@@ -49,6 +49,7 @@ Built for parents, caregivers, therapists, and educators to log daily activities
 | 9 | **Medication** | 💊 | Medication name, dosage, administered status | ⬜ |
 | 10 | **Therapy** | 🧩 | Session type (speech/OT/PT/behavioral), provider, goals | ⬜ |
 | 11 | **Routine** | 📋 | Daily routine name, completion, duration | ⬜ |
+| 12 | **Milestones** | ⭐ | Developmental milestones across 8 categories with status workflow | ✅ |
 
 ### Platform Capabilities
 
@@ -62,22 +63,23 @@ Built for parents, caregivers, therapists, and educators to log daily activities
 | 📤 **CSV Export** | Export all 11 tracker types + milestones per child |
 | 🤝 **Caregiver Invites** | Secure token-based sharing and collaboration |
 | 📝 **Audit Trail** | Timestamped logging of all create/update/delete operations |
-| ☁️ **Dual Storage** | Offline-first localStorage or Neon Postgres cloud via `VITE_USE_CLOUD` |
+| ☁️ **Cloud Storage** | All 11 tracker types + milestones + enabled_modules persist to Neon Postgres via `VITE_USE_CLOUD=true`. Local mode uses localStorage as fallback. |
 | 📥 **Data Import** | Bulk import via CSV/Excel for all entry types |
 
 ### Pages
 
 | Page | Route | Nav Icon | Description |
 |------|-------|----------|-------------|
-| Journal (Dashboard) | `/` | 🏠 Home | Daily log with all enabled trackers + milestones |
-| Add Entry | `/add` | — | 11 tabbed entry forms |
-| Charts | `/charts` | 🧭 Explore | Recharts data visualization |
-| Calendar | `/calendar` | — | Calendar view of all entries |
-| Milestones | `/milestones` | ⭐ Star | Developmental milestone dashboard |
-| Caregiver Portal | `/caregiver` | 👥 Users | Invite management & shared access |
-| Profile / Settings | `/profile` | ⚙️ Settings | Theme, module toggles, account settings |
+| Today (Home) | `/` | 🏠 Today | Today's entries at a glance, quick-add grid, daily stats |
+| Journal | `/journal` | 📖 Journal | Full diary history with calendar-strip date navigation |
+| Add Entry | `/add` | — | 11 tabbed entry forms with in-app help guides |
+| Charts / Explore | `/charts` | 🧭 Explore | Recharts data visualisation |
+| Calendar | `/calendar` | — | Monthly calendar view of all entries |
+| Milestones | `/milestones` | — | Developmental milestone dashboard |
+| Caregiver Portal | `/caregiver` | 👥 Care | Invite management & shared access |
+| Profile / Settings | `/profile` | ⚙️ Settings | Theme, module toggles with Save button, GDPR controls, role info |
 | Admin | `/admin` | 👑 Crown | System admin (admin role only) |
-| Login | — | — | Register / login / password reset |
+| Login | — | — | Register / login / password reset with role descriptions |
 
 ---
 
@@ -249,7 +251,7 @@ export const DEFAULT_MODULES: TrackerModule[] = [
 ];
 ```
 
-**Per-child toggling:** Parents toggle modules on/off in Profile → Settings. State persists to `bt_enabled_modules` (localStorage) or the `enabled_modules` table (cloud). The Dashboard, Add Entry, and Charts pages all respect the active module set for the selected child.
+**Per-child toggling:** Parents toggle modules on/off in Profile → Settings. State persists to the `enabled_modules` table in Neon DB (cloud mode) or `bt_enabled_modules` localStorage key (local mode). The Settings page now includes a Save button that explicitly commits changes to the DB. Module state is loaded per-child on login and child selection.
 
 ---
 
@@ -318,9 +320,23 @@ All endpoints are Vercel Serverless Functions under `/api/`. Auth is via JWT in 
 | `GET/POST/PUT/DELETE /api/drinks` | Drink entries |
 | `GET/POST/PUT/DELETE /api/urine` | Urine entries |
 | `GET/POST/PUT/DELETE /api/bowel` | Bowel entries |
-| `GET/POST/PUT/DELETE /api/trackers?type=<type>` | sleep, toilet, food, mood, sensory, medication, therapy, routine |
+| `GET/POST/PUT/DELETE /api/trackers?type=<type>` | `sleep`, `toilet`, `food` |
+| `GET/POST/PUT/DELETE /api/modules?type=<type>` | `mood`, `sensory`, `medication`, `therapy`, `routine`, `milestones` |
 
 All tracker endpoints accept `?childId=<id>` for filtering and return `{ entries: Entry[] }`.
+
+### `/api/modules` — New Module Endpoint
+
+The `/api/modules` endpoint handles all 6 newer tracker types plus enabled_modules management in a single consolidated function.
+
+| Method | `type` param | Body | Purpose |
+|--------|-------------|------|---------|
+| `GET` | `mood\|sensory\|medication\|therapy\|routine\|milestones` | — | List entries for accessible children |
+| `GET` | `enabled_modules` | `?childId=<id>` | Get enabled module IDs for a child |
+| `POST` | — | `{ trackerType, childId, date, time, ...fields }` | Create entry |
+| `POST` | — | `{ action: 'set_enabled_modules', childId, modules: string[] }` | Save enabled modules to DB |
+| `PUT` | — | `{ trackerType, id, ...fields }` | Update entry |
+| `DELETE` | `mood\|sensory\|...` | `?id=<entry-id>` | Delete entry |
 
 ### Other Endpoints
 
@@ -332,6 +348,7 @@ All tracker endpoints accept `?childId=<id>` for filtering and return `{ entries
 | `/api/data?childId=<id>` | GET | Export all child data as CSV |
 | `/api/data` | POST | Import bulk data `{ childId, drinks?, urineEntries?, ... }` |
 | `/api/migrate` | POST | Run idempotent DB schema migration |
+| `/api/auth` | `DELETE` | Delete account and all associated data (GDPR right to erasure) |
 
 ---
 
@@ -365,8 +382,8 @@ All tracker endpoints accept `?childId=<id>` for filtering and return `{ entries
    ```
 2. **Add to `ModuleId`** union type and `DEFAULT_MODULES` array.
 3. **Add localStorage CRUD** in `src/utils/storage.ts` — follow the `get*Entries / add*Entry / update*Entry / delete*Entry` pattern with a `bt_new` key.
-4. **Add cloud API** in `src/utils/api.ts` — add functions that call `/api/trackers?type=new`.
-5. **Add server handler** in `api/trackers.ts` — add a case for the new type in the `switch(type)` block.
+4. **Add cloud API** in `src/utils/api.ts` — add functions that call `/api/modules?type=new` (or create a dedicated endpoint if approaching the 12-function limit).
+5. **Add server handler** in `api/modules.ts` — add a handler for the new type in `api/modules.ts` (which consolidates mood, sensory, medication, therapy, routine, and milestones). If modules exceed the Vercel function limit, create a new consolidated endpoint.
 6. **Add DB table** in `api/_lib/db.ts` — add `CREATE TABLE IF NOT EXISTS` in the migration function.
 7. **Wire into AppContext** — add state, fetch, and CRUD methods in `src/context/AppContext.tsx`.
 8. **Add UI** — add tab in `AddEntryPage.tsx`, card in `DashboardPage.tsx`, and chart in `ChartsPage.tsx`.
@@ -381,6 +398,22 @@ All tracker endpoints accept `?childId=<id>` for filtering and return `{ entries
 ### DB Migration Pattern
 
 All migrations are idempotent (`CREATE TABLE IF NOT EXISTS`, `ALTER TABLE ... ADD COLUMN IF NOT EXISTS`). Add new tables or columns in the `runMigrations()` function in `api/_lib/db.ts`, then hit `POST /api/migrate`.
+
+### Adding In-App Help to a New Module
+
+Every entry form should include a `<HelpPanel>` component at the top:
+
+```tsx
+import HelpPanel from '../components/HelpPanel';
+
+// Inside your form's return JSX:
+<HelpPanel title="Logging a New Module">
+  <p><strong>Field name:</strong> Explanation of what to enter.</p>
+  <p><strong>Another field:</strong> Why this data is useful.</p>
+</HelpPanel>
+```
+
+See `src/components/HelpPanel.tsx` for the full component. It is collapsible, keyboard-navigable, and ARIA-labelled.
 
 ---
 
@@ -411,9 +444,10 @@ Vercel's Hobby plan limits serverless functions per deployment. This project con
 | Strategy | Implementation |
 |----------|---------------|
 | **Consolidated `/api/trackers.ts`** | Single function handles 8 tracker types (sleep, toilet, food, mood, sensory, medication, therapy, routine) via `?type=` query parameter |
+| **Consolidated `/api/modules.ts`** | Single function handles 6 newer tracker types (mood, sensory, medication, therapy, routine, milestones) plus `enabled_modules` management |
 | **Separate high-traffic endpoints** | Drinks, urine, and bowel retain dedicated functions for clarity |
 | **Shared `_lib/`** | `auth.ts` and `db.ts` are shared modules (not counted as functions) |
-| **Total functions** | ~12 serverless functions — well within Hobby tier limits |
+| **Total functions** | 12 serverless functions — at Hobby tier limit. New tracker types consolidated into `/api/modules`. |
 
 ### Neon Free Tier
 
