@@ -16,6 +16,7 @@ Built for parents, caregivers, therapists, and educators to log daily activities
 ## 📑 Table of Contents
 
 - [Features](#-features)
+- [Feature Roadmap (Baby Leap-Inspired)](#-feature-roadmap-baby-leap-inspired)
 - [Navigation](#-navigation)
 - [Architecture](#-architecture)
 - [Getting Started](#-getting-started)
@@ -34,6 +35,75 @@ Built for parents, caregivers, therapists, and educators to log daily activities
 - [Known Issues](#-known-issues)
 - [Documentation](#-documentation)
 - [Contributing](#-contributing)
+- [Testing & QA](#-testing--qa)
+
+---
+
+## 🗺 Feature Roadmap (Baby Leap-Inspired)
+
+### 1) Milestones timeline & calendar
+- `/milestones` now provides a milestone timeline with **weekly / monthly / annual zoom**, date markers, and milestone cards.
+- Filters are available for **module, milestone type, status, category, and time window**.
+- “**Jump to today**” and “**Jump to next leap**” controls are included.
+- Custom milestones support module-scoped entries, milestone type, target date, diary notes, and role source metadata.
+
+### 2) Contextual guidance panels
+- Milestone cards provide an “NHS guidance” action that opens a contextual panel:
+  - what this means,
+  - expected behaviours,
+  - practical tips,
+  - next steps,
+  - autism/SEND support.
+- Guidance content is maintained in `src/data/milestoneGuidance.ts` for easy future updates and localization.
+
+### 3) Modular logging, diary notes, and source metadata
+- Milestones include diary notes and source role metadata for parent/teacher-equivalent/specialist workflows.
+- Existing module logging remains per-child and per-category.
+
+### 4) Reminders and non-intrusive notifications
+- Reminder preferences can now be configured in Settings per child and per module (daily/weekly).
+- Dashboard displays reminder banners with a one-tap “snooze 1 hour” control.
+- Reminder preferences persist in both local mode and cloud mode.
+
+### 5) Multi-child, multi-role behaviour
+- Child switching refreshes milestone, reminder, and report context for the selected child.
+- Role-aware UI remains in Settings and admin/profiles pages.
+- Role mapping used in product copy:
+  - `schoolAdmin` ≈ teacher/school role,
+  - `therapist` / `specialist` ≈ health professional role.
+
+### 6) Reports & export
+- Reports now include milestone trend charting.
+- Export controls include:
+  - CSV export with explicit privacy confirmation modal
+  - PDF export via browser print-to-PDF workflow
+
+### 7) Accessibility and NHS-style UX
+- Dyslexia-friendly font toggle (Atkinson Hyperlegible), keyboard-accessible controls, and high-contrast support remain available.
+- New milestone/reminder/report controls use large tap targets and high-contrast card/toggle styling.
+
+### 8) Privacy, consent, and compliance
+- Export path now requires a consent confirmation step.
+- Reminder preferences and milestone metadata are scoped per user and child in storage/DB.
+- GDPR policy remains in `GDPR.md` and applies to new milestone/reminder fields.
+
+### 9) Onboarding flow summary
+1. Create/login account and select role.
+2. Add/select child profile.
+3. Enable modules in Settings.
+4. Configure reminder preferences.
+5. Track milestones in timeline view and open NHS guidance panels.
+6. Use Reports to review trends and export with consent confirmation.
+
+### Role & permission matrix
+
+| Role | View timeline/logs | Add milestones/notes | Reminder setup | Export summaries |
+|------|--------------------|----------------------|----------------|------------------|
+| Parent | ✅ | ✅ | ✅ | ✅ |
+| Caregiver | ✅ | ✅ | ✅ (assigned child only) | ⚠️ owner policy |
+| School admin (teacher-equivalent) | ✅ | ✅ | ✅ (assigned child only) | ⚠️ owner policy |
+| Therapist / Specialist (health professional-equivalent) | ✅ | ✅ | ✅ (assigned child only) | ✅ clinical workflow |
+| Admin | ✅ | ✅ | ✅ | ✅ |
 
 ---
 
@@ -599,3 +669,21 @@ Changes apply **instantly** (no Save button) and persist to localStorage (local 
 - Theme persistence uses localStorage (not synced to cloud)
 - Goal dismissal state uses localStorage
 
+---
+
+## 🧪 Testing & QA
+
+### Automated checks run
+- `npm run build` ✅
+- `npx tsc --project tsconfig.api.json --noEmit` ✅
+- `npm run lint` ⚠️ currently has pre-existing warnings/errors outside this roadmap scope
+
+### Manual QA checklist
+- [ ] Milestones timeline: weekly/monthly/annual zoom, filters, and jump controls
+- [ ] Milestones cards: add/update/delete, category/module/type/status behaviour
+- [ ] Guidance panel: opens from milestone card and shows NHS-contextual text/links
+- [ ] Reminders: configure per child/module in Settings, banner appears on Dashboard, snooze works
+- [ ] Multi-child switch: timeline/reminder/report context refreshes correctly
+- [ ] Reports: milestone trend chart renders; CSV export requires consent modal; PDF print flow works
+- [ ] Accessibility: dyslexia font toggle, keyboard tab order, switch controls, readable contrast
+- [ ] Edge cases: rapid toggle changes, login/logout, no child selected, empty milestone filter results

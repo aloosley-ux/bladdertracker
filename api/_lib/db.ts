@@ -293,14 +293,23 @@ export async function migrate(): Promise<string[]> {
       name VARCHAR(255) NOT NULL,
       description TEXT DEFAULT '',
       category VARCHAR(30) NOT NULL CHECK (category IN ('speech', 'motor', 'social', 'cognitive', 'self_care', 'routine', 'sensory', 'other')),
+      module_id VARCHAR(50) NOT NULL DEFAULT 'milestones',
+      milestone_type VARCHAR(30) NOT NULL DEFAULT 'developmental',
       status VARCHAR(20) NOT NULL DEFAULT 'not_started' CHECK (status IN ('not_started', 'in_progress', 'achieved')),
+      target_date VARCHAR(20),
       date_achieved VARCHAR(20),
       notes TEXT DEFAULT '',
+      source_role VARCHAR(30),
       created_by TEXT REFERENCES accounts(id),
       created_at TIMESTAMPTZ DEFAULT NOW()
     )
   `;
   log.push('milestones table ready');
+  await sql`ALTER TABLE milestones ADD COLUMN IF NOT EXISTS module_id VARCHAR(50) NOT NULL DEFAULT 'milestones'`;
+  await sql`ALTER TABLE milestones ADD COLUMN IF NOT EXISTS milestone_type VARCHAR(30) NOT NULL DEFAULT 'developmental'`;
+  await sql`ALTER TABLE milestones ADD COLUMN IF NOT EXISTS target_date VARCHAR(20)`;
+  await sql`ALTER TABLE milestones ADD COLUMN IF NOT EXISTS source_role VARCHAR(30)`;
+  log.push('milestones columns up to date');
 
   // Enabled modules per child
   await sql`
@@ -312,6 +321,23 @@ export async function migrate(): Promise<string[]> {
     )
   `;
   log.push('enabled_modules table ready');
+
+  await sql`
+    CREATE TABLE IF NOT EXISTS reminder_preferences (
+      id TEXT PRIMARY KEY,
+      user_id TEXT REFERENCES accounts(id) ON DELETE CASCADE,
+      child_id TEXT REFERENCES children(id) ON DELETE CASCADE,
+      module_id VARCHAR(50) NOT NULL,
+      frequency VARCHAR(10) NOT NULL DEFAULT 'daily' CHECK (frequency IN ('daily', 'weekly')),
+      enabled BOOLEAN NOT NULL DEFAULT TRUE,
+      snoozed_until TIMESTAMPTZ,
+      next_reminder_at TIMESTAMPTZ,
+      created_at TIMESTAMPTZ DEFAULT NOW(),
+      updated_at TIMESTAMPTZ DEFAULT NOW(),
+      UNIQUE (user_id, child_id, module_id)
+    )
+  `;
+  log.push('reminder_preferences table ready');
 
   // Update accounts role constraint to include new roles (safe: existing roles are a subset)
   try {

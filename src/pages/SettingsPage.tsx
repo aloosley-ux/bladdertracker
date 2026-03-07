@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import {
   AlertTriangle,
+  Bell,
   ChevronDown,
   Crown,
   Download,
@@ -26,6 +27,8 @@ import { getImportTemplateDescription, parseImportFile } from '../utils/importer
 import type { Child, ModuleId } from '../types';
 import { DEFAULT_MODULES } from '../types';
 
+const REMINDER_ENABLED_MODULES: ModuleId[] = ['milestones', 'therapy', 'routine', 'mood'];
+
 export default function SettingsPage() {
   const {
     user,
@@ -42,6 +45,8 @@ export default function SettingsPage() {
     clearAllData,
     enabledModules,
     setEnabledModules,
+    reminderPreferences,
+    setReminderPreferences,
   } = useApp();
   const { theme, setTheme, dyslexiaFont, setDyslexiaFont } = useTheme();
 
@@ -167,6 +172,10 @@ export default function SettingsPage() {
 
   const visibleAudit = showAllAudit ? auditTrail : auditTrail.slice(0, 5);
   const templateHints = getImportTemplateDescription();
+  const reminderForChild = selectedChildId
+    ? reminderPreferences.filter((entry) => entry.childId === selectedChildId)
+    : [];
+  const reminderModules = enabledModules.filter((moduleId) => REMINDER_ENABLED_MODULES.includes(moduleId));
 
   return (
     <div className="pb-20">
@@ -291,6 +300,72 @@ export default function SettingsPage() {
             initialModules={enabledModules}
             onSave={setEnabledModules}
           />
+        )}
+
+        {selectedChild && (
+          <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
+            <h3 className="mb-2 flex items-center gap-2 text-sm font-bold text-gray-700">
+              <Bell size={16} className="text-lavender-500" /> Reminder preferences
+            </h3>
+            <p className="mb-3 text-xs text-gray-500">
+              Opt in to daily or weekly milestone reminders. Reminders stay scoped to this child profile.
+            </p>
+            <div className="space-y-2">
+              {reminderModules.map((moduleId) => {
+                  const existing = reminderForChild.find((entry) => entry.moduleId === moduleId);
+                  const enabled = existing?.enabled ?? false;
+                  const frequency = existing?.frequency ?? 'weekly';
+                  return (
+                    <div key={moduleId} className="rounded-xl border border-gray-100 p-3">
+                      <div className="flex items-center justify-between gap-2">
+                        <div>
+                          <p className="text-sm font-semibold text-gray-900">{moduleId}</p>
+                          <p className="text-xs text-gray-500">Show dashboard reminder banner</p>
+                        </div>
+                        <button
+                          role="switch"
+                          aria-checked={enabled}
+                          className="nhs-toggle"
+                          data-on={enabled}
+                          onClick={() => {
+                            if (!selectedChildId) return;
+                            const next = reminderModules
+                              .map((id) => {
+                                const item = reminderForChild.find((entry) => entry.moduleId === id);
+                                if (id !== moduleId) return item ?? { moduleId: id, enabled: false, frequency: 'weekly' as const };
+                                return { moduleId: id, enabled: !enabled, frequency, snoozedUntil: null };
+                              });
+                            setReminderPreferences(selectedChildId, next);
+                          }}
+                        />
+                      </div>
+                      {enabled && (
+                        <div className="mt-2 flex items-center gap-2">
+                          <label className="text-xs font-semibold text-gray-600">Frequency</label>
+                          <select
+                            className="rounded-lg border border-gray-200 px-2 py-1 text-xs"
+                            value={frequency}
+                            onChange={(event) => {
+                              if (!selectedChildId) return;
+                              const next = reminderModules
+                                .map((id) => {
+                                  const item = reminderForChild.find((entry) => entry.moduleId === id);
+                                  if (id !== moduleId) return item ?? { moduleId: id, enabled: false, frequency: 'weekly' as const };
+                                  return { moduleId: id, enabled: true, frequency: event.target.value as 'daily' | 'weekly', snoozedUntil: null };
+                                });
+                              setReminderPreferences(selectedChildId, next);
+                            }}
+                          >
+                            <option value="daily">Daily</option>
+                            <option value="weekly">Weekly</option>
+                          </select>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+            </div>
+          </section>
         )}
 
         {/* ── Child Profiles ───────────────────────────────────────── */}

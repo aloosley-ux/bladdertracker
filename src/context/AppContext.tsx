@@ -19,6 +19,7 @@ import type {
   UserRole,
   CaregiverInvite,
   NotificationItem,
+  ReminderPreference,
   AuditEvent,
   ImportSummary,
 } from '../types';
@@ -30,6 +31,9 @@ import { AppContext } from './appContextDef';
 function isApiAvailable(): boolean {
   return typeof window !== 'undefined' && !!import.meta.env.VITE_USE_CLOUD;
 }
+
+const DAY_IN_MS = 24 * 60 * 60 * 1000;
+const WEEK_IN_MS = 7 * DAY_IN_MS;
 
 export function AppProvider({ children: childrenProp }: { children: ReactNode }) {
   const cloud = isApiAvailable();
@@ -52,6 +56,7 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
   const [enabledModules, setEnabledModulesState] = useState<ModuleId[]>([]);
   const [invites, setInvites] = useState<CaregiverInvite[]>([]);
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const [reminderPreferences, setReminderPreferencesState] = useState<ReminderPreference[]>([]);
   const [auditTrail, setAuditTrail] = useState<AuditEvent[]>([]);
   const [ready, setReady] = useState(false);
 
@@ -79,6 +84,7 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
       setEnabledModulesState([]);
       setInvites([]);
       setNotifications([]);
+      setReminderPreferencesState([]);
       setAuditTrail([]);
       return;
     }
@@ -87,7 +93,7 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
       const [
         childrenData, drinksData, urineData, bowelData, sleepData, toiletData, foodData,
         moodData, sensoryData, medicationData, therapyData, routineData, milestonesData,
-        invitesData, notificationsData, auditData,
+        invitesData, notificationsData, reminderData, auditData,
       ] = await Promise.all([
         api.apiGetChildren(),
         api.apiGetDrinks(),
@@ -104,6 +110,7 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
         api.apiGetMilestones(),
         api.apiGetInvites(),
         api.apiGetNotifications(),
+        api.apiGetReminderPreferences(),
         api.apiGetAuditEvents(),
       ]);
       setChildrenList(childrenData);
@@ -121,6 +128,7 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
       setMilestones(milestonesData);
       setInvites(invitesData);
       setNotifications(notificationsData);
+      setReminderPreferencesState(reminderData);
       setAuditTrail(auditData);
 
       // Resolve the selected child: keep current selection if still valid, else fall back to first.
@@ -168,6 +176,7 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
     setEnabledModulesState(resolvedId ? localStorage.getEnabledModules(resolvedId) : []);
     setInvites(currentUser ? localStorage.getInvites(currentUser) : []);
     setNotifications(currentUser ? localStorage.getNotifications(currentUser.id) : []);
+    setReminderPreferencesState(currentUser ? localStorage.getReminderPreferences(currentUser.id) : []);
     setAuditTrail(currentUser ? localStorage.getAuditEvents(currentUser.id) : []);
   }, []);
 
@@ -238,6 +247,7 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
     setEnabledModulesState([]);
     setInvites([]);
     setNotifications([]);
+    setReminderPreferencesState([]);
     setAuditTrail([]);
     setSelectedChildId(null);
   };
@@ -790,6 +800,49 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
     }
   };
 
+  const setReminderPreferences = async (childId: string, reminders: Array<Partial<ReminderPreference> & { moduleId: ReminderPreference['moduleId'] }>) => {
+    if (!user) return;
+    if (cloud) {
+      try {
+        await api.apiSetReminderPreferences(childId, reminders);
+        await refreshCloudData(user);
+      } catch (error) {
+        console.error('Failed to persist reminder preferences', error);
+      }
+      return;
+    }
+
+    const existing = localStorage.getReminderPreferences(user.id);
+    const now = new Date().toISOString();
+    const untouched = existing.filter((entry) => entry.childId !== childId);
+    const next = reminders.map((entry) => {
+      const found = existing.find((item) => item.childId === childId && item.moduleId === entry.moduleId);
+      const frequency = entry.frequency ?? found?.frequency ?? 'daily';
+      const enabled = entry.enabled ?? found?.enabled ?? true;
+      const nextReminderAt = enabled
+        ? (frequency === 'daily'
+          ? new Date(Date.now() + DAY_IN_MS).toISOString()
+          : new Date(Date.now() + WEEK_IN_MS).toISOString())
+        : null;
+
+      return {
+        id: found?.id ?? localStorage.generateId(),
+        userId: user.id,
+        childId,
+        moduleId: entry.moduleId,
+        frequency,
+        enabled,
+        snoozedUntil: entry.snoozedUntil ?? found?.snoozedUntil ?? null,
+        nextReminderAt,
+        createdAt: found?.createdAt ?? now,
+        updatedAt: now,
+      } satisfies ReminderPreference;
+    });
+
+    localStorage.setReminderPreferences([...untouched, ...next]);
+    refreshLocalData(user, selectedChildId);
+  };
+
   const clearAllData = () => {
     if (!cloud) {
       localStorage.clearAllAppData();
@@ -811,6 +864,7 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
     setEnabledModulesState([]);
     setInvites([]);
     setNotifications([]);
+    setReminderPreferencesState([]);
     setAuditTrail([]);
     setSelectedChildId(null);
   };
@@ -847,6 +901,7 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
         enabledModules,
         invites,
         notifications,
+        reminderPreferences,
         auditTrail,
         login,
         logout,
@@ -895,6 +950,7 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
         acceptInvite,
         importDiaryData,
         markNotificationRead,
+        setReminderPreferences,
         clearAllData,
       }}
     >
