@@ -3,7 +3,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { Baby, Download, LogOut, Shield, Trash2 } from 'lucide-react';
 import { useApp } from '../context/useApp';
 import { generateId } from '../utils/storage';
-import BrandIcon from '../components/BrandIcon';
+import BrandBanner from '../components/BrandBanner';
 import type { Child } from '../types';
 
 export default function ProfilePage() {
@@ -50,9 +50,9 @@ export default function ProfilePage() {
 
   return (
     <div className="pb-20">
-      <div className="bg-[linear-gradient(180deg,#fbf7f2_0%,#ffffff_100%)] px-4 pb-4 pt-4">
-        <div className="flex flex-col items-center text-center">
-          <BrandIcon width={130} />
+      <div className="bg-[linear-gradient(180deg,#fbf7f2_0%,#ffffff_100%)] pb-4">
+        <BrandBanner />
+        <div className="flex flex-col items-center text-center px-4">
           <h1 className="mt-1 text-base font-bold text-gray-900">Security, profiles, and audit</h1>
           <p className="mt-0.5 text-xs text-gray-500">Designed for a calmer, production-style experience with clearer ownership and data handling.</p>
         </div>

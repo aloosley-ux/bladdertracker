@@ -15,7 +15,7 @@ import {
 import { CalendarDays, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useApp } from '../context/useApp';
-import BrandIcon from '../components/BrandIcon';
+import BrandBanner from '../components/BrandBanner';
 
 type Period = '7d' | '14d' | '30d';
 
@@ -69,14 +69,14 @@ export default function ChartsPage() {
 
   return (
     <div className="pb-20">
-      <div className="bg-[linear-gradient(180deg,#fbf7f2_0%,#ffffff_100%)] px-4 pb-4 pt-4">
-        <div className="flex flex-col items-center text-center">
-          <BrandIcon width={130} />
+      <div className="bg-[linear-gradient(180deg,#fbf7f2_0%,#ffffff_100%)] pb-4">
+        <BrandBanner />
+        <div className="flex flex-col items-center text-center px-4">
           <h1 className="mt-1 text-base font-bold text-gray-900">Patterns and trends</h1>
           <p className="mt-0.5 text-xs text-gray-500">A calm, visual snapshot for {selectedChild?.name ?? 'your selected child'}.</p>
         </div>
 
-        <div className="mt-3 flex items-center justify-between gap-2">
+        <div className="mt-3 flex items-center justify-between gap-2 px-4">
           <div className="flex-1 grid grid-cols-3 gap-2 rounded-2xl bg-[#f6f1ff] p-1 text-sm">
             {(['7d', '14d', '30d'] as Period[]).map((item) => (
               <button
