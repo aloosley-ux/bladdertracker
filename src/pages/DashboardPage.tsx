@@ -128,24 +128,27 @@ export default function DashboardPage() {
           <Link
             to="/add"
             state={{ tab: 'drink' }}
-            className="flex flex-col items-center gap-2 rounded-[1.5rem] bg-[#eef8ff] py-4 shadow-sm ring-1 ring-sky-100 transition hover:bg-sky-50"
+            className="relative flex flex-col items-center gap-2 rounded-[1.5rem] bg-[#eef8ff] py-4 shadow-sm ring-1 ring-sky-100 transition hover:bg-sky-50 active:scale-95"
           >
+            <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-sky-500 text-[11px] font-bold leading-none text-white shadow-sm">+</span>
             <span className="text-2xl">🥤</span>
             <span className="text-xs font-semibold text-sky-700">Drink</span>
           </Link>
           <Link
             to="/add"
             state={{ tab: 'urine' }}
-            className="flex flex-col items-center gap-2 rounded-[1.5rem] bg-peach py-4 shadow-sm ring-1 ring-amber-100 transition hover:bg-amber-50"
+            className="relative flex flex-col items-center gap-2 rounded-[1.5rem] bg-peach py-4 shadow-sm ring-1 ring-amber-100 transition hover:bg-amber-50 active:scale-95"
           >
+            <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-amber-500 text-[11px] font-bold leading-none text-white shadow-sm">+</span>
             <span className="text-2xl">💦</span>
             <span className="text-xs font-semibold text-amber-700">Urine</span>
           </Link>
           <Link
             to="/add"
             state={{ tab: 'bowel' }}
-            className="flex flex-col items-center gap-2 rounded-[1.5rem] bg-mint py-4 shadow-sm ring-1 ring-emerald-100 transition hover:bg-emerald-50"
+            className="relative flex flex-col items-center gap-2 rounded-[1.5rem] bg-mint py-4 shadow-sm ring-1 ring-emerald-100 transition hover:bg-emerald-50 active:scale-95"
           >
+            <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 text-[11px] font-bold leading-none text-white shadow-sm">+</span>
             <span className="text-2xl">🚽</span>
             <span className="text-xs font-semibold text-emerald-700">Bowel</span>
           </Link>
