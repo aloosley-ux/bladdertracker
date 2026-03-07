@@ -173,7 +173,7 @@ export default function LoginPage() {
             </div>
             <p className="text-xs font-bold tracking-wide text-lavender-500 uppercase">BladderTracker</p>
             <h1 className="mt-1 text-2xl font-bold tracking-tight text-gray-900">
-              Smarter journaling for families&nbsp;&amp;&nbsp;schools
+              Smarter journaling for families &amp; schools
             </h1>
             <div className="mt-3 flex items-center justify-center gap-3 text-[11px] text-gray-500">
               <span className="inline-flex items-center gap-1"><ShieldCheck size={12} className="text-lavender-400" /> Secure</span>

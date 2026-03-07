@@ -185,7 +185,10 @@ export default function CalendarPage() {
                   <div className="flex-1 text-sm">
                     {u.wet && <span className="font-medium">Wet </span>}
                     {u.pass && <span className="font-medium">Pass </span>}
-                    {u.notes && <span className="text-gray-400 text-xs ml-2">{u.notes}</span>}
+                    {u.volumeMl != null && u.volumeMl > 0 && <span className="font-medium text-amber-700">{u.volumeMl}ml </span>}
+                    {u.urgency != null && <span className="text-xs text-amber-600">Urgency {u.urgency}/5 </span>}
+                    {u.leakageAmount && u.leakageAmount !== 'none' && <span className="text-xs text-blue-600">Leak: {u.leakageAmount} </span>}
+                    {u.notes && <span className="text-gray-400 text-xs ml-1">{u.notes}</span>}
                   </div>
                   <span className="text-xs text-gray-400">{u.time}</span>
                 </div>

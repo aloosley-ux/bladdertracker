@@ -87,8 +87,8 @@ export async function migrate(): Promise<string[]> {
 
   // Add new columns to existing urine_entries tables (safe if already present)
   await sql`ALTER TABLE urine_entries ADD COLUMN IF NOT EXISTS volume_ml INTEGER`;
-  await sql`ALTER TABLE urine_entries ADD COLUMN IF NOT EXISTS urgency SMALLINT`;
-  await sql`ALTER TABLE urine_entries ADD COLUMN IF NOT EXISTS leakage_amount VARCHAR(10)`;
+  await sql`ALTER TABLE urine_entries ADD COLUMN IF NOT EXISTS urgency SMALLINT CHECK (urgency IS NULL OR (urgency >= 1 AND urgency <= 5))`;
+  await sql`ALTER TABLE urine_entries ADD COLUMN IF NOT EXISTS leakage_amount VARCHAR(10) CHECK (leakage_amount IS NULL OR leakage_amount IN ('none', 'small', 'medium', 'large'))`;
   log.push('urine_entries columns up to date');
 
   await sql`
