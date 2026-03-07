@@ -6,14 +6,14 @@ import { useApp } from './context/useApp';
 import AppNav from './components/AppNav';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
-import TodayPage from './pages/TodayPage';
 import AddEntryPage from './pages/AddEntryPage';
-import ChartsPage from './pages/ChartsPage';
+import ReportsPage from './pages/ReportsPage';
 import CalendarPage from './pages/CalendarPage';
-import ProfilePage from './pages/ProfilePage';
-import CaregiverPortalPage from './pages/CaregiverPortalPage';
+import SettingsPage from './pages/SettingsPage';
+import ProfilesPage from './pages/ProfilesPage';
 import AdminPage from './pages/AdminPage';
-import MilestonesPage from './pages/MilestonesPage';
+import LogPage from './pages/LogPage';
+import HelpPage from './pages/HelpPage';
 import { promoteToAdmin, addAuditEvent } from './utils/storage';
 
 const ADMIN_ACCESS_KEY = 'bladdertracker-admin-2024';
@@ -34,12 +34,10 @@ function AdminAccessHandler() {
           detail: 'Account promoted to admin via secure URL.',
         });
         login(promoted);
-        // Remove the query param from URL
         searchParams.delete('admin-access');
         setSearchParams(searchParams, { replace: true });
       }
     } else if (adminKey && adminKey !== ADMIN_ACCESS_KEY) {
-      // Invalid key — just remove it
       searchParams.delete('admin-access');
       setSearchParams(searchParams, { replace: true });
     }
@@ -56,21 +54,29 @@ function AppRoutes() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--bg-primary)] max-w-2xl mx-auto relative">
-      <AdminAccessHandler />
+    <div className="min-h-screen bg-[var(--bg-primary)]">
       <AppNav />
-      <Routes>
-        <Route path="/" element={<TodayPage />} />
-        <Route path="/journal" element={<DashboardPage />} />
-        <Route path="/add" element={<AddEntryPage />} />
-        <Route path="/charts" element={<ChartsPage />} />
-        <Route path="/calendar" element={<CalendarPage />} />
-        <Route path="/caregiver" element={<CaregiverPortalPage />} />
-        <Route path="/milestones" element={<MilestonesPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/admin" element={<AdminPage />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+      <AdminAccessHandler />
+      <main className="mx-auto max-w-5xl px-0 md:px-6 pb-20 md:pb-6 pt-0 md:pt-4">
+        <Routes>
+          <Route path="/" element={<DashboardPage />} />
+          <Route path="/log" element={<LogPage />} />
+          <Route path="/add" element={<AddEntryPage />} />
+          <Route path="/reports" element={<ReportsPage />} />
+          <Route path="/calendar" element={<CalendarPage />} />
+          <Route path="/profiles" element={<ProfilesPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/help" element={<HelpPage />} />
+          <Route path="/admin" element={<AdminPage />} />
+          {/* Legacy redirects */}
+          <Route path="/journal" element={<Navigate to="/log" replace />} />
+          <Route path="/charts" element={<Navigate to="/reports" replace />} />
+          <Route path="/caregiver" element={<Navigate to="/profiles" replace />} />
+          <Route path="/profile" element={<Navigate to="/settings" replace />} />
+          <Route path="/milestones" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </main>
     </div>
   );
 }
