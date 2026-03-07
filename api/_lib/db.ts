@@ -150,5 +150,55 @@ export async function migrate(): Promise<string[]> {
   `;
   log.push('audit_events table ready');
 
+  await sql`
+    CREATE TABLE IF NOT EXISTS sleep_entries (
+      id TEXT PRIMARY KEY,
+      child_id TEXT REFERENCES children(id) ON DELETE CASCADE,
+      date VARCHAR(20) NOT NULL,
+      time VARCHAR(10) NOT NULL,
+      event_type VARCHAR(20) NOT NULL CHECK (event_type IN ('onset', 'wake', 'nap_start', 'nap_end')),
+      duration_minutes INTEGER,
+      quality SMALLINT CHECK (quality IS NULL OR (quality >= 1 AND quality <= 5)),
+      nighttime_event BOOLEAN DEFAULT FALSE,
+      notes TEXT DEFAULT '',
+      created_by TEXT REFERENCES accounts(id),
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `;
+  log.push('sleep_entries table ready');
+
+  await sql`
+    CREATE TABLE IF NOT EXISTS toilet_attempt_entries (
+      id TEXT PRIMARY KEY,
+      child_id TEXT REFERENCES children(id) ON DELETE CASCADE,
+      date VARCHAR(20) NOT NULL,
+      time VARCHAR(10) NOT NULL,
+      outcome VARCHAR(20) NOT NULL CHECK (outcome IN ('success', 'failure', 'no_event')),
+      supervised BOOLEAN DEFAULT FALSE,
+      prompted BOOLEAN DEFAULT FALSE,
+      duration_minutes INTEGER,
+      notes TEXT DEFAULT '',
+      created_by TEXT REFERENCES accounts(id),
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `;
+  log.push('toilet_attempt_entries table ready');
+
+  await sql`
+    CREATE TABLE IF NOT EXISTS food_entries (
+      id TEXT PRIMARY KEY,
+      child_id TEXT REFERENCES children(id) ON DELETE CASCADE,
+      date VARCHAR(20) NOT NULL,
+      time VARCHAR(10) NOT NULL,
+      meal_type VARCHAR(20) NOT NULL CHECK (meal_type IN ('breakfast', 'lunch', 'dinner', 'snack')),
+      description TEXT NOT NULL DEFAULT '',
+      portions NUMERIC(5,2),
+      notes TEXT DEFAULT '',
+      created_by TEXT REFERENCES accounts(id),
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `;
+  log.push('food_entries table ready');
+
   return log;
 }
