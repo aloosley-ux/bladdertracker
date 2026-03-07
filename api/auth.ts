@@ -19,6 +19,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return handleSession(req, res);
   }
 
+  // DELETE → account deletion
+  if (req.method === 'DELETE') {
+    return handleDeleteAccount(req, res);
+  }
+
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method not allowed' });
     return;
@@ -190,4 +195,49 @@ async function handleReset(req: VercelRequest, res: VercelResponse) {
       createdAt: account.created_at,
     },
   });
+}
+
+async function handleDeleteAccount(req: VercelRequest, res: VercelResponse) {
+  try {
+    const session = await getSessionFromRequest(req);
+    if (!session) {
+      res.status(401).json({ error: 'Not authenticated' });
+      return;
+    }
+
+    const userId = session.userId;
+
+    await sql`DELETE FROM notifications WHERE user_id = ${userId}`;
+    await sql`DELETE FROM audit_events WHERE user_id = ${userId}`;
+    await sql`DELETE FROM invites WHERE invited_by = ${userId}`;
+
+    const childResult = await sql`SELECT id FROM children WHERE created_by = ${userId}`;
+    const childIds = childResult.rows.map((r) => r.id);
+
+    if (childIds.length > 0) {
+      await sql`DELETE FROM drink_entries WHERE child_id = ANY(${childIds})`;
+      await sql`DELETE FROM urine_entries WHERE child_id = ANY(${childIds})`;
+      await sql`DELETE FROM bowel_entries WHERE child_id = ANY(${childIds})`;
+      await sql`DELETE FROM sleep_entries WHERE child_id = ANY(${childIds})`;
+      await sql`DELETE FROM toilet_attempt_entries WHERE child_id = ANY(${childIds})`;
+      await sql`DELETE FROM food_entries WHERE child_id = ANY(${childIds})`;
+      await sql`DELETE FROM mood_entries WHERE child_id = ANY(${childIds})`;
+      await sql`DELETE FROM sensory_entries WHERE child_id = ANY(${childIds})`;
+      await sql`DELETE FROM medication_entries WHERE child_id = ANY(${childIds})`;
+      await sql`DELETE FROM therapy_entries WHERE child_id = ANY(${childIds})`;
+      await sql`DELETE FROM routine_entries WHERE child_id = ANY(${childIds})`;
+      await sql`DELETE FROM milestones WHERE child_id = ANY(${childIds})`;
+      await sql`DELETE FROM enabled_modules WHERE child_id = ANY(${childIds})`;
+      await sql`DELETE FROM child_access WHERE child_id = ANY(${childIds})`;
+    }
+
+    await sql`DELETE FROM children WHERE created_by = ${userId}`;
+    await sql`DELETE FROM accounts WHERE id = ${userId}`;
+
+    clearSessionCookie(res);
+    res.status(200).json({ ok: true });
+  } catch (err) {
+    console.error('handleDeleteAccount error:', err);
+    res.status(500).json({ error: 'Failed to delete account.' });
+  }
 }

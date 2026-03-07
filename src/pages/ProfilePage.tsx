@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
-import { AlertTriangle, Baby, Crown, Download, LogOut, Palette, Settings, Shield, Trash2 } from 'lucide-react';
+import { AlertTriangle, Baby, Crown, Download, Globe, LogOut, Palette, Save, Settings, Shield, Trash2, UserCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useApp } from '../context/useApp';
 import { useTheme } from '../context/useTheme';
 import { generateId } from '../utils/storage';
+import { apiDeleteAccount } from '../utils/api';
 import BrandBanner from '../components/BrandBanner';
 import type { Child, ModuleId } from '../types';
 import { DEFAULT_MODULES } from '../types';
@@ -23,6 +24,12 @@ export default function ProfilePage() {
   // Clear data confirmation state
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [clearConfirmText, setClearConfirmText] = useState('');
+
+  // Delete account state
+  const [showDeleteAccount, setShowDeleteAccount] = useState(false);
+  const [deleteAccountText, setDeleteAccountText] = useState('');
+
+  const cloud = typeof window !== 'undefined' && !!import.meta.env.VITE_USE_CLOUD;
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
@@ -78,6 +85,18 @@ export default function ProfilePage() {
     setClearConfirmText('');
   };
 
+  const handleDeleteAccount = async () => {
+    if (deleteAccountText !== 'DELETE MY ACCOUNT') return;
+    try {
+      await apiDeleteAccount();
+      clearAllData();
+    } catch {
+      setDeleteAccountText('');
+      setShowDeleteAccount(false);
+      alert('Account deletion failed. Please try again or contact support.');
+    }
+  };
+
   const formatRole = (role: string) => {
     if (role === 'schoolAdmin') return 'School admin';
     if (role === 'admin') return 'Administrator';
@@ -112,6 +131,50 @@ export default function ProfilePage() {
           </div>
         </section>
 
+        {/* Role & Permissions */}
+        <section className="rounded-[1.75rem] bg-white p-5 shadow-sm ring-1 ring-black/5" aria-labelledby="role-heading">
+          <h3 id="role-heading" className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-3">
+            <UserCheck size={16} className="text-lavender-500" /> Your Role & Access
+          </h3>
+          <div className="rounded-xl bg-lavender-50 p-3 mb-3">
+            <p className="text-xs font-semibold text-lavender-800 mb-1">{formatRole(user?.role ?? '')} — what you can do:</p>
+            <ul className="text-xs text-lavender-700 space-y-1 list-disc list-inside">
+              {(user?.role === 'admin' || user?.role === 'parent') && (
+                <>
+                  <li>Add, edit, and remove child profiles</li>
+                  <li>Log and delete all diary entries</li>
+                  <li>Invite caregivers, school admins, therapists, and specialists</li>
+                  <li>Toggle modules per child and export data</li>
+                </>
+              )}
+              {user?.role === 'caregiver' && (
+                <>
+                  <li>View and log diary entries for linked children</li>
+                  <li>Cannot add or remove child profiles</li>
+                  <li>Cannot invite other users or export data</li>
+                </>
+              )}
+              {user?.role === 'schoolAdmin' && (
+                <>
+                  <li>View diary entries for linked children</li>
+                  <li>Log school-time entries (food, routine, toilet attempts)</li>
+                  <li>Cannot modify child profiles or invite users</li>
+                </>
+              )}
+              {(user?.role === 'therapist' || user?.role === 'specialist') && (
+                <>
+                  <li>View all diary entries for linked children</li>
+                  <li>Log therapy and milestone entries</li>
+                  <li>Read-only access to personal profile data</li>
+                </>
+              )}
+            </ul>
+          </div>
+          <p className="text-[10px] text-gray-400">
+            Roles are assigned at invite time. Contact the account owner to change your role.
+          </p>
+        </section>
+
         {/* Theme switcher */}
         <section className="rounded-[1.75rem] bg-white p-5 shadow-sm ring-1 ring-black/5">
           <h3 className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-3">
@@ -131,36 +194,12 @@ export default function ProfilePage() {
 
         {/* Module management */}
         {selectedChild && (
-          <section className="rounded-[1.75rem] bg-white p-5 shadow-sm ring-1 ring-black/5">
-            <h3 className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-1">
-              <Settings size={16} className="text-lavender-500" /> Modules for {selectedChild.name}
-            </h3>
-            <p className="text-xs text-gray-400 mb-3">Toggle tracker modules on or off for this child.</p>
-            <div className="space-y-2">
-              {DEFAULT_MODULES.map((mod) => {
-                const enabled = enabledModules.includes(mod.id);
-                return (
-                  <label key={mod.id} className="flex items-center justify-between rounded-xl bg-gray-50 px-3 py-2.5">
-                    <div className="flex items-center gap-2">
-                      <span className="text-lg">{mod.icon}</span>
-                      <div>
-                        <span className="text-sm font-medium text-gray-700">{mod.label}</span>
-                        <p className="text-[10px] text-gray-400">{mod.description}</p>
-                      </div>
-                    </div>
-                    <input type="checkbox" checked={enabled}
-                      onChange={(e) => {
-                        const next = e.target.checked
-                          ? [...enabledModules, mod.id]
-                          : enabledModules.filter((m: ModuleId) => m !== mod.id);
-                        setEnabledModules(next);
-                      }}
-                      className="h-4 w-4 rounded border-gray-300 text-lavender-500 focus:ring-lavender-400" />
-                  </label>
-                );
-              })}
-            </div>
-          </section>
+          <ModuleSettings
+            key={selectedChild.id}
+            childName={selectedChild.name}
+            initialModules={enabledModules}
+            onSave={setEnabledModules}
+          />
         )}
 
         {/* Child profiles — only admin/parent can add/remove */}
@@ -274,6 +313,72 @@ export default function ProfilePage() {
           </div>
         </section>
 
+        {/* Data & Privacy (GDPR) */}
+        <section className="rounded-[1.75rem] bg-white p-5 shadow-sm ring-1 ring-black/5" aria-labelledby="gdpr-heading">
+          <h3 id="gdpr-heading" className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-3">
+            <Globe size={16} className="text-lavender-500" /> Data & Privacy
+          </h3>
+          <p className="text-xs text-gray-400 mb-4">
+            Your data is stored securely. You have the right to export or permanently delete your account and all associated records at any time.
+          </p>
+          <div className="space-y-2">
+            <button
+              onClick={exportData}
+              className="flex w-full items-center gap-3 rounded-[1.5rem] bg-lavender-50 p-4 text-left ring-1 ring-lavender-100 hover:bg-lavender-100 transition"
+              aria-label="Export your diary data as a CSV file"
+            >
+              <Download size={18} className="text-lavender-600" />
+              <div>
+                <div className="text-sm font-semibold text-gray-900">Export my data</div>
+                <div className="text-xs text-gray-500">Download all diary entries as a CSV file.</div>
+              </div>
+            </button>
+            {cloud && (
+              <button
+                onClick={() => setShowDeleteAccount(true)}
+                className="flex w-full items-center gap-3 rounded-[1.5rem] bg-rose-50 p-4 text-left ring-1 ring-rose-100 hover:bg-rose-100 transition"
+                aria-label="Permanently delete your account"
+              >
+                <Trash2 size={18} className="text-rose-500" />
+                <div>
+                  <div className="text-sm font-semibold text-rose-700">Delete my account</div>
+                  <div className="text-xs text-rose-500">Permanently removes your account and all data. Cannot be undone.</div>
+                </div>
+              </button>
+            )}
+          </div>
+
+          {showDeleteAccount && (
+            <div className="mt-4 rounded-[1.5rem] bg-rose-50 p-4 ring-1 ring-rose-200">
+              <p className="text-sm font-semibold text-rose-700 mb-2">This will permanently delete your account and all data.</p>
+              <p className="text-xs text-rose-600 mb-3">Type <strong>DELETE MY ACCOUNT</strong> to confirm:</p>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={deleteAccountText}
+                  onChange={(e) => setDeleteAccountText(e.target.value)}
+                  placeholder="DELETE MY ACCOUNT"
+                  className="flex-1 rounded-xl border border-rose-200 bg-white px-3 py-2 text-xs outline-none focus:border-rose-400"
+                  aria-label="Type DELETE MY ACCOUNT to confirm"
+                />
+                <button
+                  onClick={handleDeleteAccount}
+                  disabled={deleteAccountText !== 'DELETE MY ACCOUNT'}
+                  className="rounded-xl bg-rose-500 px-4 py-2 text-xs font-semibold text-white disabled:opacity-40"
+                >
+                  Delete
+                </button>
+                <button
+                  onClick={() => { setShowDeleteAccount(false); setDeleteAccountText(''); }}
+                  className="rounded-xl bg-gray-100 px-3 py-2 text-xs font-semibold text-gray-600"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+        </section>
+
         {/* Audit trail */}
         <section className="rounded-[1.75rem] bg-white p-5 shadow-sm ring-1 ring-black/5">
           <h3 className="text-sm font-bold text-gray-700">Recent audit trail</h3>
@@ -376,5 +481,81 @@ export default function ProfilePage() {
         </section>
       </div>
     </div>
+  );
+}
+
+
+// ── Module Settings subcomponent ─────────────────────────────────────
+// Using a keyed subcomponent so state resets naturally when child switches.
+interface ModuleSettingsProps {
+  childName: string;
+  initialModules: ModuleId[];
+  onSave: (modules: ModuleId[]) => void | Promise<void>;
+}
+
+function ModuleSettings({ childName, initialModules, onSave }: ModuleSettingsProps) {
+  const [pending, setPending] = useState<ModuleId[]>(initialModules);
+  const [prevInitialModules, setPrevInitialModules] = useState(initialModules);
+  const [saved, setSaved] = useState(false);
+
+  // Render-phase sync: if initialModules changes (e.g., after cloud data refresh), reset
+  // pending to match. This is the React-recommended pattern for derived state from props
+  // (see https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes).
+  if (initialModules !== prevInitialModules) {
+    setPrevInitialModules(initialModules);
+    setPending(initialModules);
+    setSaved(false);
+  }
+
+  return (
+    <section className="rounded-[1.75rem] bg-white p-5 shadow-sm ring-1 ring-black/5">
+      <h3 className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-1">
+        <Settings size={16} className="text-lavender-500" /> Modules for {childName}
+      </h3>
+      <p className="text-xs text-gray-400 mb-3">
+        Toggle tracker modules on or off for this child. Click Save to persist your changes.
+      </p>
+      <div className="space-y-2">
+        {DEFAULT_MODULES.map((mod) => {
+          const enabled = pending.includes(mod.id);
+          return (
+            <label
+              key={mod.id}
+              className="flex items-center justify-between rounded-xl bg-gray-50 px-3 py-2.5 cursor-pointer hover:bg-lavender-50 transition-colors"
+            >
+              <div className="flex items-center gap-2">
+                <span className="text-lg">{mod.icon}</span>
+                <div>
+                  <span className="text-sm font-medium text-gray-700">{mod.label}</span>
+                  <p className="text-[10px] text-gray-400">{mod.description}</p>
+                </div>
+              </div>
+              <input
+                type="checkbox"
+                checked={enabled}
+                onChange={(e) => {
+                  const next = e.target.checked
+                    ? [...pending, mod.id]
+                    : pending.filter((m) => m !== mod.id);
+                  setPending(next);
+                  setSaved(false);
+                }}
+                className="h-4 w-4 rounded border-gray-300 text-lavender-500 focus:ring-lavender-400"
+              />
+            </label>
+          );
+        })}
+      </div>
+      <button
+        onClick={async () => {
+          await onSave(pending);
+          setSaved(true);
+        }}
+        className="mt-4 w-full flex items-center justify-center gap-2 py-2.5 bg-lavender-500 hover:bg-lavender-600 text-white rounded-xl font-semibold text-sm transition-all shadow-md shadow-lavender-200"
+      >
+        <Save size={15} />
+        {saved ? '✓ Saved!' : 'Save Module Settings'}
+      </button>
+    </section>
   );
 }

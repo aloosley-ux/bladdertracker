@@ -7,8 +7,15 @@ import type {
   FoodEntry,
   ImportedDiaryPayload,
   ImportSummary,
+  MedicationEntry,
+  Milestone,
+  ModuleId,
+  MoodEntry,
   NotificationItem,
+  RoutineEntry,
+  SensoryEntry,
   SleepEntry,
+  TherapyEntry,
   ToiletAttemptEntry,
   UrineEntry,
   User,
@@ -290,4 +297,155 @@ export async function apiImportData(childId: string, payload: ImportedDiaryPaylo
     body: JSON.stringify({ childId, ...payload }),
   });
   return summary;
+}
+
+// ── New Modules (mood, sensory, medication, therapy, routine, milestones) ──
+
+// Mood
+export async function apiGetMoodEntries(): Promise<MoodEntry[]> {
+  const { entries } = await request<{ entries: MoodEntry[] }>('/modules?type=mood');
+  return entries;
+}
+
+export async function apiAddMoodEntry(entry: Omit<MoodEntry, 'id' | 'createdBy' | 'createdAt'>): Promise<string> {
+  const { id } = await request<{ id: string }>('/modules', {
+    method: 'POST',
+    body: JSON.stringify({ ...entry, trackerType: 'mood' }),
+  });
+  return id;
+}
+
+export async function apiUpdateMoodEntry(entry: MoodEntry): Promise<void> {
+  await request<{ ok: boolean }>('/modules', { method: 'PUT', body: JSON.stringify({ ...entry, trackerType: 'mood' }) });
+}
+
+export async function apiDeleteMoodEntry(id: string): Promise<void> {
+  await request<{ ok: boolean }>(`/modules?type=mood&id=${id}`, { method: 'DELETE' });
+}
+
+// Sensory
+export async function apiGetSensoryEntries(): Promise<SensoryEntry[]> {
+  const { entries } = await request<{ entries: SensoryEntry[] }>('/modules?type=sensory');
+  return entries;
+}
+
+export async function apiAddSensoryEntry(entry: Omit<SensoryEntry, 'id' | 'createdBy' | 'createdAt'>): Promise<string> {
+  const { id } = await request<{ id: string }>('/modules', {
+    method: 'POST',
+    body: JSON.stringify({ ...entry, trackerType: 'sensory' }),
+  });
+  return id;
+}
+
+export async function apiUpdateSensoryEntry(entry: SensoryEntry): Promise<void> {
+  await request<{ ok: boolean }>('/modules', { method: 'PUT', body: JSON.stringify({ ...entry, trackerType: 'sensory' }) });
+}
+
+export async function apiDeleteSensoryEntry(id: string): Promise<void> {
+  await request<{ ok: boolean }>(`/modules?type=sensory&id=${id}`, { method: 'DELETE' });
+}
+
+// Medication
+export async function apiGetMedicationEntries(): Promise<MedicationEntry[]> {
+  const { entries } = await request<{ entries: MedicationEntry[] }>('/modules?type=medication');
+  return entries;
+}
+
+export async function apiAddMedicationEntry(entry: Omit<MedicationEntry, 'id' | 'createdBy' | 'createdAt'>): Promise<string> {
+  const { id } = await request<{ id: string }>('/modules', {
+    method: 'POST',
+    body: JSON.stringify({ ...entry, trackerType: 'medication' }),
+  });
+  return id;
+}
+
+export async function apiUpdateMedicationEntry(entry: MedicationEntry): Promise<void> {
+  await request<{ ok: boolean }>('/modules', { method: 'PUT', body: JSON.stringify({ ...entry, trackerType: 'medication' }) });
+}
+
+export async function apiDeleteMedicationEntry(id: string): Promise<void> {
+  await request<{ ok: boolean }>(`/modules?type=medication&id=${id}`, { method: 'DELETE' });
+}
+
+// Therapy
+export async function apiGetTherapyEntries(): Promise<TherapyEntry[]> {
+  const { entries } = await request<{ entries: TherapyEntry[] }>('/modules?type=therapy');
+  return entries;
+}
+
+export async function apiAddTherapyEntry(entry: Omit<TherapyEntry, 'id' | 'createdBy' | 'createdAt'>): Promise<string> {
+  const { id } = await request<{ id: string }>('/modules', {
+    method: 'POST',
+    body: JSON.stringify({ ...entry, trackerType: 'therapy' }),
+  });
+  return id;
+}
+
+export async function apiUpdateTherapyEntry(entry: TherapyEntry): Promise<void> {
+  await request<{ ok: boolean }>('/modules', { method: 'PUT', body: JSON.stringify({ ...entry, trackerType: 'therapy' }) });
+}
+
+export async function apiDeleteTherapyEntry(id: string): Promise<void> {
+  await request<{ ok: boolean }>(`/modules?type=therapy&id=${id}`, { method: 'DELETE' });
+}
+
+// Routine
+export async function apiGetRoutineEntries(): Promise<RoutineEntry[]> {
+  const { entries } = await request<{ entries: RoutineEntry[] }>('/modules?type=routine');
+  return entries;
+}
+
+export async function apiAddRoutineEntry(entry: Omit<RoutineEntry, 'id' | 'createdBy' | 'createdAt'>): Promise<string> {
+  const { id } = await request<{ id: string }>('/modules', {
+    method: 'POST',
+    body: JSON.stringify({ ...entry, trackerType: 'routine' }),
+  });
+  return id;
+}
+
+export async function apiUpdateRoutineEntry(entry: RoutineEntry): Promise<void> {
+  await request<{ ok: boolean }>('/modules', { method: 'PUT', body: JSON.stringify({ ...entry, trackerType: 'routine' }) });
+}
+
+export async function apiDeleteRoutineEntry(id: string): Promise<void> {
+  await request<{ ok: boolean }>(`/modules?type=routine&id=${id}`, { method: 'DELETE' });
+}
+
+// Milestones
+export async function apiGetMilestones(): Promise<Milestone[]> {
+  const { entries } = await request<{ entries: Milestone[] }>('/modules?type=milestones');
+  return entries;
+}
+
+export async function apiAddMilestone(milestone: Omit<Milestone, 'id' | 'createdBy' | 'createdAt'>): Promise<string> {
+  const { id } = await request<{ id: string }>('/modules', {
+    method: 'POST',
+    body: JSON.stringify({ ...milestone, trackerType: 'milestones' }),
+  });
+  return id;
+}
+
+export async function apiUpdateMilestone(milestone: Milestone): Promise<void> {
+  await request<{ ok: boolean }>('/modules', { method: 'PUT', body: JSON.stringify({ ...milestone, trackerType: 'milestones' }) });
+}
+
+export async function apiDeleteMilestone(id: string): Promise<void> {
+  await request<{ ok: boolean }>(`/modules?type=milestones&id=${id}`, { method: 'DELETE' });
+}
+
+// Enabled Modules
+export async function apiGetEnabledModules(childId: string): Promise<ModuleId[]> {
+  const { modules } = await request<{ modules: ModuleId[] }>(`/modules?type=enabled_modules&childId=${childId}`);
+  return modules;
+}
+
+export async function apiSetEnabledModules(childId: string, modules: ModuleId[]): Promise<void> {
+  await request<{ ok: boolean }>('/modules', {
+    method: 'POST',
+    body: JSON.stringify({ action: 'set_enabled_modules', childId, modules }),
+  });
+}
+
+export async function apiDeleteAccount(): Promise<void> {
+  await request<{ ok: boolean }>('/auth', { method: 'DELETE' });
 }
