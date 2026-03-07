@@ -37,12 +37,12 @@ export default function CaregiverPortalPage() {
   );
   const sentInvites = useMemo(() => invites.filter((invite) => invite.invitedBy === user?.id), [invites, user?.id]);
 
-  const handleInvite = (event: React.FormEvent) => {
+  const handleInvite = async (event: React.FormEvent) => {
     event.preventDefault();
     setStatusMessage('');
     if (!selectedChildId) return;
 
-    const invite = createInvite(inviteEmail, inviteRole, selectedChildId);
+    const invite = await createInvite(inviteEmail, inviteRole, selectedChildId);
     if (!invite) {
       setStatusMessage('Choose a child before sending an invite.');
       return;
@@ -60,7 +60,7 @@ export default function CaregiverPortalPage() {
     setImporting(true);
     try {
       const payload = await parseImportFile(file);
-      const summary = importDiaryData(payload, selectedChildId);
+      const summary = await importDiaryData(payload, selectedChildId);
       const total = summary.drinks + summary.urineEntries + summary.bowelEntries;
       const errorText = summary.errors.length > 0 ? ` ${summary.errors.join(' ')}` : '';
       setImportMessage(`Imported ${total} records.${errorText}`);
@@ -239,8 +239,8 @@ export default function CaregiverPortalPage() {
                       <div className="mt-1 text-xs text-gray-500">Role: {formatRole(invite.role)}</div>
                     </div>
                     <button
-                      onClick={() => {
-                        const accepted = acceptInvite(invite.token);
+                      onClick={async () => {
+                        const accepted = await acceptInvite(invite.token);
                         setStatusMessage(accepted ? `Accepted access to ${invite.childName}.` : 'This invite could not be accepted.');
                       }}
                       className="rounded-full bg-lavender-500 px-4 py-2 text-xs font-semibold text-white"

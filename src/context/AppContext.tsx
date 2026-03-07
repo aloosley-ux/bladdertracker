@@ -7,244 +7,452 @@ import type {
   BowelEntry,
   ImportedDiaryPayload,
   UserRole,
+  CaregiverInvite,
+  NotificationItem,
+  AuditEvent,
+  ImportSummary,
 } from '../types';
-import * as storage from '../utils/storage';
+import * as api from '../utils/api';
+import * as localStorage from '../utils/storage';
 import { AppContext } from './appContextDef';
 
-function hydrateState(user: User | null, selectedChildId?: string | null) {
-  const children = user ? storage.getChildren(user.id) : [];
-  const availableChildIds = children.map((child) => child.id);
-  const resolvedSelectedChildId =
-    selectedChildId && availableChildIds.includes(selectedChildId)
-      ? selectedChildId
-      : children[0]?.id ?? null;
-
-  return {
-    user,
-    children,
-    selectedChildId: resolvedSelectedChildId,
-    drinks: storage.getDrinks(availableChildIds),
-    urineEntries: storage.getUrineEntries(availableChildIds),
-    bowelEntries: storage.getBowelEntries(availableChildIds),
-    invites: user ? storage.getInvites(user) : [],
-    notifications: user ? storage.getNotifications(user.id) : [],
-    auditTrail: user ? storage.getAuditEvents(user.id) : [],
-  };
+function isApiAvailable(): boolean {
+  return typeof window !== 'undefined' && !!import.meta.env.VITE_USE_CLOUD;
 }
 
 export function AppProvider({ children: childrenProp }: { children: ReactNode }) {
-  const [state, setState] = useState(() => hydrateState(storage.getUser()));
+  const cloud = isApiAvailable();
 
-  const refreshData = useCallback(() => {
-    setState((prev) => hydrateState(prev.user, prev.selectedChildId));
+  const [user, setUserState] = useState<User | null>(null);
+  const [childrenList, setChildrenList] = useState<Child[]>([]);
+  const [selectedChildId, setSelectedChildId] = useState<string | null>(null);
+  const [drinks, setDrinks] = useState<DrinkEntry[]>([]);
+  const [urineEntries, setUrineEntries] = useState<UrineEntry[]>([]);
+  const [bowelEntries, setBowelEntries] = useState<BowelEntry[]>([]);
+  const [invites, setInvites] = useState<CaregiverInvite[]>([]);
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const [auditTrail, setAuditTrail] = useState<AuditEvent[]>([]);
+  const [ready, setReady] = useState(false);
+
+  const refreshCloudData = useCallback(async (currentUser: User | null) => {
+    if (!currentUser) {
+      setChildrenList([]);
+      setDrinks([]);
+      setUrineEntries([]);
+      setBowelEntries([]);
+      setInvites([]);
+      setNotifications([]);
+      setAuditTrail([]);
+      return;
+    }
+
+    try {
+      const [ch, dr, ur, bo, inv, notif, aud] = await Promise.all([
+        api.apiGetChildren(),
+        api.apiGetDrinks(),
+        api.apiGetUrineEntries(),
+        api.apiGetBowelEntries(),
+        api.apiGetInvites(),
+        api.apiGetNotifications(),
+        api.apiGetAuditEvents(),
+      ]);
+      setChildrenList(ch);
+      setDrinks(dr);
+      setUrineEntries(ur);
+      setBowelEntries(bo);
+      setInvites(inv);
+      setNotifications(notif);
+      setAuditTrail(aud);
+
+      setSelectedChildId((prev) => {
+        if (prev && ch.some((c) => c.id === prev)) return prev;
+        return ch[0]?.id ?? null;
+      });
+    } catch {
+      // If API calls fail, data stays as-is
+    }
   }, []);
 
+  const refreshLocalData = useCallback((currentUser: User | null, childId?: string | null) => {
+    const ch = currentUser ? localStorage.getChildren(currentUser.id) : [];
+    const ids = ch.map((c) => c.id);
+    const resolvedId =
+      childId && ids.includes(childId) ? childId : ch[0]?.id ?? null;
+
+    setChildrenList(ch);
+    setSelectedChildId(resolvedId);
+    setDrinks(localStorage.getDrinks(ids));
+    setUrineEntries(localStorage.getUrineEntries(ids));
+    setBowelEntries(localStorage.getBowelEntries(ids));
+    setInvites(currentUser ? localStorage.getInvites(currentUser) : []);
+    setNotifications(currentUser ? localStorage.getNotifications(currentUser.id) : []);
+    setAuditTrail(currentUser ? localStorage.getAuditEvents(currentUser.id) : []);
+  }, []);
+
+  // Initialize session
   useEffect(() => {
-    const handleStorage = (event: StorageEvent) => {
-      if (event.key?.startsWith('bt_')) {
-        refreshData();
+    (async () => {
+      if (cloud) {
+        try {
+          const sessionUser = await api.apiGetSession();
+          setUserState(sessionUser);
+          if (sessionUser) await refreshCloudData(sessionUser);
+        } catch {
+          setUserState(null);
+        }
+      } else {
+        const sessionUser = localStorage.getUser();
+        setUserState(sessionUser);
+        refreshLocalData(sessionUser);
+      }
+      setReady(true);
+    })();
+  }, [cloud, refreshCloudData, refreshLocalData]);
+
+  // Listen for storage events in local mode
+  useEffect(() => {
+    if (cloud) return;
+    const handle = (e: StorageEvent) => {
+      if (e.key?.startsWith('bt_')) {
+        const u = localStorage.getUser();
+        setUserState(u);
+        refreshLocalData(u, selectedChildId);
       }
     };
+    window.addEventListener('storage', handle);
+    return () => window.removeEventListener('storage', handle);
+  }, [cloud, refreshLocalData, selectedChildId]);
 
-    window.addEventListener('storage', handleStorage);
-    return () => window.removeEventListener('storage', handleStorage);
-  }, [refreshData]);
-
-  const login = (user: User) => {
-    storage.setUser(user);
-    setState((prev) => hydrateState(user, prev.selectedChildId));
+  const login = (u: User) => {
+    setUserState(u);
+    if (cloud) {
+      refreshCloudData(u);
+    } else {
+      localStorage.setUser(u);
+      refreshLocalData(u);
+    }
   };
 
-  const logout = () => {
-    storage.clearUser();
-    setState(hydrateState(null));
+  const logout = async () => {
+    if (cloud) {
+      try { await api.apiLogout(); } catch { /* ignore */ }
+    } else {
+      localStorage.clearUser();
+    }
+    setUserState(null);
+    setChildrenList([]);
+    setDrinks([]);
+    setUrineEntries([]);
+    setBowelEntries([]);
+    setInvites([]);
+    setNotifications([]);
+    setAuditTrail([]);
+    setSelectedChildId(null);
   };
 
-  const addChild = (child: Child) => {
-    storage.addChild(child);
-    storage.addAuditEvent({
-      userId: child.createdBy,
-      action: 'Created child profile',
-      subject: child.name,
-      detail: 'Added a new child profile for diary tracking.',
-    });
-    setState((prev) => hydrateState(prev.user, prev.selectedChildId ?? child.id));
+  const addChild = async (child: Child) => {
+    if (cloud) {
+      try {
+        const created = await api.apiAddChild(child.name, child.dateOfBirth);
+        await refreshCloudData(user);
+        setSelectedChildId((prev) => prev ?? created.id);
+      } catch { /* ignore */ }
+    } else {
+      localStorage.addChild(child);
+      localStorage.addAuditEvent({
+        userId: child.createdBy,
+        action: 'Created child profile',
+        subject: child.name,
+        detail: 'Added a new child profile for diary tracking.',
+      });
+      refreshLocalData(user, selectedChildId ?? child.id);
+    }
   };
 
   const selectChild = (childId: string) => {
-    setState((prev) => ({ ...prev, selectedChildId: childId }));
+    setSelectedChildId(childId);
   };
 
-  const addDrinkFn = (drink: DrinkEntry) => {
-    storage.addDrink(drink);
-    if (state.user) {
-      storage.addAuditEvent({
-        userId: state.user.id,
-        action: 'Added drink entry',
-        subject: drink.childId,
-        detail: `${drink.amountMl}ml recorded at ${drink.time}.`,
-      });
+  const addDrink = async (drink: DrinkEntry) => {
+    if (cloud) {
+      try {
+        await api.apiAddDrink(drink);
+        await refreshCloudData(user);
+      } catch { /* ignore */ }
+    } else {
+      localStorage.addDrink(drink);
+      if (user) {
+        localStorage.addAuditEvent({
+          userId: user.id,
+          action: 'Added drink entry',
+          subject: drink.childId,
+          detail: `${drink.amountMl}ml recorded at ${drink.time}.`,
+        });
+      }
+      refreshLocalData(user, selectedChildId);
     }
-    refreshData();
   };
 
-  const updateDrinkFn = (drink: DrinkEntry) => {
-    storage.updateDrink(drink);
-    refreshData();
-  };
-
-  const deleteDrinkFn = (id: string) => {
-    storage.deleteDrink(id);
-    refreshData();
-  };
-
-  const addUrineEntryFn = (entry: UrineEntry) => {
-    storage.addUrineEntry(entry);
-    if (state.user) {
-      storage.addAuditEvent({
-        userId: state.user.id,
-        action: 'Added urine entry',
-        subject: entry.childId,
-        detail: `Urine event logged at ${entry.time}.`,
-      });
+  const updateDrink = async (drink: DrinkEntry) => {
+    if (cloud) {
+      try { await api.apiUpdateDrink(drink); await refreshCloudData(user); } catch { /* ignore */ }
+    } else {
+      localStorage.updateDrink(drink);
+      refreshLocalData(user, selectedChildId);
     }
-    refreshData();
   };
 
-  const updateUrineEntryFn = (entry: UrineEntry) => {
-    storage.updateUrineEntry(entry);
-    refreshData();
-  };
-
-  const deleteUrineEntryFn = (id: string) => {
-    storage.deleteUrineEntry(id);
-    refreshData();
-  };
-
-  const addBowelEntryFn = (entry: BowelEntry) => {
-    storage.addBowelEntry(entry);
-    if (state.user) {
-      storage.addAuditEvent({
-        userId: state.user.id,
-        action: 'Added bowel entry',
-        subject: entry.childId,
-        detail: `Bowel event logged at ${entry.time}.`,
-      });
+  const deleteDrink = async (id: string) => {
+    if (cloud) {
+      try { await api.apiDeleteDrink(id); await refreshCloudData(user); } catch { /* ignore */ }
+    } else {
+      localStorage.deleteDrink(id);
+      refreshLocalData(user, selectedChildId);
     }
-    refreshData();
   };
 
-  const updateBowelEntryFn = (entry: BowelEntry) => {
-    storage.updateBowelEntry(entry);
-    refreshData();
+  const addUrineEntry = async (entry: UrineEntry) => {
+    if (cloud) {
+      try {
+        await api.apiAddUrineEntry(entry);
+        await refreshCloudData(user);
+      } catch { /* ignore */ }
+    } else {
+      localStorage.addUrineEntry(entry);
+      if (user) {
+        localStorage.addAuditEvent({
+          userId: user.id,
+          action: 'Added urine entry',
+          subject: entry.childId,
+          detail: `Urine event logged at ${entry.time}.`,
+        });
+      }
+      refreshLocalData(user, selectedChildId);
+    }
   };
 
-  const deleteBowelEntryFn = (id: string) => {
-    storage.deleteBowelEntry(id);
-    refreshData();
+  const updateUrineEntry = async (entry: UrineEntry) => {
+    if (cloud) {
+      try { await api.apiUpdateUrineEntry(entry); await refreshCloudData(user); } catch { /* ignore */ }
+    } else {
+      localStorage.updateUrineEntry(entry);
+      refreshLocalData(user, selectedChildId);
+    }
   };
 
-  const exportData = () => {
-    const child = state.children.find((item) => item.id === state.selectedChildId);
+  const deleteUrineEntry = async (id: string) => {
+    if (cloud) {
+      try { await api.apiDeleteUrineEntry(id); await refreshCloudData(user); } catch { /* ignore */ }
+    } else {
+      localStorage.deleteUrineEntry(id);
+      refreshLocalData(user, selectedChildId);
+    }
+  };
+
+  const addBowelEntry = async (entry: BowelEntry) => {
+    if (cloud) {
+      try {
+        await api.apiAddBowelEntry(entry);
+        await refreshCloudData(user);
+      } catch { /* ignore */ }
+    } else {
+      localStorage.addBowelEntry(entry);
+      if (user) {
+        localStorage.addAuditEvent({
+          userId: user.id,
+          action: 'Added bowel entry',
+          subject: entry.childId,
+          detail: `Bowel event logged at ${entry.time}.`,
+        });
+      }
+      refreshLocalData(user, selectedChildId);
+    }
+  };
+
+  const updateBowelEntry = async (entry: BowelEntry) => {
+    if (cloud) {
+      try { await api.apiUpdateBowelEntry(entry); await refreshCloudData(user); } catch { /* ignore */ }
+    } else {
+      localStorage.updateBowelEntry(entry);
+      refreshLocalData(user, selectedChildId);
+    }
+  };
+
+  const deleteBowelEntry = async (id: string) => {
+    if (cloud) {
+      try { await api.apiDeleteBowelEntry(id); await refreshCloudData(user); } catch { /* ignore */ }
+    } else {
+      localStorage.deleteBowelEntry(id);
+      refreshLocalData(user, selectedChildId);
+    }
+  };
+
+  const exportData = async () => {
+    const child = childrenList.find((c) => c.id === selectedChildId);
     if (!child) return;
-    storage.downloadCSV(child.id, child.name);
-    if (state.user) {
-      storage.addAuditEvent({
-        userId: state.user.id,
-        action: 'Exported diary',
+
+    if (cloud) {
+      try { await api.apiExportCSV(child.id, child.name); } catch { /* ignore */ }
+    } else {
+      localStorage.downloadCSV(child.id, child.name);
+      if (user) {
+        localStorage.addAuditEvent({
+          userId: user.id,
+          action: 'Exported diary',
+          subject: child.name,
+          detail: 'Downloaded CSV export for the selected child.',
+        });
+        refreshLocalData(user, selectedChildId);
+      }
+    }
+  };
+
+  const createInvite = async (email: string, role: UserRole, childId: string) => {
+    if (!user) return null;
+
+    if (cloud) {
+      try {
+        const invite = await api.apiCreateInvite(childId, email, role);
+        await refreshCloudData(user);
+        return invite;
+      } catch {
+        return null;
+      }
+    } else {
+      const child = childrenList.find((c) => c.id === childId);
+      if (!child) return null;
+
+      const invite = localStorage.createInvite({
+        childId,
+        childName: child.name,
+        email,
+        role,
+        invitedBy: user.id,
+      });
+
+      localStorage.addAuditEvent({
+        userId: user.id,
+        action: 'Created secure invite',
         subject: child.name,
-        detail: 'Downloaded CSV export for the selected child.',
+        detail: `Shared a ${role} invite with ${invite.email}.`,
       });
-      refreshData();
+
+      refreshLocalData(user, selectedChildId);
+      return invite;
     }
   };
 
-  const createInvite = (email: string, role: UserRole, childId: string) => {
-    if (!state.user) return null;
+  const acceptInvite = async (token: string) => {
+    if (!user) return false;
 
-    const child = state.children.find((item) => item.id === childId);
-    if (!child) return null;
+    if (cloud) {
+      try {
+        await api.apiAcceptInvite(token);
+        await refreshCloudData(user);
+        return true;
+      } catch {
+        return false;
+      }
+    } else {
+      const accepted = localStorage.acceptInvite(token, user);
+      if (!accepted) return false;
 
-    const invite = storage.createInvite({
-      childId,
-      childName: child.name,
-      email,
-      role,
-      invitedBy: state.user.id,
-    });
-
-    storage.addAuditEvent({
-      userId: state.user.id,
-      action: 'Created secure invite',
-      subject: child.name,
-      detail: `Shared a ${role} invite with ${invite.email}.`,
-    });
-
-    refreshData();
-    return invite;
-  };
-
-  const acceptInvite = (token: string) => {
-    if (!state.user) return false;
-
-    const acceptedInvite = storage.acceptInvite(token, state.user);
-    if (!acceptedInvite) return false;
-
-    storage.addAuditEvent({
-      userId: state.user.id,
-      action: 'Accepted invite',
-      subject: acceptedInvite.childName,
-      detail: `Accepted ${acceptedInvite.role} access to the diary.`,
-    });
-
-    refreshData();
-    return true;
-  };
-
-  const importDiaryData = (payload: ImportedDiaryPayload, childId: string) => {
-    const summary = storage.importDiaryPayload(payload, childId, state.user?.id ?? '');
-    if (state.user) {
-      storage.addAuditEvent({
-        userId: state.user.id,
-        action: 'Imported diary data',
-        subject: childId,
-        detail: `Imported ${summary.drinks + summary.urineEntries + summary.bowelEntries} records.`,
+      localStorage.addAuditEvent({
+        userId: user.id,
+        action: 'Accepted invite',
+        subject: accepted.childName,
+        detail: `Accepted ${accepted.role} access to the diary.`,
       });
+
+      refreshLocalData(user, selectedChildId);
+      return true;
     }
-    refreshData();
-    return summary;
   };
 
-  const markNotificationRead = (id: string) => {
-    storage.markNotificationRead(id);
-    refreshData();
+  const importDiaryData = async (payload: ImportedDiaryPayload, childId: string): Promise<ImportSummary> => {
+    if (cloud) {
+      try {
+        const summary = await api.apiImportData(childId, payload);
+        await refreshCloudData(user);
+        return summary;
+      } catch {
+        return { drinks: 0, urineEntries: 0, bowelEntries: 0, errors: ['Import failed'] };
+      }
+    } else {
+      const summary = localStorage.importDiaryPayload(payload, childId, user?.id ?? '');
+      if (user) {
+        localStorage.addAuditEvent({
+          userId: user.id,
+          action: 'Imported diary data',
+          subject: childId,
+          detail: `Imported ${summary.drinks + summary.urineEntries + summary.bowelEntries} records.`,
+        });
+      }
+      refreshLocalData(user, selectedChildId);
+      return summary;
+    }
+  };
+
+  const markNotificationRead = async (id: string) => {
+    if (cloud) {
+      try { await api.apiMarkNotificationRead(id); await refreshCloudData(user); } catch { /* ignore */ }
+    } else {
+      localStorage.markNotificationRead(id);
+      refreshLocalData(user, selectedChildId);
+    }
   };
 
   const clearAllData = () => {
-    storage.clearAllAppData();
-    setState(hydrateState(null));
+    if (!cloud) {
+      localStorage.clearAllAppData();
+    }
+    setUserState(null);
+    setChildrenList([]);
+    setDrinks([]);
+    setUrineEntries([]);
+    setBowelEntries([]);
+    setInvites([]);
+    setNotifications([]);
+    setAuditTrail([]);
+    setSelectedChildId(null);
   };
 
-  const selectedChild = state.children.find((child) => child.id === state.selectedChildId) ?? null;
+  const selectedChild = childrenList.find((c) => c.id === selectedChildId) ?? null;
+
+  if (!ready) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#f8f5ff]">
+        <div className="animate-pulse text-lavender-500 text-sm font-medium">Loading…</div>
+      </div>
+    );
+  }
 
   return (
     <AppContext.Provider
       value={{
-        ...state,
+        user,
+        children: childrenList,
+        selectedChildId,
         selectedChild,
+        drinks,
+        urineEntries,
+        bowelEntries,
+        invites,
+        notifications,
+        auditTrail,
         login,
         logout,
         addChild,
         selectChild,
-        addDrink: addDrinkFn,
-        updateDrink: updateDrinkFn,
-        deleteDrink: deleteDrinkFn,
-        addUrineEntry: addUrineEntryFn,
-        updateUrineEntry: updateUrineEntryFn,
-        deleteUrineEntry: deleteUrineEntryFn,
-        addBowelEntry: addBowelEntryFn,
-        updateBowelEntry: updateBowelEntryFn,
-        deleteBowelEntry: deleteBowelEntryFn,
+        addDrink: addDrink,
+        updateDrink: updateDrink,
+        deleteDrink: deleteDrink,
+        addUrineEntry: addUrineEntry,
+        updateUrineEntry: updateUrineEntry,
+        deleteUrineEntry: deleteUrineEntry,
+        addBowelEntry: addBowelEntry,
+        updateBowelEntry: updateBowelEntry,
+        deleteBowelEntry: deleteBowelEntry,
         exportData,
         createInvite,
         acceptInvite,

@@ -27,23 +27,23 @@ interface AppState {
 
 export interface AppContextType extends AppState {
   login: (user: User) => void;
-  logout: () => void;
-  addChild: (child: Child) => void;
+  logout: () => void | Promise<void>;
+  addChild: (child: Child) => void | Promise<void>;
   selectChild: (childId: string) => void;
-  addDrink: (drink: DrinkEntry) => void;
-  updateDrink: (drink: DrinkEntry) => void;
-  deleteDrink: (id: string) => void;
-  addUrineEntry: (entry: UrineEntry) => void;
-  updateUrineEntry: (entry: UrineEntry) => void;
-  deleteUrineEntry: (id: string) => void;
-  addBowelEntry: (entry: BowelEntry) => void;
-  updateBowelEntry: (entry: BowelEntry) => void;
-  deleteBowelEntry: (id: string) => void;
-  exportData: () => void;
-  createInvite: (email: string, role: UserRole, childId: string) => CaregiverInvite | null;
-  acceptInvite: (token: string) => boolean;
-  importDiaryData: (payload: ImportedDiaryPayload, childId: string) => ImportSummary;
-  markNotificationRead: (id: string) => void;
+  addDrink: (drink: DrinkEntry) => void | Promise<void>;
+  updateDrink: (drink: DrinkEntry) => void | Promise<void>;
+  deleteDrink: (id: string) => void | Promise<void>;
+  addUrineEntry: (entry: UrineEntry) => void | Promise<void>;
+  updateUrineEntry: (entry: UrineEntry) => void | Promise<void>;
+  deleteUrineEntry: (id: string) => void | Promise<void>;
+  addBowelEntry: (entry: BowelEntry) => void | Promise<void>;
+  updateBowelEntry: (entry: BowelEntry) => void | Promise<void>;
+  deleteBowelEntry: (id: string) => void | Promise<void>;
+  exportData: () => void | Promise<void>;
+  createInvite: (email: string, role: UserRole, childId: string) => CaregiverInvite | null | Promise<CaregiverInvite | null>;
+  acceptInvite: (token: string) => boolean | Promise<boolean>;
+  importDiaryData: (payload: ImportedDiaryPayload, childId: string) => ImportSummary | Promise<ImportSummary>;
+  markNotificationRead: (id: string) => void | Promise<void>;
   clearAllData: () => void;
   selectedChild: Child | null;
 }

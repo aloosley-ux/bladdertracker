@@ -3,8 +3,8 @@ import { useSearchParams } from 'react-router-dom';
 import { LockKeyhole, Mail, ShieldCheck, Sparkles } from 'lucide-react';
 import { useApp } from '../context/useApp';
 import { createPasswordCredentials, verifyPassword } from '../utils/auth';
+import * as api from '../utils/api';
 import {
-  acceptInvite as acceptInviteInStorage,
   findAccountByEmail,
   generateId,
   getPendingInvitesByEmail,
@@ -23,8 +23,12 @@ const roleOptions: { value: UserRole; label: string }[] = [
   { value: 'schoolAdmin', label: 'School admin' },
 ];
 
+function isCloudMode(): boolean {
+  return !!import.meta.env.VITE_USE_CLOUD;
+}
+
 export default function LoginPage() {
-  const { login } = useApp();
+  const { login, acceptInvite } = useApp();
   const [searchParams] = useSearchParams();
   const [mode, setMode] = useState<AuthMode>('register');
   const [name, setName] = useState('');
@@ -37,20 +41,23 @@ export default function LoginPage() {
   const [submitting, setSubmitting] = useState(false);
 
   const inviteToken = searchParams.get('invite');
-  const pendingInvites = useMemo(() => (email ? getPendingInvitesByEmail(normaliseEmail(email)) : []), [email]);
+  const cloud = isCloudMode();
+  const pendingInvites = useMemo(
+    () => (!cloud && email ? getPendingInvitesByEmail(normaliseEmail(email)) : []),
+    [cloud, email],
+  );
 
-  const finalizeLogin = (user: User) => {
+  const finalizeLogin = async (user: User) => {
     login(user);
     if (inviteToken) {
-      const accepted = acceptInviteInStorage(inviteToken, user);
+      const accepted = await acceptInvite(inviteToken);
       setMessage(
         accepted
-          ? 'Welcome back — your secure invite has been accepted.'
-          : 'Signed in successfully. The invite link could not be matched to this account.'
+          ? 'Welcome — your secure invite has been accepted.'
+          : 'Signed in successfully. The invite link could not be matched to this account.',
       );
       return;
     }
-
     setMessage('Signed in successfully. Your diary is ready.');
   };
 
@@ -59,41 +66,31 @@ export default function LoginPage() {
     setError('');
     setMessage('');
 
-    if (!name.trim()) {
-      setError('Please enter your name.');
-      return;
-    }
-
-    if (password.length < 8) {
-      setError('Passwords must be at least 8 characters long.');
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setError('Passwords do not match.');
-      return;
-    }
-
-    if (findAccountByEmail(email)) {
-      setError('An account with this email already exists.');
-      setMode('login');
-      return;
-    }
+    if (!name.trim()) { setError('Please enter your name.'); return; }
+    if (password.length < 8) { setError('Passwords must be at least 8 characters long.'); return; }
+    if (password !== confirmPassword) { setError('Passwords do not match.'); return; }
 
     setSubmitting(true);
     try {
-      const credentials = await createPasswordCredentials(password);
-      const account: AccountRecord = {
-        id: generateId(),
-        name: name.trim(),
-        email: normaliseEmail(email),
-        role,
-        createdAt: new Date().toISOString(),
-        ...credentials,
-      };
-
-      registerAccount(account);
-      finalizeLogin(toUser(account));
+      if (cloud) {
+        const user = await api.apiRegister(name.trim(), email, password, role);
+        await finalizeLogin(user);
+      } else {
+        if (findAccountByEmail(email)) { setError('An account with this email already exists.'); setMode('login'); return; }
+        const credentials = await createPasswordCredentials(password);
+        const account: AccountRecord = {
+          id: generateId(),
+          name: name.trim(),
+          email: normaliseEmail(email),
+          role,
+          createdAt: new Date().toISOString(),
+          ...credentials,
+        };
+        registerAccount(account);
+        await finalizeLogin(toUser(account));
+      }
+    } catch (err) {
+      setError(err instanceof api.ApiError ? err.message : 'Registration failed. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -104,22 +101,20 @@ export default function LoginPage() {
     setError('');
     setMessage('');
 
-    const account = findAccountByEmail(email);
-    if (!account) {
-      setError('No account exists with that email yet.');
-      setMode('register');
-      return;
-    }
-
     setSubmitting(true);
     try {
-      const isValidPassword = await verifyPassword(password, account.passwordHash, account.passwordSalt);
-      if (!isValidPassword) {
-        setError('Incorrect password. Please try again.');
-        return;
+      if (cloud) {
+        const user = await api.apiLogin(email, password);
+        await finalizeLogin(user);
+      } else {
+        const account = findAccountByEmail(email);
+        if (!account) { setError('No account exists with that email yet.'); setMode('register'); return; }
+        const isValid = await verifyPassword(password, account.passwordHash, account.passwordSalt);
+        if (!isValid) { setError('Incorrect password. Please try again.'); return; }
+        await finalizeLogin(toUser(account));
       }
-
-      finalizeLogin(toUser(account));
+    } catch (err) {
+      setError(err instanceof api.ApiError ? err.message : 'Login failed. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -130,32 +125,24 @@ export default function LoginPage() {
     setError('');
     setMessage('');
 
-    const account = findAccountByEmail(email);
-    if (!account) {
-      setError('No account exists with that email yet.');
-      return;
-    }
-
-    if (password.length < 8) {
-      setError('Please enter a new password with at least 8 characters.');
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setError('Passwords do not match.');
-      return;
-    }
+    if (password.length < 8) { setError('Please enter a new password with at least 8 characters.'); return; }
+    if (password !== confirmPassword) { setError('Passwords do not match.'); return; }
 
     setSubmitting(true);
     try {
-      const credentials = await createPasswordCredentials(password);
-      const updatedUser = updateAccountPassword(account.id, credentials.passwordHash, credentials.passwordSalt);
-      if (!updatedUser) {
-        setError('We could not reset your password. Please try again.');
-        return;
+      if (cloud) {
+        const user = await api.apiResetPassword(email, password);
+        await finalizeLogin(user);
+      } else {
+        const account = findAccountByEmail(email);
+        if (!account) { setError('No account exists with that email yet.'); return; }
+        const credentials = await createPasswordCredentials(password);
+        const updatedUser = updateAccountPassword(account.id, credentials.passwordHash, credentials.passwordSalt);
+        if (!updatedUser) { setError('We could not reset your password. Please try again.'); return; }
+        await finalizeLogin(updatedUser);
       }
-
-      finalizeLogin(updatedUser);
+    } catch (err) {
+      setError(err instanceof api.ApiError ? err.message : 'Password reset failed. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -188,12 +175,14 @@ export default function LoginPage() {
             Smarter journaling for families and schools
           </h1>
           <p className="mt-3 text-sm leading-6 text-gray-500">
-            Secure diary accounts, caregiver invites, and calm school-ready journaling inspired by the attached UI reference.
+            {cloud
+              ? 'Cloud-synced diary accounts, caregiver invites, and school-ready journaling — your data is available across all your devices.'
+              : 'Secure diary accounts, caregiver invites, and calm school-ready journaling — powered by local storage for privacy.'}
           </p>
           <div className="mt-5 grid grid-cols-3 gap-2 text-left text-[11px] text-gray-600">
             <FeaturePill icon={<ShieldCheck size={14} />} label="Secure sign-in" />
             <FeaturePill icon={<Mail size={14} />} label="Email invites" />
-            <FeaturePill icon={<Sparkles size={14} />} label="Pastel cards" />
+            <FeaturePill icon={<Sparkles size={14} />} label={cloud ? 'Cloud sync' : 'Pastel cards'} />
           </div>
         </section>
 
@@ -203,11 +192,7 @@ export default function LoginPage() {
               <button
                 key={item}
                 type="button"
-                onClick={() => {
-                  setMode(item);
-                  setError('');
-                  setMessage('');
-                }}
+                onClick={() => { setMode(item); setError(''); setMessage(''); }}
                 className={`rounded-2xl px-3 py-2 font-medium transition-all ${
                   mode === item ? 'bg-white text-lavender-700 shadow-sm' : 'text-gray-500'
                 }`}
@@ -220,26 +205,12 @@ export default function LoginPage() {
           <form onSubmit={submitHandler} className="space-y-4">
             {mode === 'register' && (
               <Field label="Full name">
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(event) => setName(event.target.value)}
-                  placeholder="Amina Patel"
-                  className="input-card"
-                  required
-                />
+                <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Amina Patel" className="input-card" required />
               </Field>
             )}
 
             <Field label="Email address">
-              <input
-                type="email"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                placeholder="you@example.org"
-                className="input-card"
-                required
-              />
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.org" className="input-card" required />
             </Field>
 
             {mode === 'register' && (
@@ -266,27 +237,13 @@ export default function LoginPage() {
             <Field label={mode === 'reset' ? 'New password' : 'Password'}>
               <div className="relative">
                 <LockKeyhole size={16} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(event) => setPassword(event.target.value)}
-                  placeholder="At least 8 characters"
-                  className="input-card pl-11"
-                  required
-                />
+                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="At least 8 characters" className="input-card pl-11" required />
               </div>
             </Field>
 
             {mode !== 'login' && (
               <Field label={mode === 'reset' ? 'Confirm new password' : 'Confirm password'}>
-                <input
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(event) => setConfirmPassword(event.target.value)}
-                  placeholder="Repeat your password"
-                  className="input-card"
-                  required
-                />
+                <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Repeat your password" className="input-card" required />
               </Field>
             )}
 
