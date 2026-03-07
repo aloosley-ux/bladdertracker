@@ -1,19 +1,20 @@
 # BladderTracker 🧸
 
-A responsive web app for families to digitally track paediatric bladder and bowel diaries. Built with React, TypeScript, and Tailwind CSS with a Vercel-compatible cloud backend.
+A responsive web app for families to digitally track paediatric bladder and bowel diaries. Built with React, TypeScript, and Tailwind CSS with a Neon/Postgres cloud backend deployed on Vercel.
 
 ## Features
 
 - **Cloud-synced accounts** — Register, sign in, and reset your password; data is available across all devices and sessions
 - **Multi-user profiles** — Parent/caregiver & child profiles with easy switching
 - **Role-based access** — Parents, caregivers, and school admins with real permissions management
-- **Dashboard** — Daily and weekly overview with calendar strip, summary cards, and clinical reminders
+- **Dashboard** — Daily and weekly overview with calendar strip, summary cards, fluid balance, and clinical reminders
 - **Drink tracking** — Log time, type (cup/beaker/bottle/sippy), amount in ml, and notes
-- **Urine tracking** — Log time, wet/pass events, and notes
+- **Urine tracking** — Log time, wet/pass events, voiding volume (ml), urgency level (1–5), leakage amount, and notes
 - **Bowel tracking** — Log date/time, toilet/nappy, amount (S/M/L), Bristol Stool Chart type (visual picker), laxatives given, and notes
+- **Daily fluid balance** — Real-time intake vs measured output calculation on the dashboard
 - **Charts & Insights** — Fluid intake bar chart, events timeline, stool type distribution
 - **Calendar review** — Monthly calendar with coloured indicators for each entry type
-- **Export** — Download diary as CSV for clinic visits
+- **Export** — Download diary as CSV for clinic visits (includes voiding volume, urgency, leakage data)
 - **Import** — Import CSV, JSON, or XLSX diary data for bulk updates
 - **Invite caregivers** — Role-specific secure invite links for parents, caregivers, and school admins
 - **Notifications & audit** — Track invite acceptance, data changes, and caregiver activity
@@ -24,7 +25,7 @@ A responsive web app for families to digitally track paediatric bladder and bowe
 
 - **Frontend:** React 19 + TypeScript, Vite 7, Tailwind CSS 4, React Router 7, Recharts 3, Lucide React icons, date-fns
 - **Backend:** Vercel Serverless Functions (Node.js)
-- **Database:** Vercel Postgres (Neon-compatible)
+- **Database:** Neon Postgres via `@neondatabase/serverless`
 - **Auth:** JWT sessions with httpOnly cookies, bcrypt password hashing
 
 ## Architecture
@@ -33,7 +34,7 @@ A responsive web app for families to digitally track paediatric bladder and bowe
 ├── api/                  # Vercel Serverless Functions (10 functions, Hobby-plan safe)
 │   ├── _lib/             # Shared utilities (not deployed as functions)
 │   │   ├── auth.ts       # JWT session management, CORS helpers
-│   │   └── db.ts         # Database connection, migration, shared queries
+│   │   └── db.ts         # Neon Postgres connection, migration, shared queries
 │   ├── auth.ts           # POST /api/auth (action: register|login|logout|reset), GET /api/auth (session)
 │   ├── children.ts       # GET/POST/PUT /api/children
 │   ├── drinks.ts         # GET/POST/PUT/DELETE /api/drinks
@@ -87,17 +88,25 @@ vercel link
 
 #### 2. Set Up a Postgres Database
 
-Option A: Use the **Vercel Marketplace** to add a Neon Postgres database to your project.
+Option A: Use the **Vercel Marketplace** to add a Neon Postgres database to your project. The Neon integration will automatically set `DATABASE_URL`, `PGHOST`, `PGUSER`, `PGDATABASE`, `PGPASSWORD`, `POSTGRES_URL`, and other connection variables.
 
-Option B: Use any Postgres-compatible database and set the connection string manually.
+Option B: Create a database at [neon.tech](https://neon.tech) directly and copy the connection string.
 
 #### 3. Configure Environment Variables
 
 Set these environment variables in your Vercel project (or in a `.env.local` file for local development):
 
 ```env
-# Database connection (provided by Vercel/Neon integration)
-POSTGRES_URL="postgres://user:password@host:5432/dbname?sslmode=require"
+# Database connection (provided by Neon/Vercel integration)
+DATABASE_URL="postgresql://user:password@host.neon.tech:5432/dbname?sslmode=require"
+# Alternative: POSTGRES_URL is also supported
+POSTGRES_URL="postgresql://user:password@host.neon.tech:5432/dbname?sslmode=require"
+
+# Additional Neon variables (set automatically by the Vercel integration)
+PGHOST="host.neon.tech"
+PGUSER="user"
+PGDATABASE="dbname"
+PGPASSWORD="password"
 
 # JWT secret for session tokens (generate a secure random string)
 JWT_SECRET="your-random-secret-at-least-32-characters-long"
@@ -106,7 +115,7 @@ JWT_SECRET="your-random-secret-at-least-32-characters-long"
 VITE_USE_CLOUD="true"
 ```
 
-> **Note:** The `VITE_USE_CLOUD` variable must be prefixed with `VITE_` so Vite exposes it to the frontend bundle. When this variable is set, the app uses API calls instead of localStorage.
+> **Note:** The app reads `DATABASE_URL` or `POSTGRES_URL` (in that order) for the Neon connection string. The `VITE_USE_CLOUD` variable must be prefixed with `VITE_` so Vite exposes it to the frontend bundle. When this variable is set, the app uses API calls instead of localStorage.
 
 #### 4. Run Database Migration
 
@@ -145,7 +154,12 @@ vercel --prod
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `POSTGRES_URL` | For cloud mode | PostgreSQL connection string |
+| `DATABASE_URL` | For cloud mode | Neon PostgreSQL connection string (primary) |
+| `POSTGRES_URL` | For cloud mode | Alternative PostgreSQL connection string (fallback) |
+| `PGHOST` | Optional | PostgreSQL host (set by Neon integration) |
+| `PGUSER` | Optional | PostgreSQL user (set by Neon integration) |
+| `PGDATABASE` | Optional | PostgreSQL database name (set by Neon integration) |
+| `PGPASSWORD` | Optional | PostgreSQL password (set by Neon integration) |
 | `JWT_SECRET` | For cloud mode | Secret key for JWT session tokens |
 | `VITE_USE_CLOUD` | For cloud mode | Set to `"true"` to enable cloud API calls |
 
