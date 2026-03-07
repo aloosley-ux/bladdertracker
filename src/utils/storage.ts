@@ -9,6 +9,7 @@ import type {
   FoodEntry,
   ImportSummary,
   ImportedDiaryPayload,
+  LeapSymptomLog,
   MedicationEntry,
   Milestone,
   ModuleId,
@@ -41,6 +42,7 @@ const STORAGE_KEYS = {
   THERAPY: 'bt_therapy',
   ROUTINE: 'bt_routine',
   MILESTONES: 'bt_milestones',
+  LEAP_SYMPTOM_LOGS: 'bt_leap_symptom_logs',
   ENABLED_MODULES: 'bt_enabled_modules',
   INVITES: 'bt_invites',
   NOTIFICATIONS: 'bt_notifications',
@@ -497,6 +499,32 @@ export function deleteMilestone(id: string): void {
   setItem(STORAGE_KEYS.MILESTONES, getMilestones().filter((m) => m.id !== id));
 }
 
+// Leap symptom logs
+export function getLeapSymptomLogs(childFilter?: string | string[]): LeapSymptomLog[] {
+  const logs = getItem<LeapSymptomLog[]>(STORAGE_KEYS.LEAP_SYMPTOM_LOGS, []);
+  const childIds = typeof childFilter === 'string' ? [childFilter] : childFilter;
+  return logs.filter((l) => matchesChildId(childIds, l.childId));
+}
+
+export function addLeapSymptomLog(log: LeapSymptomLog): void {
+  const logs = getLeapSymptomLogs();
+  logs.push(log);
+  setItem(STORAGE_KEYS.LEAP_SYMPTOM_LOGS, logs);
+}
+
+export function updateLeapSymptomLog(log: LeapSymptomLog): void {
+  const logs = getLeapSymptomLogs();
+  const index = logs.findIndex((l) => l.id === log.id);
+  if (index !== -1) {
+    logs[index] = log;
+    setItem(STORAGE_KEYS.LEAP_SYMPTOM_LOGS, logs);
+  }
+}
+
+export function deleteLeapSymptomLog(id: string): void {
+  setItem(STORAGE_KEYS.LEAP_SYMPTOM_LOGS, getLeapSymptomLogs().filter((l) => l.id !== id));
+}
+
 // Module registry — per-child enabled modules
 export function getEnabledModules(childId: string): ModuleId[] {
   const all = getItem<EnabledModules[]>(STORAGE_KEYS.ENABLED_MODULES, []);
@@ -533,6 +561,7 @@ export function removeChild(childId: string): void {
   setItem(STORAGE_KEYS.THERAPY, getTherapyEntries().filter((e) => e.childId !== childId));
   setItem(STORAGE_KEYS.ROUTINE, getRoutineEntries().filter((e) => e.childId !== childId));
   setItem(STORAGE_KEYS.MILESTONES, getMilestones().filter((m) => m.childId !== childId));
+  setItem(STORAGE_KEYS.LEAP_SYMPTOM_LOGS, getLeapSymptomLogs().filter((l) => l.childId !== childId));
 }
 
 // Invites
