@@ -56,11 +56,14 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
     }
 
     try {
-      const [ch, dr, ur, bo, inv, notif, aud] = await Promise.all([
+      const [ch, dr, ur, bo, sl, ta, fo, inv, notif, aud] = await Promise.all([
         api.apiGetChildren(),
         api.apiGetDrinks(),
         api.apiGetUrineEntries(),
         api.apiGetBowelEntries(),
+        api.apiGetSleepEntries(),
+        api.apiGetToiletAttemptEntries(),
+        api.apiGetFoodEntries(),
         api.apiGetInvites(),
         api.apiGetNotifications(),
         api.apiGetAuditEvents(),
@@ -69,6 +72,9 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
       setDrinks(dr);
       setUrineEntries(ur);
       setBowelEntries(bo);
+      setSleepEntries(sl);
+      setToiletAttemptEntries(ta);
+      setFoodEntries(fo);
       setInvites(inv);
       setNotifications(notif);
       setAuditTrail(aud);

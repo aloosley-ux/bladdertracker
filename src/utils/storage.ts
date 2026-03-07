@@ -516,6 +516,32 @@ export function addAuditEvent({
   return event;
 }
 
+// Admin management
+export function getAllAccounts(): AccountRecord[] {
+  return getAccounts();
+}
+
+export function updateAccountRole(userId: string, newRole: User['role']): User | null {
+  const accounts = getAccounts();
+  const index = accounts.findIndex((a) => a.id === userId);
+  if (index === -1) return null;
+  accounts[index] = { ...accounts[index], role: newRole };
+  setAccounts(accounts);
+  return toUser(accounts[index]);
+}
+
+export function deleteAccount(userId: string): boolean {
+  const accounts = getAccounts();
+  const filtered = accounts.filter((a) => a.id !== userId);
+  if (filtered.length === accounts.length) return false;
+  setAccounts(filtered);
+  return true;
+}
+
+export function promoteToAdmin(userId: string): User | null {
+  return updateAccountRole(userId, 'admin');
+}
+
 // Import & export
 export function importDiaryPayload(payload: ImportedDiaryPayload, childId: string, userId: string): ImportSummary {
   const summary: ImportSummary = {
