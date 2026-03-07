@@ -7,6 +7,10 @@ import type { UserRole } from '../types';
 
 const inviteRoles: UserRole[] = ['parent', 'caregiver', 'schoolAdmin'];
 
+function formatRole(role: UserRole): string {
+  return role === 'schoolAdmin' ? 'School admin' : role;
+}
+
 export default function CaregiverPortalPage() {
   const {
     user,
@@ -104,7 +108,9 @@ export default function CaregiverPortalPage() {
                 <div className="flex items-center justify-between gap-3">
                   <div>
                     <div className="text-sm font-semibold text-gray-900">{child.name}</div>
-                    <div className="text-xs text-gray-500">{child.dateOfBirth || 'DOB not recorded'} · {child.caregivers.length} caregivers · {child.parentIds.length} parents</div>
+                    <div className="text-xs text-gray-500">
+                      {child.dateOfBirth || 'DOB not recorded'} · {child.caregivers.length} caregiver{child.caregivers.length === 1 ? '' : 's'} · {child.parentIds.length} parent{child.parentIds.length === 1 ? '' : 's'}
+                    </div>
                   </div>
                   <div className="rounded-full bg-white px-3 py-1 text-[11px] font-semibold text-lavender-700">
                     {selectedChild?.id === child.id ? 'Active child' : 'Available'}
@@ -152,7 +158,7 @@ export default function CaregiverPortalPage() {
                       : 'border-gray-200 text-gray-500 hover:border-lavender-200 hover:bg-lavender-50/60'
                   }`}
                 >
-                  {role === 'schoolAdmin' ? 'School admin' : role}
+                  {formatRole(role)}
                 </button>
               ))}
             </div>
@@ -169,7 +175,7 @@ export default function CaregiverPortalPage() {
                   <div>
                     <div className="text-sm font-semibold text-gray-900">{invite.email}</div>
                     <div className="mt-1 text-xs text-gray-500">
-                      {invite.childName} · {invite.role === 'schoolAdmin' ? 'School admin' : invite.role} · {invite.status}
+                      {invite.childName} · {formatRole(invite.role)} · {invite.status}
                     </div>
                   </div>
                   <button
@@ -230,7 +236,7 @@ export default function CaregiverPortalPage() {
                   <div className="flex items-center justify-between gap-3">
                     <div>
                       <div className="text-sm font-semibold text-gray-900">{invite.childName}</div>
-                      <div className="mt-1 text-xs text-gray-500">Role: {invite.role === 'schoolAdmin' ? 'School admin' : invite.role}</div>
+                      <div className="mt-1 text-xs text-gray-500">Role: {formatRole(invite.role)}</div>
                     </div>
                     <button
                       onClick={() => {

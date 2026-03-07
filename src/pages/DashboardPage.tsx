@@ -74,7 +74,7 @@ export default function DashboardPage() {
           <div>
             <p className="text-xs font-medium uppercase tracking-[0.24em] text-lavender-500">AI journal style calm UI</p>
             <h1 className="mt-1 text-3xl font-bold text-gray-900">
-              Your personal journaling hub for {selectedChild.name}
+              Your personal journaling hub for {selectedChild?.name}
             </h1>
             <p className="mt-2 text-sm text-gray-500">Hello {user?.name}, capture entries, share safely, and prepare for clinics or school reviews.</p>
           </div>

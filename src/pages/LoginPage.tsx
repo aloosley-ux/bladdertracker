@@ -8,6 +8,7 @@ import {
   findAccountByEmail,
   generateId,
   getPendingInvitesByEmail,
+  normaliseEmail,
   registerAccount,
   toUser,
   updateAccountPassword,
@@ -36,7 +37,7 @@ export default function LoginPage() {
   const [submitting, setSubmitting] = useState(false);
 
   const inviteToken = searchParams.get('invite');
-  const pendingInvites = useMemo(() => (email ? getPendingInvitesByEmail(email) : []), [email]);
+  const pendingInvites = useMemo(() => (email ? getPendingInvitesByEmail(normaliseEmail(email)) : []), [email]);
 
   const finalizeLogin = (user: User) => {
     login(user);
@@ -85,7 +86,7 @@ export default function LoginPage() {
       const account: AccountRecord = {
         id: generateId(),
         name: name.trim(),
-        email: email.trim().toLowerCase(),
+        email: normaliseEmail(email),
         role,
         createdAt: new Date().toISOString(),
         ...credentials,

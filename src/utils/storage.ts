@@ -37,7 +37,7 @@ function setItem<T>(key: string, value: T): void {
   localStorage.setItem(key, JSON.stringify(value));
 }
 
-function normaliseEmail(email: string): string {
+export function normaliseEmail(email: string): string {
   return email.trim().toLowerCase();
 }
 
@@ -51,7 +51,9 @@ function getAccessibleChildIds(userId?: string): string[] {
 }
 
 export function generateId(): string {
-  return Date.now().toString(36) + Math.random().toString(36).substring(2, 10);
+  const bytes = new Uint8Array(16);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('');
 }
 
 export function clearAllAppData(): void {
@@ -269,6 +271,10 @@ export function createInvite({
   invitedBy: string;
 }): CaregiverInvite {
   const token = generateId();
+  const basePath = import.meta.env.BASE_URL.endsWith('/')
+    ? import.meta.env.BASE_URL.slice(0, -1)
+    : import.meta.env.BASE_URL;
+
   const invite: CaregiverInvite = {
     id: generateId(),
     childId,
@@ -279,7 +285,7 @@ export function createInvite({
     invitedBy,
     createdAt: new Date().toISOString(),
     token,
-    link: `${window.location.origin}${window.location.pathname}?invite=${token}`,
+    link: `${window.location.origin}${basePath || ''}/?invite=${token}`,
   };
 
   const invites = getInvites();
@@ -424,7 +430,7 @@ export function importDiaryPayload(payload: ImportedDiaryPayload, childId: strin
 
   payload.drinks?.forEach((entry, index) => {
     if (!entry.date || !entry.time || typeof entry.amountMl !== 'number') {
-      summary.errors.push(`Drink row ${index + 1} is missing date, time, or amount.`);
+      summary.errors.push(`Drink data row ${index + 1} is missing date, time, or amount.`);
       return;
     }
 
@@ -444,7 +450,7 @@ export function importDiaryPayload(payload: ImportedDiaryPayload, childId: strin
 
   payload.urineEntries?.forEach((entry, index) => {
     if (!entry.date || !entry.time) {
-      summary.errors.push(`Urine row ${index + 1} is missing date or time.`);
+      summary.errors.push(`Urine data row ${index + 1} is missing date or time.`);
       return;
     }
 
@@ -464,7 +470,7 @@ export function importDiaryPayload(payload: ImportedDiaryPayload, childId: strin
 
   payload.bowelEntries?.forEach((entry, index) => {
     if (!entry.date || !entry.time) {
-      summary.errors.push(`Bowel row ${index + 1} is missing date or time.`);
+      summary.errors.push(`Bowel data row ${index + 1} is missing date or time.`);
       return;
     }
 

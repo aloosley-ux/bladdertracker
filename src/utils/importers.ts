@@ -1,6 +1,8 @@
 import readXlsxFile from 'read-excel-file/browser';
 import type { BowelEntry, DrinkEntry, ImportedDiaryPayload } from '../types';
 
+type ExcelCell = string | number | boolean | Date | null;
+
 function normaliseKey(value: unknown): string {
   return String(value ?? '')
     .trim()
@@ -17,27 +19,32 @@ function splitCsvLine(line: string): string[] {
   const values: string[] = [];
   let current = '';
   let inQuotes = false;
+  let index = 0;
 
-  for (let index = 0; index < line.length; index += 1) {
+  while (index < line.length) {
     const character = line[index];
 
     if (character === '"') {
       if (inQuotes && line[index + 1] === '"') {
         current += '"';
-        index += 1;
-      } else {
-        inQuotes = !inQuotes;
+        index += 2;
+        continue;
       }
+
+      inQuotes = !inQuotes;
+      index += 1;
       continue;
     }
 
     if (character === ',' && !inQuotes) {
       values.push(current.trim());
       current = '';
+      index += 1;
       continue;
     }
 
     current += character;
+    index += 1;
   }
 
   values.push(current.trim());
@@ -137,11 +144,11 @@ function parseJson(content: string): ImportedDiaryPayload {
 }
 
 async function parseXlsx(file: File): Promise<ImportedDiaryPayload> {
-  const rows = (await readXlsxFile(file)) as Array<Array<string | number | boolean | Date | null>>;
+  const rows = (await readXlsxFile(file)) as ExcelCell[][];
   if (rows.length < 2) return {};
 
-  const headers = rows[0].map((cell: string | number | boolean | Date | null) => String(cell ?? ''));
-  const records = rows.slice(1).map((row: Array<string | number | boolean | Date | null>) => rowToRecord(headers, row));
+  const headers = rows[0].map((cell: ExcelCell) => String(cell ?? ''));
+  const records = rows.slice(1).map((row: ExcelCell[]) => rowToRecord(headers, row));
   return spreadsheetRecordsToPayload(records);
 }
 
