@@ -8,8 +8,15 @@ import type {
   FoodEntry,
   ImportSummary,
   ImportedDiaryPayload,
+  MedicationEntry,
+  Milestone,
+  ModuleId,
+  MoodEntry,
   NotificationItem,
+  RoutineEntry,
+  SensoryEntry,
   SleepEntry,
+  TherapyEntry,
   ToiletAttemptEntry,
   UrineEntry,
   User,
@@ -26,6 +33,13 @@ interface AppState {
   sleepEntries: SleepEntry[];
   toiletAttemptEntries: ToiletAttemptEntry[];
   foodEntries: FoodEntry[];
+  moodEntries: MoodEntry[];
+  sensoryEntries: SensoryEntry[];
+  medicationEntries: MedicationEntry[];
+  therapyEntries: TherapyEntry[];
+  routineEntries: RoutineEntry[];
+  milestones: Milestone[];
+  enabledModules: ModuleId[];
   invites: CaregiverInvite[];
   notifications: NotificationItem[];
   auditTrail: AuditEvent[];
@@ -55,6 +69,25 @@ export interface AppContextType extends AppState {
   addFoodEntry: (entry: FoodEntry) => void | Promise<void>;
   updateFoodEntry: (entry: FoodEntry) => void | Promise<void>;
   deleteFoodEntry: (id: string) => void | Promise<void>;
+  addMoodEntry: (entry: MoodEntry) => void | Promise<void>;
+  updateMoodEntry: (entry: MoodEntry) => void | Promise<void>;
+  deleteMoodEntry: (id: string) => void | Promise<void>;
+  addSensoryEntry: (entry: SensoryEntry) => void | Promise<void>;
+  updateSensoryEntry: (entry: SensoryEntry) => void | Promise<void>;
+  deleteSensoryEntry: (id: string) => void | Promise<void>;
+  addMedicationEntry: (entry: MedicationEntry) => void | Promise<void>;
+  updateMedicationEntry: (entry: MedicationEntry) => void | Promise<void>;
+  deleteMedicationEntry: (id: string) => void | Promise<void>;
+  addTherapyEntry: (entry: TherapyEntry) => void | Promise<void>;
+  updateTherapyEntry: (entry: TherapyEntry) => void | Promise<void>;
+  deleteTherapyEntry: (id: string) => void | Promise<void>;
+  addRoutineEntry: (entry: RoutineEntry) => void | Promise<void>;
+  updateRoutineEntry: (entry: RoutineEntry) => void | Promise<void>;
+  deleteRoutineEntry: (id: string) => void | Promise<void>;
+  addMilestone: (milestone: Milestone) => void | Promise<void>;
+  updateMilestone: (milestone: Milestone) => void | Promise<void>;
+  deleteMilestone: (id: string) => void | Promise<void>;
+  setEnabledModules: (modules: ModuleId[]) => void | Promise<void>;
   exportData: () => void | Promise<void>;
   createInvite: (email: string, role: UserRole, childId: string) => CaregiverInvite | null | Promise<CaregiverInvite | null>;
   acceptInvite: (token: string) => boolean | Promise<boolean>;

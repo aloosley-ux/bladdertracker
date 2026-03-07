@@ -1,4 +1,4 @@
-export type UserRole = 'admin' | 'parent' | 'caregiver' | 'schoolAdmin';
+export type UserRole = 'admin' | 'parent' | 'caregiver' | 'schoolAdmin' | 'therapist' | 'specialist';
 
 export interface User {
   id: string;
@@ -23,6 +23,52 @@ export interface Child {
   parentIds: string[];
   createdBy: string;
   lastUpdatedAt: string;
+}
+
+// ── Module Registry ──────────────────────────────────────────────────
+export type ModuleId =
+  | 'drinks'
+  | 'urine'
+  | 'bowel'
+  | 'sleep'
+  | 'toilet'
+  | 'food'
+  | 'mood'
+  | 'sensory'
+  | 'medication'
+  | 'therapy'
+  | 'routine'
+  | 'milestones';
+
+export interface TrackerModule {
+  id: ModuleId;
+  label: string;
+  icon: string;          // emoji or lucide icon name
+  description: string;
+  builtIn: boolean;      // false for user-created custom modules
+  defaultEnabled: boolean;
+}
+
+export interface EnabledModules {
+  childId: string;
+  modules: ModuleId[];
+}
+
+// ── Milestones ───────────────────────────────────────────────────────
+export type MilestoneStatus = 'not_started' | 'in_progress' | 'achieved';
+export type MilestoneCategory = 'speech' | 'motor' | 'social' | 'cognitive' | 'self_care' | 'routine' | 'sensory' | 'other';
+
+export interface Milestone {
+  id: string;
+  childId: string;
+  name: string;
+  description: string;
+  category: MilestoneCategory;
+  status: MilestoneStatus;
+  dateAchieved?: string | null;
+  notes: string;
+  createdBy: string;
+  createdAt: string;
 }
 
 export interface DrinkEntry {
@@ -123,6 +169,78 @@ export interface FoodEntry {
   createdAt: string;
 }
 
+// ── New tracker entry types ──────────────────────────────────────────
+export type MoodLevel = 1 | 2 | 3 | 4 | 5;
+
+export interface MoodEntry {
+  id: string;
+  childId: string;
+  date: string;
+  time: string;
+  level: MoodLevel;
+  triggers: string;
+  notes: string;
+  createdBy: string;
+  createdAt: string;
+}
+
+export type SensoryResponseType = 'seeking' | 'avoiding' | 'neutral';
+
+export interface SensoryEntry {
+  id: string;
+  childId: string;
+  date: string;
+  time: string;
+  sensoryType: string;          // e.g. 'auditory', 'tactile', 'visual', 'vestibular'
+  response: SensoryResponseType;
+  intensity: 1 | 2 | 3 | 4 | 5;
+  notes: string;
+  createdBy: string;
+  createdAt: string;
+}
+
+export interface MedicationEntry {
+  id: string;
+  childId: string;
+  date: string;
+  time: string;
+  name: string;
+  dosage: string;
+  administered: boolean;
+  notes: string;
+  createdBy: string;
+  createdAt: string;
+}
+
+export type TherapyType = 'speech' | 'occupational' | 'physical' | 'behavioral' | 'other';
+
+export interface TherapyEntry {
+  id: string;
+  childId: string;
+  date: string;
+  time: string;
+  therapyType: TherapyType;
+  provider: string;
+  durationMinutes: number;
+  goals: string;
+  notes: string;
+  createdBy: string;
+  createdAt: string;
+}
+
+export interface RoutineEntry {
+  id: string;
+  childId: string;
+  date: string;
+  time: string;
+  routineName: string;
+  completed: boolean;
+  durationMinutes?: number | null;
+  notes: string;
+  createdBy: string;
+  createdAt: string;
+}
+
 export interface DailyLog {
   date: string;
   childId: string;
@@ -132,6 +250,11 @@ export interface DailyLog {
   sleepEvents: SleepEntry[];
   toiletAttempts: ToiletAttemptEntry[];
   foodEntries: FoodEntry[];
+  moodEntries: MoodEntry[];
+  sensoryEntries: SensoryEntry[];
+  medicationEntries: MedicationEntry[];
+  therapyEntries: TherapyEntry[];
+  routineEntries: RoutineEntry[];
 }
 
 export interface CaregiverInvite {
@@ -173,6 +296,11 @@ export interface ImportedDiaryPayload {
   sleepEntries?: Array<Partial<SleepEntry>>;
   toiletAttemptEntries?: Array<Partial<ToiletAttemptEntry>>;
   foodEntries?: Array<Partial<FoodEntry>>;
+  moodEntries?: Array<Partial<MoodEntry>>;
+  sensoryEntries?: Array<Partial<SensoryEntry>>;
+  medicationEntries?: Array<Partial<MedicationEntry>>;
+  therapyEntries?: Array<Partial<TherapyEntry>>;
+  routineEntries?: Array<Partial<RoutineEntry>>;
 }
 
 export interface ImportSummary {
@@ -182,5 +310,26 @@ export interface ImportSummary {
   sleepEntries: number;
   toiletAttemptEntries: number;
   foodEntries: number;
+  moodEntries: number;
+  sensoryEntries: number;
+  medicationEntries: number;
+  therapyEntries: number;
+  routineEntries: number;
   errors: string[];
 }
+
+// ── Default Module Registry ──────────────────────────────────────────
+export const DEFAULT_MODULES: TrackerModule[] = [
+  { id: 'drinks', label: 'Drinks', icon: '🥤', description: 'Track fluid intake', builtIn: true, defaultEnabled: true },
+  { id: 'urine', label: 'Urine', icon: '💦', description: 'Track urination events', builtIn: true, defaultEnabled: true },
+  { id: 'bowel', label: 'Bowel', icon: '🚽', description: 'Track bowel movements', builtIn: true, defaultEnabled: true },
+  { id: 'sleep', label: 'Sleep', icon: '🌙', description: 'Track sleep patterns', builtIn: true, defaultEnabled: true },
+  { id: 'toilet', label: 'Toilet Attempts', icon: '🎯', description: 'Track toilet training attempts', builtIn: true, defaultEnabled: true },
+  { id: 'food', label: 'Food', icon: '🍽️', description: 'Track meals and nutrition', builtIn: true, defaultEnabled: true },
+  { id: 'mood', label: 'Mood', icon: '😊', description: 'Track emotional states and triggers', builtIn: true, defaultEnabled: false },
+  { id: 'sensory', label: 'Sensory', icon: '🎨', description: 'Track sensory responses and preferences', builtIn: true, defaultEnabled: false },
+  { id: 'medication', label: 'Medication', icon: '💊', description: 'Track medications and dosages', builtIn: true, defaultEnabled: false },
+  { id: 'therapy', label: 'Therapy', icon: '🧩', description: 'Track therapy sessions and goals', builtIn: true, defaultEnabled: false },
+  { id: 'routine', label: 'Routine', icon: '📋', description: 'Track daily routines and schedules', builtIn: true, defaultEnabled: false },
+  { id: 'milestones', label: 'Milestones', icon: '⭐', description: 'Track developmental milestones', builtIn: true, defaultEnabled: true },
+];
