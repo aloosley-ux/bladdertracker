@@ -12,17 +12,55 @@
   --color-lavender-800: #5b18bf;
   --color-lavender-900: #4c169c;
   --color-lavender-950: #2e0a6a;
-  
+
   --color-sky-light: #e8f4fd;
-  --color-peach: #fff0e6;
-  --color-mint: #e6fff0;
+  --color-peach: #fff2e8;
+  --color-mint: #ebfff2;
   --color-rose: #ffe6ee;
+}
+
+:root {
+  color: #1f2937;
+  background: linear-gradient(180deg, #fbf7f2 0%, #f8f1ff 45%, #ffffff 100%);
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  min-width: 320px;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #f8f5ff;
+  background: linear-gradient(180deg, #fbf7f2 0%, #f8f1ff 45%, #ffffff 100%);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.input-card {
+  width: 100%;
+  border-radius: 1rem;
+  border: 1px solid #ece7f7;
+  background: #fff;
+  padding: 0.875rem 1rem;
+  font-size: 0.95rem;
+  color: #1f2937;
+  outline: none;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.input-card:focus {
+  border-color: #c4adff;
+  box-shadow: 0 0 0 4px rgba(196, 173, 255, 0.22);
 }

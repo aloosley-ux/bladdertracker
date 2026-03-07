@@ -1,77 +1,76 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { formatDistanceToNow } from 'date-fns';
+import { Baby, Download, LogOut, Shield, Trash2 } from 'lucide-react';
 import { useApp } from '../context/useApp';
 import { generateId } from '../utils/storage';
-import { LogOut, UserPlus, Download, Baby, Shield, Trash2 } from 'lucide-react';
 import type { Child } from '../types';
 
 export default function ProfilePage() {
-  const { user, children, logout, addChild, exportData, selectedChild, selectChild } = useApp();
+  const { user, children, selectedChild, selectChild, addChild, exportData, auditTrail, logout, clearAllData } = useApp();
   const [showAddChild, setShowAddChild] = useState(false);
-  const [showInvite, setShowInvite] = useState(false);
   const [childName, setChildName] = useState('');
   const [childDob, setChildDob] = useState('');
-  const [inviteEmail, setInviteEmail] = useState('');
-  const [inviteSent, setInviteSent] = useState(false);
 
-  const handleAddChild = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!childName.trim()) return;
+  const userInitials = useMemo(
+    () =>
+      user?.name
+        .split(' ')
+        .map((part) => part[0])
+        .join('')
+        .slice(0, 2)
+        .toUpperCase() ?? 'BT',
+    [user?.name]
+  );
+
+  const handleAddChild = (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!childName.trim() || !user) return;
+
     const child: Child = {
       id: generateId(),
       name: childName.trim(),
       dateOfBirth: childDob,
-      caregivers: [],
+      caregivers: user.role === 'parent' ? [] : [user.id],
+      parentIds: user.role === 'parent' ? [user.id] : [],
+      createdBy: user.id,
+      lastUpdatedAt: new Date().toISOString(),
     };
+
     addChild(child);
     setChildName('');
     setChildDob('');
     setShowAddChild(false);
   };
 
-  const handleInvite = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!inviteEmail.trim()) return;
-    // In a real app, this would send an email invitation
-    setInviteSent(true);
-    setTimeout(() => {
-      setInviteSent(false);
-      setShowInvite(false);
-      setInviteEmail('');
-    }, 2000);
-  };
-
   return (
     <div className="pb-20">
-      <div className="bg-white px-4 pt-4 pb-3">
-        <h1 className="text-lg font-bold text-gray-800">Profile &amp; Settings</h1>
+      <div className="bg-[linear-gradient(180deg,#fbf7f2_0%,#ffffff_100%)] px-4 pb-4 pt-5">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-lavender-500">Settings</p>
+        <h1 className="mt-2 text-3xl font-bold text-gray-900">Security, profiles, and audit</h1>
+        <p className="mt-2 text-sm text-gray-500">Designed for a calmer, production-style experience with clearer ownership and data handling.</p>
       </div>
 
-      <div className="px-4 mt-4 space-y-4">
-        {/* User info */}
-        <div className="bg-white rounded-2xl p-5 shadow-sm">
+      <div className="space-y-4 px-4 pt-4">
+        <section className="rounded-[1.75rem] bg-white p-5 shadow-sm ring-1 ring-black/5">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-full bg-lavender-100 flex items-center justify-center text-2xl">
-              {user?.role === 'parent' ? '👨‍👩‍👧' : '🤝'}
+            <div className="flex h-14 w-14 items-center justify-center rounded-[1.25rem] bg-lavender-50 text-lg font-bold text-lavender-700">
+              {userInitials}
             </div>
             <div>
-              <h2 className="font-bold text-gray-800">{user?.name}</h2>
-              <p className="text-xs text-gray-400 capitalize">{user?.role}</p>
-              {user?.email && <p className="text-xs text-gray-400">{user.email}</p>}
+              <h2 className="text-lg font-bold text-gray-900">{user?.name}</h2>
+              <p className="text-sm capitalize text-gray-500">{user?.role === 'schoolAdmin' ? 'School admin' : user?.role}</p>
+              <p className="text-xs text-gray-400">{user?.email}</p>
             </div>
           </div>
-        </div>
+        </section>
 
-        {/* Children */}
-        <div className="bg-white rounded-2xl p-5 shadow-sm">
-          <div className="flex items-center justify-between mb-3">
+        <section className="rounded-[1.75rem] bg-white p-5 shadow-sm ring-1 ring-black/5">
+          <div className="mb-3 flex items-center justify-between">
             <h3 className="text-sm font-bold text-gray-700 flex items-center gap-2">
-              <Baby size={16} className="text-lavender-500" /> Children
+              <Baby size={16} className="text-lavender-500" /> Child profiles
             </h3>
-            <button
-              onClick={() => setShowAddChild(!showAddChild)}
-              className="text-xs text-lavender-600 font-medium hover:text-lavender-700"
-            >
-              + Add Child
+            <button onClick={() => setShowAddChild((value) => !value)} className="text-xs font-semibold text-lavender-600">
+              + Add child
             </button>
           </div>
 
@@ -80,158 +79,94 @@ export default function ProfilePage() {
               <button
                 key={child.id}
                 onClick={() => selectChild(child.id)}
-                className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all text-left ${
-                  selectedChild?.id === child.id
-                    ? 'bg-lavender-50 border-2 border-lavender-300'
-                    : 'bg-gray-50 border-2 border-transparent hover:bg-lavender-50'
+                className={`w-full rounded-[1.5rem] p-4 text-left ring-1 transition-all ${
+                  selectedChild?.id === child.id ? 'bg-lavender-50 ring-lavender-200' : 'bg-[#faf7ff] ring-lavender-100'
                 }`}
               >
-                <div className="w-8 h-8 rounded-full bg-lavender-200 flex items-center justify-center text-sm">
-                  👶
-                </div>
-                <div className="flex-1">
-                  <div className="text-sm font-medium text-gray-800">{child.name}</div>
-                  {child.dateOfBirth && (
-                    <div className="text-[10px] text-gray-400">DOB: {child.dateOfBirth}</div>
-                  )}
-                </div>
-                {selectedChild?.id === child.id && (
-                  <span className="text-[10px] bg-lavender-500 text-white px-2 py-0.5 rounded-full">
-                    Active
-                  </span>
-                )}
+                <div className="text-sm font-semibold text-gray-900">{child.name}</div>
+                <div className="mt-1 text-xs text-gray-500">{child.dateOfBirth || 'DOB not recorded'}</div>
               </button>
             ))}
           </div>
 
           {showAddChild && (
-            <form onSubmit={handleAddChild} className="mt-3 space-y-3 p-3 bg-lavender-50 rounded-xl">
+            <form onSubmit={handleAddChild} className="mt-4 space-y-3 rounded-[1.5rem] bg-[#faf7ff] p-4 ring-1 ring-lavender-100">
               <input
                 type="text"
                 value={childName}
-                onChange={(e) => setChildName(e.target.value)}
+                onChange={(event) => setChildName(event.target.value)}
                 placeholder="Child's name"
-                className="w-full px-3 py-2 rounded-lg border border-lavender-200 text-sm focus:border-lavender-400 outline-none"
+                className="input-card"
                 required
               />
               <input
                 type="date"
                 value={childDob}
-                onChange={(e) => setChildDob(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-lavender-200 text-sm focus:border-lavender-400 outline-none"
+                onChange={(event) => setChildDob(event.target.value)}
+                className="input-card"
               />
-              <button
-                type="submit"
-                className="w-full py-2 bg-lavender-500 text-white rounded-lg text-sm font-medium"
-              >
-                Add Child
-              </button>
+              <button className="w-full rounded-full bg-lavender-500 px-4 py-3 text-sm font-semibold text-white">Save child profile</button>
             </form>
           )}
-        </div>
+        </section>
 
-        {/* Invite caregiver */}
-        <div className="bg-white rounded-2xl p-5 shadow-sm">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-bold text-gray-700 flex items-center gap-2">
-              <UserPlus size={16} className="text-lavender-500" /> Invite Caregiver
-            </h3>
-          </div>
-          <p className="text-xs text-gray-400 mb-3">
-            Invite another caregiver to help track {selectedChild?.name}&apos;s diary
-          </p>
-
-          {showInvite ? (
-            <form onSubmit={handleInvite} className="space-y-3">
-              <input
-                type="email"
-                value={inviteEmail}
-                onChange={(e) => setInviteEmail(e.target.value)}
-                placeholder="Caregiver's email"
-                className="w-full px-3 py-2 rounded-lg border border-lavender-200 text-sm focus:border-lavender-400 outline-none"
-                required
-              />
-              <button
-                type="submit"
-                className="w-full py-2 bg-lavender-500 text-white rounded-lg text-sm font-medium"
-              >
-                {inviteSent ? '✅ Invite Sent!' : 'Send Invite'}
-              </button>
-            </form>
-          ) : (
-            <button
-              onClick={() => setShowInvite(true)}
-              className="w-full py-2.5 border-2 border-dashed border-lavender-200 text-lavender-600 rounded-xl text-sm font-medium hover:bg-lavender-50 transition-all flex items-center justify-center gap-2"
-            >
-              <UserPlus size={14} /> Send Invitation
-            </button>
-          )}
-        </div>
-
-        {/* Actions */}
-        <div className="bg-white rounded-2xl p-5 shadow-sm space-y-2">
-          <h3 className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-3">
-            <Shield size={16} className="text-lavender-500" /> Actions
+        <section className="rounded-[1.75rem] bg-white p-5 shadow-sm ring-1 ring-black/5">
+          <h3 className="text-sm font-bold text-gray-700 flex items-center gap-2">
+            <Shield size={16} className="text-lavender-500" /> Privacy & security
           </h3>
+          <div className="mt-3 rounded-[1.5rem] bg-[#faf7ff] p-4 text-sm text-gray-600 ring-1 ring-lavender-100">
+            Passwords are hashed before storage in this app, invites are role-scoped, and audit activity is kept locally for review. For full multi-device NHS-grade deployment, connect the same flows to a managed backend.
+          </div>
+        </section>
 
-          <button
-            onClick={exportData}
-            className="w-full flex items-center gap-3 p-3 rounded-xl bg-gray-50 hover:bg-lavender-50 transition-all text-left"
-          >
-            <Download size={16} className="text-lavender-500" />
+        <section className="rounded-[1.75rem] bg-white p-5 shadow-sm ring-1 ring-black/5">
+          <h3 className="text-sm font-bold text-gray-700">Recent audit trail</h3>
+          <div className="mt-3 space-y-3">
+            {auditTrail.slice(0, 5).map((event) => (
+              <div key={event.id} className="rounded-[1.5rem] bg-[#faf7ff] px-4 py-3 ring-1 ring-lavender-100">
+                <div className="text-sm font-semibold text-gray-900">{event.action}</div>
+                <div className="mt-1 text-xs text-gray-500">{event.detail}</div>
+                <div className="mt-2 text-[11px] text-gray-400">
+                  {formatDistanceToNow(new Date(event.createdAt), { addSuffix: true })}
+                </div>
+              </div>
+            ))}
+            {auditTrail.length === 0 && <p className="text-sm text-gray-500">No audit events yet.</p>}
+          </div>
+        </section>
+
+        <section className="rounded-[1.75rem] bg-white p-5 shadow-sm ring-1 ring-black/5 space-y-2">
+          <button onClick={exportData} className="flex w-full items-center gap-3 rounded-[1.5rem] bg-[#faf7ff] p-4 text-left ring-1 ring-lavender-100">
+            <Download size={18} className="text-lavender-500" />
             <div>
-              <div className="text-sm font-medium text-gray-700">Export Diary (CSV)</div>
-              <div className="text-[10px] text-gray-400">Download data for clinic visits</div>
+              <div className="text-sm font-semibold text-gray-900">Export diary</div>
+              <div className="text-xs text-gray-500">Download the current child&apos;s journal as CSV.</div>
             </div>
           </button>
 
           <button
             onClick={() => {
-              if (confirm('Clear all data? This cannot be undone.')) {
-                localStorage.clear();
-                window.location.reload();
+              if (confirm('Clear all saved app data? This cannot be undone.')) {
+                clearAllData();
               }
             }}
-            className="w-full flex items-center gap-3 p-3 rounded-xl bg-gray-50 hover:bg-red-50 transition-all text-left"
+            className="flex w-full items-center gap-3 rounded-[1.5rem] bg-[#fff4f5] p-4 text-left ring-1 ring-rose-100"
           >
-            <Trash2 size={16} className="text-red-400" />
+            <Trash2 size={18} className="text-rose-500" />
             <div>
-              <div className="text-sm font-medium text-red-500">Clear All Data</div>
-              <div className="text-[10px] text-gray-400">Remove all entries permanently</div>
+              <div className="text-sm font-semibold text-rose-600">Clear all data</div>
+              <div className="text-xs text-gray-500">Remove local demo data from this browser.</div>
             </div>
           </button>
 
-          <button
-            onClick={logout}
-            className="w-full flex items-center gap-3 p-3 rounded-xl bg-gray-50 hover:bg-red-50 transition-all text-left"
-          >
-            <LogOut size={16} className="text-red-400" />
+          <button onClick={logout} className="flex w-full items-center gap-3 rounded-[1.5rem] bg-[#faf7ff] p-4 text-left ring-1 ring-lavender-100">
+            <LogOut size={18} className="text-rose-500" />
             <div>
-              <div className="text-sm font-medium text-red-500">Sign Out</div>
-              <div className="text-[10px] text-gray-400">Log out of your account</div>
+              <div className="text-sm font-semibold text-gray-900">Sign out</div>
+              <div className="text-xs text-gray-500">End your current session.</div>
             </div>
           </button>
-        </div>
-
-        {/* Clinical info */}
-        <div className="bg-lavender-50 border border-lavender-100 rounded-2xl p-4">
-          <h3 className="text-sm font-semibold text-gray-800 mb-2">📋 Clinical Information</h3>
-          <div className="text-xs text-gray-500 space-y-2">
-            <p>
-              <strong>Constipation signs:</strong> Hard, pellet-like stools (Bristol Type 1-2),
-              straining, infrequent bowel movements (&lt;3 per week), or abdominal discomfort.
-            </p>
-            <p>
-              <strong>Bladder health:</strong> Children should drink 6-8 cups daily and visit the
-              toilet every 2-3 hours. Holding urine can lead to urinary tract infections.
-            </p>
-            <p>
-              <strong>When to seek help:</strong> If your child has persistent constipation,
-              soiling accidents, blood in stools, or frequent urinary symptoms, consult your
-              GP or paediatrician.
-            </p>
-          </div>
-        </div>
+        </section>
       </div>
     </div>
   );
