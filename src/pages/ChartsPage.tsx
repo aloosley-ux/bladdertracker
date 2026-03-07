@@ -1,158 +1,148 @@
-import { useMemo, useState } from 'react';
-import { format, subDays, startOfDay } from 'date-fns';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, LineChart, Line } from 'recharts';
-import { ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useMemo, useState, type ReactNode } from 'react';
+import { format, startOfDay, subDays } from 'date-fns';
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Legend,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
+import { CalendarDays, ChevronRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useApp } from '../context/useApp';
 
 type Period = '7d' | '14d' | '30d';
 
 export default function ChartsPage() {
   const { drinks, urineEntries, bowelEntries, selectedChildId, selectedChild } = useApp();
-  const navigate = useNavigate();
   const [period, setPeriod] = useState<Period>('7d');
 
   const days = period === '7d' ? 7 : period === '14d' ? 14 : 30;
 
   const fluidData = useMemo(() => {
-    const result = [];
-    for (let i = days - 1; i >= 0; i--) {
-      const date = startOfDay(subDays(new Date(), i));
+    return Array.from({ length: days }, (_, index) => {
+      const date = startOfDay(subDays(new Date(), days - index - 1));
       const dateStr = format(date, 'yyyy-MM-dd');
-      const dayDrinks = drinks.filter(
-        (d) => d.childId === selectedChildId && d.date === dateStr
-      );
-      result.push({
+      const dayDrinks = drinks.filter((drink) => drink.childId === selectedChildId && drink.date === dateStr);
+
+      return {
         date: format(date, 'dd/MM'),
-        fullDate: dateStr,
-        totalMl: dayDrinks.reduce((sum, d) => sum + d.amountMl, 0),
-        count: dayDrinks.length,
-      });
-    }
-    return result;
-  }, [drinks, selectedChildId, days]);
+        totalMl: dayDrinks.reduce((sum, drink) => sum + drink.amountMl, 0),
+      };
+    });
+  }, [days, drinks, selectedChildId]);
 
   const eventData = useMemo(() => {
-    const result = [];
-    for (let i = days - 1; i >= 0; i--) {
-      const date = startOfDay(subDays(new Date(), i));
+    return Array.from({ length: days }, (_, index) => {
+      const date = startOfDay(subDays(new Date(), days - index - 1));
       const dateStr = format(date, 'yyyy-MM-dd');
-      const dayUrine = urineEntries.filter(
-        (u) => u.childId === selectedChildId && u.date === dateStr
-      );
-      const dayBowel = bowelEntries.filter(
-        (b) => b.childId === selectedChildId && b.date === dateStr
-      );
-      result.push({
+      const dayUrine = urineEntries.filter((entry) => entry.childId === selectedChildId && entry.date === dateStr);
+      const dayBowel = bowelEntries.filter((entry) => entry.childId === selectedChildId && entry.date === dateStr);
+
+      return {
         date: format(date, 'dd/MM'),
-        wet: dayUrine.filter((u) => u.wet).length,
-        pass: dayUrine.filter((u) => u.pass).length,
+        wet: dayUrine.filter((entry) => entry.wet).length,
+        pass: dayUrine.filter((entry) => entry.pass).length,
         bowel: dayBowel.length,
-      });
-    }
-    return result;
-  }, [urineEntries, bowelEntries, selectedChildId, days]);
+      };
+    });
+  }, [days, urineEntries, bowelEntries, selectedChildId]);
 
   const stoolTypeData = useMemo(() => {
-    const types = [1, 2, 3, 4, 5, 6, 7];
-    const childBowel = bowelEntries.filter((b) => b.childId === selectedChildId);
-    return types.map((t) => ({
-      type: `Type ${t}`,
-      count: childBowel.filter((b) => b.bristolType === t).length,
+    const childBowel = bowelEntries.filter((entry) => entry.childId === selectedChildId);
+    return [1, 2, 3, 4, 5, 6, 7].map((type) => ({
+      type: `Type ${type}`,
+      count: childBowel.filter((entry) => entry.bristolType === type).length,
     }));
   }, [bowelEntries, selectedChildId]);
 
   return (
     <div className="pb-20">
-      <div className="bg-white px-4 pt-4 pb-3 flex items-center gap-3">
-        <button
-          onClick={() => navigate('/')}
-          className="w-9 h-9 rounded-full bg-gray-50 flex items-center justify-center text-gray-500 hover:bg-lavender-50"
-        >
-          <ArrowLeft size={18} />
-        </button>
-        <div>
-          <h1 className="text-lg font-bold text-gray-800">Charts &amp; Insights</h1>
-          <p className="text-xs text-gray-400">{selectedChild?.name}</p>
+      <div className="bg-[linear-gradient(180deg,#fbf7f2_0%,#ffffff_100%)] px-4 pb-4 pt-5">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-lavender-500">Explore</p>
+        <div className="mt-2 flex items-start justify-between gap-3">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Patterns and trends</h1>
+            <p className="mt-1 text-sm text-gray-500">A calm, visual snapshot for {selectedChild?.name ?? 'your selected child'}.</p>
+          </div>
+          <Link
+            to="/calendar"
+            className="flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-lavender-700 shadow-sm ring-1 ring-lavender-100"
+          >
+            <CalendarDays size={16} /> Calendar <ChevronRight size={16} />
+          </Link>
+        </div>
+
+        <div className="mt-4 grid grid-cols-3 gap-2 rounded-2xl bg-[#f6f1ff] p-1 text-sm">
+          {(['7d', '14d', '30d'] as Period[]).map((item) => (
+            <button
+              key={item}
+              onClick={() => setPeriod(item)}
+              className={`rounded-2xl px-3 py-2 font-medium transition-all ${
+                period === item ? 'bg-white text-lavender-700 shadow-sm' : 'text-gray-500'
+              }`}
+            >
+              {item === '7d' ? '7 Days' : item === '14d' ? '14 Days' : '30 Days'}
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* Period selector */}
-      <div className="px-4 mt-4 flex gap-2">
-        {(['7d', '14d', '30d'] as Period[]).map((p) => (
-          <button
-            key={p}
-            onClick={() => setPeriod(p)}
-            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-              period === p
-                ? 'bg-lavender-500 text-white shadow-md'
-                : 'bg-white text-gray-500 hover:bg-lavender-50'
-            }`}
-          >
-            {p === '7d' ? '7 Days' : p === '14d' ? '14 Days' : '30 Days'}
-          </button>
-        ))}
-      </div>
-
-      {/* Fluid intake chart */}
-      <div className="px-4 mt-4">
-        <div className="bg-white rounded-2xl p-4 shadow-sm">
-          <h3 className="text-sm font-bold text-gray-700 mb-3">💧 Fluid Intake (ml)</h3>
+      <div className="space-y-4 px-4 pt-4">
+        <ChartCard title="💧 Fluid intake (ml)">
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={fluidData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#ede7f7" />
               <XAxis dataKey="date" tick={{ fontSize: 10 }} />
               <YAxis tick={{ fontSize: 10 }} />
-              <Tooltip
-                contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-              />
-              <Bar dataKey="totalMl" fill="#8b4dff" radius={[6, 6, 0, 0]} name="ml" />
+              <Tooltip contentStyle={{ borderRadius: 16, border: 'none', boxShadow: '0 12px 32px rgba(28, 25, 63, 0.12)' }} />
+              <Bar dataKey="totalMl" fill="#8b4dff" radius={[10, 10, 0, 0]} name="ml" />
             </BarChart>
           </ResponsiveContainer>
-        </div>
-      </div>
+        </ChartCard>
 
-      {/* Events timeline */}
-      <div className="px-4 mt-4">
-        <div className="bg-white rounded-2xl p-4 shadow-sm">
-          <h3 className="text-sm font-bold text-gray-700 mb-3">📊 Events Timeline</h3>
+        <ChartCard title="📊 Events timeline">
           <ResponsiveContainer width="100%" height={220}>
             <LineChart data={eventData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#ede7f7" />
               <XAxis dataKey="date" tick={{ fontSize: 10 }} />
               <YAxis tick={{ fontSize: 10 }} />
-              <Tooltip
-                contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-              />
+              <Tooltip contentStyle={{ borderRadius: 16, border: 'none', boxShadow: '0 12px 32px rgba(28, 25, 63, 0.12)' }} />
               <Legend />
-              <Line type="monotone" dataKey="wet" stroke="#eab308" strokeWidth={2} name="Wet" dot={{ r: 3 }} />
-              <Line type="monotone" dataKey="pass" stroke="#22c55e" strokeWidth={2} name="Pass" dot={{ r: 3 }} />
-              <Line type="monotone" dataKey="bowel" stroke="#8b4dff" strokeWidth={2} name="Bowel" dot={{ r: 3 }} />
+              <Line type="monotone" dataKey="wet" stroke="#f4b52c" strokeWidth={2} dot={{ r: 3 }} />
+              <Line type="monotone" dataKey="pass" stroke="#22c55e" strokeWidth={2} dot={{ r: 3 }} />
+              <Line type="monotone" dataKey="bowel" stroke="#8b4dff" strokeWidth={2} dot={{ r: 3 }} />
             </LineChart>
           </ResponsiveContainer>
-        </div>
-      </div>
+        </ChartCard>
 
-      {/* Bristol stool distribution */}
-      <div className="px-4 mt-4">
-        <div className="bg-white rounded-2xl p-4 shadow-sm">
-          <h3 className="text-sm font-bold text-gray-700 mb-3">💩 Stool Type Distribution</h3>
+        <ChartCard title="💩 Bristol stool distribution">
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={stoolTypeData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#ede7f7" />
               <XAxis dataKey="type" tick={{ fontSize: 10 }} />
               <YAxis tick={{ fontSize: 10 }} />
-              <Tooltip
-                contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-              />
-              <Bar dataKey="count" fill="#22c55e" radius={[6, 6, 0, 0]} name="Count" />
+              <Tooltip contentStyle={{ borderRadius: 16, border: 'none', boxShadow: '0 12px 32px rgba(28, 25, 63, 0.12)' }} />
+              <Bar dataKey="count" fill="#22c55e" radius={[10, 10, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
-          <p className="text-xs text-gray-400 mt-2 italic">
-            💡 Types 3-4 are ideal. Consult your healthcare provider if types 1-2 or 6-7 are frequent.
-          </p>
-        </div>
+          <p className="mt-2 text-xs text-gray-400">Types 3–4 are usually ideal. Use this alongside clinical advice and your care team&apos;s guidance.</p>
+        </ChartCard>
       </div>
+    </div>
+  );
+}
+
+function ChartCard({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <div className="rounded-[1.75rem] bg-white p-4 shadow-sm ring-1 ring-black/5">
+      <h3 className="mb-3 text-sm font-bold text-gray-700">{title}</h3>
+      {children}
     </div>
   );
 }

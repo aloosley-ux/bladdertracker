@@ -1,9 +1,17 @@
+export type UserRole = 'parent' | 'caregiver' | 'schoolAdmin';
+
 export interface User {
   id: string;
   name: string;
-  role: 'parent' | 'caregiver' | 'child';
+  role: UserRole;
   avatar?: string;
-  email?: string;
+  email: string;
+  createdAt: string;
+}
+
+export interface AccountRecord extends User {
+  passwordHash: string;
+  passwordSalt: string;
 }
 
 export interface Child {
@@ -11,7 +19,10 @@ export interface Child {
   name: string;
   dateOfBirth: string;
   avatar?: string;
-  caregivers: string[]; // user IDs
+  caregivers: string[];
+  parentIds: string[];
+  createdBy: string;
+  lastUpdatedAt: string;
 }
 
 export interface DrinkEntry {
@@ -67,8 +78,44 @@ export interface DailyLog {
 export interface CaregiverInvite {
   id: string;
   childId: string;
+  childName: string;
   email: string;
+  role: UserRole;
   status: 'pending' | 'accepted' | 'declined';
   invitedBy: string;
   createdAt: string;
+  token: string;
+  link: string;
+  acceptedBy?: string;
+}
+
+export interface NotificationItem {
+  id: string;
+  userId: string;
+  title: string;
+  message: string;
+  createdAt: string;
+  read: boolean;
+}
+
+export interface AuditEvent {
+  id: string;
+  userId: string;
+  action: string;
+  subject: string;
+  detail: string;
+  createdAt: string;
+}
+
+export interface ImportedDiaryPayload {
+  drinks?: Array<Partial<DrinkEntry>>;
+  urineEntries?: Array<Partial<UrineEntry>>;
+  bowelEntries?: Array<Partial<BowelEntry>>;
+}
+
+export interface ImportSummary {
+  drinks: number;
+  urineEntries: number;
+  bowelEntries: number;
+  errors: string[];
 }

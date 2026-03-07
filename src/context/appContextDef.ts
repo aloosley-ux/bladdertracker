@@ -1,5 +1,17 @@
 import { createContext } from 'react';
-import type { User, Child, DrinkEntry, UrineEntry, BowelEntry } from '../types';
+import type {
+  AuditEvent,
+  BowelEntry,
+  CaregiverInvite,
+  Child,
+  DrinkEntry,
+  ImportSummary,
+  ImportedDiaryPayload,
+  NotificationItem,
+  UrineEntry,
+  User,
+  UserRole,
+} from '../types';
 
 interface AppState {
   user: User | null;
@@ -8,6 +20,9 @@ interface AppState {
   drinks: DrinkEntry[];
   urineEntries: UrineEntry[];
   bowelEntries: BowelEntry[];
+  invites: CaregiverInvite[];
+  notifications: NotificationItem[];
+  auditTrail: AuditEvent[];
 }
 
 export interface AppContextType extends AppState {
@@ -25,6 +40,11 @@ export interface AppContextType extends AppState {
   updateBowelEntry: (entry: BowelEntry) => void;
   deleteBowelEntry: (id: string) => void;
   exportData: () => void;
+  createInvite: (email: string, role: UserRole, childId: string) => CaregiverInvite | null;
+  acceptInvite: (token: string) => boolean;
+  importDiaryData: (payload: ImportedDiaryPayload, childId: string) => ImportSummary;
+  markNotificationRead: (id: string) => void;
+  clearAllData: () => void;
   selectedChild: Child | null;
 }
 
