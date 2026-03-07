@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 import { format } from 'date-fns';
-import { Droplets, CloudRain, Stethoscope, ArrowLeft } from 'lucide-react';
+import { Droplets, CloudRain, Stethoscope, Moon, Target, Apple, ArrowLeft } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useApp } from '../context/useApp';
 import { generateId } from '../utils/storage';
 import BristolStoolPicker from '../components/BristolStoolPicker';
 import BrandIcon from '../components/BrandIcon';
-import type { BristolStoolType, BowelAmount, UrineEntry } from '../types';
+import type { BristolStoolType, BowelAmount, UrineEntry, SleepEventType, ToiletAttemptOutcome, MealType } from '../types';
 
-type EntryType = 'drink' | 'urine' | 'bowel';
+type EntryType = 'drink' | 'urine' | 'bowel' | 'sleep' | 'toilet' | 'food';
 
 export default function AddEntryPage() {
   const location = useLocation();
@@ -16,7 +16,6 @@ export default function AddEntryPage() {
   const [activeTab, setActiveTab] = useState<EntryType>(initialTab);
   const navigate = useNavigate();
 
-  // Scroll to top on mount
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, []);
@@ -25,11 +24,13 @@ export default function AddEntryPage() {
     { type: 'drink', icon: Droplets, label: 'Drink', color: 'text-blue-500' },
     { type: 'urine', icon: CloudRain, label: 'Urine', color: 'text-yellow-500' },
     { type: 'bowel', icon: Stethoscope, label: 'Bowel', color: 'text-green-500' },
+    { type: 'sleep', icon: Moon, label: 'Sleep', color: 'text-indigo-500' },
+    { type: 'toilet', icon: Target, label: 'Attempt', color: 'text-purple-500' },
+    { type: 'food', icon: Apple, label: 'Food', color: 'text-orange-500' },
   ];
 
   return (
     <div className="pb-20">
-      {/* Brand header */}
       <div className="bg-[linear-gradient(180deg,#fbf7f2_0%,#ffffff_100%)] px-4 pt-4 pb-3">
         <div className="mb-3 flex items-center gap-3">
           <button
@@ -41,30 +42,31 @@ export default function AddEntryPage() {
           <BrandIcon width={110} />
         </div>
 
-        {/* Tabs */}
-        <div className="flex gap-2">
+        <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
           {tabs.map(({ type, icon: Icon, label, color }) => (
             <button
               key={type}
               onClick={() => setActiveTab(type)}
-              className={`flex flex-1 items-center justify-center gap-2 rounded-xl py-3 text-sm font-medium transition-all ${
+              className={`flex items-center justify-center gap-1.5 rounded-xl py-2.5 px-3 text-xs font-medium transition-all whitespace-nowrap ${
                 activeTab === type
                   ? 'bg-lavender-500 text-white shadow-md'
                   : 'bg-white text-gray-500 shadow-sm ring-1 ring-black/5 hover:bg-lavender-50'
               }`}
             >
-              <Icon size={16} className={activeTab === type ? 'text-white' : color} />
+              <Icon size={14} className={activeTab === type ? 'text-white' : color} />
               {label}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Forms */}
       <div className="px-4 mt-4">
         {activeTab === 'drink' && <DrinkForm />}
         {activeTab === 'urine' && <UrineForm />}
         {activeTab === 'bowel' && <BowelForm />}
+        {activeTab === 'sleep' && <SleepForm />}
+        {activeTab === 'toilet' && <ToiletAttemptForm />}
+        {activeTab === 'food' && <FoodForm />}
       </div>
     </div>
   );
@@ -443,6 +445,345 @@ function BowelForm() {
         className="w-full py-3 bg-lavender-500 hover:bg-lavender-600 text-white rounded-xl font-semibold text-sm transition-all shadow-lg shadow-lavender-200"
         disabled={!bristolType}>
         Save Bowel Entry 📋
+      </button>
+    </form>
+  );
+}
+
+function SleepForm() {
+  const { addSleepEntry, selectedChildId, user } = useApp();
+  const navigate = useNavigate();
+  const [time, setTime] = useState(format(new Date(), 'HH:mm'));
+  const [date, setDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+  const [eventType, setEventType] = useState<SleepEventType>('onset');
+  const [duration, setDuration] = useState('');
+  const [quality, setQuality] = useState<number | null>(null);
+  const [nighttimeEvent, setNighttimeEvent] = useState(false);
+  const [notes, setNotes] = useState('');
+
+  const sleepEvents: { value: SleepEventType; label: string; emoji: string }[] = [
+    { value: 'onset', label: 'Sleep onset', emoji: '😴' },
+    { value: 'wake', label: 'Wake up', emoji: '☀️' },
+    { value: 'nap_start', label: 'Nap start', emoji: '💤' },
+    { value: 'nap_end', label: 'Nap end', emoji: '⏰' },
+  ];
+
+  const qualityLabels = [
+    { value: 1, label: 'Poor', emoji: '😫' },
+    { value: 2, label: 'Fair', emoji: '😕' },
+    { value: 3, label: 'OK', emoji: '😐' },
+    { value: 4, label: 'Good', emoji: '🙂' },
+    { value: 5, label: 'Great', emoji: '😊' },
+  ];
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedChildId) return;
+    addSleepEntry({
+      id: generateId(),
+      childId: selectedChildId,
+      date,
+      time,
+      eventType,
+      durationMinutes: duration ? Number(duration) : null,
+      quality: (quality ?? null) as 1 | 2 | 3 | 4 | 5 | null,
+      nighttimeEvent,
+      notes,
+      createdBy: user?.id ?? '',
+      createdAt: new Date().toISOString(),
+    });
+    navigate('/');
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="rounded-3xl bg-[#eee8ff] p-5 shadow-sm space-y-4">
+      <h2 className="text-base font-bold text-gray-800 flex items-center gap-2">
+        <Moon size={18} className="text-indigo-500" /> Log Sleep Event
+      </h2>
+
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="text-xs font-medium text-gray-600">Date</label>
+          <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
+            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
+        </div>
+        <div>
+          <label className="text-xs font-medium text-gray-600">Time</label>
+          <input type="time" value={time} onChange={(e) => setTime(e.target.value)}
+            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
+        </div>
+      </div>
+
+      <div>
+        <label className="text-xs font-medium text-gray-600 block mb-2">Event Type</label>
+        <div className="grid grid-cols-2 gap-2">
+          {sleepEvents.map((se) => (
+            <button key={se.value} type="button" onClick={() => setEventType(se.value)}
+              className={`py-3 rounded-xl text-sm font-medium transition-all ${
+                eventType === se.value
+                  ? 'bg-indigo-500 text-white shadow-md'
+                  : 'bg-white text-gray-600 hover:bg-indigo-50'
+              }`}>
+              {se.emoji} {se.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <label className="text-xs font-medium text-gray-600">Duration (minutes) <span className="text-gray-400 font-normal">— optional</span></label>
+        <input type="number" value={duration} onChange={(e) => setDuration(e.target.value)}
+          placeholder="e.g. 480 for 8 hours"
+          className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm"
+          min="0" />
+      </div>
+
+      <div>
+        <label className="text-xs font-medium text-gray-600 block mb-2">Quality <span className="text-gray-400 font-normal">— optional</span></label>
+        <div className="flex gap-1.5">
+          {qualityLabels.map((q) => (
+            <button key={q.value} type="button" onClick={() => setQuality(quality === q.value ? null : q.value)}
+              className={`flex-1 flex flex-col items-center gap-0.5 py-2 rounded-xl text-xs font-medium transition-all ${
+                quality === q.value
+                  ? 'bg-indigo-100 text-indigo-800 ring-2 ring-indigo-300'
+                  : 'bg-white text-gray-500 hover:bg-indigo-50'
+              }`}>
+              <span className="text-lg">{q.emoji}</span>
+              <span>{q.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <label className="flex items-center gap-3 cursor-pointer">
+          <input type="checkbox" checked={nighttimeEvent} onChange={(e) => setNighttimeEvent(e.target.checked)}
+            className="h-5 w-5 rounded border-gray-300 text-indigo-500 focus:ring-indigo-200" />
+          <span className="text-sm font-medium text-gray-700">🌙 Nighttime bladder/bowel event linked</span>
+        </label>
+      </div>
+
+      <div>
+        <label className="text-xs font-medium text-gray-600">Notes</label>
+        <textarea value={notes} onChange={(e) => setNotes(e.target.value)}
+          placeholder="Optional notes..."
+          className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm resize-none"
+          rows={2} />
+      </div>
+
+      <button type="submit"
+        className="w-full py-3 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl font-semibold text-sm transition-all shadow-lg shadow-indigo-200">
+        Save Sleep Entry 🌙
+      </button>
+    </form>
+  );
+}
+
+function ToiletAttemptForm() {
+  const { addToiletAttemptEntry, selectedChildId, user } = useApp();
+  const navigate = useNavigate();
+  const [time, setTime] = useState(format(new Date(), 'HH:mm'));
+  const [date, setDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+  const [outcome, setOutcome] = useState<ToiletAttemptOutcome>('success');
+  const [supervised, setSupervised] = useState(true);
+  const [prompted, setPrompted] = useState(false);
+  const [duration, setDuration] = useState('');
+  const [notes, setNotes] = useState('');
+
+  const outcomes: { value: ToiletAttemptOutcome; label: string; emoji: string }[] = [
+    { value: 'success', label: 'Success', emoji: '✅' },
+    { value: 'failure', label: 'No result', emoji: '❌' },
+    { value: 'no_event', label: 'Refused', emoji: '🚫' },
+  ];
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedChildId) return;
+    addToiletAttemptEntry({
+      id: generateId(),
+      childId: selectedChildId,
+      date,
+      time,
+      outcome,
+      supervised,
+      prompted,
+      durationMinutes: duration ? Number(duration) : null,
+      notes,
+      createdBy: user?.id ?? '',
+      createdAt: new Date().toISOString(),
+    });
+    navigate('/');
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="rounded-3xl bg-[#f3eeff] p-5 shadow-sm space-y-4">
+      <h2 className="text-base font-bold text-gray-800 flex items-center gap-2">
+        <Target size={18} className="text-purple-500" /> Log Toilet Attempt
+      </h2>
+
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="text-xs font-medium text-gray-600">Date</label>
+          <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
+            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
+        </div>
+        <div>
+          <label className="text-xs font-medium text-gray-600">Time</label>
+          <input type="time" value={time} onChange={(e) => setTime(e.target.value)}
+            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
+        </div>
+      </div>
+
+      <div>
+        <label className="text-xs font-medium text-gray-600 block mb-2">Outcome</label>
+        <div className="flex gap-3">
+          {outcomes.map((o) => (
+            <button key={o.value} type="button" onClick={() => setOutcome(o.value)}
+              className={`flex-1 py-3 rounded-xl text-sm font-medium transition-all ${
+                outcome === o.value
+                  ? 'bg-purple-500 text-white shadow-md'
+                  : 'bg-white text-gray-600 hover:bg-purple-50'
+              }`}>
+              {o.emoji} {o.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex gap-4">
+        <label className="flex items-center gap-3 cursor-pointer flex-1">
+          <input type="checkbox" checked={supervised} onChange={(e) => setSupervised(e.target.checked)}
+            className="h-5 w-5 rounded border-gray-300 text-purple-500 focus:ring-purple-200" />
+          <span className="text-sm font-medium text-gray-700">👀 Supervised</span>
+        </label>
+        <label className="flex items-center gap-3 cursor-pointer flex-1">
+          <input type="checkbox" checked={prompted} onChange={(e) => setPrompted(e.target.checked)}
+            className="h-5 w-5 rounded border-gray-300 text-purple-500 focus:ring-purple-200" />
+          <span className="text-sm font-medium text-gray-700">🔔 Prompted</span>
+        </label>
+      </div>
+
+      <div>
+        <label className="text-xs font-medium text-gray-600">Duration (minutes) <span className="text-gray-400 font-normal">— optional</span></label>
+        <input type="number" value={duration} onChange={(e) => setDuration(e.target.value)}
+          placeholder="Time on toilet in minutes"
+          className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm"
+          min="0" />
+      </div>
+
+      <div>
+        <label className="text-xs font-medium text-gray-600">Notes</label>
+        <textarea value={notes} onChange={(e) => setNotes(e.target.value)}
+          placeholder="Optional notes..."
+          className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm resize-none"
+          rows={2} />
+      </div>
+
+      <button type="submit"
+        className="w-full py-3 bg-purple-500 hover:bg-purple-600 text-white rounded-xl font-semibold text-sm transition-all shadow-lg shadow-purple-200">
+        Save Toilet Attempt 🎯
+      </button>
+    </form>
+  );
+}
+
+function FoodForm() {
+  const { addFoodEntry, selectedChildId, user } = useApp();
+  const navigate = useNavigate();
+  const [time, setTime] = useState(format(new Date(), 'HH:mm'));
+  const [date, setDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+  const [mealType, setMealType] = useState<MealType>('snack');
+  const [description, setDescription] = useState('');
+  const [portions, setPortions] = useState('');
+  const [notes, setNotes] = useState('');
+
+  const mealTypes: { value: MealType; label: string; emoji: string }[] = [
+    { value: 'breakfast', label: 'Breakfast', emoji: '🌅' },
+    { value: 'lunch', label: 'Lunch', emoji: '☀️' },
+    { value: 'dinner', label: 'Dinner', emoji: '🌙' },
+    { value: 'snack', label: 'Snack', emoji: '🍎' },
+  ];
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedChildId || !description.trim()) return;
+    addFoodEntry({
+      id: generateId(),
+      childId: selectedChildId,
+      date,
+      time,
+      mealType,
+      description: description.trim(),
+      portions: portions ? Number(portions) : null,
+      notes,
+      createdBy: user?.id ?? '',
+      createdAt: new Date().toISOString(),
+    });
+    navigate('/');
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="rounded-3xl bg-[#fff5eb] p-5 shadow-sm space-y-4">
+      <h2 className="text-base font-bold text-gray-800 flex items-center gap-2">
+        <Apple size={18} className="text-orange-500" /> Log Food
+      </h2>
+
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="text-xs font-medium text-gray-600">Date</label>
+          <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
+            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
+        </div>
+        <div>
+          <label className="text-xs font-medium text-gray-600">Time</label>
+          <input type="time" value={time} onChange={(e) => setTime(e.target.value)}
+            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
+        </div>
+      </div>
+
+      <div>
+        <label className="text-xs font-medium text-gray-600 block mb-2">Meal Type</label>
+        <div className="grid grid-cols-4 gap-2">
+          {mealTypes.map((m) => (
+            <button key={m.value} type="button" onClick={() => setMealType(m.value)}
+              className={`py-2.5 rounded-xl text-xs font-medium transition-all ${
+                mealType === m.value
+                  ? 'bg-orange-500 text-white shadow-md'
+                  : 'bg-white text-gray-600 hover:bg-orange-50'
+              }`}>
+              {m.emoji} {m.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <label className="text-xs font-medium text-gray-600">Food description</label>
+        <input type="text" value={description} onChange={(e) => setDescription(e.target.value)}
+          placeholder="e.g. Pasta with vegetables, yoghurt"
+          className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm"
+          required />
+      </div>
+
+      <div>
+        <label className="text-xs font-medium text-gray-600">Portions <span className="text-gray-400 font-normal">— optional</span></label>
+        <input type="number" value={portions} onChange={(e) => setPortions(e.target.value)}
+          placeholder="Number of portions"
+          className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm"
+          min="0" step="0.5" />
+      </div>
+
+      <div>
+        <label className="text-xs font-medium text-gray-600">Notes</label>
+        <textarea value={notes} onChange={(e) => setNotes(e.target.value)}
+          placeholder="Dietary notes, allergies, reactions..."
+          className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm resize-none"
+          rows={2} />
+      </div>
+
+      <button type="submit"
+        className="w-full py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-semibold text-sm transition-all shadow-lg shadow-orange-200">
+        Save Food Entry 🍽️
       </button>
     </form>
   );
