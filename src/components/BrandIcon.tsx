@@ -2,18 +2,21 @@ import brandIconUrl from '../assets/brand-icon.svg';
 
 interface BrandIconProps {
   /**
-   * Width in pixels. Height is derived automatically from the logo's
-   * native 520 × 410 aspect ratio. Defaults to 140.
+   * Width in pixels. Height is derived from the logo's native 420×370
+   * aspect ratio (~1.14:1). Defaults to 140.
    *
-   * Swap the brand image by replacing /src/assets/brand-icon.svg.
+   * Replace /src/assets/brand-icon.svg to swap the brand image app-wide.
    */
   width?: number;
   className?: string;
 }
 
+/** Native dimensions of brand-icon.svg viewBox */
+const LOGO_WIDTH = 420;
+const LOGO_HEIGHT = 370;
+
 export default function BrandIcon({ width = 140, className = '' }: BrandIconProps) {
-  // Native viewBox is 520 × 410
-  const height = Math.round((width * 410) / 520);
+  const height = Math.round((width * LOGO_HEIGHT) / LOGO_WIDTH);
   return (
     <img
       src={brandIconUrl}

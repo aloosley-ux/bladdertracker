@@ -1,198 +1,171 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 410" fill="none" role="img" aria-label="BladderTracker logo">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 370" fill="none" role="img" aria-label="BladderTracker logo">
   <defs>
-    <!-- Body: light lavender radial gradient, bright highlight top-left -->
-    <radialGradient id="bodyG" cx="38%" cy="33%" r="65%">
-      <stop offset="0%"   stop-color="#ddd0f8"/>
-      <stop offset="50%"  stop-color="#b89ee6"/>
-      <stop offset="100%" stop-color="#9370d0"/>
+    <!--
+      Brand palette (from style guide):
+        Primary purple : #786CF6
+        Soft Lavender  : #B8AFFF
+        Trust Green    : #44CC3A
+        Background     : #F6F7FF
+    -->
+
+    <!-- Body: lavender highlight → primary purple -->
+    <radialGradient id="bodyG" cx="36%" cy="30%" r="68%">
+      <stop offset="0%"   stop-color="#d4ccff"/>
+      <stop offset="45%"  stop-color="#a99cf8"/>
+      <stop offset="100%" stop-color="#786CF6"/>
     </radialGradient>
-    <!-- Horn fill -->
+
+    <!-- Horn/arm: slightly darker than soft lavender -->
     <linearGradient id="hornG" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%"   stop-color="#c8aef5"/>
-      <stop offset="100%" stop-color="#9b70d8"/>
+      <stop offset="0%"   stop-color="#c0b8ff"/>
+      <stop offset="100%" stop-color="#8f86f8"/>
     </linearGradient>
-    <!-- Legs match body -->
-    <radialGradient id="legG" cx="40%" cy="30%" r="65%">
-      <stop offset="0%"   stop-color="#cdb8f5"/>
-      <stop offset="100%" stop-color="#9068cc"/>
+
+    <!-- Leg gradient matches body -->
+    <radialGradient id="legG" cx="38%" cy="28%" r="65%">
+      <stop offset="0%"   stop-color="#c8c0ff"/>
+      <stop offset="100%" stop-color="#786CF6"/>
     </radialGradient>
-    <!-- Shield outer (teal/mint) -->
-    <linearGradient id="shieldOuter" x1="0.1" y1="0" x2="0.9" y2="1">
-      <stop offset="0%"   stop-color="#78d8be"/>
-      <stop offset="100%" stop-color="#3aaa8c"/>
-    </linearGradient>
-    <!-- Shield inner (lighter teal) -->
-    <linearGradient id="shieldInner" x1="0.1" y1="0" x2="0.8" y2="1">
-      <stop offset="0%"   stop-color="#a0e8d4"/>
-      <stop offset="100%" stop-color="#50c4a8"/>
-    </linearGradient>
-    <!-- Magnifier lens -->
-    <radialGradient id="lensG" cx="35%" cy="35%" r="62%">
+
+    <!-- Magnifying-glass lens: trust green tint -->
+    <radialGradient id="lensG" cx="32%" cy="32%" r="65%">
       <stop offset="0%"   stop-color="#ffffff"/>
-      <stop offset="70%"  stop-color="#e4f4ff"/>
-      <stop offset="100%" stop-color="#c0dff5"/>
+      <stop offset="60%"  stop-color="#d4f7d2"/>
+      <stop offset="100%" stop-color="#a8eea5"/>
     </radialGradient>
-    <!-- Drop shadows -->
-    <filter id="bodyShad" x="-12%" y="-8%" width="124%" height="132%">
-      <feDropShadow dx="0" dy="5" stdDeviation="9" flood-color="#7050b8" flood-opacity="0.28"/>
-    </filter>
-    <filter id="shieldShad" x="-18%" y="-12%" width="136%" height="140%">
-      <feDropShadow dx="2" dy="5" stdDeviation="7" flood-color="#207a64" flood-opacity="0.32"/>
+
+    <!-- Subtle drop shadow on body -->
+    <filter id="bodyShad" x="-14%" y="-8%" width="128%" height="130%">
+      <feDropShadow dx="0" dy="5" stdDeviation="10"
+                    flood-color="#5a50d0" flood-opacity="0.25"/>
     </filter>
   </defs>
 
-  <!-- ─── Ground shadow ─── -->
-  <ellipse cx="182" cy="276" rx="90" ry="13" fill="#b8a0e8" opacity="0.3"/>
+  <!-- ─── Ground ellipse shadow ─── -->
+  <ellipse cx="194" cy="278" rx="94" ry="13" fill="#B8AFFF" opacity="0.35"/>
 
-  <!-- ═══════════════════════════════
-       MASCOT BODY
-       ═══════════════════════════════ -->
-  <!-- Outline ring (dark purple stroke) -->
-  <ellipse cx="182" cy="197" rx="101" ry="80" fill="#7050b0"/>
-  <!-- Body fill with gradient -->
-  <ellipse cx="182" cy="195" rx="96"  ry="75" fill="url(#bodyG)" filter="url(#bodyShad)"/>
+  <!-- ═══════════════════════════════════════
+       BODY
+       ═══════════════════════════════════════ -->
+  <!-- Dark-purple outline ring -->
+  <ellipse cx="194" cy="193" rx="113" ry="88" fill="#5a50cc"/>
+  <!-- Body fill -->
+  <ellipse cx="194" cy="191" rx="108" ry="83" fill="url(#bodyG)" filter="url(#bodyShad)"/>
 
-  <!-- Glossy highlight blob (top-left of body) -->
-  <ellipse cx="153" cy="157" rx="30" ry="20" fill="white" opacity="0.38" transform="rotate(-28 153 157)"/>
+  <!-- Gloss highlight (top-left) -->
+  <ellipse cx="162" cy="147" rx="32" ry="21"
+           fill="white" opacity="0.40" transform="rotate(-28 162 147)"/>
   <!-- Secondary shine dots -->
-  <circle cx="143" cy="182" r="8"   fill="white" opacity="0.42"/>
-  <circle cx="157" cy="168" r="4.5" fill="white" opacity="0.32"/>
-  <circle cx="130" cy="173" r="3"   fill="white" opacity="0.28"/>
+  <circle cx="150" cy="174" r="9"   fill="white" opacity="0.40"/>
+  <circle cx="165" cy="160" r="5"   fill="white" opacity="0.30"/>
+  <circle cx="136" cy="167" r="3.5" fill="white" opacity="0.26"/>
 
-  <!-- ─── Horns ─── -->
-  <!-- Left horn outline -->
-  <ellipse cx="130" cy="132" rx="18" ry="33" fill="#7050b0" transform="rotate(-18 130 132)"/>
-  <!-- Left horn fill -->
-  <ellipse cx="130" cy="130" rx="13" ry="28" fill="url(#hornG)" transform="rotate(-18 130 130)"/>
-  <!-- Right horn outline -->
-  <ellipse cx="234" cy="132" rx="18" ry="33" fill="#7050b0" transform="rotate(18 234 132)"/>
-  <!-- Right horn fill -->
-  <ellipse cx="234" cy="130" rx="13" ry="28" fill="url(#hornG)" transform="rotate(18 234 130)"/>
+  <!-- ═══════════════════════════════════════
+       HORNS  (two curved antler-like bumps)
+       ═══════════════════════════════════════ -->
+  <!-- Left horn – outline -->
+  <ellipse cx="138" cy="124" rx="19" ry="35" fill="#5a50cc" transform="rotate(-20 138 124)"/>
+  <!-- Left horn – fill -->
+  <ellipse cx="138" cy="122" rx="14" ry="30" fill="url(#hornG)" transform="rotate(-20 138 122)"/>
 
-  <!-- ─── Eyes ─── -->
-  <!-- Left eye white -->
-  <ellipse cx="154" cy="192" rx="18" ry="19" fill="white"/>
-  <!-- Right eye white -->
-  <ellipse cx="205" cy="192" rx="18" ry="19" fill="white"/>
-  <!-- Left pupil -->
-  <circle  cx="157" cy="195" r="11" fill="#1a1030"/>
-  <!-- Right pupil -->
-  <circle  cx="208" cy="195" r="11" fill="#1a1030"/>
-  <!-- Left main shine -->
-  <circle  cx="163" cy="188" r="4.5" fill="white"/>
-  <!-- Right main shine -->
-  <circle  cx="214" cy="188" r="4.5" fill="white"/>
-  <!-- Left small shine -->
-  <circle  cx="151" cy="198" r="2.5" fill="white" opacity="0.75"/>
-  <!-- Right small shine -->
-  <circle  cx="202" cy="198" r="2.5" fill="white" opacity="0.75"/>
+  <!-- Right horn – outline -->
+  <ellipse cx="252" cy="124" rx="19" ry="35" fill="#5a50cc" transform="rotate(20 252 124)"/>
+  <!-- Right horn – fill -->
+  <ellipse cx="252" cy="122" rx="14" ry="30" fill="url(#hornG)" transform="rotate(20 252 122)"/>
 
-  <!-- ─── Mouth (open, happy) ─── -->
-  <!-- Outer lip/mouth shape -->
-  <path d="M158,220 Q180,242 204,220" fill="#5a3090"/>
-  <!-- Inner mouth cavity -->
-  <path d="M162,220 Q180,237 200,220" fill="#ff8aa0"/>
-  <!-- Tongue hint -->
-  <ellipse cx="181" cy="232" rx="10" ry="6" fill="#ff6888" opacity="0.8"/>
+  <!-- ═══════════════════════════════════════
+       FACE
+       ═══════════════════════════════════════ -->
+  <!-- Left eye sclera -->
+  <ellipse cx="163" cy="188" rx="19" ry="20" fill="white"/>
+  <!-- Right eye sclera -->
+  <ellipse cx="218" cy="188" rx="19" ry="20" fill="white"/>
+  <!-- Pupils -->
+  <circle cx="166" cy="191" r="12" fill="#1a1040"/>
+  <circle cx="221" cy="191" r="12" fill="#1a1040"/>
+  <!-- Main shine spots -->
+  <circle cx="173" cy="184" r="5"   fill="white"/>
+  <circle cx="228" cy="184" r="5"   fill="white"/>
+  <!-- Small secondary shine -->
+  <circle cx="160" cy="195" r="2.8" fill="white" opacity="0.75"/>
+  <circle cx="215" cy="195" r="2.8" fill="white" opacity="0.75"/>
 
-  <!-- ─── Rosy cheeks ─── -->
-  <ellipse cx="127" cy="216" rx="16" ry="10" fill="#ffb3c0" opacity="0.60"/>
-  <ellipse cx="232" cy="214" rx="16" ry="10" fill="#ffb3c0" opacity="0.60"/>
+  <!-- Open happy mouth -->
+  <!-- Outer (dark lip arc) -->
+  <path d="M167,218 Q192,242 218,218" fill="#5a50cc"/>
+  <!-- Inner mouth (pink) -->
+  <path d="M171,218 Q192,237 214,218" fill="#ff8faa"/>
+  <!-- Tongue -->
+  <ellipse cx="193" cy="232" rx="11" ry="7" fill="#ff6888" opacity="0.85"/>
 
-  <!-- ═══════════════════════════════
-       LEGS  (4 stubby rounded legs)
-       ═══════════════════════════════ -->
-  <!-- Outline (dark ring) -->
-  <ellipse cx="132" cy="266" rx="16" ry="20" fill="#7050b0"/>
-  <ellipse cx="160" cy="270" rx="15" ry="19" fill="#7050b0"/>
-  <ellipse cx="200" cy="270" rx="15" ry="19" fill="#7050b0"/>
-  <ellipse cx="230" cy="266" rx="16" ry="20" fill="#7050b0"/>
-  <!-- Fill -->
-  <ellipse cx="132" cy="265" rx="12" ry="17" fill="url(#legG)"/>
-  <ellipse cx="160" cy="269" rx="11" ry="16" fill="url(#legG)"/>
-  <ellipse cx="200" cy="269" rx="11" ry="16" fill="url(#legG)"/>
-  <ellipse cx="230" cy="265" rx="12" ry="17" fill="url(#legG)"/>
+  <!-- Rosy cheeks -->
+  <ellipse cx="135" cy="212" rx="17" ry="11" fill="#ffb3c0" opacity="0.62"/>
+  <ellipse cx="249" cy="210" rx="17" ry="11" fill="#ffb3c0" opacity="0.62"/>
 
-  <!-- ═══════════════════════════════
+  <!-- ═══════════════════════════════════════
+       LEGS  (4 stubby feet)
+       ═══════════════════════════════════════ -->
+  <!-- Outlines -->
+  <ellipse cx="143" cy="264" rx="17" ry="21" fill="#5a50cc"/>
+  <ellipse cx="171" cy="269" rx="16" ry="20" fill="#5a50cc"/>
+  <ellipse cx="213" cy="269" rx="16" ry="20" fill="#5a50cc"/>
+  <ellipse cx="245" cy="264" rx="17" ry="21" fill="#5a50cc"/>
+  <!-- Fills -->
+  <ellipse cx="143" cy="263" rx="13" ry="18" fill="url(#legG)"/>
+  <ellipse cx="171" cy="268" rx="12" ry="17" fill="url(#legG)"/>
+  <ellipse cx="213" cy="268" rx="12" ry="17" fill="url(#legG)"/>
+  <ellipse cx="245" cy="263" rx="13" ry="18" fill="url(#legG)"/>
+
+  <!-- ═══════════════════════════════════════
        LEFT ARM  (small raised stub)
-       ═══════════════════════════════ -->
-  <ellipse cx="94"  cy="200" rx="16" ry="10" fill="#7050b0" transform="rotate(-25 94 200)"/>
-  <ellipse cx="93"  cy="199" rx="12" ry="7.5" fill="url(#legG)" transform="rotate(-25 93 199)"/>
+       ═══════════════════════════════════════ -->
+  <ellipse cx="97"  cy="197" rx="17" ry="11" fill="#5a50cc" transform="rotate(-28 97 197)"/>
+  <ellipse cx="96"  cy="196" rx="13" ry="8"  fill="url(#legG)" transform="rotate(-28 96 196)"/>
 
-  <!-- ═══════════════════════════════
+  <!-- ═══════════════════════════════════════
        RIGHT ARM + MAGNIFYING GLASS
-       ═══════════════════════════════ -->
+       ═══════════════════════════════════════ -->
   <!-- Arm stub -->
-  <ellipse cx="270" cy="210" rx="16" ry="10" fill="#7050b0" transform="rotate(22 270 210)"/>
-  <ellipse cx="269" cy="209" rx="12" ry="7.5" fill="url(#legG)" transform="rotate(22 269 209)"/>
+  <ellipse cx="286" cy="206" rx="17" ry="11" fill="#5a50cc" transform="rotate(24 286 206)"/>
+  <ellipse cx="285" cy="205" rx="13" ry="8"  fill="url(#legG)" transform="rotate(24 285 205)"/>
 
-  <!-- Magnifying-glass handle -->
-  <rect x="291" y="222" width="9" height="30" rx="4.5" fill="#8058c8" transform="rotate(42 295 237)"/>
+  <!-- Handle (rotated pill) -->
+  <rect x="303" y="220" width="10" height="32" rx="5"
+        fill="#786CF6" transform="rotate(42 308 236)"/>
 
-  <!-- Lens outer ring (purple) -->
-  <circle cx="284" cy="193" r="31" fill="#7050b0"/>
+  <!-- Lens outer ring (dark purple border) -->
+  <circle cx="300" cy="188" r="33" fill="#5a50cc"/>
   <!-- Lens white surround -->
-  <circle cx="284" cy="193" r="27" fill="white"/>
-  <!-- Lens tinted fill -->
-  <circle cx="284" cy="193" r="25" fill="url(#lensG)"/>
+  <circle cx="300" cy="188" r="29" fill="white"/>
+  <!-- Lens tinted fill (trust-green tint) -->
+  <circle cx="300" cy="188" r="27" fill="url(#lensG)"/>
   <!-- Lens glare -->
-  <ellipse cx="274" cy="182" rx="8" ry="5.5" fill="white" opacity="0.65" transform="rotate(-22 274 182)"/>
+  <ellipse cx="290" cy="177" rx="9" ry="6"
+           fill="white" opacity="0.68" transform="rotate(-22 290 177)"/>
 
-  <!-- ═══════════════════════════════
-       TEAL SHIELD  (right of mascot)
-       ═══════════════════════════════ -->
-  <!-- Outer shield border (darker teal) -->
-  <path d="M328,146 L402,146 L402,212 Q402,264 365,282 Q328,264 328,212 Z"
-        fill="#2a9878" filter="url(#shieldShad)"/>
-  <!-- Inner shield lighter teal gradient -->
-  <path d="M334,152 L396,152 L396,212 Q396,258 365,274 Q334,258 334,212 Z"
-        fill="url(#shieldOuter)"/>
-  <!-- Shield face (even lighter) -->
-  <path d="M339,158 L391,158 L391,212 Q391,252 365,267 Q339,252 339,212 Z"
-        fill="url(#shieldInner)"/>
-  <!-- Shield sheen (diagonal highlight top) -->
-  <path d="M343,161 L378,161 L376,178 Q362,186 348,178 Z" fill="white" opacity="0.22"/>
-  <!-- Shield sparkle glint -->
-  <g transform="translate(388,168)">
-    <path d="M0,-6 L1,-1 L6,0 L1,1 L0,6 L-1,1 L-6,0 L-1,-1 Z" fill="white" opacity="0.55"/>
-  </g>
-  <!-- Checkmark -->
-  <polyline points="348,216 362,232 386,198"
-            stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-
-  <!-- ═══════════════════════════════
-       SPARKLES  (above mascot)
-       ═══════════════════════════════ -->
+  <!-- ═══════════════════════════════════════
+       SPARKLES  (above mascot, #B8AFFF)
+       ═══════════════════════════════════════ -->
   <!-- Centre sparkle (largest) -->
-  <g transform="translate(182,97)">
-    <path d="M0,-15 L2.8,-2.8 L15,0 L2.8,2.8 L0,15 L-2.8,2.8 L-15,0 L-2.8,-2.8 Z"
-          fill="#c8aef5"/>
-  </g>
+  <path d="M194,87 L197,97 L207,100 L197,103 L194,113 L191,103 L181,100 L191,97 Z"
+        fill="#B8AFFF"/>
   <!-- Left sparkle -->
-  <g transform="translate(150,112)">
-    <path d="M0,-10 L1.8,-1.8 L10,0 L1.8,1.8 L0,10 L-1.8,1.8 L-10,0 L-1.8,-1.8 Z"
-          fill="#c8aef5" opacity="0.82"/>
-  </g>
+  <path d="M160,102 L162,109 L169,111 L162,113 L160,120 L158,113 L151,111 L158,109 Z"
+        fill="#B8AFFF" opacity="0.82"/>
   <!-- Right sparkle -->
-  <g transform="translate(215,107)">
-    <path d="M0,-9 L1.6,-1.6 L9,0 L1.6,1.6 L0,9 L-1.6,1.6 L-9,0 L-1.6,-1.6 Z"
-          fill="#c8aef5" opacity="0.78"/>
-  </g>
+  <path d="M230,97 L232,104 L239,106 L232,108 L230,115 L228,108 L221,106 L228,104 Z"
+        fill="#B8AFFF" opacity="0.76"/>
 
-  <!-- Motion swooshes (upper-right, near shield) -->
-  <path d="M308,148 Q317,141 325,147" stroke="#c0a0f0" stroke-width="5.5" stroke-linecap="round" fill="none" opacity="0.72"/>
-  <path d="M313,163 Q322,156 330,162" stroke="#c0a0f0" stroke-width="4"   stroke-linecap="round" fill="none" opacity="0.55"/>
-
-  <!-- ═══════════════════════════════
+  <!-- ═══════════════════════════════════════
        WORDMARK  "BladderTracker"
-       ═══════════════════════════════ -->
+       ═══════════════════════════════════════ -->
   <text
-    x="255" y="368"
+    x="210" y="338"
     text-anchor="middle"
     font-family="'Nunito', 'Varela Round', 'Fredoka One', 'Arial Rounded MT Bold', Arial, sans-serif"
-    font-size="60"
+    font-size="52"
     font-weight="800"
-    fill="#9b70d8"
-    letter-spacing="-1"
+    fill="#786CF6"
+    letter-spacing="-0.5"
   >BladderTracker</text>
 </svg>

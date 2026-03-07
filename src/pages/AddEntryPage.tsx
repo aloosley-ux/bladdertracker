@@ -30,7 +30,7 @@ export default function AddEntryPage() {
   return (
     <div className="pb-20">
       {/* Brand header */}
-      <div className="bg-[linear-gradient(180deg,#fbf7f2_0%,#ffffff_100%)] px-4 pt-5 pb-3">
+      <div className="bg-[linear-gradient(180deg,#fbf7f2_0%,#ffffff_100%)] px-4 pt-4 pb-3">
         <div className="mb-3 flex items-center gap-3">
           <button
             onClick={() => navigate('/')}
@@ -38,13 +38,7 @@ export default function AddEntryPage() {
           >
             <ArrowLeft size={18} />
           </button>
-          <div className="flex flex-1 items-center gap-2">
-            <BrandIcon size={36} />
-            <div>
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-lavender-500">Add Entry</p>
-              <h1 className="text-base font-bold text-gray-800">Log a new event</h1>
-            </div>
-          </div>
+          <BrandIcon width={110} />
         </div>
 
         {/* Tabs */}

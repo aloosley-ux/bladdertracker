@@ -14,6 +14,7 @@ import {
   updateAccountPassword,
 } from '../utils/storage';
 import type { AccountRecord, User, UserRole } from '../types';
+import BrandIcon from '../components/BrandIcon';
 
 type AuthMode = 'register' | 'login' | 'reset';
 
@@ -156,23 +157,10 @@ export default function LoginPage() {
         <div className="overflow-hidden rounded-[2rem] bg-white shadow-[0_30px_80px_rgba(139,77,255,0.12)] ring-1 ring-black/5">
           {/* Header */}
           <div className="bg-[radial-gradient(ellipse_at_top,#f2e7ff_0%,#eef8ff_50%,#ffffff_100%)] px-6 pb-5 pt-7 text-center">
-            <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center">
-              <div className="relative flex h-[4.5rem] w-14 items-center justify-center rounded-[40%] border border-white/70 bg-white shadow-lg">
-                <div className="absolute -top-2.5 left-1 h-5 w-5 rounded-full bg-slate-100" />
-                <div className="absolute -top-2.5 right-1 h-5 w-5 rounded-full bg-slate-100" />
-                <div className="absolute inset-x-1.5 top-4 rounded-[999px] bg-[#203674] px-2 py-2 shadow-inner">
-                  <div className="flex items-center justify-between">
-                    <span className="h-2.5 w-2.5 rounded-full bg-cyan-300 shadow-[0_0_10px_rgba(34,211,238,0.7)]" />
-                    <span className="h-2.5 w-2.5 rounded-full bg-cyan-300 shadow-[0_0_10px_rgba(34,211,238,0.7)]" />
-                  </div>
-                </div>
-                <div className="absolute bottom-3 h-6 w-6 rounded-lg bg-gradient-to-b from-cyan-200 to-sky-400 shadow-inner" />
-                <div className="absolute -bottom-1.5 left-2 h-4 w-3 rounded-full bg-[#28478f]" />
-                <div className="absolute -bottom-1.5 right-2 h-4 w-3 rounded-full bg-[#28478f]" />
-              </div>
+            <div className="flex justify-center mb-1">
+              <BrandIcon width={180} />
             </div>
-            <p className="text-xs font-bold tracking-wide text-lavender-500 uppercase">BladderTracker</p>
-            <h1 className="mt-1 text-2xl font-bold tracking-tight text-gray-900">
+            <h1 className="mt-1 text-xl font-bold tracking-tight text-gray-900">
               Smarter journaling for families &amp; schools
             </h1>
             <div className="mt-3 flex items-center justify-center gap-3 text-[11px] text-gray-500">

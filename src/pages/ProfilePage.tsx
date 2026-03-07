@@ -50,14 +50,11 @@ export default function ProfilePage() {
 
   return (
     <div className="pb-20">
-      <div className="bg-[linear-gradient(180deg,#fbf7f2_0%,#ffffff_100%)] px-4 pb-4 pt-5">
-        <div className="flex items-center gap-3">
-          <BrandIcon size={40} />
-          <div>
-            <p className="text-[11px] font-semibold uppercase tracking-widest text-lavender-500">Settings</p>
-            <h1 className="text-lg font-bold leading-snug text-gray-900">Security, profiles, and audit</h1>
-            <p className="text-xs text-gray-500">Designed for a calmer, production-style experience with clearer ownership and data handling.</p>
-          </div>
+      <div className="bg-[linear-gradient(180deg,#fbf7f2_0%,#ffffff_100%)] px-4 pb-4 pt-4">
+        <div className="flex flex-col items-center text-center">
+          <BrandIcon width={130} />
+          <h1 className="mt-1 text-base font-bold text-gray-900">Security, profiles, and audit</h1>
+          <p className="mt-0.5 text-xs text-gray-500">Designed for a calmer, production-style experience with clearer ownership and data handling.</p>
         </div>
       </div>
 
