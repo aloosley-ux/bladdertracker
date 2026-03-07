@@ -30,40 +30,34 @@ A responsive web app for families to digitally track paediatric bladder and bowe
 ## Architecture
 
 ```
-├── api/                # Vercel Serverless Functions (backend)
-│   ├── _lib/           # Shared utilities (not deployed as functions)
-│   │   ├── auth.ts     # JWT session management, CORS helpers
-│   │   └── db.ts       # Database connection and migration
-│   ├── auth/           # Authentication endpoints
-│   │   ├── register.ts # POST /api/auth/register
-│   │   ├── login.ts    # POST /api/auth/login
-│   │   ├── logout.ts   # POST /api/auth/logout
-│   │   ├── session.ts  # GET  /api/auth/session
-│   │   └── reset.ts    # POST /api/auth/reset
-│   ├── children.ts     # GET/POST/PUT /api/children
-│   ├── drinks.ts       # GET/POST/PUT/DELETE /api/drinks
-│   ├── urine.ts        # GET/POST/PUT/DELETE /api/urine
-│   ├── bowel.ts        # GET/POST/PUT/DELETE /api/bowel
-│   ├── invites.ts      # GET/POST /api/invites (create & accept)
-│   ├── notifications.ts# GET/PUT /api/notifications
-│   ├── audit.ts        # GET /api/audit
-│   ├── export.ts       # GET /api/export (CSV download)
-│   ├── import.ts       # POST /api/import (bulk data import)
-│   └── migrate.ts      # POST /api/migrate (database setup)
-├── src/                # Frontend React application
-│   ├── components/     # Reusable UI components
-│   ├── context/        # React context for app state
-│   ├── pages/          # Page components (routed)
-│   ├── types/          # TypeScript type definitions
-│   ├── utils/          # Utility functions
-│   │   ├── api.ts      # Frontend API client (fetch-based)
-│   │   ├── auth.ts     # Client-side auth helpers (local mode)
-│   │   ├── importers.ts# File import parsers (CSV/JSON/XLSX)
-│   │   └── storage.ts  # localStorage fallback (local mode)
+├── api/                  # Vercel Serverless Functions (10 functions, Hobby-plan safe)
+│   ├── _lib/             # Shared utilities (not deployed as functions)
+│   │   ├── auth.ts       # JWT session management, CORS helpers
+│   │   └── db.ts         # Database connection, migration, shared queries
+│   ├── auth.ts           # POST /api/auth (action: register|login|logout|reset), GET /api/auth (session)
+│   ├── children.ts       # GET/POST/PUT /api/children
+│   ├── drinks.ts         # GET/POST/PUT/DELETE /api/drinks
+│   ├── urine.ts          # GET/POST/PUT/DELETE /api/urine
+│   ├── bowel.ts          # GET/POST/PUT/DELETE /api/bowel
+│   ├── invites.ts        # GET/POST /api/invites (create & accept)
+│   ├── notifications.ts  # GET/PUT /api/notifications
+│   ├── audit.ts          # GET /api/audit
+│   ├── data.ts           # GET /api/data (CSV export), POST /api/data (bulk import)
+│   └── migrate.ts        # POST /api/migrate (database setup)
+├── src/                  # Frontend React application
+│   ├── components/       # Reusable UI components
+│   ├── context/          # React context for app state
+│   ├── pages/            # Page components (routed)
+│   ├── types/            # TypeScript type definitions
+│   ├── utils/            # Utility functions
+│   │   ├── api.ts        # Frontend API client (fetch-based)
+│   │   ├── auth.ts       # Client-side auth helpers (local mode)
+│   │   ├── importers.ts  # File import parsers (CSV/JSON/XLSX)
+│   │   └── storage.ts    # localStorage fallback (local mode)
 │   ├── App.tsx
 │   ├── index.css
 │   └── main.tsx
-├── vercel.json         # Vercel deployment configuration
+├── vercel.json           # Vercel deployment configuration
 └── package.json
 ```
 
