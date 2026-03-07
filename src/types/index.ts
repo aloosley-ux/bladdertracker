@@ -77,6 +77,7 @@ export interface Milestone {
   milestoneType?: 'developmental' | 'educational' | 'medical' | 'therapy' | 'custom';
   status: MilestoneStatus;
   dateAchieved?: string | null;
+  targetDate?: string | null;
   notes: string;
   sourceRole?: UserRole;
   createdBy: string;

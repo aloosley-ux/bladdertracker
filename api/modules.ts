@@ -4,6 +4,8 @@ import { getSessionFromRequest, generateId, cors } from './_lib/auth.js';
 
 type NewTrackerType = 'mood' | 'sensory' | 'medication' | 'therapy' | 'routine' | 'milestones';
 const VALID_TYPES = new Set<NewTrackerType>(['mood', 'sensory', 'medication', 'therapy', 'routine', 'milestones']);
+const DAY_IN_MS = 24 * 60 * 60 * 1000;
+const WEEK_IN_MS = 7 * DAY_IN_MS;
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   cors(res);
@@ -110,7 +112,7 @@ async function handleGet(req: VercelRequest, res: VercelResponse, userId: string
     // milestones
     result = await sql`
       SELECT id, child_id AS "childId", name, description, category, module_id AS "moduleId",
-             milestone_type AS "milestoneType", status, date_achieved AS "dateAchieved", notes,
+             milestone_type AS "milestoneType", status, target_date AS "targetDate", date_achieved AS "dateAchieved", notes,
              source_role AS "sourceRole", created_by AS "createdBy", created_at AS "createdAt"
       FROM milestones WHERE child_id = ANY(${childIds}) ORDER BY created_at DESC
     `;
@@ -161,8 +163,8 @@ async function handlePost(req: VercelRequest, res: VercelResponse, userId: strin
       const snoozedUntil = reminder.snoozedUntil ?? null;
       const nextReminderAt = enabled
         ? reminder.nextReminderAt ?? (frequency === 'daily'
-          ? new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
-          : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString())
+          ? new Date(Date.now() + DAY_IN_MS).toISOString()
+          : new Date(Date.now() + WEEK_IN_MS).toISOString())
         : null;
 
       await sql`
@@ -257,13 +259,14 @@ async function handlePost(req: VercelRequest, res: VercelResponse, userId: strin
       moduleId = 'milestones',
       milestoneType = 'developmental',
       status = 'not_started',
+      targetDate = null,
       dateAchieved = null,
       sourceRole = null,
     } = body;
     if (!name || !name.trim()) { res.status(400).json({ error: 'Milestone name is required' }); return; }
     await sql`
-      INSERT INTO milestones (id, child_id, name, description, category, module_id, milestone_type, status, date_achieved, notes, source_role, created_by)
-      VALUES (${id}, ${childId}, ${name.trim()}, ${description}, ${category}, ${moduleId}, ${milestoneType}, ${status}, ${dateAchieved}, ${notes}, ${sourceRole}, ${userId})
+      INSERT INTO milestones (id, child_id, name, description, category, module_id, milestone_type, status, target_date, date_achieved, notes, source_role, created_by)
+      VALUES (${id}, ${childId}, ${name.trim()}, ${description}, ${category}, ${moduleId}, ${milestoneType}, ${status}, ${targetDate}, ${dateAchieved}, ${notes}, ${sourceRole}, ${userId})
     `;
     await sql`
       INSERT INTO audit_events (id, user_id, action, subject, detail)
@@ -360,12 +363,13 @@ async function handlePut(req: VercelRequest, res: VercelResponse, userId: string
       moduleId = 'milestones',
       milestoneType = 'developmental',
       status = 'not_started',
+      targetDate = null,
       dateAchieved = null,
       sourceRole = null,
     } = body;
     await sql`
       UPDATE milestones SET name=${name}, description=${description}, category=${category},
-        module_id=${moduleId}, milestone_type=${milestoneType}, status=${status},
+        module_id=${moduleId}, milestone_type=${milestoneType}, status=${status}, target_date=${targetDate},
         date_achieved=${dateAchieved}, notes=${notes}, source_role=${sourceRole}
       WHERE id = ${id}
     `;

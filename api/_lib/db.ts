@@ -296,6 +296,7 @@ export async function migrate(): Promise<string[]> {
       module_id VARCHAR(50) NOT NULL DEFAULT 'milestones',
       milestone_type VARCHAR(30) NOT NULL DEFAULT 'developmental',
       status VARCHAR(20) NOT NULL DEFAULT 'not_started' CHECK (status IN ('not_started', 'in_progress', 'achieved')),
+      target_date VARCHAR(20),
       date_achieved VARCHAR(20),
       notes TEXT DEFAULT '',
       source_role VARCHAR(30),
@@ -306,6 +307,7 @@ export async function migrate(): Promise<string[]> {
   log.push('milestones table ready');
   await sql`ALTER TABLE milestones ADD COLUMN IF NOT EXISTS module_id VARCHAR(50) NOT NULL DEFAULT 'milestones'`;
   await sql`ALTER TABLE milestones ADD COLUMN IF NOT EXISTS milestone_type VARCHAR(30) NOT NULL DEFAULT 'developmental'`;
+  await sql`ALTER TABLE milestones ADD COLUMN IF NOT EXISTS target_date VARCHAR(20)`;
   await sql`ALTER TABLE milestones ADD COLUMN IF NOT EXISTS source_role VARCHAR(30)`;
   log.push('milestones columns up to date');
 

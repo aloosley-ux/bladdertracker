@@ -27,6 +27,8 @@ import { getImportTemplateDescription, parseImportFile } from '../utils/importer
 import type { Child, ModuleId } from '../types';
 import { DEFAULT_MODULES } from '../types';
 
+const REMINDER_ENABLED_MODULES: ModuleId[] = ['milestones', 'therapy', 'routine', 'mood'];
+
 export default function SettingsPage() {
   const {
     user,
@@ -173,6 +175,7 @@ export default function SettingsPage() {
   const reminderForChild = selectedChildId
     ? reminderPreferences.filter((entry) => entry.childId === selectedChildId)
     : [];
+  const reminderModules = enabledModules.filter((moduleId) => REMINDER_ENABLED_MODULES.includes(moduleId));
 
   return (
     <div className="pb-20">
@@ -308,9 +311,7 @@ export default function SettingsPage() {
               Opt in to daily or weekly milestone reminders. Reminders stay scoped to this child profile.
             </p>
             <div className="space-y-2">
-              {enabledModules
-                .filter((moduleId) => moduleId === 'milestones' || moduleId === 'therapy' || moduleId === 'routine' || moduleId === 'mood')
-                .map((moduleId) => {
+              {reminderModules.map((moduleId) => {
                   const existing = reminderForChild.find((entry) => entry.moduleId === moduleId);
                   const enabled = existing?.enabled ?? false;
                   const frequency = existing?.frequency ?? 'weekly';
@@ -328,8 +329,7 @@ export default function SettingsPage() {
                           data-on={enabled}
                           onClick={() => {
                             if (!selectedChildId) return;
-                            const next = enabledModules
-                              .filter((id) => id === 'milestones' || id === 'therapy' || id === 'routine' || id === 'mood')
+                            const next = reminderModules
                               .map((id) => {
                                 const item = reminderForChild.find((entry) => entry.moduleId === id);
                                 if (id !== moduleId) return item ?? { moduleId: id, enabled: false, frequency: 'weekly' as const };
@@ -347,8 +347,7 @@ export default function SettingsPage() {
                             value={frequency}
                             onChange={(event) => {
                               if (!selectedChildId) return;
-                              const next = enabledModules
-                                .filter((id) => id === 'milestones' || id === 'therapy' || id === 'routine' || id === 'mood')
+                              const next = reminderModules
                                 .map((id) => {
                                   const item = reminderForChild.find((entry) => entry.moduleId === id);
                                   if (id !== moduleId) return item ?? { moduleId: id, enabled: false, frequency: 'weekly' as const };

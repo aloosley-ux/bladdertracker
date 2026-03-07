@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
-import { addDays, addYears, format, isAfter, isBefore, isSameDay, parseISO, startOfDay, startOfMonth, startOfWeek } from 'date-fns';
-import { Calendar, ChevronRight, CircleHelp, Plus, RefreshCcw } from 'lucide-react';
+import { addDays, format, isAfter, isBefore, isSameDay, parseISO, startOfDay, startOfMonth, startOfWeek } from 'date-fns';
+import { Calendar, ChevronRight, CircleHelp, Plus, X } from 'lucide-react';
 import { useApp } from '../context/useApp';
 import type { Milestone, MilestoneCategory, MilestoneStatus, ModuleId } from '../types';
 import { DEFAULT_MODULES } from '../types';
@@ -47,6 +47,7 @@ const ZOOM_BUCKET_FORMAT: Record<ZoomMode, string> = {
 
 function milestoneDate(milestone: Milestone): Date {
   if (milestone.dateAchieved) return parseISO(milestone.dateAchieved);
+  if (milestone.targetDate) return parseISO(milestone.targetDate);
   return parseISO(milestone.createdAt);
 }
 
@@ -143,8 +144,9 @@ export default function MilestonesPage() {
       category: formCategory,
       moduleId: formModuleId,
       milestoneType: formType,
-      status: isSameDay(parseISO(formTargetDate), new Date()) ? 'in_progress' : 'not_started',
-      dateAchieved: formTargetDate,
+      status: isSameDay(startOfDay(parseISO(formTargetDate)), startOfDay(new Date())) ? 'in_progress' : 'not_started',
+      targetDate: formTargetDate,
+      dateAchieved: null,
       notes: formNotes.trim(),
       sourceRole: user?.role,
       createdBy: user?.id ?? '',
@@ -154,7 +156,7 @@ export default function MilestonesPage() {
     setFormName('');
     setFormDescription('');
     setFormNotes('');
-    setFormTargetDate(format(addYears(new Date(), 0), 'yyyy-MM-dd'));
+    setFormTargetDate(format(new Date(), 'yyyy-MM-dd'));
     setShowForm(false);
   };
 
@@ -315,7 +317,13 @@ export default function MilestonesPage() {
                             <button
                               key={status}
                               type="button"
-                              onClick={() => updateMilestone({ ...entry, status, dateAchieved: status === 'achieved' ? format(new Date(), 'yyyy-MM-dd') : entry.dateAchieved })}
+                              onClick={() =>
+                                updateMilestone({
+                                  ...entry,
+                                  status,
+                                  dateAchieved: status === 'achieved' ? format(new Date(), 'yyyy-MM-dd') : null,
+                                })
+                              }
                               className={`min-h-10 rounded-full px-3 text-xs font-semibold ${entry.status === status ? 'bg-violet-600 text-white' : 'bg-white text-slate-700'}`}
                             >
                               {STATUS_LABELS[status]}
@@ -342,7 +350,7 @@ export default function MilestonesPage() {
             <div className="mb-2 flex items-center justify-between">
               <h2 className="text-lg font-bold text-slate-900">{MILESTONE_GUIDANCE[guidanceMilestone.category].title}</h2>
               <button type="button" onClick={() => setGuidanceMilestone(null)} className="rounded-full bg-slate-100 p-2" aria-label="Close guidance panel">
-                <RefreshCcw size={14} />
+                <X size={14} />
               </button>
             </div>
             <p className="text-sm text-slate-600">{MILESTONE_GUIDANCE[guidanceMilestone.category].whatItMeans}</p>

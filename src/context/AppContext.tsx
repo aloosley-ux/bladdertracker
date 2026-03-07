@@ -32,6 +32,9 @@ function isApiAvailable(): boolean {
   return typeof window !== 'undefined' && !!import.meta.env.VITE_USE_CLOUD;
 }
 
+const DAY_IN_MS = 24 * 60 * 60 * 1000;
+const WEEK_IN_MS = 7 * DAY_IN_MS;
+
 export function AppProvider({ children: childrenProp }: { children: ReactNode }) {
   const cloud = isApiAvailable();
 
@@ -803,7 +806,9 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
       try {
         await api.apiSetReminderPreferences(childId, reminders);
         await refreshCloudData(user);
-      } catch { /* ignore */ }
+      } catch (error) {
+        console.error('Failed to persist reminder preferences', error);
+      }
       return;
     }
 
@@ -816,8 +821,8 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
       const enabled = entry.enabled ?? found?.enabled ?? true;
       const nextReminderAt = enabled
         ? (frequency === 'daily'
-          ? new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
-          : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString())
+          ? new Date(Date.now() + DAY_IN_MS).toISOString()
+          : new Date(Date.now() + WEEK_IN_MS).toISOString())
         : null;
 
       return {
