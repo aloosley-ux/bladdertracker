@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { useApp } from '../context/useApp';
 import { useTheme } from '../context/useTheme';
 import { generateId } from '../utils/storage';
+import { apiDeleteAccount } from '../utils/api';
 import BrandBanner from '../components/BrandBanner';
 import type { Child, ModuleId } from '../types';
 import { DEFAULT_MODULES } from '../types';
@@ -28,7 +29,7 @@ export default function ProfilePage() {
   const [showDeleteAccount, setShowDeleteAccount] = useState(false);
   const [deleteAccountText, setDeleteAccountText] = useState('');
 
-  const cloud = !!(typeof import.meta !== 'undefined' && import.meta.env?.VITE_USE_CLOUD);
+  const cloud = typeof window !== 'undefined' && !!import.meta.env.VITE_USE_CLOUD;
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
@@ -87,11 +88,12 @@ export default function ProfilePage() {
   const handleDeleteAccount = async () => {
     if (deleteAccountText !== 'DELETE MY ACCOUNT') return;
     try {
-      await import('../utils/api').then(m => m.apiDeleteAccount());
+      await apiDeleteAccount();
       clearAllData();
     } catch {
-      // ignore, account may still be cleared locally
-      clearAllData();
+      setDeleteAccountText('');
+      setShowDeleteAccount(false);
+      alert('Account deletion failed. Please try again or contact support.');
     }
   };
 

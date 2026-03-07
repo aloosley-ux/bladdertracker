@@ -159,10 +159,10 @@ async function handlePost(req: VercelRequest, res: VercelResponse, userId: strin
     `;
   } else if (type === 'medication') {
     const { name = '', dosage = '', administered = true } = body;
-    if (!name) { res.status(400).json({ error: 'Medication name is required' }); return; }
+    if (!name || !name.trim()) { res.status(400).json({ error: 'Medication name is required' }); return; }
     await sql`
       INSERT INTO medication_entries (id, child_id, date, time, name, dosage, administered, notes, created_by)
-      VALUES (${id}, ${childId}, ${date}, ${time}, ${name}, ${dosage}, ${administered}, ${notes}, ${userId})
+      VALUES (${id}, ${childId}, ${date}, ${time}, ${name.trim()}, ${dosage}, ${administered}, ${notes}, ${userId})
     `;
     await sql`
       INSERT INTO audit_events (id, user_id, action, subject, detail)
@@ -180,10 +180,10 @@ async function handlePost(req: VercelRequest, res: VercelResponse, userId: strin
     `;
   } else if (type === 'routine') {
     const { routineName = '', completed = true, durationMinutes = null } = body;
-    if (!routineName) { res.status(400).json({ error: 'routineName is required' }); return; }
+    if (!routineName || !routineName.trim()) { res.status(400).json({ error: 'routineName is required' }); return; }
     await sql`
       INSERT INTO routine_entries (id, child_id, date, time, routine_name, completed, duration_minutes, notes, created_by)
-      VALUES (${id}, ${childId}, ${date}, ${time}, ${routineName}, ${completed}, ${durationMinutes}, ${notes}, ${userId})
+      VALUES (${id}, ${childId}, ${date}, ${time}, ${routineName.trim()}, ${completed}, ${durationMinutes}, ${notes}, ${userId})
     `;
     await sql`
       INSERT INTO audit_events (id, user_id, action, subject, detail)
@@ -192,10 +192,10 @@ async function handlePost(req: VercelRequest, res: VercelResponse, userId: strin
   } else {
     // milestones
     const { name = '', description = '', category = 'other', status = 'not_started', dateAchieved = null } = body;
-    if (!name) { res.status(400).json({ error: 'Milestone name is required' }); return; }
+    if (!name || !name.trim()) { res.status(400).json({ error: 'Milestone name is required' }); return; }
     await sql`
       INSERT INTO milestones (id, child_id, name, description, category, status, date_achieved, notes, created_by)
-      VALUES (${id}, ${childId}, ${name}, ${description}, ${category}, ${status}, ${dateAchieved}, ${notes}, ${userId})
+      VALUES (${id}, ${childId}, ${name.trim()}, ${description}, ${category}, ${status}, ${dateAchieved}, ${notes}, ${userId})
     `;
     await sql`
       INSERT INTO audit_events (id, user_id, action, subject, detail)

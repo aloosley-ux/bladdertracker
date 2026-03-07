@@ -136,7 +136,7 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
       if (resolvedChildId) {
         api.apiGetEnabledModules(resolvedChildId)
           .then(setEnabledModulesState)
-          .catch(() => setEnabledModulesState([]));
+          .catch((err) => { console.error('Failed to load enabled modules:', err); setEnabledModulesState([]); });
       } else {
         setEnabledModulesState([]);
       }
@@ -266,7 +266,7 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
     if (cloud) {
       api.apiGetEnabledModules(childId)
         .then(setEnabledModulesState)
-        .catch(() => setEnabledModulesState([]));
+        .catch((err) => { console.error('Failed to load enabled modules:', err); setEnabledModulesState([]); });
     } else {
       setEnabledModulesState(localStorage.getEnabledModules(childId));
     }
