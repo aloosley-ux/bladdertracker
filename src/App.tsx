@@ -6,6 +6,7 @@ import { useApp } from './context/useApp';
 import BottomNav from './components/BottomNav';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
+import TodayPage from './pages/TodayPage';
 import AddEntryPage from './pages/AddEntryPage';
 import ChartsPage from './pages/ChartsPage';
 import CalendarPage from './pages/CalendarPage';
@@ -55,10 +56,11 @@ function AppRoutes() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--bg-primary)] max-w-lg mx-auto relative">
+    <div className="min-h-screen bg-[var(--bg-primary)] max-w-2xl mx-auto relative">
       <AdminAccessHandler />
       <Routes>
-        <Route path="/" element={<DashboardPage />} />
+        <Route path="/" element={<TodayPage />} />
+        <Route path="/journal" element={<DashboardPage />} />
         <Route path="/add" element={<AddEntryPage />} />
         <Route path="/charts" element={<ChartsPage />} />
         <Route path="/calendar" element={<CalendarPage />} />

@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { Compass, Crown, Home, Settings, UsersRound, Star } from 'lucide-react';
+import { BookOpen, Compass, Crown, Home, Settings, UsersRound } from 'lucide-react';
 import { useApp } from '../context/useApp';
 
 export default function BottomNav() {
@@ -7,19 +7,20 @@ export default function BottomNav() {
   const isAdmin = user?.role === 'admin';
 
   const navItems = [
-    { to: '/', icon: Home, label: 'Journal' },
-    { to: '/milestones', icon: Star, label: 'Milestones' },
+    { to: '/', icon: Home, label: 'Today' },
+    { to: '/journal', icon: BookOpen, label: 'Journal' },
     { to: '/charts', icon: Compass, label: 'Explore' },
-    { to: '/caregiver', icon: UsersRound, label: 'Caregiver' },
+    { to: '/caregiver', icon: UsersRound, label: 'Care' },
     { to: '/profile', icon: Settings, label: 'Settings' },
     ...(isAdmin ? [{ to: '/admin', icon: Crown, label: 'Admin' }] : []),
   ];
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-lavender-100/80 bg-white/95 backdrop-blur safe-area-bottom">
-      <div className="mx-auto flex h-17 max-w-lg items-center justify-around px-2">
+      <div className="mx-auto flex h-17 max-w-2xl items-center justify-around px-2">
         {navItems.map(({ to, icon: Icon, label }) => (
           <NavLink
+            end
             key={to}
             to={to}
             className={({ isActive }) =>
