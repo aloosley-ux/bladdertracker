@@ -1,6 +1,6 @@
 # BladderTracker 🧸
 
-A responsive web app for families to digitally track paediatric bladder and bowel diaries. Built with React, TypeScript, and Tailwind CSS with a Neon/Postgres cloud backend deployed on Vercel.
+A responsive web app for families to digitally track paediatric bladder and bowel diaries. Built with React, TypeScript, and Tailwind CSS with a Neon/Postgres cloud backend deployed on Vercel. :)
 
 ## Features
 
