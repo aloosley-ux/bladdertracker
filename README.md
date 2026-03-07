@@ -1,8 +1,8 @@
 # 🧩 Development Tracker
 
-**A comprehensive developmental tracking platform for children with autism and developmental needs.**
+**UK Child Development & Autism Tracker** — a comprehensive developmental tracking platform with an NHS-inspired design.
 
-Built for parents, caregivers, therapists, and educators to log daily activities, track developmental milestones, and collaborate on a child's progress — all from a mobile-first PWA.
+Built for parents, caregivers, therapists, and educators to log daily activities, track developmental milestones, and collaborate on a child's progress — all from a responsive PWA with adaptive navigation.
 
 [![React 19](https://img.shields.io/badge/React-19-61dafb)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178c6)](https://www.typescriptlang.org)
@@ -16,6 +16,7 @@ Built for parents, caregivers, therapists, and educators to log daily activities
 ## 📑 Table of Contents
 
 - [Features](#-features)
+- [Navigation](#-navigation)
 - [Architecture](#-architecture)
 - [Getting Started](#-getting-started)
 - [Database Schema](#-database-schema)
@@ -25,9 +26,13 @@ Built for parents, caregivers, therapists, and educators to log daily activities
 - [Theme System](#-theme-system)
 - [API Reference](#-api-reference)
 - [Security, Privacy & Compliance](#-security-privacy--compliance)
+- [GDPR & Privacy](#-gdpr--privacy)
+- [Accessibility](#-accessibility)
 - [Extension Guide](#-extension-guide)
 - [Clinical & Market Benchmarking](#-clinical--market-benchmarking)
 - [Vercel & Neon Optimization](#-vercel--neon-optimization)
+- [Known Issues](#-known-issues)
+- [Documentation](#-documentation)
 - [Contributing](#-contributing)
 
 ---
@@ -55,6 +60,8 @@ Built for parents, caregivers, therapists, and educators to log daily activities
 
 | Capability | Details |
 |------------|---------|
+| 🏥 **NHS-Inspired UI** | Responsive layout with top navigation on desktop and bottom navigation on mobile |
+| 📱 **Full-Width Responsive Layout** | Adapts seamlessly across mobile, tablet, and desktop viewports |
 | 🏆 **Milestone Engine** | Full CRUD for developmental milestones across 8 categories with status workflow |
 | 🔀 **Module Registry** | Per-child module toggling via `DEFAULT_MODULES` + localStorage/DB persistence |
 | 👥 **6 User Roles** | admin, parent, caregiver, schoolAdmin, therapist, specialist |
@@ -70,10 +77,10 @@ Built for parents, caregivers, therapists, and educators to log daily activities
 
 | Page | Route | Nav Icon | Description |
 |------|-------|----------|-------------|
-| Today (Home) | `/` | 🏠 Today | Today's entries at a glance, quick-add grid, daily stats |
-| Journal | `/journal` | 📖 Journal | Full diary history with calendar-strip date navigation |
+| Dashboard | `/` | 📊 Dashboard | Today's overview, quick-add grid, daily stats |
+| Log | `/log` | 📋 Log | Full diary history with calendar-strip, filters, and entry management |
 | Add Entry | `/add` | — | 11 tabbed entry forms with in-app help guides |
-| Charts / Explore | `/charts` | 🧭 Explore | Recharts data visualisation |
+| Reports | `/reports` | 📈 Reports | Charts, trends, and period summaries |
 | Calendar | `/calendar` | — | Monthly calendar view of all entries |
 | Milestones | `/milestones` | — | Developmental milestone dashboard |
 | Caregiver Portal | `/caregiver` | 👥 Care | Invite management & shared access |
@@ -386,14 +393,14 @@ The `/api/modules` endpoint handles all 6 newer tracker types plus enabled_modul
 5. **Add server handler** in `api/modules.ts` — add a handler for the new type in `api/modules.ts` (which consolidates mood, sensory, medication, therapy, routine, and milestones). If modules exceed the Vercel function limit, create a new consolidated endpoint.
 6. **Add DB table** in `api/_lib/db.ts` — add `CREATE TABLE IF NOT EXISTS` in the migration function.
 7. **Wire into AppContext** — add state, fetch, and CRUD methods in `src/context/AppContext.tsx`.
-8. **Add UI** — add tab in `AddEntryPage.tsx`, card in `DashboardPage.tsx`, and chart in `ChartsPage.tsx`.
+8. **Add UI** — add tab in `AddEntryPage.tsx`, card in `DashboardPage.tsx`, and chart in `ReportsPage.tsx`.
 
 ### Adding a New User Role
 
 1. Add to `UserRole` union in `src/types/index.ts`.
 2. Add role option in `LoginPage.tsx` registration form.
 3. Update server-side role validation in `api/_lib/auth.ts`.
-4. Adjust conditional UI rendering (e.g., `BottomNav.tsx` admin check).
+4. Adjust conditional UI rendering (e.g., `AppNav.tsx` admin check).
 
 ### DB Migration Pattern
 
@@ -470,7 +477,7 @@ api/                  → Vercel Serverless Functions (one file = one endpoint)
   _lib/               → Shared auth (JWT/CORS) and DB (Neon/migrations)
 src/
   pages/              → 9 React page components
-  components/         → Reusable UI (BottomNav, BristolStoolPicker, EntryCard, etc.)
+  components/         → Reusable UI (AppNav, BristolStoolPicker, EntryCard, etc.)
   context/            → AppContext (state + CRUD) and ThemeContext (light/dark)
   types/index.ts      → All TypeScript types, enums, and DEFAULT_MODULES
   utils/storage.ts    → localStorage CRUD (1000+ lines, all 11 trackers)
@@ -501,3 +508,48 @@ npm run build         # Full type-check + production build
 <p align="center">
   Built with ❤️ for families navigating developmental journeys
 </p>
+
+---
+
+## 📚 Documentation
+
+| Document | Description |
+|----------|-------------|
+| [GDPR.md](./GDPR.md) | Full GDPR & Data Protection Policy |
+| [CONTRIBUTING.md](./CONTRIBUTING.md) | Developer guide, module schema, adding features |
+| [docs/Onboarding.md](./docs/Onboarding.md) | User step-by-step onboarding guide |
+| [docs/API.md](./docs/API.md) | API endpoint reference |
+| [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) | System architecture |
+| [docs/MODULES.md](./docs/MODULES.md) | Module documentation |
+
+---
+
+## ♿ Accessibility
+
+- **WCAG 2.1 AA** compliance throughout
+- Three theme options: Light, Dark, High Contrast
+- Keyboard navigation support with proper focus management
+- ARIA labels and semantic HTML on all interactive elements
+- Clear, simple language suitable for all users
+- Screen reader compatible
+
+---
+
+## 🔒 GDPR & Privacy
+
+- Full [GDPR Policy](./GDPR.md) available
+- **Export**: Download all diary data as CSV from Settings > Data & Privacy
+- **Delete**: Permanently remove your account and all data
+- **Clear**: Remove all local app data
+- **Audit Trail**: View all account actions in Settings
+- Data isolation per child and per user
+- Role-based access control (6 roles)
+
+---
+
+## ⚠️ Known Issues
+
+- Chunk size warning during build (>500KB) — consider code-splitting for production
+- Theme persistence uses localStorage (not synced to cloud)
+- Goal dismissal state uses localStorage
+
