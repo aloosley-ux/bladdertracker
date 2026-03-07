@@ -53,9 +53,8 @@ export default function DashboardPage() {
   if (!selectedChild) {
     return (
       <div className="px-4 pb-20 pt-8">
-        <div className="mb-6 flex flex-col items-center gap-1">
-          <BrandIcon size={52} />
-          <p className="text-xs font-semibold uppercase tracking-widest text-lavender-500">Journal</p>
+        <div className="mb-6 flex justify-center">
+          <BrandIcon width={150} />
         </div>
         <div className="rounded-[2rem] bg-white p-6 text-center shadow-[0_24px_70px_rgba(139,77,255,0.08)]">
           <h1 className="text-2xl font-bold text-gray-900">No child profile yet</h1>
@@ -78,21 +77,19 @@ export default function DashboardPage() {
   return (
     <div className="pb-20">
       {/* Brand header */}
-      <div className="rounded-b-[2rem] bg-[linear-gradient(180deg,#fbf7f2_0%,#ffffff_100%)] px-4 pb-4 pt-5 shadow-sm">
-        <div className="mb-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <BrandIcon size={44} />
-            <div>
-              <p className="text-[11px] font-semibold uppercase tracking-widest text-lavender-500">Journal</p>
-              <h1 className="text-lg font-bold leading-snug text-gray-900">
-                Your Journal for {selectedChild?.name}
-              </h1>
-              <p className="text-xs text-gray-500">Quickly capture entries, review progress, and be prepared for care discussions.</p>
-            </div>
+      <div className="rounded-b-[2rem] bg-[linear-gradient(180deg,#fbf7f2_0%,#ffffff_100%)] px-4 pb-4 pt-4 shadow-sm">
+        {/* Logo row with export button */}
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex flex-col gap-0.5">
+            <BrandIcon width={120} />
+            <h1 className="text-base font-bold leading-snug text-gray-900">
+              Your Journal for {selectedChild?.name}
+            </h1>
+            <p className="text-xs text-gray-500">Quickly capture entries, review progress, and be prepared for care discussions.</p>
           </div>
           <button
             onClick={exportData}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-lavender-600 shadow-sm ring-1 ring-lavender-100 transition hover:bg-lavender-50"
+            className="mt-2 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-lavender-600 shadow-sm ring-1 ring-lavender-100 transition hover:bg-lavender-50"
             title="Export diary"
           >
             <Download size={16} />

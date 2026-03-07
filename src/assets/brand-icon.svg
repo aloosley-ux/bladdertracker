@@ -1,26 +1,198 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 72" fill="none" aria-label="BladderTracker logo">
-  <!-- Body of bladder shape -->
-  <rect x="4" y="14" width="48" height="46" rx="20" fill="white" stroke="#e9e0ff" stroke-width="1.5"/>
-  <!-- Left inlet bump -->
-  <circle cx="14" cy="12" r="10" fill="#f0e8ff"/>
-  <!-- Right inlet bump -->
-  <circle cx="42" cy="12" r="10" fill="#f0e8ff"/>
-  <!-- Control panel band -->
-  <rect x="10" y="26" width="36" height="12" rx="6" fill="#203674"/>
-  <!-- Left indicator dot -->
-  <circle cx="19" cy="32" r="3.5" fill="#67e8f9" style="filter:drop-shadow(0 0 4px rgba(34,211,238,0.7))"/>
-  <!-- Right indicator dot -->
-  <circle cx="37" cy="32" r="3.5" fill="#67e8f9" style="filter:drop-shadow(0 0 4px rgba(34,211,238,0.7))"/>
-  <!-- Outlet square -->
-  <rect x="20" y="47" width="16" height="10" rx="4" fill="url(#outlet)"/>
-  <!-- Left handle bump -->
-  <ellipse cx="14" cy="60" rx="5" ry="7" fill="#28478f"/>
-  <!-- Right handle bump -->
-  <ellipse cx="42" cy="60" rx="5" ry="7" fill="#28478f"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 410" fill="none" role="img" aria-label="BladderTracker logo">
   <defs>
-    <linearGradient id="outlet" x1="20" y1="47" x2="36" y2="57" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#bae6fd"/>
-      <stop offset="100%" stop-color="#38bdf8"/>
+    <!-- Body: light lavender radial gradient, bright highlight top-left -->
+    <radialGradient id="bodyG" cx="38%" cy="33%" r="65%">
+      <stop offset="0%"   stop-color="#ddd0f8"/>
+      <stop offset="50%"  stop-color="#b89ee6"/>
+      <stop offset="100%" stop-color="#9370d0"/>
+    </radialGradient>
+    <!-- Horn fill -->
+    <linearGradient id="hornG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#c8aef5"/>
+      <stop offset="100%" stop-color="#9b70d8"/>
     </linearGradient>
+    <!-- Legs match body -->
+    <radialGradient id="legG" cx="40%" cy="30%" r="65%">
+      <stop offset="0%"   stop-color="#cdb8f5"/>
+      <stop offset="100%" stop-color="#9068cc"/>
+    </radialGradient>
+    <!-- Shield outer (teal/mint) -->
+    <linearGradient id="shieldOuter" x1="0.1" y1="0" x2="0.9" y2="1">
+      <stop offset="0%"   stop-color="#78d8be"/>
+      <stop offset="100%" stop-color="#3aaa8c"/>
+    </linearGradient>
+    <!-- Shield inner (lighter teal) -->
+    <linearGradient id="shieldInner" x1="0.1" y1="0" x2="0.8" y2="1">
+      <stop offset="0%"   stop-color="#a0e8d4"/>
+      <stop offset="100%" stop-color="#50c4a8"/>
+    </linearGradient>
+    <!-- Magnifier lens -->
+    <radialGradient id="lensG" cx="35%" cy="35%" r="62%">
+      <stop offset="0%"   stop-color="#ffffff"/>
+      <stop offset="70%"  stop-color="#e4f4ff"/>
+      <stop offset="100%" stop-color="#c0dff5"/>
+    </radialGradient>
+    <!-- Drop shadows -->
+    <filter id="bodyShad" x="-12%" y="-8%" width="124%" height="132%">
+      <feDropShadow dx="0" dy="5" stdDeviation="9" flood-color="#7050b8" flood-opacity="0.28"/>
+    </filter>
+    <filter id="shieldShad" x="-18%" y="-12%" width="136%" height="140%">
+      <feDropShadow dx="2" dy="5" stdDeviation="7" flood-color="#207a64" flood-opacity="0.32"/>
+    </filter>
   </defs>
+
+  <!-- ─── Ground shadow ─── -->
+  <ellipse cx="182" cy="276" rx="90" ry="13" fill="#b8a0e8" opacity="0.3"/>
+
+  <!-- ═══════════════════════════════
+       MASCOT BODY
+       ═══════════════════════════════ -->
+  <!-- Outline ring (dark purple stroke) -->
+  <ellipse cx="182" cy="197" rx="101" ry="80" fill="#7050b0"/>
+  <!-- Body fill with gradient -->
+  <ellipse cx="182" cy="195" rx="96"  ry="75" fill="url(#bodyG)" filter="url(#bodyShad)"/>
+
+  <!-- Glossy highlight blob (top-left of body) -->
+  <ellipse cx="153" cy="157" rx="30" ry="20" fill="white" opacity="0.38" transform="rotate(-28 153 157)"/>
+  <!-- Secondary shine dots -->
+  <circle cx="143" cy="182" r="8"   fill="white" opacity="0.42"/>
+  <circle cx="157" cy="168" r="4.5" fill="white" opacity="0.32"/>
+  <circle cx="130" cy="173" r="3"   fill="white" opacity="0.28"/>
+
+  <!-- ─── Horns ─── -->
+  <!-- Left horn outline -->
+  <ellipse cx="130" cy="132" rx="18" ry="33" fill="#7050b0" transform="rotate(-18 130 132)"/>
+  <!-- Left horn fill -->
+  <ellipse cx="130" cy="130" rx="13" ry="28" fill="url(#hornG)" transform="rotate(-18 130 130)"/>
+  <!-- Right horn outline -->
+  <ellipse cx="234" cy="132" rx="18" ry="33" fill="#7050b0" transform="rotate(18 234 132)"/>
+  <!-- Right horn fill -->
+  <ellipse cx="234" cy="130" rx="13" ry="28" fill="url(#hornG)" transform="rotate(18 234 130)"/>
+
+  <!-- ─── Eyes ─── -->
+  <!-- Left eye white -->
+  <ellipse cx="154" cy="192" rx="18" ry="19" fill="white"/>
+  <!-- Right eye white -->
+  <ellipse cx="205" cy="192" rx="18" ry="19" fill="white"/>
+  <!-- Left pupil -->
+  <circle  cx="157" cy="195" r="11" fill="#1a1030"/>
+  <!-- Right pupil -->
+  <circle  cx="208" cy="195" r="11" fill="#1a1030"/>
+  <!-- Left main shine -->
+  <circle  cx="163" cy="188" r="4.5" fill="white"/>
+  <!-- Right main shine -->
+  <circle  cx="214" cy="188" r="4.5" fill="white"/>
+  <!-- Left small shine -->
+  <circle  cx="151" cy="198" r="2.5" fill="white" opacity="0.75"/>
+  <!-- Right small shine -->
+  <circle  cx="202" cy="198" r="2.5" fill="white" opacity="0.75"/>
+
+  <!-- ─── Mouth (open, happy) ─── -->
+  <!-- Outer lip/mouth shape -->
+  <path d="M158,220 Q180,242 204,220" fill="#5a3090"/>
+  <!-- Inner mouth cavity -->
+  <path d="M162,220 Q180,237 200,220" fill="#ff8aa0"/>
+  <!-- Tongue hint -->
+  <ellipse cx="181" cy="232" rx="10" ry="6" fill="#ff6888" opacity="0.8"/>
+
+  <!-- ─── Rosy cheeks ─── -->
+  <ellipse cx="127" cy="216" rx="16" ry="10" fill="#ffb3c0" opacity="0.60"/>
+  <ellipse cx="232" cy="214" rx="16" ry="10" fill="#ffb3c0" opacity="0.60"/>
+
+  <!-- ═══════════════════════════════
+       LEGS  (4 stubby rounded legs)
+       ═══════════════════════════════ -->
+  <!-- Outline (dark ring) -->
+  <ellipse cx="132" cy="266" rx="16" ry="20" fill="#7050b0"/>
+  <ellipse cx="160" cy="270" rx="15" ry="19" fill="#7050b0"/>
+  <ellipse cx="200" cy="270" rx="15" ry="19" fill="#7050b0"/>
+  <ellipse cx="230" cy="266" rx="16" ry="20" fill="#7050b0"/>
+  <!-- Fill -->
+  <ellipse cx="132" cy="265" rx="12" ry="17" fill="url(#legG)"/>
+  <ellipse cx="160" cy="269" rx="11" ry="16" fill="url(#legG)"/>
+  <ellipse cx="200" cy="269" rx="11" ry="16" fill="url(#legG)"/>
+  <ellipse cx="230" cy="265" rx="12" ry="17" fill="url(#legG)"/>
+
+  <!-- ═══════════════════════════════
+       LEFT ARM  (small raised stub)
+       ═══════════════════════════════ -->
+  <ellipse cx="94"  cy="200" rx="16" ry="10" fill="#7050b0" transform="rotate(-25 94 200)"/>
+  <ellipse cx="93"  cy="199" rx="12" ry="7.5" fill="url(#legG)" transform="rotate(-25 93 199)"/>
+
+  <!-- ═══════════════════════════════
+       RIGHT ARM + MAGNIFYING GLASS
+       ═══════════════════════════════ -->
+  <!-- Arm stub -->
+  <ellipse cx="270" cy="210" rx="16" ry="10" fill="#7050b0" transform="rotate(22 270 210)"/>
+  <ellipse cx="269" cy="209" rx="12" ry="7.5" fill="url(#legG)" transform="rotate(22 269 209)"/>
+
+  <!-- Magnifying-glass handle -->
+  <rect x="291" y="222" width="9" height="30" rx="4.5" fill="#8058c8" transform="rotate(42 295 237)"/>
+
+  <!-- Lens outer ring (purple) -->
+  <circle cx="284" cy="193" r="31" fill="#7050b0"/>
+  <!-- Lens white surround -->
+  <circle cx="284" cy="193" r="27" fill="white"/>
+  <!-- Lens tinted fill -->
+  <circle cx="284" cy="193" r="25" fill="url(#lensG)"/>
+  <!-- Lens glare -->
+  <ellipse cx="274" cy="182" rx="8" ry="5.5" fill="white" opacity="0.65" transform="rotate(-22 274 182)"/>
+
+  <!-- ═══════════════════════════════
+       TEAL SHIELD  (right of mascot)
+       ═══════════════════════════════ -->
+  <!-- Outer shield border (darker teal) -->
+  <path d="M328,146 L402,146 L402,212 Q402,264 365,282 Q328,264 328,212 Z"
+        fill="#2a9878" filter="url(#shieldShad)"/>
+  <!-- Inner shield lighter teal gradient -->
+  <path d="M334,152 L396,152 L396,212 Q396,258 365,274 Q334,258 334,212 Z"
+        fill="url(#shieldOuter)"/>
+  <!-- Shield face (even lighter) -->
+  <path d="M339,158 L391,158 L391,212 Q391,252 365,267 Q339,252 339,212 Z"
+        fill="url(#shieldInner)"/>
+  <!-- Shield sheen (diagonal highlight top) -->
+  <path d="M343,161 L378,161 L376,178 Q362,186 348,178 Z" fill="white" opacity="0.22"/>
+  <!-- Shield sparkle glint -->
+  <g transform="translate(388,168)">
+    <path d="M0,-6 L1,-1 L6,0 L1,1 L0,6 L-1,1 L-6,0 L-1,-1 Z" fill="white" opacity="0.55"/>
+  </g>
+  <!-- Checkmark -->
+  <polyline points="348,216 362,232 386,198"
+            stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+  <!-- ═══════════════════════════════
+       SPARKLES  (above mascot)
+       ═══════════════════════════════ -->
+  <!-- Centre sparkle (largest) -->
+  <g transform="translate(182,97)">
+    <path d="M0,-15 L2.8,-2.8 L15,0 L2.8,2.8 L0,15 L-2.8,2.8 L-15,0 L-2.8,-2.8 Z"
+          fill="#c8aef5"/>
+  </g>
+  <!-- Left sparkle -->
+  <g transform="translate(150,112)">
+    <path d="M0,-10 L1.8,-1.8 L10,0 L1.8,1.8 L0,10 L-1.8,1.8 L-10,0 L-1.8,-1.8 Z"
+          fill="#c8aef5" opacity="0.82"/>
+  </g>
+  <!-- Right sparkle -->
+  <g transform="translate(215,107)">
+    <path d="M0,-9 L1.6,-1.6 L9,0 L1.6,1.6 L0,9 L-1.6,1.6 L-9,0 L-1.6,-1.6 Z"
+          fill="#c8aef5" opacity="0.78"/>
+  </g>
+
+  <!-- Motion swooshes (upper-right, near shield) -->
+  <path d="M308,148 Q317,141 325,147" stroke="#c0a0f0" stroke-width="5.5" stroke-linecap="round" fill="none" opacity="0.72"/>
+  <path d="M313,163 Q322,156 330,162" stroke="#c0a0f0" stroke-width="4"   stroke-linecap="round" fill="none" opacity="0.55"/>
+
+  <!-- ═══════════════════════════════
+       WORDMARK  "BladderTracker"
+       ═══════════════════════════════ -->
+  <text
+    x="255" y="368"
+    text-anchor="middle"
+    font-family="'Nunito', 'Varela Round', 'Fredoka One', 'Arial Rounded MT Bold', Arial, sans-serif"
+    font-size="60"
+    font-weight="800"
+    fill="#9b70d8"
+    letter-spacing="-1"
+  >BladderTracker</text>
 </svg>

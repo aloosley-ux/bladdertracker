@@ -1,23 +1,27 @@
 import brandIconUrl from '../assets/brand-icon.svg';
 
 interface BrandIconProps {
-  /** Size in pixels (width = height). Defaults to 56. */
-  size?: number;
+  /**
+   * Width in pixels. Height is derived automatically from the logo's
+   * native 520 × 410 aspect ratio. Defaults to 140.
+   *
+   * Swap the brand image by replacing /src/assets/brand-icon.svg.
+   */
+  width?: number;
   className?: string;
 }
 
-/**
- * Reusable brand/logo icon component.
- * Swap the logo by replacing /src/assets/brand-icon.svg.
- */
-export default function BrandIcon({ size = 56, className = '' }: BrandIconProps) {
+export default function BrandIcon({ width = 140, className = '' }: BrandIconProps) {
+  // Native viewBox is 520 × 410
+  const height = Math.round((width * 410) / 520);
   return (
     <img
       src={brandIconUrl}
       alt="BladderTracker app logo"
-      width={size}
-      height={size}
+      width={width}
+      height={height}
       className={className}
+      draggable={false}
     />
   );
 }
