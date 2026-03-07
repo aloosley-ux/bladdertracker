@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { useApp } from '../context/useApp';
 import CalendarStrip from '../components/CalendarStrip';
 import EntryCard from '../components/EntryCard';
-import BrandIcon from '../components/BrandIcon';
+import BrandBanner from '../components/BrandBanner';
 
 export default function DashboardPage() {
   const {
@@ -52,22 +52,22 @@ export default function DashboardPage() {
 
   if (!selectedChild) {
     return (
-      <div className="px-4 pb-20 pt-8">
-        <div className="mb-6 flex justify-center">
-          <BrandIcon width={150} />
-        </div>
-        <div className="rounded-[2rem] bg-white p-6 text-center shadow-[0_24px_70px_rgba(139,77,255,0.08)]">
-          <h1 className="text-2xl font-bold text-gray-900">No child profile yet</h1>
-          <p className="mt-2 text-sm text-gray-500">
-            Add a child in Settings or accept a caregiver invite to start journaling.
-          </p>
-          <div className="mt-5 flex justify-center gap-3">
-            <Link className="rounded-full bg-lavender-500 px-4 py-3 text-sm font-semibold text-white" to="/profile">
-              Open settings
-            </Link>
-            <Link className="rounded-full bg-[#f7f1ff] px-4 py-3 text-sm font-semibold text-lavender-700" to="/caregiver">
-              View caregiver portal
-            </Link>
+      <div className="pb-20">
+        <BrandBanner />
+        <div className="px-4 pt-2">
+          <div className="rounded-[2rem] bg-white p-6 text-center shadow-[0_24px_70px_rgba(139,77,255,0.08)]">
+            <h1 className="text-2xl font-bold text-gray-900">No child profile yet</h1>
+            <p className="mt-2 text-sm text-gray-500">
+              Add a child in Settings or accept a caregiver invite to start journaling.
+            </p>
+            <div className="mt-5 flex justify-center gap-3">
+              <Link className="rounded-full bg-lavender-500 px-4 py-3 text-sm font-semibold text-white" to="/profile">
+                Open settings
+              </Link>
+              <Link className="rounded-full bg-[#f7f1ff] px-4 py-3 text-sm font-semibold text-lavender-700" to="/caregiver">
+                View caregiver portal
+              </Link>
+            </div>
           </div>
         </div>
       </div>
@@ -76,12 +76,12 @@ export default function DashboardPage() {
 
   return (
     <div className="pb-20">
-      {/* Brand header */}
-      <div className="rounded-b-[2rem] bg-[linear-gradient(180deg,#fbf7f2_0%,#ffffff_100%)] px-4 pb-4 pt-4 shadow-sm">
-        {/* Logo row with export button */}
-        <div className="flex items-start justify-between gap-2">
+      {/* Brand banner */}
+      <div className="rounded-b-[2rem] bg-[linear-gradient(180deg,#fbf7f2_0%,#ffffff_100%)] pb-4 shadow-sm">
+        <BrandBanner />
+        {/* Header row with title and export button */}
+        <div className="flex items-start justify-between gap-2 px-4">
           <div className="flex flex-col gap-0.5">
-            <BrandIcon width={120} />
             <h1 className="text-base font-bold leading-snug text-gray-900">
               Your Journal for {selectedChild?.name}
             </h1>
@@ -89,7 +89,7 @@ export default function DashboardPage() {
           </div>
           <button
             onClick={exportData}
-            className="mt-2 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-lavender-600 shadow-sm ring-1 ring-lavender-100 transition hover:bg-lavender-50"
+            className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-lavender-600 shadow-sm ring-1 ring-lavender-100 transition hover:bg-lavender-50"
             title="Export diary"
           >
             <Download size={16} />
@@ -100,7 +100,7 @@ export default function DashboardPage() {
           <select
             value={selectedChildId ?? ''}
             onChange={(event) => selectChild(event.target.value)}
-            className="mb-4 w-full rounded-2xl border border-lavender-100 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-sm outline-none"
+            className="mx-4 mb-4 w-[calc(100%-2rem)] rounded-2xl border border-lavender-100 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-sm outline-none"
           >
             {children.map((child) => (
               <option key={child.id} value={child.id}>
@@ -110,7 +110,9 @@ export default function DashboardPage() {
           </select>
         )}
 
-        <CalendarStrip selectedDate={selectedDate} onSelectDate={setSelectedDate} />
+        <div className="px-4">
+          <CalendarStrip selectedDate={selectedDate} onSelectDate={setSelectedDate} />
+        </div>
       </div>
 
       <div className="space-y-4 px-4 pt-4">
@@ -126,24 +128,27 @@ export default function DashboardPage() {
           <Link
             to="/add"
             state={{ tab: 'drink' }}
-            className="flex flex-col items-center gap-2 rounded-[1.5rem] bg-[#eef8ff] py-4 shadow-sm ring-1 ring-sky-100 transition hover:bg-sky-50"
+            className="relative flex flex-col items-center gap-2 rounded-[1.5rem] bg-[#eef8ff] py-4 shadow-sm ring-1 ring-sky-100 transition hover:bg-sky-50 active:scale-95"
           >
+            <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-sky-500 text-[11px] font-bold leading-none text-white shadow-sm">+</span>
             <span className="text-2xl">🥤</span>
             <span className="text-xs font-semibold text-sky-700">Drink</span>
           </Link>
           <Link
             to="/add"
             state={{ tab: 'urine' }}
-            className="flex flex-col items-center gap-2 rounded-[1.5rem] bg-peach py-4 shadow-sm ring-1 ring-amber-100 transition hover:bg-amber-50"
+            className="relative flex flex-col items-center gap-2 rounded-[1.5rem] bg-peach py-4 shadow-sm ring-1 ring-amber-100 transition hover:bg-amber-50 active:scale-95"
           >
+            <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-amber-500 text-[11px] font-bold leading-none text-white shadow-sm">+</span>
             <span className="text-2xl">💦</span>
             <span className="text-xs font-semibold text-amber-700">Urine</span>
           </Link>
           <Link
             to="/add"
             state={{ tab: 'bowel' }}
-            className="flex flex-col items-center gap-2 rounded-[1.5rem] bg-mint py-4 shadow-sm ring-1 ring-emerald-100 transition hover:bg-emerald-50"
+            className="relative flex flex-col items-center gap-2 rounded-[1.5rem] bg-mint py-4 shadow-sm ring-1 ring-emerald-100 transition hover:bg-emerald-50 active:scale-95"
           >
+            <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 text-[11px] font-bold leading-none text-white shadow-sm">+</span>
             <span className="text-2xl">🚽</span>
             <span className="text-xs font-semibold text-emerald-700">Bowel</span>
           </Link>
