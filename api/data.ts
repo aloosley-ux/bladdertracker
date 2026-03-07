@@ -19,6 +19,19 @@ interface EntryPayload {
   laxativesGiven?: boolean;
   notes?: string;
   entryType?: string;
+  // Sleep
+  eventType?: string;
+  durationMinutes?: number;
+  quality?: number;
+  nighttimeEvent?: boolean;
+  // Toilet attempt
+  outcome?: string;
+  supervised?: boolean;
+  prompted?: boolean;
+  // Food
+  mealType?: string;
+  description?: string;
+  portions?: number;
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -57,6 +70,15 @@ async function handleExport(req: VercelRequest, res: VercelResponse) {
   const bowel = await sql`
     SELECT date, time, location, amount, bristol_type, laxatives_given, notes FROM bowel_entries WHERE child_id = ${childId} ORDER BY date, time
   `;
+  const sleep = await sql`
+    SELECT date, time, event_type, duration_minutes, quality, nighttime_event, notes FROM sleep_entries WHERE child_id = ${childId} ORDER BY date, time
+  `;
+  const toiletAttempts = await sql`
+    SELECT date, time, outcome, supervised, prompted, duration_minutes, notes FROM toilet_attempt_entries WHERE child_id = ${childId} ORDER BY date, time
+  `;
+  const food = await sql`
+    SELECT date, time, meal_type, description, portions, notes FROM food_entries WHERE child_id = ${childId} ORDER BY date, time
+  `;
 
   let csv = `Bladder & Bowel Diary Export for ${escapeCsvField(childName)}\n`;
   csv += `Generated: ${new Date().toLocaleDateString()}\n\n`;
@@ -70,16 +92,25 @@ async function handleExport(req: VercelRequest, res: VercelResponse) {
   csv += '\nBOWEL EVENTS\nDate,Time,Location,Amount,Bristol Type,Laxatives,Notes\n';
   bowel.rows.forEach((r) => { csv += `${r.date},${r.time},${r.location},${r.amount},Type ${r.bristol_type},${r.laxatives_given},${escapeCsvField(r.notes)}\n`; });
 
+  csv += '\nSLEEP EVENTS\nDate,Time,Event Type,Duration (min),Quality (1-5),Nighttime,Notes\n';
+  sleep.rows.forEach((r) => { csv += `${r.date},${r.time},${r.event_type},${r.duration_minutes ?? ''},${r.quality ?? ''},${r.nighttime_event},${escapeCsvField(r.notes)}\n`; });
+
+  csv += '\nTOILET ATTEMPTS\nDate,Time,Outcome,Supervised,Prompted,Duration (min),Notes\n';
+  toiletAttempts.rows.forEach((r) => { csv += `${r.date},${r.time},${r.outcome},${r.supervised},${r.prompted},${r.duration_minutes ?? ''},${escapeCsvField(r.notes)}\n`; });
+
+  csv += '\nFOOD ENTRIES\nDate,Time,Meal Type,Description,Portions,Notes\n';
+  food.rows.forEach((r) => { csv += `${r.date},${r.time},${r.meal_type},${escapeCsvField(r.description)},${r.portions ?? ''},${escapeCsvField(r.notes)}\n`; });
+
   res.setHeader('Content-Type', 'text/csv; charset=utf-8');
   res.setHeader('Content-Disposition', `attachment; filename="bladder-diary-${childName.toLowerCase().replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.csv"`);
   res.status(200).send(csv);
 }
 
 async function handleImport(req: VercelRequest, res: VercelResponse, userId: string) {
-  const { childId, drinks, urineEntries, bowelEntries } = req.body ?? {};
+  const { childId, drinks, urineEntries, bowelEntries, sleepEntries, toiletAttemptEntries, foodEntries } = req.body ?? {};
   if (!childId) { res.status(400).json({ error: 'childId is required' }); return; }
 
-  const summary = { drinks: 0, urineEntries: 0, bowelEntries: 0, errors: [] as string[] };
+  const summary = { drinks: 0, urineEntries: 0, bowelEntries: 0, sleepEntries: 0, toiletAttemptEntries: 0, foodEntries: 0, errors: [] as string[] };
 
   if (drinks) {
     for (const [i, entry] of (drinks as EntryPayload[]).entries()) {
@@ -123,7 +154,49 @@ async function handleImport(req: VercelRequest, res: VercelResponse, userId: str
     }
   }
 
-  const total = summary.drinks + summary.urineEntries + summary.bowelEntries;
+  if (sleepEntries) {
+    for (const [i, entry] of (sleepEntries as EntryPayload[]).entries()) {
+      if (!entry.date || !entry.time) {
+        summary.errors.push(`Sleep row ${i + 1} missing date or time.`);
+        continue;
+      }
+      await sql`
+        INSERT INTO sleep_entries (id, child_id, date, time, event_type, duration_minutes, quality, nighttime_event, notes, created_by)
+        VALUES (${generateId()}, ${childId}, ${entry.date}, ${entry.time}, ${entry.eventType || 'onset'}, ${entry.durationMinutes ?? null}, ${entry.quality ?? null}, ${Boolean(entry.nighttimeEvent)}, ${entry.notes || ''}, ${userId})
+      `;
+      summary.sleepEntries++;
+    }
+  }
+
+  if (toiletAttemptEntries) {
+    for (const [i, entry] of (toiletAttemptEntries as EntryPayload[]).entries()) {
+      if (!entry.date || !entry.time) {
+        summary.errors.push(`Toilet attempt row ${i + 1} missing date or time.`);
+        continue;
+      }
+      await sql`
+        INSERT INTO toilet_attempt_entries (id, child_id, date, time, outcome, supervised, prompted, duration_minutes, notes, created_by)
+        VALUES (${generateId()}, ${childId}, ${entry.date}, ${entry.time}, ${entry.outcome || 'no_event'}, ${Boolean(entry.supervised)}, ${Boolean(entry.prompted)}, ${entry.durationMinutes ?? null}, ${entry.notes || ''}, ${userId})
+      `;
+      summary.toiletAttemptEntries++;
+    }
+  }
+
+  if (foodEntries) {
+    for (const [i, entry] of (foodEntries as EntryPayload[]).entries()) {
+      if (!entry.date || !entry.time) {
+        summary.errors.push(`Food row ${i + 1} missing date or time.`);
+        continue;
+      }
+      await sql`
+        INSERT INTO food_entries (id, child_id, date, time, meal_type, description, portions, notes, created_by)
+        VALUES (${generateId()}, ${childId}, ${entry.date}, ${entry.time}, ${entry.mealType || 'snack'}, ${entry.description || ''}, ${entry.portions ?? null}, ${entry.notes || ''}, ${userId})
+      `;
+      summary.foodEntries++;
+    }
+  }
+
+  const total = summary.drinks + summary.urineEntries + summary.bowelEntries + summary.sleepEntries + summary.toiletAttemptEntries + summary.foodEntries;
   await sql`
     INSERT INTO audit_events (id, user_id, action, subject, detail)
     VALUES (${generateId()}, ${userId}, 'Imported diary data', ${childId}, ${`Imported ${total} records.`})
