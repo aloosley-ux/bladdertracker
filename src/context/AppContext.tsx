@@ -78,7 +78,7 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
     }
 
     try {
-      const [ch, dr, ur, bo, sl, ta, fo, inv, notif, aud] = await Promise.all([
+      const [ch, dr, ur, bo, sl, ta, fo, mo, se, me, th, ro, mi, inv, notif, aud] = await Promise.all([
         api.apiGetChildren(),
         api.apiGetDrinks(),
         api.apiGetUrineEntries(),
@@ -86,6 +86,12 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
         api.apiGetSleepEntries(),
         api.apiGetToiletAttemptEntries(),
         api.apiGetFoodEntries(),
+        api.apiGetMoodEntries(),
+        api.apiGetSensoryEntries(),
+        api.apiGetMedicationEntries(),
+        api.apiGetTherapyEntries(),
+        api.apiGetRoutineEntries(),
+        api.apiGetMilestones(),
         api.apiGetInvites(),
         api.apiGetNotifications(),
         api.apiGetAuditEvents(),
@@ -97,6 +103,12 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
       setSleepEntries(sl);
       setToiletAttemptEntries(ta);
       setFoodEntries(fo);
+      setMoodEntries(mo);
+      setSensoryEntries(se);
+      setMedicationEntries(me);
+      setTherapyEntries(th);
+      setRoutineEntries(ro);
+      setMilestones(mi);
       setInvites(inv);
       setNotifications(notif);
       setAuditTrail(aud);
@@ -105,6 +117,12 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
         if (prev && ch.some((c) => c.id === prev)) return prev;
         return ch[0]?.id ?? null;
       });
+
+      // Load enabled modules for the first/current child
+      const resolvedChildId = ch[0]?.id;
+      if (resolvedChildId) {
+        api.apiGetEnabledModules(resolvedChildId).then(setEnabledModulesState).catch(() => {});
+      }
     } catch {
       // If API calls fail, data stays as-is
     }
@@ -228,6 +246,11 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
 
   const selectChild = (childId: string) => {
     setSelectedChildId(childId);
+    if (cloud) {
+      api.apiGetEnabledModules(childId).then(setEnabledModulesState).catch(() => {});
+    } else {
+      setEnabledModulesState(localStorage.getEnabledModules(childId));
+    }
   };
 
   const removeChild = async (childId: string) => {
@@ -476,78 +499,156 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
     }
   };
 
-  // Mood entry CRUD (local-only for now)
+  // Mood entry CRUD
   const addMoodEntry = async (entry: MoodEntry) => {
-    localStorage.addMoodEntry(entry);
-    if (user) {
-      localStorage.addAuditEvent({ userId: user.id, action: 'Added mood entry', subject: entry.childId, detail: `Mood ${entry.level}/5 logged at ${entry.time}.` });
+    if (cloud) {
+      try { await api.apiAddMoodEntry(entry); await refreshCloudData(user); } catch { /* ignore */ }
+    } else {
+      localStorage.addMoodEntry(entry);
+      if (user) {
+        localStorage.addAuditEvent({ userId: user.id, action: 'Added mood entry', subject: entry.childId, detail: `Mood ${entry.level}/5 logged at ${entry.time}.` });
+      }
+      refreshLocalData(user, selectedChildId);
     }
-    refreshLocalData(user, selectedChildId);
   };
-  const updateMoodEntry = async (entry: MoodEntry) => { localStorage.updateMoodEntry(entry); refreshLocalData(user, selectedChildId); };
-  const deleteMoodEntry = async (id: string) => { localStorage.deleteMoodEntry(id); refreshLocalData(user, selectedChildId); };
+  const updateMoodEntry = async (entry: MoodEntry) => {
+    if (cloud) {
+      try { await api.apiUpdateMoodEntry(entry); await refreshCloudData(user); } catch { /* ignore */ }
+    } else { localStorage.updateMoodEntry(entry); refreshLocalData(user, selectedChildId); }
+  };
+  const deleteMoodEntry = async (id: string) => {
+    if (cloud) {
+      try { await api.apiDeleteMoodEntry(id); await refreshCloudData(user); } catch { /* ignore */ }
+    } else { localStorage.deleteMoodEntry(id); refreshLocalData(user, selectedChildId); }
+  };
 
   // Sensory entry CRUD
   const addSensoryEntry = async (entry: SensoryEntry) => {
-    localStorage.addSensoryEntry(entry);
-    if (user) {
-      localStorage.addAuditEvent({ userId: user.id, action: 'Added sensory entry', subject: entry.childId, detail: `${entry.sensoryType} (${entry.response}) logged at ${entry.time}.` });
+    if (cloud) {
+      try { await api.apiAddSensoryEntry(entry); await refreshCloudData(user); } catch { /* ignore */ }
+    } else {
+      localStorage.addSensoryEntry(entry);
+      if (user) {
+        localStorage.addAuditEvent({ userId: user.id, action: 'Added sensory entry', subject: entry.childId, detail: `${entry.sensoryType} (${entry.response}) logged at ${entry.time}.` });
+      }
+      refreshLocalData(user, selectedChildId);
     }
-    refreshLocalData(user, selectedChildId);
   };
-  const updateSensoryEntry = async (entry: SensoryEntry) => { localStorage.updateSensoryEntry(entry); refreshLocalData(user, selectedChildId); };
-  const deleteSensoryEntry = async (id: string) => { localStorage.deleteSensoryEntry(id); refreshLocalData(user, selectedChildId); };
+  const updateSensoryEntry = async (entry: SensoryEntry) => {
+    if (cloud) {
+      try { await api.apiUpdateSensoryEntry(entry); await refreshCloudData(user); } catch { /* ignore */ }
+    } else { localStorage.updateSensoryEntry(entry); refreshLocalData(user, selectedChildId); }
+  };
+  const deleteSensoryEntry = async (id: string) => {
+    if (cloud) {
+      try { await api.apiDeleteSensoryEntry(id); await refreshCloudData(user); } catch { /* ignore */ }
+    } else { localStorage.deleteSensoryEntry(id); refreshLocalData(user, selectedChildId); }
+  };
 
   // Medication entry CRUD
   const addMedicationEntry = async (entry: MedicationEntry) => {
-    localStorage.addMedicationEntry(entry);
-    if (user) {
-      localStorage.addAuditEvent({ userId: user.id, action: 'Added medication entry', subject: entry.childId, detail: `${entry.name} ${entry.dosage} at ${entry.time}.` });
+    if (cloud) {
+      try { await api.apiAddMedicationEntry(entry); await refreshCloudData(user); } catch { /* ignore */ }
+    } else {
+      localStorage.addMedicationEntry(entry);
+      if (user) {
+        localStorage.addAuditEvent({ userId: user.id, action: 'Added medication entry', subject: entry.childId, detail: `${entry.name} ${entry.dosage} at ${entry.time}.` });
+      }
+      refreshLocalData(user, selectedChildId);
     }
-    refreshLocalData(user, selectedChildId);
   };
-  const updateMedicationEntry = async (entry: MedicationEntry) => { localStorage.updateMedicationEntry(entry); refreshLocalData(user, selectedChildId); };
-  const deleteMedicationEntry = async (id: string) => { localStorage.deleteMedicationEntry(id); refreshLocalData(user, selectedChildId); };
+  const updateMedicationEntry = async (entry: MedicationEntry) => {
+    if (cloud) {
+      try { await api.apiUpdateMedicationEntry(entry); await refreshCloudData(user); } catch { /* ignore */ }
+    } else { localStorage.updateMedicationEntry(entry); refreshLocalData(user, selectedChildId); }
+  };
+  const deleteMedicationEntry = async (id: string) => {
+    if (cloud) {
+      try { await api.apiDeleteMedicationEntry(id); await refreshCloudData(user); } catch { /* ignore */ }
+    } else { localStorage.deleteMedicationEntry(id); refreshLocalData(user, selectedChildId); }
+  };
 
   // Therapy entry CRUD
   const addTherapyEntry = async (entry: TherapyEntry) => {
-    localStorage.addTherapyEntry(entry);
-    if (user) {
-      localStorage.addAuditEvent({ userId: user.id, action: 'Added therapy entry', subject: entry.childId, detail: `${entry.therapyType} session (${entry.durationMinutes}min) at ${entry.time}.` });
+    if (cloud) {
+      try { await api.apiAddTherapyEntry(entry); await refreshCloudData(user); } catch { /* ignore */ }
+    } else {
+      localStorage.addTherapyEntry(entry);
+      if (user) {
+        localStorage.addAuditEvent({ userId: user.id, action: 'Added therapy entry', subject: entry.childId, detail: `${entry.therapyType} session (${entry.durationMinutes}min) at ${entry.time}.` });
+      }
+      refreshLocalData(user, selectedChildId);
     }
-    refreshLocalData(user, selectedChildId);
   };
-  const updateTherapyEntry = async (entry: TherapyEntry) => { localStorage.updateTherapyEntry(entry); refreshLocalData(user, selectedChildId); };
-  const deleteTherapyEntry = async (id: string) => { localStorage.deleteTherapyEntry(id); refreshLocalData(user, selectedChildId); };
+  const updateTherapyEntry = async (entry: TherapyEntry) => {
+    if (cloud) {
+      try { await api.apiUpdateTherapyEntry(entry); await refreshCloudData(user); } catch { /* ignore */ }
+    } else { localStorage.updateTherapyEntry(entry); refreshLocalData(user, selectedChildId); }
+  };
+  const deleteTherapyEntry = async (id: string) => {
+    if (cloud) {
+      try { await api.apiDeleteTherapyEntry(id); await refreshCloudData(user); } catch { /* ignore */ }
+    } else { localStorage.deleteTherapyEntry(id); refreshLocalData(user, selectedChildId); }
+  };
 
   // Routine entry CRUD
   const addRoutineEntry = async (entry: RoutineEntry) => {
-    localStorage.addRoutineEntry(entry);
-    if (user) {
-      localStorage.addAuditEvent({ userId: user.id, action: 'Added routine entry', subject: entry.childId, detail: `${entry.routineName} ${entry.completed ? 'completed' : 'incomplete'} at ${entry.time}.` });
+    if (cloud) {
+      try { await api.apiAddRoutineEntry(entry); await refreshCloudData(user); } catch { /* ignore */ }
+    } else {
+      localStorage.addRoutineEntry(entry);
+      if (user) {
+        localStorage.addAuditEvent({ userId: user.id, action: 'Added routine entry', subject: entry.childId, detail: `${entry.routineName} ${entry.completed ? 'completed' : 'incomplete'} at ${entry.time}.` });
+      }
+      refreshLocalData(user, selectedChildId);
     }
-    refreshLocalData(user, selectedChildId);
   };
-  const updateRoutineEntry = async (entry: RoutineEntry) => { localStorage.updateRoutineEntry(entry); refreshLocalData(user, selectedChildId); };
-  const deleteRoutineEntry = async (id: string) => { localStorage.deleteRoutineEntry(id); refreshLocalData(user, selectedChildId); };
+  const updateRoutineEntry = async (entry: RoutineEntry) => {
+    if (cloud) {
+      try { await api.apiUpdateRoutineEntry(entry); await refreshCloudData(user); } catch { /* ignore */ }
+    } else { localStorage.updateRoutineEntry(entry); refreshLocalData(user, selectedChildId); }
+  };
+  const deleteRoutineEntry = async (id: string) => {
+    if (cloud) {
+      try { await api.apiDeleteRoutineEntry(id); await refreshCloudData(user); } catch { /* ignore */ }
+    } else { localStorage.deleteRoutineEntry(id); refreshLocalData(user, selectedChildId); }
+  };
 
   // Milestone CRUD
   const addMilestoneEntry = async (milestone: Milestone) => {
-    localStorage.addMilestone(milestone);
-    if (user) {
-      localStorage.addAuditEvent({ userId: user.id, action: 'Added milestone', subject: milestone.childId, detail: `"${milestone.name}" (${milestone.category}) created.` });
+    if (cloud) {
+      try { await api.apiAddMilestone(milestone); await refreshCloudData(user); } catch { /* ignore */ }
+    } else {
+      localStorage.addMilestone(milestone);
+      if (user) {
+        localStorage.addAuditEvent({ userId: user.id, action: 'Added milestone', subject: milestone.childId, detail: `"${milestone.name}" (${milestone.category}) created.` });
+      }
+      refreshLocalData(user, selectedChildId);
     }
-    refreshLocalData(user, selectedChildId);
   };
-  const updateMilestoneEntry = async (milestone: Milestone) => { localStorage.updateMilestone(milestone); refreshLocalData(user, selectedChildId); };
-  const deleteMilestoneEntry = async (id: string) => { localStorage.deleteMilestone(id); refreshLocalData(user, selectedChildId); };
+  const updateMilestoneEntry = async (milestone: Milestone) => {
+    if (cloud) {
+      try { await api.apiUpdateMilestone(milestone); await refreshCloudData(user); } catch { /* ignore */ }
+    } else { localStorage.updateMilestone(milestone); refreshLocalData(user, selectedChildId); }
+  };
+  const deleteMilestoneEntry = async (id: string) => {
+    if (cloud) {
+      try { await api.apiDeleteMilestone(id); await refreshCloudData(user); } catch { /* ignore */ }
+    } else { localStorage.deleteMilestone(id); refreshLocalData(user, selectedChildId); }
+  };
 
   // Module management
-  const setEnabledModulesForChild = (modules: ModuleId[]) => {
-    if (selectedChildId) {
-      localStorage.setEnabledModules(selectedChildId, modules);
-      setEnabledModulesState(modules);
+  const setEnabledModulesForChild = async (modules: ModuleId[]) => {
+    if (cloud) {
+      if (selectedChildId) {
+        try { await api.apiSetEnabledModules(selectedChildId, modules); } catch { /* ignore */ }
+      }
+    } else {
+      if (selectedChildId) {
+        localStorage.setEnabledModules(selectedChildId, modules);
+      }
     }
+    setEnabledModulesState(modules);
   };
 
   const exportData = async () => {

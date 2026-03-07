@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
-import { AlertTriangle, Baby, Crown, Download, LogOut, Palette, Settings, Shield, Trash2 } from 'lucide-react';
+import { AlertTriangle, Baby, Crown, Download, LogOut, Palette, Save, Settings, Shield, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useApp } from '../context/useApp';
 import { useTheme } from '../context/useTheme';
@@ -131,36 +131,12 @@ export default function ProfilePage() {
 
         {/* Module management */}
         {selectedChild && (
-          <section className="rounded-[1.75rem] bg-white p-5 shadow-sm ring-1 ring-black/5">
-            <h3 className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-1">
-              <Settings size={16} className="text-lavender-500" /> Modules for {selectedChild.name}
-            </h3>
-            <p className="text-xs text-gray-400 mb-3">Toggle tracker modules on or off for this child.</p>
-            <div className="space-y-2">
-              {DEFAULT_MODULES.map((mod) => {
-                const enabled = enabledModules.includes(mod.id);
-                return (
-                  <label key={mod.id} className="flex items-center justify-between rounded-xl bg-gray-50 px-3 py-2.5">
-                    <div className="flex items-center gap-2">
-                      <span className="text-lg">{mod.icon}</span>
-                      <div>
-                        <span className="text-sm font-medium text-gray-700">{mod.label}</span>
-                        <p className="text-[10px] text-gray-400">{mod.description}</p>
-                      </div>
-                    </div>
-                    <input type="checkbox" checked={enabled}
-                      onChange={(e) => {
-                        const next = e.target.checked
-                          ? [...enabledModules, mod.id]
-                          : enabledModules.filter((m: ModuleId) => m !== mod.id);
-                        setEnabledModules(next);
-                      }}
-                      className="h-4 w-4 rounded border-gray-300 text-lavender-500 focus:ring-lavender-400" />
-                  </label>
-                );
-              })}
-            </div>
-          </section>
+          <ModuleSettings
+            key={selectedChild.id}
+            childName={selectedChild.name}
+            initialModules={enabledModules}
+            onSave={setEnabledModules}
+          />
         )}
 
         {/* Child profiles — only admin/parent can add/remove */}
@@ -376,5 +352,71 @@ export default function ProfilePage() {
         </section>
       </div>
     </div>
+  );
+}
+
+
+// ── Module Settings subcomponent ─────────────────────────────────────
+// Using a keyed subcomponent so state resets naturally when child switches.
+interface ModuleSettingsProps {
+  childName: string;
+  initialModules: ModuleId[];
+  onSave: (modules: ModuleId[]) => void | Promise<void>;
+}
+
+function ModuleSettings({ childName, initialModules, onSave }: ModuleSettingsProps) {
+  const [pending, setPending] = useState<ModuleId[]>(initialModules);
+  const [saved, setSaved] = useState(false);
+
+  return (
+    <section className="rounded-[1.75rem] bg-white p-5 shadow-sm ring-1 ring-black/5">
+      <h3 className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-1">
+        <Settings size={16} className="text-lavender-500" /> Modules for {childName}
+      </h3>
+      <p className="text-xs text-gray-400 mb-3">
+        Toggle tracker modules on or off for this child. Click Save to persist your changes.
+      </p>
+      <div className="space-y-2">
+        {DEFAULT_MODULES.map((mod) => {
+          const enabled = pending.includes(mod.id);
+          return (
+            <label
+              key={mod.id}
+              className="flex items-center justify-between rounded-xl bg-gray-50 px-3 py-2.5 cursor-pointer hover:bg-lavender-50 transition-colors"
+            >
+              <div className="flex items-center gap-2">
+                <span className="text-lg">{mod.icon}</span>
+                <div>
+                  <span className="text-sm font-medium text-gray-700">{mod.label}</span>
+                  <p className="text-[10px] text-gray-400">{mod.description}</p>
+                </div>
+              </div>
+              <input
+                type="checkbox"
+                checked={enabled}
+                onChange={(e) => {
+                  const next = e.target.checked
+                    ? [...pending, mod.id]
+                    : pending.filter((m) => m !== mod.id);
+                  setPending(next);
+                  setSaved(false);
+                }}
+                className="h-4 w-4 rounded border-gray-300 text-lavender-500 focus:ring-lavender-400"
+              />
+            </label>
+          );
+        })}
+      </div>
+      <button
+        onClick={async () => {
+          await onSave(pending);
+          setSaved(true);
+        }}
+        className="mt-4 w-full flex items-center justify-center gap-2 py-2.5 bg-lavender-500 hover:bg-lavender-600 text-white rounded-xl font-semibold text-sm transition-all shadow-md shadow-lavender-200"
+      >
+        <Save size={15} />
+        {saved ? '✓ Saved!' : 'Save Module Settings'}
+      </button>
+    </section>
   );
 }
