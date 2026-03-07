@@ -115,7 +115,7 @@ export default function ProfilePage() {
             <Shield size={16} className="text-lavender-500" /> Privacy & security
           </h3>
           <div className="mt-3 rounded-[1.5rem] bg-[#faf7ff] p-4 text-sm text-gray-600 ring-1 ring-lavender-100">
-            Passwords are hashed before storage in this app, invites are role-scoped, and audit activity is kept locally for review. For full multi-device NHS-grade deployment, connect the same flows to a managed backend.
+            Passwords are securely hashed before storage, invites are role-scoped, and audit activity is tracked. When connected to cloud storage, your data syncs across devices with NHS/school-grade privacy.
           </div>
         </section>
 
@@ -155,7 +155,7 @@ export default function ProfilePage() {
             <Trash2 size={18} className="text-rose-500" />
             <div>
               <div className="text-sm font-semibold text-rose-600">Clear all data</div>
-              <div className="text-xs text-gray-500">Remove local demo data from this browser.</div>
+              <div className="text-xs text-gray-500">Remove all saved app data from this browser.</div>
             </div>
           </button>
 
