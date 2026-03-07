@@ -11,6 +11,7 @@ import CalendarPage from './pages/CalendarPage';
 import ProfilePage from './pages/ProfilePage';
 import CaregiverPortalPage from './pages/CaregiverPortalPage';
 import AdminPage from './pages/AdminPage';
+import MilestonesPage from './pages/MilestonesPage';
 import { promoteToAdmin, addAuditEvent } from './utils/storage';
 
 const ADMIN_ACCESS_KEY = 'bladdertracker-admin-2024';
@@ -61,6 +62,7 @@ function AppRoutes() {
         <Route path="/charts" element={<ChartsPage />} />
         <Route path="/calendar" element={<CalendarPage />} />
         <Route path="/caregiver" element={<CaregiverPortalPage />} />
+        <Route path="/milestones" element={<MilestonesPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/admin" element={<AdminPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />

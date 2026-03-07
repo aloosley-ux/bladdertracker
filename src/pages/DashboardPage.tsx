@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { format, isSameDay } from 'date-fns';
-import { Apple, Bell, CloudRain, Download, Droplets, Moon, Stethoscope, Target, X } from 'lucide-react';
+import { Apple, Bell, CloudRain, ClipboardList, Download, Droplets, Moon, Palette, Pill, Puzzle, Smile, Star, Stethoscope, Target, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useApp } from '../context/useApp';
 import CalendarStrip from '../components/CalendarStrip';
@@ -53,6 +53,17 @@ export default function DashboardPage() {
     deleteSleepEntry,
     deleteToiletAttemptEntry,
     deleteFoodEntry,
+    moodEntries,
+    sensoryEntries,
+    medicationEntries,
+    therapyEntries,
+    routineEntries,
+    milestones,
+    deleteMoodEntry,
+    deleteSensoryEntry,
+    deleteMedicationEntry,
+    deleteTherapyEntry,
+    deleteRoutineEntry,
     exportData,
   } = useApp();
 
@@ -92,6 +103,30 @@ export default function DashboardPage() {
     () => foodEntries.filter((e) => e.childId === selectedChildId && e.date === dateStr),
     [foodEntries, selectedChildId, dateStr]
   );
+  const dayMood = useMemo(
+    () => moodEntries.filter((e) => e.childId === selectedChildId && e.date === dateStr),
+    [moodEntries, selectedChildId, dateStr]
+  );
+  const daySensory = useMemo(
+    () => sensoryEntries.filter((e) => e.childId === selectedChildId && e.date === dateStr),
+    [sensoryEntries, selectedChildId, dateStr]
+  );
+  const dayMedication = useMemo(
+    () => medicationEntries.filter((e) => e.childId === selectedChildId && e.date === dateStr),
+    [medicationEntries, selectedChildId, dateStr]
+  );
+  const dayTherapy = useMemo(
+    () => therapyEntries.filter((e) => e.childId === selectedChildId && e.date === dateStr),
+    [therapyEntries, selectedChildId, dateStr]
+  );
+  const dayRoutine = useMemo(
+    () => routineEntries.filter((e) => e.childId === selectedChildId && e.date === dateStr),
+    [routineEntries, selectedChildId, dateStr]
+  );
+  const childMilestones = useMemo(
+    () => milestones.filter((m) => m.childId === selectedChildId),
+    [milestones, selectedChildId]
+  );
 
   const totalMl = dayDrinks.reduce((sum, d) => sum + d.amountMl, 0);
   const totalOutput = dayUrine.reduce((sum, e) => sum + (e.volumeMl || 0), 0);
@@ -101,8 +136,14 @@ export default function DashboardPage() {
   const sleepCount = daySleep.length;
   const toiletCount = dayToilet.length;
   const foodCount = dayFood.length;
+  const moodCount = dayMood.length;
+  const sensoryCount = daySensory.length;
+  const medicationCount = dayMedication.length;
+  const therapyCount = dayTherapy.length;
+  const routineCount = dayRoutine.length;
+  const milestoneAchieved = childMilestones.filter((m) => m.status === 'achieved').length;
 
-  const hasEntries = dayDrinks.length + dayUrine.length + dayBowel.length + daySleep.length + dayToilet.length + dayFood.length > 0;
+  const hasEntries = dayDrinks.length + dayUrine.length + dayBowel.length + daySleep.length + dayToilet.length + dayFood.length + dayMood.length + daySensory.length + dayMedication.length + dayTherapy.length + dayRoutine.length > 0;
 
   const handleDismissGoal = () => {
     setGoalDismissed(true);
@@ -236,9 +277,57 @@ export default function DashboardPage() {
             <span className="text-2xl">🍽️</span>
             <span className="text-xs font-semibold text-orange-700">Food</span>
           </Link>
+          <Link
+            to="/add" state={{ tab: 'mood' }}
+            className="relative flex flex-col items-center gap-2 rounded-[1.5rem] bg-[#fce4ec] py-4 shadow-sm ring-1 ring-pink-100 transition hover:bg-pink-50 active:scale-95"
+          >
+            <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-pink-500 text-[11px] font-bold leading-none text-white shadow-sm">+</span>
+            <span className="text-2xl">😊</span>
+            <span className="text-xs font-semibold text-pink-700">Mood</span>
+          </Link>
+          <Link
+            to="/add" state={{ tab: 'sensory' }}
+            className="relative flex flex-col items-center gap-2 rounded-[1.5rem] bg-[#e0f2f1] py-4 shadow-sm ring-1 ring-teal-100 transition hover:bg-teal-50 active:scale-95"
+          >
+            <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-teal-500 text-[11px] font-bold leading-none text-white shadow-sm">+</span>
+            <span className="text-2xl">🎨</span>
+            <span className="text-xs font-semibold text-teal-700">Sensory</span>
+          </Link>
+          <Link
+            to="/add" state={{ tab: 'medication' }}
+            className="relative flex flex-col items-center gap-2 rounded-[1.5rem] bg-[#ffebee] py-4 shadow-sm ring-1 ring-red-100 transition hover:bg-red-50 active:scale-95"
+          >
+            <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[11px] font-bold leading-none text-white shadow-sm">+</span>
+            <span className="text-2xl">💊</span>
+            <span className="text-xs font-semibold text-red-700">Meds</span>
+          </Link>
+          <Link
+            to="/add" state={{ tab: 'therapy' }}
+            className="relative flex flex-col items-center gap-2 rounded-[1.5rem] bg-[#e0f7fa] py-4 shadow-sm ring-1 ring-cyan-100 transition hover:bg-cyan-50 active:scale-95"
+          >
+            <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-cyan-500 text-[11px] font-bold leading-none text-white shadow-sm">+</span>
+            <span className="text-2xl">🧩</span>
+            <span className="text-xs font-semibold text-cyan-700">Therapy</span>
+          </Link>
+          <Link
+            to="/add" state={{ tab: 'routine' }}
+            className="relative flex flex-col items-center gap-2 rounded-[1.5rem] bg-[#f0f4c3] py-4 shadow-sm ring-1 ring-lime-100 transition hover:bg-lime-50 active:scale-95"
+          >
+            <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-lime-500 text-[11px] font-bold leading-none text-white shadow-sm">+</span>
+            <span className="text-2xl">📋</span>
+            <span className="text-xs font-semibold text-lime-700">Routine</span>
+          </Link>
+          <Link
+            to="/milestones"
+            className="relative flex flex-col items-center gap-2 rounded-[1.5rem] bg-[#fff8e1] py-4 shadow-sm ring-1 ring-yellow-100 transition hover:bg-yellow-50 active:scale-95"
+          >
+            <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-yellow-500 text-[11px] font-bold leading-none text-white shadow-sm">⭐</span>
+            <span className="text-2xl">⭐</span>
+            <span className="text-xs font-semibold text-yellow-700">Milestones</span>
+          </Link>
         </section>
 
-        {/* Summary stats — 2 rows of 3 */}
+        {/* Summary stats */}
         <section className="grid grid-cols-3 gap-3">
           <SummaryCard icon={<Droplets size={18} className="text-sky-500" />} label="Drinks" value={`${totalMl}ml`} sub={`${dayDrinks.length} entries`} bg="bg-sky-light" />
           <SummaryCard icon={<CloudRain size={18} className="text-amber-500" />} label="Urine" value={`${wetCount + passCount}`} sub={totalOutput > 0 ? `${totalOutput}ml output` : `${wetCount} wet · ${passCount} pass`} bg="bg-peach" />
@@ -246,6 +335,12 @@ export default function DashboardPage() {
           <SummaryCard icon={<Moon size={18} className="text-indigo-500" />} label="Sleep" value={`${sleepCount}`} sub="events" bg="bg-[#eee8ff]" />
           <SummaryCard icon={<Target size={18} className="text-purple-500" />} label="Attempts" value={`${toiletCount}`} sub="logged" bg="bg-[#f3eeff]" />
           <SummaryCard icon={<Apple size={18} className="text-orange-500" />} label="Food" value={`${foodCount}`} sub="meals" bg="bg-[#fff5eb]" />
+          <SummaryCard icon={<Smile size={18} className="text-pink-500" />} label="Mood" value={`${moodCount}`} sub="entries" bg="bg-[#fce4ec]" />
+          <SummaryCard icon={<Palette size={18} className="text-teal-500" />} label="Sensory" value={`${sensoryCount}`} sub="events" bg="bg-[#e0f2f1]" />
+          <SummaryCard icon={<Pill size={18} className="text-red-500" />} label="Meds" value={`${medicationCount}`} sub="doses" bg="bg-[#ffebee]" />
+          <SummaryCard icon={<Puzzle size={18} className="text-cyan-500" />} label="Therapy" value={`${therapyCount}`} sub="sessions" bg="bg-[#e0f7fa]" />
+          <SummaryCard icon={<ClipboardList size={18} className="text-lime-600" />} label="Routine" value={`${routineCount}`} sub="entries" bg="bg-[#f0f4c3]" />
+          <SummaryCard icon={<Star size={18} className="text-yellow-500" />} label="Milestones" value={`${milestoneAchieved}`} sub={`of ${childMilestones.length}`} bg="bg-[#fff8e1]" />
         </section>
 
         {/* Fluid balance */}
@@ -417,6 +512,66 @@ export default function DashboardPage() {
               time={entry.time}
               color="bg-[#fff5eb]"
               onDelete={() => deleteFoodEntry(entry.id)}
+            />
+          ))}
+
+          {dayMood.map((entry) => (
+            <EntryCard
+              key={entry.id}
+              icon={<Smile size={18} className="text-pink-500" />}
+              title={`Mood: ${entry.level === 1 ? '😢' : entry.level === 2 ? '😟' : entry.level === 3 ? '😐' : entry.level === 4 ? '🙂' : '😁'} ${entry.level}/5`}
+              subtitle={[entry.triggers ? `Triggers: ${entry.triggers}` : '', entry.notes].filter(Boolean).join(' · ')}
+              time={entry.time}
+              color="bg-[#fce4ec]"
+              onDelete={() => deleteMoodEntry(entry.id)}
+            />
+          ))}
+
+          {daySensory.map((entry) => (
+            <EntryCard
+              key={entry.id}
+              icon={<Palette size={18} className="text-teal-500" />}
+              title={`Sensory: ${entry.sensoryType} (${entry.response})`}
+              subtitle={[`Intensity ${entry.intensity}/5`, entry.notes].filter(Boolean).join(' · ')}
+              time={entry.time}
+              color="bg-[#e0f2f1]"
+              onDelete={() => deleteSensoryEntry(entry.id)}
+            />
+          ))}
+
+          {dayMedication.map((entry) => (
+            <EntryCard
+              key={entry.id}
+              icon={<Pill size={18} className="text-red-500" />}
+              title={`${entry.name} ${entry.dosage}${entry.administered ? '' : ' (not administered)'}`}
+              subtitle={entry.notes}
+              time={entry.time}
+              color="bg-[#ffebee]"
+              onDelete={() => deleteMedicationEntry(entry.id)}
+            />
+          ))}
+
+          {dayTherapy.map((entry) => (
+            <EntryCard
+              key={entry.id}
+              icon={<Puzzle size={18} className="text-cyan-500" />}
+              title={`${entry.therapyType} therapy (${entry.durationMinutes}min)`}
+              subtitle={[entry.provider ? `Provider: ${entry.provider}` : '', entry.goals ? `Goals: ${entry.goals}` : '', entry.notes].filter(Boolean).join(' · ')}
+              time={entry.time}
+              color="bg-[#e0f7fa]"
+              onDelete={() => deleteTherapyEntry(entry.id)}
+            />
+          ))}
+
+          {dayRoutine.map((entry) => (
+            <EntryCard
+              key={entry.id}
+              icon={<ClipboardList size={18} className="text-lime-600" />}
+              title={`${entry.routineName} ${entry.completed ? '✅' : '❌'}`}
+              subtitle={[entry.durationMinutes ? `${entry.durationMinutes} min` : '', entry.notes].filter(Boolean).join(' · ')}
+              time={entry.time}
+              color="bg-[#f0f4c3]"
+              onDelete={() => deleteRoutineEntry(entry.id)}
             />
           ))}
         </div>

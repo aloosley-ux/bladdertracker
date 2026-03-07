@@ -21,8 +21,8 @@ import type {
   ToiletAttemptEntry,
   UrineEntry,
   User,
-  DEFAULT_MODULES,
 } from '../types';
+import { DEFAULT_MODULES } from '../types';
 
 const STORAGE_KEYS = {
   USER: 'bt_user',

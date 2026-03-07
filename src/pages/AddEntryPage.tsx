@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 import { format } from 'date-fns';
-import { Droplets, CloudRain, Stethoscope, Moon, Target, Apple, ArrowLeft } from 'lucide-react';
+import { Droplets, CloudRain, Stethoscope, Moon, Target, Apple, ArrowLeft, Smile, Palette, Pill, Puzzle, ClipboardList } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useApp } from '../context/useApp';
 import { generateId } from '../utils/storage';
 import BristolStoolPicker from '../components/BristolStoolPicker';
 import BrandIcon from '../components/BrandIcon';
-import type { BristolStoolType, BowelAmount, UrineEntry, SleepEventType, ToiletAttemptOutcome, MealType } from '../types';
+import type { BristolStoolType, BowelAmount, UrineEntry, SleepEventType, ToiletAttemptOutcome, MealType, MoodLevel, SensoryResponseType, TherapyType } from '../types';
 
-type EntryType = 'drink' | 'urine' | 'bowel' | 'sleep' | 'toilet' | 'food';
+type EntryType = 'drink' | 'urine' | 'bowel' | 'sleep' | 'toilet' | 'food' | 'mood' | 'sensory' | 'medication' | 'therapy' | 'routine';
 
 export default function AddEntryPage() {
   const location = useLocation();
@@ -27,6 +27,11 @@ export default function AddEntryPage() {
     { type: 'sleep', icon: Moon, label: 'Sleep', color: 'text-indigo-500' },
     { type: 'toilet', icon: Target, label: 'Attempt', color: 'text-purple-500' },
     { type: 'food', icon: Apple, label: 'Food', color: 'text-orange-500' },
+    { type: 'mood', icon: Smile, label: 'Mood', color: 'text-pink-500' },
+    { type: 'sensory', icon: Palette, label: 'Sensory', color: 'text-teal-500' },
+    { type: 'medication', icon: Pill, label: 'Meds', color: 'text-red-500' },
+    { type: 'therapy', icon: Puzzle, label: 'Therapy', color: 'text-cyan-500' },
+    { type: 'routine', icon: ClipboardList, label: 'Routine', color: 'text-lime-600' },
   ];
 
   return (
@@ -67,6 +72,11 @@ export default function AddEntryPage() {
         {activeTab === 'sleep' && <SleepForm />}
         {activeTab === 'toilet' && <ToiletAttemptForm />}
         {activeTab === 'food' && <FoodForm />}
+        {activeTab === 'mood' && <MoodForm />}
+        {activeTab === 'sensory' && <SensoryForm />}
+        {activeTab === 'medication' && <MedicationForm />}
+        {activeTab === 'therapy' && <TherapyForm />}
+        {activeTab === 'routine' && <RoutineForm />}
       </div>
     </div>
   );
@@ -785,6 +795,223 @@ function FoodForm() {
         className="w-full py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-semibold text-sm transition-all shadow-lg shadow-orange-200">
         Save Food Entry 🍽️
       </button>
+    </form>
+  );
+}
+
+function MoodForm() {
+  const { addMoodEntry, selectedChildId, user } = useApp();
+  const navigate = useNavigate();
+  const [time, setTime] = useState(format(new Date(), 'HH:mm'));
+  const [date, setDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+  const [level, setLevel] = useState<MoodLevel>(3);
+  const [triggers, setTriggers] = useState('');
+  const [notes, setNotes] = useState('');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedChildId || !user) return;
+    addMoodEntry({ id: generateId(), childId: selectedChildId, date, time, level, triggers, notes, createdBy: user.id, createdAt: new Date().toISOString() });
+    navigate('/');
+  };
+
+  const inputCls = "w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm";
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4 rounded-[2rem] bg-white p-5 shadow-[0_24px_70px_rgba(139,77,255,0.08)]">
+      <h2 className="text-lg font-bold text-gray-900">😊 Log Mood</h2>
+      <div className="grid grid-cols-2 gap-3">
+        <div><label className="text-xs font-medium text-gray-600">Date</label><input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={inputCls} /></div>
+        <div><label className="text-xs font-medium text-gray-600">Time</label><input type="time" value={time} onChange={(e) => setTime(e.target.value)} className={inputCls} /></div>
+      </div>
+      <div>
+        <label className="text-xs font-medium text-gray-600">Mood Level (1–5)</label>
+        <div className="flex gap-2 mt-1">{([1,2,3,4,5] as MoodLevel[]).map((l) => (
+          <button key={l} type="button" onClick={() => setLevel(l)}
+            className={`flex-1 py-2 rounded-xl text-sm font-semibold transition-all ${level === l ? 'bg-pink-500 text-white shadow-md' : 'bg-gray-100 text-gray-600'}`}>
+            {l === 1 ? '😢' : l === 2 ? '😟' : l === 3 ? '😐' : l === 4 ? '🙂' : '😁'} {l}
+          </button>
+        ))}</div>
+      </div>
+      <div><label className="text-xs font-medium text-gray-600">Triggers</label><input value={triggers} onChange={(e) => setTriggers(e.target.value)} placeholder="What triggered this mood..." className={inputCls} /></div>
+      <div><label className="text-xs font-medium text-gray-600">Notes</label><textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Additional observations..." className={inputCls + " resize-none"} rows={2} /></div>
+      <button type="submit" className="w-full py-3 bg-pink-500 hover:bg-pink-600 text-white rounded-xl font-semibold text-sm transition-all shadow-lg shadow-pink-200">Save Mood Entry 😊</button>
+    </form>
+  );
+}
+
+function SensoryForm() {
+  const { addSensoryEntry, selectedChildId, user } = useApp();
+  const navigate = useNavigate();
+  const [time, setTime] = useState(format(new Date(), 'HH:mm'));
+  const [date, setDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+  const [sensoryType, setSensoryType] = useState('auditory');
+  const [response, setResponse] = useState<SensoryResponseType>('neutral');
+  const [intensity, setIntensity] = useState<1|2|3|4|5>(3);
+  const [notes, setNotes] = useState('');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedChildId || !user) return;
+    addSensoryEntry({ id: generateId(), childId: selectedChildId, date, time, sensoryType, response, intensity, notes, createdBy: user.id, createdAt: new Date().toISOString() });
+    navigate('/');
+  };
+
+  const inputCls = "w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm";
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4 rounded-[2rem] bg-white p-5 shadow-[0_24px_70px_rgba(139,77,255,0.08)]">
+      <h2 className="text-lg font-bold text-gray-900">🎨 Log Sensory Event</h2>
+      <div className="grid grid-cols-2 gap-3">
+        <div><label className="text-xs font-medium text-gray-600">Date</label><input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={inputCls} /></div>
+        <div><label className="text-xs font-medium text-gray-600">Time</label><input type="time" value={time} onChange={(e) => setTime(e.target.value)} className={inputCls} /></div>
+      </div>
+      <div>
+        <label className="text-xs font-medium text-gray-600">Sensory Type</label>
+        <select value={sensoryType} onChange={(e) => setSensoryType(e.target.value)} className={inputCls}>
+          {['auditory','tactile','visual','vestibular','proprioceptive','olfactory','gustatory'].map((t) => (
+            <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>
+          ))}
+        </select>
+      </div>
+      <div>
+        <label className="text-xs font-medium text-gray-600">Response</label>
+        <div className="flex gap-2 mt-1">{(['seeking','neutral','avoiding'] as SensoryResponseType[]).map((r) => (
+          <button key={r} type="button" onClick={() => setResponse(r)}
+            className={`flex-1 py-2 rounded-xl text-xs font-semibold transition-all ${response === r ? 'bg-teal-500 text-white shadow-md' : 'bg-gray-100 text-gray-600'}`}>
+            {r === 'seeking' ? '🔍' : r === 'avoiding' ? '🚫' : '😐'} {r.charAt(0).toUpperCase() + r.slice(1)}
+          </button>
+        ))}</div>
+      </div>
+      <div>
+        <label className="text-xs font-medium text-gray-600">Intensity (1–5)</label>
+        <div className="flex gap-2 mt-1">{([1,2,3,4,5] as (1|2|3|4|5)[]).map((i) => (
+          <button key={i} type="button" onClick={() => setIntensity(i)}
+            className={`flex-1 py-2 rounded-xl text-sm font-semibold transition-all ${intensity === i ? 'bg-teal-500 text-white shadow-md' : 'bg-gray-100 text-gray-600'}`}>{i}</button>
+        ))}</div>
+      </div>
+      <div><label className="text-xs font-medium text-gray-600">Notes</label><textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Describe the sensory event..." className={inputCls + " resize-none"} rows={2} /></div>
+      <button type="submit" className="w-full py-3 bg-teal-500 hover:bg-teal-600 text-white rounded-xl font-semibold text-sm transition-all shadow-lg shadow-teal-200">Save Sensory Entry 🎨</button>
+    </form>
+  );
+}
+
+function MedicationForm() {
+  const { addMedicationEntry, selectedChildId, user } = useApp();
+  const navigate = useNavigate();
+  const [time, setTime] = useState(format(new Date(), 'HH:mm'));
+  const [date, setDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+  const [name, setName] = useState('');
+  const [dosage, setDosage] = useState('');
+  const [administered, setAdministered] = useState(true);
+  const [notes, setNotes] = useState('');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedChildId || !user || !name) return;
+    addMedicationEntry({ id: generateId(), childId: selectedChildId, date, time, name, dosage, administered, notes, createdBy: user.id, createdAt: new Date().toISOString() });
+    navigate('/');
+  };
+
+  const inputCls = "w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm";
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4 rounded-[2rem] bg-white p-5 shadow-[0_24px_70px_rgba(139,77,255,0.08)]">
+      <h2 className="text-lg font-bold text-gray-900">💊 Log Medication</h2>
+      <div className="grid grid-cols-2 gap-3">
+        <div><label className="text-xs font-medium text-gray-600">Date</label><input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={inputCls} /></div>
+        <div><label className="text-xs font-medium text-gray-600">Time</label><input type="time" value={time} onChange={(e) => setTime(e.target.value)} className={inputCls} /></div>
+      </div>
+      <div><label className="text-xs font-medium text-gray-600">Medication Name</label><input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Melatonin" className={inputCls} required /></div>
+      <div><label className="text-xs font-medium text-gray-600">Dosage</label><input value={dosage} onChange={(e) => setDosage(e.target.value)} placeholder="e.g. 1mg" className={inputCls} /></div>
+      <label className="flex items-center gap-2 text-sm text-gray-700">
+        <input type="checkbox" checked={administered} onChange={(e) => setAdministered(e.target.checked)} className="h-4 w-4 rounded border-gray-300 text-red-500 focus:ring-red-400" />
+        Administered
+      </label>
+      <div><label className="text-xs font-medium text-gray-600">Notes</label><textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Side effects, observations..." className={inputCls + " resize-none"} rows={2} /></div>
+      <button type="submit" className="w-full py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl font-semibold text-sm transition-all shadow-lg shadow-red-200">Save Medication Entry 💊</button>
+    </form>
+  );
+}
+
+function TherapyForm() {
+  const { addTherapyEntry, selectedChildId, user } = useApp();
+  const navigate = useNavigate();
+  const [time, setTime] = useState(format(new Date(), 'HH:mm'));
+  const [date, setDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+  const [therapyType, setTherapyType] = useState<TherapyType>('speech');
+  const [provider, setProvider] = useState('');
+  const [durationMinutes, setDurationMinutes] = useState(30);
+  const [goals, setGoals] = useState('');
+  const [notes, setNotes] = useState('');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedChildId || !user) return;
+    addTherapyEntry({ id: generateId(), childId: selectedChildId, date, time, therapyType, provider, durationMinutes, goals, notes, createdBy: user.id, createdAt: new Date().toISOString() });
+    navigate('/');
+  };
+
+  const inputCls = "w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm";
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4 rounded-[2rem] bg-white p-5 shadow-[0_24px_70px_rgba(139,77,255,0.08)]">
+      <h2 className="text-lg font-bold text-gray-900">🧩 Log Therapy Session</h2>
+      <div className="grid grid-cols-2 gap-3">
+        <div><label className="text-xs font-medium text-gray-600">Date</label><input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={inputCls} /></div>
+        <div><label className="text-xs font-medium text-gray-600">Time</label><input type="time" value={time} onChange={(e) => setTime(e.target.value)} className={inputCls} /></div>
+      </div>
+      <div>
+        <label className="text-xs font-medium text-gray-600">Therapy Type</label>
+        <select value={therapyType} onChange={(e) => setTherapyType(e.target.value as TherapyType)} className={inputCls}>
+          {(['speech','occupational','physical','behavioral','other'] as TherapyType[]).map((t) => (
+            <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>
+          ))}
+        </select>
+      </div>
+      <div><label className="text-xs font-medium text-gray-600">Provider</label><input value={provider} onChange={(e) => setProvider(e.target.value)} placeholder="Therapist name..." className={inputCls} /></div>
+      <div><label className="text-xs font-medium text-gray-600">Duration (minutes)</label><input type="number" value={durationMinutes} onChange={(e) => setDurationMinutes(Number(e.target.value))} min={1} className={inputCls} /></div>
+      <div><label className="text-xs font-medium text-gray-600">Goals</label><textarea value={goals} onChange={(e) => setGoals(e.target.value)} placeholder="Session goals..." className={inputCls + " resize-none"} rows={2} /></div>
+      <div><label className="text-xs font-medium text-gray-600">Notes</label><textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Progress, observations..." className={inputCls + " resize-none"} rows={2} /></div>
+      <button type="submit" className="w-full py-3 bg-cyan-500 hover:bg-cyan-600 text-white rounded-xl font-semibold text-sm transition-all shadow-lg shadow-cyan-200">Save Therapy Entry 🧩</button>
+    </form>
+  );
+}
+
+function RoutineForm() {
+  const { addRoutineEntry, selectedChildId, user } = useApp();
+  const navigate = useNavigate();
+  const [time, setTime] = useState(format(new Date(), 'HH:mm'));
+  const [date, setDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+  const [routineName, setRoutineName] = useState('');
+  const [completed, setCompleted] = useState(true);
+  const [durationMinutes, setDurationMinutes] = useState<number | ''>('');
+  const [notes, setNotes] = useState('');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedChildId || !user || !routineName) return;
+    addRoutineEntry({ id: generateId(), childId: selectedChildId, date, time, routineName, completed, durationMinutes: durationMinutes || null, notes, createdBy: user.id, createdAt: new Date().toISOString() });
+    navigate('/');
+  };
+
+  const inputCls = "w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm";
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4 rounded-[2rem] bg-white p-5 shadow-[0_24px_70px_rgba(139,77,255,0.08)]">
+      <h2 className="text-lg font-bold text-gray-900">📋 Log Routine</h2>
+      <div className="grid grid-cols-2 gap-3">
+        <div><label className="text-xs font-medium text-gray-600">Date</label><input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={inputCls} /></div>
+        <div><label className="text-xs font-medium text-gray-600">Time</label><input type="time" value={time} onChange={(e) => setTime(e.target.value)} className={inputCls} /></div>
+      </div>
+      <div><label className="text-xs font-medium text-gray-600">Routine Name</label><input value={routineName} onChange={(e) => setRoutineName(e.target.value)} placeholder="e.g. Morning brushing teeth" className={inputCls} required /></div>
+      <label className="flex items-center gap-2 text-sm text-gray-700">
+        <input type="checkbox" checked={completed} onChange={(e) => setCompleted(e.target.checked)} className="h-4 w-4 rounded border-gray-300 text-lime-500 focus:ring-lime-400" />
+        Completed
+      </label>
+      <div><label className="text-xs font-medium text-gray-600">Duration (minutes, optional)</label><input type="number" value={durationMinutes} onChange={(e) => setDurationMinutes(e.target.value ? Number(e.target.value) : '')} min={1} className={inputCls} /></div>
+      <div><label className="text-xs font-medium text-gray-600">Notes</label><textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Observations about the routine..." className={inputCls + " resize-none"} rows={2} /></div>
+      <button type="submit" className="w-full py-3 bg-lime-500 hover:bg-lime-600 text-white rounded-xl font-semibold text-sm transition-all shadow-lg shadow-lime-200">Save Routine Entry 📋</button>
     </form>
   );
 }
