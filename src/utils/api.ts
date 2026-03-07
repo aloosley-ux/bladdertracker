@@ -38,34 +38,37 @@ export class ApiError extends Error {
 
 // Auth
 export async function apiRegister(name: string, email: string, password: string, role: UserRole): Promise<User> {
-  const { user } = await request<{ user: User }>('/auth/register', {
+  const { user } = await request<{ user: User }>('/auth', {
     method: 'POST',
-    body: JSON.stringify({ name, email, password, role }),
+    body: JSON.stringify({ action: 'register', name, email, password, role }),
   });
   return user;
 }
 
 export async function apiLogin(email: string, password: string): Promise<User> {
-  const { user } = await request<{ user: User }>('/auth/login', {
+  const { user } = await request<{ user: User }>('/auth', {
     method: 'POST',
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ action: 'login', email, password }),
   });
   return user;
 }
 
 export async function apiLogout(): Promise<void> {
-  await request<{ ok: boolean }>('/auth/logout', { method: 'POST' });
+  await request<{ ok: boolean }>('/auth', {
+    method: 'POST',
+    body: JSON.stringify({ action: 'logout' }),
+  });
 }
 
 export async function apiGetSession(): Promise<User | null> {
-  const { user } = await request<{ user: User | null }>('/auth/session');
+  const { user } = await request<{ user: User | null }>('/auth');
   return user;
 }
 
 export async function apiResetPassword(email: string, password: string): Promise<User> {
-  const { user } = await request<{ user: User }>('/auth/reset', {
+  const { user } = await request<{ user: User }>('/auth', {
     method: 'POST',
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ action: 'reset', email, password }),
   });
   return user;
 }
@@ -196,7 +199,7 @@ export async function apiGetAuditEvents(): Promise<AuditEvent[]> {
 
 // Export
 export async function apiExportCSV(childId: string, childName: string): Promise<void> {
-  const res = await fetch(`${API_BASE}/export?childId=${childId}`, { credentials: 'include' });
+  const res = await fetch(`${API_BASE}/data?childId=${childId}`, { credentials: 'include' });
   if (!res.ok) throw new Error('Export failed');
   const blob = await res.blob();
   const url = URL.createObjectURL(blob);
@@ -209,7 +212,7 @@ export async function apiExportCSV(childId: string, childName: string): Promise<
 
 // Import
 export async function apiImportData(childId: string, payload: ImportedDiaryPayload): Promise<ImportSummary> {
-  const { summary } = await request<{ summary: ImportSummary }>('/import', {
+  const { summary } = await request<{ summary: ImportSummary }>('/data', {
     method: 'POST',
     body: JSON.stringify({ childId, ...payload }),
   });

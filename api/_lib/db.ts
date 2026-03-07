@@ -2,6 +2,15 @@ import { sql } from '@vercel/postgres';
 
 export { sql };
 
+export async function getAccessibleChildIds(userId: string): Promise<string[]> {
+  const result = await sql`
+    SELECT DISTINCT c.id FROM children c
+    LEFT JOIN child_access ca ON ca.child_id = c.id
+    WHERE c.created_by = ${userId} OR ca.user_id = ${userId}
+  `;
+  return result.rows.map((r) => r.id);
+}
+
 export async function migrate(): Promise<string[]> {
   const log: string[] = [];
 

@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { sql } from './_lib/db.js';
+import { sql, getAccessibleChildIds } from './_lib/db.js';
 import { getSessionFromRequest, generateId, cors } from './_lib/auth.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -16,11 +16,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const ids = childFilter ? [childFilter].filter((id) => childIds.includes(id)) : childIds;
     if (ids.length === 0) { res.status(200).json({ entries: [] }); return; }
 
-    const result = await sql`
-      SELECT id, child_id, date, time, location, amount, bristol_type, laxatives_given, notes, image_url, created_by, created_at
-      FROM bowel_entries WHERE child_id = ANY(${ids as unknown as string[]})
-      ORDER BY date DESC, time DESC
-    `;
+    const placeholders = ids.map((_, i) => `$${i + 1}`).join(', ');
+    const result = await sql.query(
+      `SELECT id, child_id, date, time, location, amount, bristol_type, laxatives_given, notes, image_url, created_by, created_at
+       FROM bowel_entries WHERE child_id IN (${placeholders})
+       ORDER BY date DESC, time DESC`,
+      ids
+    );
 
     const entries = result.rows.map((r) => ({
       id: r.id, childId: r.child_id, date: r.date, time: r.time,
@@ -75,13 +77,4 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   res.status(405).json({ error: 'Method not allowed' });
-}
-
-async function getAccessibleChildIds(userId: string): Promise<string[]> {
-  const result = await sql`
-    SELECT DISTINCT c.id FROM children c
-    LEFT JOIN child_access ca ON ca.child_id = c.id
-    WHERE c.created_by = ${userId} OR ca.user_id = ${userId}
-  `;
-  return result.rows.map((r) => r.id);
 }
