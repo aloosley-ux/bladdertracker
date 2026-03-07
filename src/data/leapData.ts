@@ -170,12 +170,12 @@ export interface ChildAge {
  * Compute a child's current age from their birth date.
  */
 export function computeChildAge(birthDate: Date, now: Date = new Date()): ChildAge {
-  const totalDays = differenceInDays(now, birthDate);
+  const totalDays = Math.max(0, differenceInDays(now, birthDate));
   return {
     days: totalDays % 7,
     weeks: differenceInWeeks(now, birthDate),
     months: differenceInMonths(now, birthDate),
-    totalDays: Math.max(0, totalDays),
+    totalDays,
   };
 }
 

@@ -2,7 +2,7 @@ import { useMemo, useState, useEffect } from 'react';
 import { format, parseISO } from 'date-fns';
 import { Baby, Calendar, ChevronDown, ChevronUp, Plus, Trash2, X } from 'lucide-react';
 import { useApp } from '../context/useApp';
-import { generateId } from '../utils/storage';
+import { generateId, updateChild } from '../utils/storage';
 import type { LeapSymptomLog, Child } from '../types';
 import {
   computeChildAge,
@@ -511,14 +511,9 @@ export default function LeapsPage() {
 
   const handleSaveDueDate = (dueDate: string) => {
     if (!child) return;
-    // Persist dueDate in localStorage (patch the child record)
-    const stored = JSON.parse(window.localStorage.getItem('bt_children') ?? '[]') as Child[];
-    const idx = stored.findIndex((c) => c.id === child.id);
-    if (idx !== -1) {
-      stored[idx] = { ...stored[idx], dueDate };
-      window.localStorage.setItem('bt_children', JSON.stringify(stored));
-      setDueDateChild({ ...child, dueDate });
-    }
+    const updatedChild = { ...child, dueDate, lastUpdatedAt: new Date().toISOString() };
+    updateChild(updatedChild);
+    setDueDateChild(updatedChild);
   };
 
   if (!child) {
