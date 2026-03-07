@@ -1,6 +1,8 @@
-import { sql } from '@vercel/postgres';
+import { neon } from '@neondatabase/serverless';
 
-export { sql };
+const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_URL;
+
+export const sql = neon(connectionString!, { fullResults: true });
 
 export async function getAccessibleChildIds(userId: string): Promise<string[]> {
   const result = await sql`
@@ -73,12 +75,21 @@ export async function migrate(): Promise<string[]> {
       time VARCHAR(10) NOT NULL,
       wet BOOLEAN DEFAULT FALSE,
       pass BOOLEAN DEFAULT FALSE,
+      volume_ml INTEGER,
+      urgency SMALLINT CHECK (urgency IS NULL OR (urgency >= 1 AND urgency <= 5)),
+      leakage_amount VARCHAR(10) CHECK (leakage_amount IS NULL OR leakage_amount IN ('none', 'small', 'medium', 'large')),
       notes TEXT DEFAULT '',
       created_by TEXT REFERENCES accounts(id),
       created_at TIMESTAMPTZ DEFAULT NOW()
     )
   `;
   log.push('urine_entries table ready');
+
+  // Add new columns to existing urine_entries tables (safe if already present)
+  await sql`ALTER TABLE urine_entries ADD COLUMN IF NOT EXISTS volume_ml INTEGER`;
+  await sql`ALTER TABLE urine_entries ADD COLUMN IF NOT EXISTS urgency SMALLINT`;
+  await sql`ALTER TABLE urine_entries ADD COLUMN IF NOT EXISTS leakage_amount VARCHAR(10)`;
+  log.push('urine_entries columns up to date');
 
   await sql`
     CREATE TABLE IF NOT EXISTS bowel_entries (

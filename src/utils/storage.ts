@@ -461,6 +461,9 @@ export function importDiaryPayload(payload: ImportedDiaryPayload, childId: strin
       time: entry.time,
       wet: Boolean(entry.wet),
       pass: Boolean(entry.pass),
+      volumeMl: entry.volumeMl ?? null,
+      urgency: entry.urgency ?? null,
+      leakageAmount: entry.leakageAmount ?? null,
       notes: entry.notes ?? '',
       createdBy: userId,
       createdAt: new Date().toISOString(),
@@ -508,9 +511,9 @@ export function exportToCSV(childId: string, childName: string): string {
   });
 
   csv += '\nURINE EVENTS\n';
-  csv += 'Date,Time,Wet,Pass,Notes\n';
+  csv += 'Date,Time,Wet,Pass,Volume (ml),Urgency,Leakage,Notes\n';
   urine.forEach((entry) => {
-    csv += `${entry.date},${entry.time},${entry.wet},${entry.pass},"${entry.notes}"\n`;
+    csv += `${entry.date},${entry.time},${entry.wet},${entry.pass},${entry.volumeMl ?? ''},${entry.urgency ?? ''},${entry.leakageAmount ?? ''},"${entry.notes}"\n`;
   });
 
   csv += '\nBOWEL EVENTS\n';

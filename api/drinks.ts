@@ -16,13 +16,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const ids = childFilter ? [childFilter].filter((id) => childIds.includes(id)) : childIds;
     if (ids.length === 0) { res.status(200).json({ drinks: [] }); return; }
 
-    const placeholders = ids.map((_, i) => `$${i + 1}`).join(', ');
-    const result = await sql.query(
-      `SELECT id, child_id, date, time, type, amount_ml, notes, created_by, created_at
-       FROM drink_entries WHERE child_id IN (${placeholders})
-       ORDER BY date DESC, time DESC`,
-      ids
-    );
+    const result = await sql`
+      SELECT id, child_id, date, time, type, amount_ml, notes, created_by, created_at
+      FROM drink_entries WHERE child_id = ANY(${ids})
+      ORDER BY date DESC, time DESC
+    `;
 
     const drinks = result.rows.map((r) => ({
       id: r.id, childId: r.child_id, date: r.date, time: r.time,

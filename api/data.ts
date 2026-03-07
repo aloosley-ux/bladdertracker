@@ -11,6 +11,9 @@ interface EntryPayload {
   amount?: string;
   wet?: boolean;
   pass?: boolean;
+  volumeMl?: number;
+  urgency?: number;
+  leakageAmount?: string;
   location?: string;
   bristolType?: number;
   laxativesGiven?: boolean;
@@ -49,7 +52,7 @@ async function handleExport(req: VercelRequest, res: VercelResponse) {
     SELECT date, time, type, amount_ml, notes FROM drink_entries WHERE child_id = ${childId} ORDER BY date, time
   `;
   const urine = await sql`
-    SELECT date, time, wet, pass, notes FROM urine_entries WHERE child_id = ${childId} ORDER BY date, time
+    SELECT date, time, wet, pass, volume_ml, urgency, leakage_amount, notes FROM urine_entries WHERE child_id = ${childId} ORDER BY date, time
   `;
   const bowel = await sql`
     SELECT date, time, location, amount, bristol_type, laxatives_given, notes FROM bowel_entries WHERE child_id = ${childId} ORDER BY date, time
@@ -61,8 +64,8 @@ async function handleExport(req: VercelRequest, res: VercelResponse) {
   csv += 'DRINKS\nDate,Time,Type,Amount (ml),Notes\n';
   drinks.rows.forEach((r) => { csv += `${r.date},${r.time},${r.type},${r.amount_ml},${escapeCsvField(r.notes)}\n`; });
 
-  csv += '\nURINE EVENTS\nDate,Time,Wet,Pass,Notes\n';
-  urine.rows.forEach((r) => { csv += `${r.date},${r.time},${r.wet},${r.pass},${escapeCsvField(r.notes)}\n`; });
+  csv += '\nURINE EVENTS\nDate,Time,Wet,Pass,Volume (ml),Urgency,Leakage,Notes\n';
+  urine.rows.forEach((r) => { csv += `${r.date},${r.time},${r.wet},${r.pass},${r.volume_ml ?? ''},${r.urgency ?? ''},${r.leakage_amount ?? ''},${escapeCsvField(r.notes)}\n`; });
 
   csv += '\nBOWEL EVENTS\nDate,Time,Location,Amount,Bristol Type,Laxatives,Notes\n';
   bowel.rows.forEach((r) => { csv += `${r.date},${r.time},${r.location},${r.amount},Type ${r.bristol_type},${r.laxatives_given},${escapeCsvField(r.notes)}\n`; });
@@ -99,8 +102,8 @@ async function handleImport(req: VercelRequest, res: VercelResponse, userId: str
         continue;
       }
       await sql`
-        INSERT INTO urine_entries (id, child_id, date, time, wet, pass, notes, created_by)
-        VALUES (${generateId()}, ${childId}, ${entry.date}, ${entry.time}, ${Boolean(entry.wet)}, ${Boolean(entry.pass)}, ${entry.notes || ''}, ${userId})
+        INSERT INTO urine_entries (id, child_id, date, time, wet, pass, volume_ml, urgency, leakage_amount, notes, created_by)
+        VALUES (${generateId()}, ${childId}, ${entry.date}, ${entry.time}, ${Boolean(entry.wet)}, ${Boolean(entry.pass)}, ${entry.volumeMl ?? null}, ${entry.urgency ?? null}, ${entry.leakageAmount ?? null}, ${entry.notes || ''}, ${userId})
       `;
       summary.urineEntries++;
     }
