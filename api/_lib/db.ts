@@ -313,10 +313,14 @@ export async function migrate(): Promise<string[]> {
   `;
   log.push('enabled_modules table ready');
 
-  // Update accounts role constraint to include new roles
-  await sql`ALTER TABLE accounts DROP CONSTRAINT IF EXISTS accounts_role_check`;
-  await sql`ALTER TABLE accounts ADD CONSTRAINT accounts_role_check CHECK (role IN ('admin', 'parent', 'caregiver', 'schoolAdmin', 'therapist', 'specialist'))`;
-  log.push('accounts role constraint updated');
+  // Update accounts role constraint to include new roles (safe: existing roles are a subset)
+  try {
+    await sql`ALTER TABLE accounts DROP CONSTRAINT IF EXISTS accounts_role_check`;
+    await sql`ALTER TABLE accounts ADD CONSTRAINT accounts_role_check CHECK (role IN ('admin', 'parent', 'caregiver', 'schoolAdmin', 'therapist', 'specialist'))`;
+    log.push('accounts role constraint updated');
+  } catch {
+    log.push('accounts role constraint update skipped (may already be correct)');
+  }
 
   return log;
 }

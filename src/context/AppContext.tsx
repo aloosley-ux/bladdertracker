@@ -22,6 +22,7 @@ import type {
   AuditEvent,
   ImportSummary,
 } from '../types';
+import { EMPTY_IMPORT_SUMMARY } from '../types';
 import * as api from '../utils/api';
 import * as localStorage from '../utils/storage';
 import { AppContext } from './appContextDef';
@@ -638,7 +639,7 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
         await refreshCloudData(user);
         return summary;
       } catch {
-        return { drinks: 0, urineEntries: 0, bowelEntries: 0, sleepEntries: 0, toiletAttemptEntries: 0, foodEntries: 0, moodEntries: 0, sensoryEntries: 0, medicationEntries: 0, therapyEntries: 0, routineEntries: 0, errors: ['Import failed'] };
+        return { ...EMPTY_IMPORT_SUMMARY, errors: ['Import failed'] };
       }
     } else {
       const summary = localStorage.importDiaryPayload(payload, childId, user?.id ?? '');

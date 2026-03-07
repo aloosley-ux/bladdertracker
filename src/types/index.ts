@@ -1,3 +1,12 @@
+/**
+ * User roles with ascending capability:
+ * - admin: Full access to all features, user management, system config
+ * - parent: Manage children, all trackers, invite caregivers
+ * - caregiver: View/edit entries for shared children
+ * - schoolAdmin: View entries, read-only management
+ * - therapist: View/edit entries and milestones for assigned children
+ * - specialist: View-only access for clinical review
+ */
 export type UserRole = 'admin' | 'parent' | 'caregiver' | 'schoolAdmin' | 'therapist' | 'specialist';
 
 export interface User {
@@ -317,6 +326,13 @@ export interface ImportSummary {
   routineEntries: number;
   errors: string[];
 }
+
+export const EMPTY_IMPORT_SUMMARY: ImportSummary = {
+  drinks: 0, urineEntries: 0, bowelEntries: 0, sleepEntries: 0,
+  toiletAttemptEntries: 0, foodEntries: 0, moodEntries: 0,
+  sensoryEntries: 0, medicationEntries: 0, therapyEntries: 0,
+  routineEntries: 0, errors: [],
+};
 
 // ── Default Module Registry ──────────────────────────────────────────
 export const DEFAULT_MODULES: TrackerModule[] = [
