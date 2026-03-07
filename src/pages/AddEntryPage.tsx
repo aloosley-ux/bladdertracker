@@ -7,33 +7,99 @@ import { generateId } from '../utils/storage';
 import BristolStoolPicker from '../components/BristolStoolPicker';
 import BrandIcon from '../components/BrandIcon';
 import HelpPanel from '../components/HelpPanel';
-import type { BristolStoolType, BowelAmount, UrineEntry, SleepEventType, ToiletAttemptOutcome, MealType, MoodLevel, SensoryResponseType, TherapyType } from '../types';
+import { DEFAULT_MODULES } from '../types';
+import type { ModuleId, BristolStoolType, BowelAmount, UrineEntry, SleepEventType, ToiletAttemptOutcome, MealType, MoodLevel, SensoryResponseType, TherapyType } from '../types';
 
 type EntryType = 'drink' | 'urine' | 'bowel' | 'sleep' | 'toilet' | 'food' | 'mood' | 'sensory' | 'medication' | 'therapy' | 'routine';
 
+const MODULE_ID_MAP: Record<EntryType, ModuleId> = {
+  drink:      'drinks',
+  urine:      'urine',
+  bowel:      'bowel',
+  sleep:      'sleep',
+  toilet:     'toilet',
+  food:       'food',
+  mood:       'mood',
+  sensory:    'sensory',
+  medication: 'medication',
+  therapy:    'therapy',
+  routine:    'routine',
+};
+
+const ALL_TABS: { type: EntryType; icon: typeof Droplets; label: string; color: string }[] = [
+  { type: 'drink',      icon: Droplets,      label: 'Drink',   color: 'text-blue-500'   },
+  { type: 'urine',      icon: CloudRain,     label: 'Urine',   color: 'text-yellow-500' },
+  { type: 'bowel',      icon: Stethoscope,   label: 'Bowel',   color: 'text-green-500'  },
+  { type: 'sleep',      icon: Moon,          label: 'Sleep',   color: 'text-indigo-500' },
+  { type: 'toilet',     icon: Target,        label: 'Attempt', color: 'text-purple-500' },
+  { type: 'food',       icon: Apple,         label: 'Food',    color: 'text-orange-500' },
+  { type: 'mood',       icon: Smile,         label: 'Mood',    color: 'text-pink-500'   },
+  { type: 'sensory',    icon: Palette,       label: 'Sensory', color: 'text-teal-500'   },
+  { type: 'medication', icon: Pill,          label: 'Meds',    color: 'text-red-500'    },
+  { type: 'therapy',    icon: Puzzle,        label: 'Therapy', color: 'text-cyan-500'   },
+  { type: 'routine',    icon: ClipboardList, label: 'Routine', color: 'text-lime-600'   },
+];
+
 export default function AddEntryPage() {
   const location = useLocation();
-  const initialTab: EntryType = (location.state as { tab?: EntryType } | null)?.tab ?? 'drink';
-  const [activeTab, setActiveTab] = useState<EntryType>(initialTab);
+  const requestedTab: EntryType = (location.state as { tab?: EntryType } | null)?.tab ?? 'drink';
   const navigate = useNavigate();
+  const { enabledModules } = useApp();
+
+  // Derive enabled tabs; fall back to default-enabled set during startup
+  const enabledSet = enabledModules.length > 0
+    ? new Set(enabledModules)
+    : new Set(DEFAULT_MODULES.filter((m) => m.defaultEnabled).map((m) => m.id));
+
+  const tabs = ALL_TABS.filter((t) => enabledSet.has(MODULE_ID_MAP[t.type]));
+
+  // Select the first enabled tab that matches the request; fall back to first available
+  const resolveTab = (req: EntryType): EntryType => {
+    if (enabledSet.has(MODULE_ID_MAP[req])) return req;
+    return tabs[0]?.type ?? req;
+  };
+
+  const [activeTab, setActiveTab] = useState<EntryType>(() => resolveTab(requestedTab));
+
+  // When enabledModules changes, correct activeTab if it is now disabled
+  useEffect(() => {
+    setActiveTab((prev) => resolveTab(prev));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [enabledModules]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, []);
 
-  const tabs: { type: EntryType; icon: typeof Droplets; label: string; color: string }[] = [
-    { type: 'drink', icon: Droplets, label: 'Drink', color: 'text-blue-500' },
-    { type: 'urine', icon: CloudRain, label: 'Urine', color: 'text-yellow-500' },
-    { type: 'bowel', icon: Stethoscope, label: 'Bowel', color: 'text-green-500' },
-    { type: 'sleep', icon: Moon, label: 'Sleep', color: 'text-indigo-500' },
-    { type: 'toilet', icon: Target, label: 'Attempt', color: 'text-purple-500' },
-    { type: 'food', icon: Apple, label: 'Food', color: 'text-orange-500' },
-    { type: 'mood', icon: Smile, label: 'Mood', color: 'text-pink-500' },
-    { type: 'sensory', icon: Palette, label: 'Sensory', color: 'text-teal-500' },
-    { type: 'medication', icon: Pill, label: 'Meds', color: 'text-red-500' },
-    { type: 'therapy', icon: Puzzle, label: 'Therapy', color: 'text-cyan-500' },
-    { type: 'routine', icon: ClipboardList, label: 'Routine', color: 'text-lime-600' },
-  ];
+  // Edge case: all modules disabled
+  if (tabs.length === 0) {
+    return (
+      <div className="pb-20">
+        <div className="bg-[linear-gradient(180deg,#fbf7f2_0%,#ffffff_100%)] px-4 pt-4 pb-3">
+          <div className="mb-3 flex items-center gap-3">
+            <button
+              onClick={() => navigate('/')}
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-gray-500 shadow-sm ring-1 ring-black/5 hover:bg-lavender-50"
+            >
+              <ArrowLeft size={18} />
+            </button>
+            <BrandIcon width={110} />
+          </div>
+        </div>
+        <div className="px-4 mt-8 text-center">
+          <p className="text-3xl mb-3">🔧</p>
+          <p className="text-sm font-semibold text-gray-700">No modules enabled</p>
+          <p className="text-xs text-gray-400 mt-1 mb-4">Enable at least one tracker module in Settings to start logging.</p>
+          <button
+            onClick={() => navigate('/settings')}
+            className="rounded-full bg-lavender-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-lavender-600"
+          >
+            Open Settings
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="pb-20">

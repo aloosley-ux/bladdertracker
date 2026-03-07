@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
-import { AlertTriangle, Baby, Crown, Download, Globe, LogOut, Palette, Save, Settings, Shield, Trash2, UserCheck } from 'lucide-react';
+import { AlertTriangle, Baby, Crown, Download, Globe, LogOut, Palette, Settings, Shield, Trash2, Type, UserCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useApp } from '../context/useApp';
 import { useTheme } from '../context/useTheme';
@@ -12,7 +12,7 @@ import { DEFAULT_MODULES } from '../types';
 
 export default function ProfilePage() {
   const { user, children, selectedChild, selectChild, addChild, removeChild, exportData, auditTrail, logout, clearAllData, enabledModules, setEnabledModules } = useApp();
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, dyslexiaFont, setDyslexiaFont } = useTheme();
   const [showAddChild, setShowAddChild] = useState(false);
   const [childName, setChildName] = useState('');
   const [childDob, setChildDob] = useState('');
@@ -189,6 +189,24 @@ export default function ProfilePage() {
                 {t === 'light' ? '☀️ Light' : t === 'dark' ? '🌙 Dark' : '🔲 High Contrast'}
               </button>
             ))}
+          </div>
+          {/* Dyslexia-friendly font toggle [7] */}
+          <div className="mt-4 flex items-center justify-between gap-3 rounded-xl bg-lavender-50 px-4 py-3">
+            <div className="flex items-center gap-2.5">
+              <Type size={16} className="shrink-0 text-lavender-600" />
+              <div>
+                <p className="text-sm font-semibold text-gray-800">Dyslexia-friendly font</p>
+                <p className="text-xs text-gray-500">Switches to Atkinson Hyperlegible</p>
+              </div>
+            </div>
+            <button
+              role="switch"
+              aria-checked={dyslexiaFont}
+              onClick={() => setDyslexiaFont(!dyslexiaFont)}
+              className="nhs-toggle shrink-0"
+              data-on={dyslexiaFont}
+              aria-label="Toggle dyslexia-friendly font"
+            />
           </div>
         </section>
 
@@ -485,8 +503,23 @@ export default function ProfilePage() {
 }
 
 
+// ── Module accent colours (same as SettingsPage) ─────────────────────
+const MODULE_ACCENT: Record<string, string> = {
+  drinks:     '#0ea5e9',
+  urine:      '#f59e0b',
+  bowel:      '#22c55e',
+  sleep:      '#6366f1',
+  toilet:     '#a855f7',
+  food:       '#f97316',
+  mood:       '#ec4899',
+  sensory:    '#14b8a6',
+  medication: '#ef4444',
+  therapy:    '#06b6d4',
+  routine:    '#84cc16',
+  milestones: '#eab308',
+};
+
 // ── Module Settings subcomponent ─────────────────────────────────────
-// Using a keyed subcomponent so state resets naturally when child switches.
 interface ModuleSettingsProps {
   childName: string;
   initialModules: ModuleId[];
@@ -494,68 +527,63 @@ interface ModuleSettingsProps {
 }
 
 function ModuleSettings({ childName, initialModules, onSave }: ModuleSettingsProps) {
-  const [pending, setPending] = useState<ModuleId[]>(initialModules);
-  const [prevInitialModules, setPrevInitialModules] = useState(initialModules);
-  const [saved, setSaved] = useState(false);
+  const latestRef = useRef(initialModules);
+  latestRef.current = initialModules;
 
-  // Render-phase sync: if initialModules changes (e.g., after cloud data refresh), reset
-  // pending to match. This is the React-recommended pattern for derived state from props
-  // (see https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes).
-  if (initialModules !== prevInitialModules) {
-    setPrevInitialModules(initialModules);
-    setPending(initialModules);
-    setSaved(false);
-  }
+  const enabled = new Set(initialModules);
+
+  const toggle = (modId: ModuleId, checked: boolean) => {
+    const base = latestRef.current;
+    const next = checked
+      ? [...base, modId]
+      : base.filter((m) => m !== modId);
+    latestRef.current = next;
+    onSave(next);
+  };
 
   return (
     <section className="rounded-[1.75rem] bg-white p-5 shadow-sm ring-1 ring-black/5">
       <h3 className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-1">
-        <Settings size={16} className="text-lavender-500" /> Modules for {childName}
+        <Settings size={16} className="text-lavender-500" /> Tracker Modules for {childName}
       </h3>
       <p className="text-xs text-gray-400 mb-3">
-        Toggle tracker modules on or off for this child. Click Save to persist your changes.
+        Toggles apply instantly — only enabled modules appear on Dashboard, Log, Reports, and Add Entry.
       </p>
       <div className="space-y-2">
         {DEFAULT_MODULES.map((mod) => {
-          const enabled = pending.includes(mod.id);
+          const isOn = enabled.has(mod.id);
+          const accent = MODULE_ACCENT[mod.id] ?? '#8b4dff';
           return (
-            <label
+            <div
               key={mod.id}
-              className="flex items-center justify-between rounded-xl bg-gray-50 px-3 py-2.5 cursor-pointer hover:bg-lavender-50 transition-colors"
+              className="flex cursor-pointer items-center justify-between rounded-xl bg-gray-50 px-3 py-3 transition-colors hover:bg-lavender-50"
+              onClick={() => toggle(mod.id, !isOn)}
+              role="row"
             >
-              <div className="flex items-center gap-2">
-                <span className="text-lg">{mod.icon}</span>
+              <div className="flex items-center gap-3">
+                <span
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-lg"
+                  style={{ background: `${accent}22` }}
+                >
+                  {mod.icon}
+                </span>
                 <div>
-                  <span className="text-sm font-medium text-gray-700">{mod.label}</span>
+                  <span className="text-sm font-semibold text-gray-800">{mod.label}</span>
                   <p className="text-[10px] text-gray-400">{mod.description}</p>
                 </div>
               </div>
-              <input
-                type="checkbox"
-                checked={enabled}
-                onChange={(e) => {
-                  const next = e.target.checked
-                    ? [...pending, mod.id]
-                    : pending.filter((m) => m !== mod.id);
-                  setPending(next);
-                  setSaved(false);
-                }}
-                className="h-4 w-4 rounded border-gray-300 text-lavender-500 focus:ring-lavender-400"
+              <button
+                role="switch"
+                aria-checked={isOn}
+                aria-label={`Toggle ${mod.label}`}
+                onClick={(e) => { e.stopPropagation(); toggle(mod.id, !isOn); }}
+                className="nhs-toggle shrink-0"
+                data-on={isOn}
               />
-            </label>
+            </div>
           );
         })}
       </div>
-      <button
-        onClick={async () => {
-          await onSave(pending);
-          setSaved(true);
-        }}
-        className="mt-4 w-full flex items-center justify-center gap-2 py-2.5 bg-lavender-500 hover:bg-lavender-600 text-white rounded-xl font-semibold text-sm transition-all shadow-md shadow-lavender-200"
-      >
-        <Save size={15} />
-        {saved ? '✓ Saved!' : 'Save Module Settings'}
-      </button>
     </section>
   );
 }

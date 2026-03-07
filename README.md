@@ -84,7 +84,7 @@ Built for parents, caregivers, therapists, and educators to log daily activities
 | Calendar | `/calendar` | — | Monthly calendar view of all entries |
 | Milestones | `/milestones` | — | Developmental milestone dashboard |
 | Caregiver Portal | `/caregiver` | 👥 Care | Invite management & shared access |
-| Profile / Settings | `/profile` | ⚙️ Settings | Theme, module toggles with Save button, GDPR controls, role info |
+| Profile / Settings | `/profile` | ⚙️ Settings | Theme, module toggles (instant, no Save required), GDPR controls, role info |
 | Admin | `/admin` | 👑 Crown | System admin (admin role only) |
 | Login | — | — | Register / login / password reset with role descriptions |
 
@@ -258,7 +258,7 @@ export const DEFAULT_MODULES: TrackerModule[] = [
 ];
 ```
 
-**Per-child toggling:** Parents toggle modules on/off in Profile → Settings. State persists to the `enabled_modules` table in Neon DB (cloud mode) or `bt_enabled_modules` localStorage key (local mode). The Settings page now includes a Save button that explicitly commits changes to the DB. Module state is loaded per-child on login and child selection.
+**Per-child toggling:** Parents toggle modules on/off in Settings (or Profile). Toggles apply **instantly** — no Save button required. State persists to the `enabled_modules` table in Neon DB (cloud mode) or `bt_enabled_modules` localStorage key (local mode). The enabled set is reloaded per-child on login and child selection, ensuring correct state across sessions and multiple children.
 
 ---
 
@@ -528,10 +528,56 @@ npm run build         # Full type-check + production build
 
 - **WCAG 2.1 AA** compliance throughout
 - Three theme options: Light, Dark, High Contrast
+- **Dyslexia-friendly font** toggle in Settings — switches to [Atkinson Hyperlegible](https://brailleinstitute.org/freefont), recommended by RNIB and the Braille Institute [7]
 - Keyboard navigation support with proper focus management
 - ARIA labels and semantic HTML on all interactive elements
 - Clear, simple language suitable for all users
 - Screen reader compatible
+
+---
+
+## 🎨 UI Design Principles (NHS-Inspired)
+
+BladderTracker follows NHS Digital Service Manual design principles, adapted for families caring for autistic children and children with special needs.
+
+### Callout Reference (from UI mockup)
+
+| # | Principle | Implementation |
+|---|-----------|---------------|
+| **[1]** | **Large tap/click zones** | Quick-add buttons use `py-5` padding; nav items `min-h-[4rem]`; toggle switches are 44×24px |
+| **[2]** | **Simplified icons, uniform colour scheme** | Each module has a consistent accent colour across Dashboard chips, Log chips, Reports chips, and stat cards. Disabled modules are hidden entirely — no cognitive noise |
+| **[3]** | **High-contrast text, logical grouping** | Summary stat cards have a coloured top border matching their module colour. Entry feeds are grouped by module section |
+| **[4]** | **Simple, uncluttered data views** | Reports charts use clean axes, minimal gridlines, and concise tooltips |
+| **[5]** | **Visual structure breaks complex forms into steps** | Add Entry form is tab-per-module with minimal required fields; each form uses step-by-step sectioning |
+| **[6]** | **Step-by-step guidance to avoid overwhelming users** | Welcome / onboarding modal shows exactly 3 steps: Add Profile → Enable Modules → Make First Entry. Each step has a single CTA button |
+| **[7]** | **Specialised accessibility options** | Dyslexia-friendly font toggle (Atkinson Hyperlegible) in Settings > Appearance. Persisted in `localStorage` key `bt_dyslexia_font` |
+
+### Colour Coding (per module)
+
+| Module | Accent colour | Usage |
+|--------|--------------|-------|
+| Drinks | Sky blue `#0ea5e9` | Stat card border, quick-add badge, Log chip, Reports chip |
+| Urine | Amber `#f59e0b` | Same pattern |
+| Bowel | Emerald `#22c55e` | Same pattern |
+| Sleep | Indigo `#6366f1` | Same pattern |
+| Toilet Attempts | Purple `#a855f7` | Same pattern |
+| Food | Orange `#f97316` | Same pattern |
+| Mood | Pink `#ec4899` | Same pattern |
+| Sensory | Teal `#14b8a6` | Same pattern |
+| Medication | Red `#ef4444` | Same pattern |
+| Therapy | Cyan `#06b6d4` | Same pattern |
+| Routine | Lime `#84cc16` | Same pattern |
+| Milestones | Yellow `#eab308` | Same pattern |
+
+### Module Visibility
+
+Modules toggled **off** in Settings are hidden from:
+- Dashboard quick-add grid and stat cards
+- Log page filter chips and entry feed
+- Reports filter chips and charts
+- Add Entry tab bar
+
+Changes apply **instantly** (no Save button) and persist to localStorage (local mode) or Neon DB (cloud mode). Child switching and login/logout correctly reload each child's module preferences.
 
 ---
 

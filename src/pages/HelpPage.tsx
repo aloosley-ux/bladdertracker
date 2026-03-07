@@ -7,8 +7,12 @@ import {
   ChevronUp,
   HelpCircle,
   Shield,
+  X,
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useApp } from '../context/useApp';
+
+const ONBOARDING_KEY = 'bt_onboarding_seen';
 
 const ONBOARDING_STEPS = [
   {
@@ -21,18 +25,15 @@ const ONBOARDING_STEPS = [
   },
   {
     title: 'Start logging entries',
-    description:
-      'Use the Dashboard or Add Entry page to record drinks, toilet visits, meals, and more.',
+    description: 'Use the Dashboard or Add Entry page to record drinks, toilet visits, meals, and more.',
   },
   {
     title: 'Review reports',
-    description:
-      'Check the Reports page for charts and trends that help you spot patterns over time.',
+    description: 'Check the Reports page for charts and trends that help you spot patterns over time.',
   },
   {
     title: 'Invite caregivers',
-    description:
-      'Share access with teachers, nurses, or family members via the Profiles page.',
+    description: 'Share access with teachers, nurses, or family members via the Profiles page.',
   },
 ];
 
@@ -40,7 +41,7 @@ const FAQ_ITEMS: { question: string; answer: string }[] = [
   {
     question: 'What modules are available?',
     answer:
-      'BladderTracker includes 12 modules: Drinks, Urine Output, Bowel Movements, Toilet Attempts, Sleep, Food & Diet, Medication, Mood & Behaviour, Symptoms, Wetness / Accidents, Exercises, and Appointments.',
+      'BladderTracker includes 12 tracker modules: Drinks, Urine, Bowel, Toilet Attempts, Sleep, Food & Diet, Medication, Mood, Sensory, Therapy, Routine, and Milestones. Enable only the ones relevant to your child in Settings.',
   },
   {
     question: 'How do I export my data?',
@@ -70,10 +71,13 @@ const FAQ_ITEMS: { question: string; answer: string }[] = [
 ];
 
 const ACCESSIBILITY_FEATURES = [
+  'Large tap/click zones on all controls [1]',
+  'High-contrast theme and coloured module coding [3]',
+  'Dyslexia-friendly font (Atkinson Hyperlegible) toggle in Settings [7]',
   'Full keyboard navigation support',
-  'High-contrast theme available in Settings',
   'Screen reader compatible (ARIA labels throughout)',
   'Clear, simple language used across all pages',
+  'Step-by-step onboarding and guided forms [5][6]',
   'WCAG 2.1 AA compliance',
 ];
 
@@ -205,6 +209,109 @@ export default function HelpPage() {
             <ArrowRight size={14} />
           </Link>
         </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Welcome / Onboarding Modal ─────────────────────────────────────────
+// Shown automatically when a logged-in user has no child profiles yet.
+// Matches the step-by-step mockup [6] from the UI specification.
+// Dismissed state is stored in sessionStorage so it does not re-appear
+// within the same browser session.
+
+const ONBOARDING_MODAL_STEPS = [
+  {
+    step: 1,
+    title: 'Add Profile',
+    description: 'Create a profile for each child you want to track.',
+    cta: 'Add Profile',
+    to: '/settings',
+  },
+  {
+    step: 2,
+    title: 'Enable Modules',
+    description: 'Choose which tracker modules are relevant — e.g. Drinks, Toilet, Sleep.',
+    cta: 'Go to Settings',
+    to: '/settings',
+  },
+  {
+    step: 3,
+    title: 'Make First Entry',
+    description: 'Tap any module on the Dashboard to start logging straight away.',
+    cta: 'Open Dashboard',
+    to: '/',
+  },
+];
+
+export function WelcomeModal() {
+  const { children } = useApp();
+  const navigate = useNavigate();
+  const [dismissed, setDismissed] = useState(() => {
+    try { return sessionStorage.getItem(ONBOARDING_KEY) === 'true'; } catch { return false; }
+  });
+
+  const dismiss = () => {
+    try { sessionStorage.setItem(ONBOARDING_KEY, 'true'); } catch { /* ignore */ }
+    setDismissed(true);
+  };
+
+  // Only show when user has no children yet and has not dismissed this session
+  if (dismissed || children.length > 0) return null;
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Welcome to BladderTracker"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 backdrop-blur-sm"
+    >
+      <div className="w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl ring-1 ring-black/10">
+        {/* Close button */}
+        <button
+          onClick={dismiss}
+          className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-500 transition hover:bg-gray-200"
+          aria-label="Dismiss welcome screen"
+        >
+          <X size={16} />
+        </button>
+
+        {/* Branding header */}
+        <div className="mb-5 flex flex-col items-center text-center">
+          <div className="mb-3 flex h-16 w-16 items-center justify-center rounded-2xl bg-lavender-100 text-3xl">
+            🐙
+          </div>
+          <h2 className="text-lg font-bold text-gray-900">Welcome to BladderTracker!</h2>
+          <p className="mt-1 text-xs text-gray-500">A simple, NHS-style autism &amp; development diary.</p>
+        </div>
+
+        {/* Step-by-step guide [6] */}
+        <ol className="mb-5 space-y-4">
+          {ONBOARDING_MODAL_STEPS.map(({ step, title, description, cta, to }) => (
+            <li key={step} className="flex flex-col gap-2">
+              <div className="flex items-center gap-2">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-lavender-100 text-xs font-bold text-lavender-700">
+                  {step}
+                </span>
+                <span className="text-sm font-semibold text-gray-800">{title}</span>
+              </div>
+              <p className="ml-8 text-xs text-gray-500">{description}</p>
+              <button
+                onClick={() => { dismiss(); navigate(to); }}
+                className="ml-8 w-[calc(100%-2rem)] rounded-xl bg-lavender-500 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-lavender-600 active:scale-95"
+              >
+                {cta}
+              </button>
+            </li>
+          ))}
+        </ol>
+
+        <button
+          onClick={dismiss}
+          className="w-full rounded-xl bg-gray-100 py-2.5 text-sm font-semibold text-gray-600 transition hover:bg-gray-200"
+        >
+          Skip for now
+        </button>
       </div>
     </div>
   );

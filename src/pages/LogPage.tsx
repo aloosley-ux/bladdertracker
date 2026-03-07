@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { format, isSameDay } from 'date-fns';
 import {
   Apple,
@@ -18,6 +18,7 @@ import { Link } from 'react-router-dom';
 import { useApp } from '../context/useApp';
 import CalendarStrip from '../components/CalendarStrip';
 import EntryCard from '../components/EntryCard';
+import { DEFAULT_MODULES } from '../types';
 
 type ModuleKey =
   | 'drinks'
@@ -31,6 +32,38 @@ type ModuleKey =
   | 'medication'
   | 'therapy'
   | 'routine';
+
+// Module accent colours for filter chips [2]
+const MODULE_CHIP_COLOURS: Record<ModuleKey, string> = {
+  drinks:     'bg-sky-100 text-sky-700',
+  urine:      'bg-amber-100 text-amber-700',
+  bowel:      'bg-emerald-100 text-emerald-700',
+  sleep:      'bg-indigo-100 text-indigo-700',
+  toilet:     'bg-purple-100 text-purple-700',
+  food:       'bg-orange-100 text-orange-700',
+  mood:       'bg-pink-100 text-pink-700',
+  sensory:    'bg-teal-100 text-teal-700',
+  medication: 'bg-red-100 text-red-700',
+  therapy:    'bg-cyan-100 text-cyan-700',
+  routine:    'bg-lime-100 text-lime-700',
+};
+const MODULE_CHIP_ACTIVE: Record<ModuleKey, string> = {
+  drinks:     'bg-sky-500 text-white',
+  urine:      'bg-amber-500 text-white',
+  bowel:      'bg-emerald-500 text-white',
+  sleep:      'bg-indigo-500 text-white',
+  toilet:     'bg-purple-500 text-white',
+  food:       'bg-orange-500 text-white',
+  mood:       'bg-pink-500 text-white',
+  sensory:    'bg-teal-500 text-white',
+  medication: 'bg-red-500 text-white',
+  therapy:    'bg-cyan-500 text-white',
+  routine:    'bg-lime-500 text-white',
+};
+
+const ALL_MODULE_KEYS = DEFAULT_MODULES
+  .filter((m) => m.id !== 'milestones')
+  .map((m) => m.id) as ModuleKey[];
 
 const MODULE_META: { key: ModuleKey; label: string; emoji: string }[] = [
   { key: 'drinks', label: 'Drinks', emoji: '🥤' },
@@ -63,6 +96,7 @@ export default function LogPage() {
     medicationEntries,
     therapyEntries,
     routineEntries,
+    enabledModules,
     deleteDrink,
     deleteUrineEntry,
     deleteBowelEntry,
@@ -76,10 +110,30 @@ export default function LogPage() {
     deleteRoutineEntry,
   } = useApp();
 
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [activeFilters, setActiveFilters] = useState<Set<ModuleKey>>(
-    () => new Set(MODULE_META.map((m) => m.key)),
+  // Derive which module keys are enabled (exclude milestones — no log entries)
+  const enabledKeys = useMemo<Set<ModuleKey>>(() => {
+    const src = enabledModules.length > 0
+      ? enabledModules
+      : DEFAULT_MODULES.filter((m) => m.defaultEnabled).map((m) => m.id);
+    return new Set(src.filter((id) => id !== 'milestones') as ModuleKey[]);
+  }, [enabledModules]);
+
+  // Visible filter chips = only enabled modules
+  const visibleModules = useMemo(
+    () => MODULE_META.filter((m) => enabledKeys.has(m.key)),
+    [enabledKeys],
   );
+
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  // Initialize activeFilters from enabled modules; sync when enabledModules changes
+  const [activeFilters, setActiveFilters] = useState<Set<ModuleKey>>(
+    () => new Set(ALL_MODULE_KEYS.filter((k) => enabledKeys.has(k))),
+  );
+
+  // When enabled modules change (e.g. Settings toggle), remove disabled ones from activeFilters
+  useEffect(() => {
+    setActiveFilters((prev) => new Set([...prev].filter((k) => enabledKeys.has(k))));
+  }, [enabledKeys]);
 
   const dateStr = format(selectedDate, 'yyyy-MM-dd');
 
@@ -456,19 +510,20 @@ export default function LogPage() {
         <CalendarStrip selectedDate={selectedDate} onSelectDate={setSelectedDate} />
       </div>
 
-      {/* Module filters */}
+      {/* Module filters — only enabled modules shown as chips [2] */}
       <div className="px-4 pt-4">
         <div className="flex flex-wrap gap-2">
-          {MODULE_META.map((m) => {
+          {visibleModules.map((m) => {
             const active = activeFilters.has(m.key);
             return (
               <button
                 key={m.key}
                 onClick={() => toggleFilter(m.key)}
-                className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-all focus-visible:ring-2 focus-visible:ring-lavender-500 focus-visible:ring-offset-2 ${
+                aria-pressed={active}
+                className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-all focus-visible:ring-2 focus-visible:ring-lavender-500 focus-visible:ring-offset-2 ${
                   active
-                    ? 'bg-lavender-500 text-white shadow-sm'
-                    : 'bg-white text-gray-500 ring-1 ring-black/5 hover:bg-gray-50'
+                    ? MODULE_CHIP_ACTIVE[m.key]
+                    : MODULE_CHIP_COLOURS[m.key]
                 }`}
               >
                 <span>{m.emoji}</span>

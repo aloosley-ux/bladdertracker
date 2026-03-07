@@ -13,7 +13,7 @@ import SettingsPage from './pages/SettingsPage';
 import ProfilesPage from './pages/ProfilesPage';
 import AdminPage from './pages/AdminPage';
 import LogPage from './pages/LogPage';
-import HelpPage from './pages/HelpPage';
+import HelpPage, { WelcomeModal } from './pages/HelpPage';
 import { promoteToAdmin, addAuditEvent } from './utils/storage';
 
 const ADMIN_ACCESS_KEY = 'bladdertracker-admin-2024';
@@ -56,6 +56,7 @@ function AppRoutes() {
   return (
     <div className="min-h-screen bg-[var(--bg-primary)]">
       <AppNav />
+      <WelcomeModal />
       <AdminAccessHandler />
       <main className="mx-auto max-w-5xl px-0 md:px-6 pb-20 md:pb-6 pt-0 md:pt-4">
         <Routes>
