@@ -11,11 +11,11 @@ import {
   startOfWeek,
   endOfWeek,
 } from 'date-fns';
-import { ChevronLeft, ChevronRight, Droplets, CloudRain, Stethoscope } from 'lucide-react';
+import { Apple, ChevronLeft, ChevronRight, CloudRain, Droplets, Moon, Stethoscope, Target } from 'lucide-react';
 import { useApp } from '../context/useApp';
 
 export default function CalendarPage() {
-  const { drinks, urineEntries, bowelEntries, selectedChildId, selectedChild } = useApp();
+  const { drinks, urineEntries, bowelEntries, sleepEntries, toiletAttemptEntries, foodEntries, selectedChildId, selectedChild } = useApp();
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
@@ -26,33 +26,16 @@ export default function CalendarPage() {
   const calendarDays = eachDayOfInterval({ start: calStart, end: calEnd });
 
   const dayData = useMemo(() => {
-    const map = new Map<string, { drinks: number; urine: number; bowel: number }>();
-    drinks
-      .filter((d) => d.childId === selectedChildId)
-      .forEach((d) => {
-        const key = d.date;
-        const existing = map.get(key) ?? { drinks: 0, urine: 0, bowel: 0 };
-        existing.drinks++;
-        map.set(key, existing);
-      });
-    urineEntries
-      .filter((u) => u.childId === selectedChildId)
-      .forEach((u) => {
-        const key = u.date;
-        const existing = map.get(key) ?? { drinks: 0, urine: 0, bowel: 0 };
-        existing.urine++;
-        map.set(key, existing);
-      });
-    bowelEntries
-      .filter((b) => b.childId === selectedChildId)
-      .forEach((b) => {
-        const key = b.date;
-        const existing = map.get(key) ?? { drinks: 0, urine: 0, bowel: 0 };
-        existing.bowel++;
-        map.set(key, existing);
-      });
+    const map = new Map<string, { drinks: number; urine: number; bowel: number; sleep: number; toilet: number; food: number }>();
+    const getOrCreate = (key: string) => map.get(key) ?? { drinks: 0, urine: 0, bowel: 0, sleep: 0, toilet: 0, food: 0 };
+    drinks.filter((d) => d.childId === selectedChildId).forEach((d) => { const e = getOrCreate(d.date); e.drinks++; map.set(d.date, e); });
+    urineEntries.filter((u) => u.childId === selectedChildId).forEach((u) => { const e = getOrCreate(u.date); e.urine++; map.set(u.date, e); });
+    bowelEntries.filter((b) => b.childId === selectedChildId).forEach((b) => { const e = getOrCreate(b.date); e.bowel++; map.set(b.date, e); });
+    sleepEntries.filter((s) => s.childId === selectedChildId).forEach((s) => { const e = getOrCreate(s.date); e.sleep++; map.set(s.date, e); });
+    toiletAttemptEntries.filter((t) => t.childId === selectedChildId).forEach((t) => { const e = getOrCreate(t.date); e.toilet++; map.set(t.date, e); });
+    foodEntries.filter((f) => f.childId === selectedChildId).forEach((f) => { const e = getOrCreate(f.date); e.food++; map.set(f.date, e); });
     return map;
-  }, [drinks, urineEntries, bowelEntries, selectedChildId]);
+  }, [drinks, urineEntries, bowelEntries, sleepEntries, toiletAttemptEntries, foodEntries, selectedChildId]);
 
   const selectedDateStr = selectedDate ? format(selectedDate, 'yyyy-MM-dd') : null;
 
@@ -64,6 +47,15 @@ export default function CalendarPage() {
     : [];
   const selectedBowel = selectedDateStr
     ? bowelEntries.filter((b) => b.childId === selectedChildId && b.date === selectedDateStr)
+    : [];
+  const selectedSleep = selectedDateStr
+    ? sleepEntries.filter((s) => s.childId === selectedChildId && s.date === selectedDateStr)
+    : [];
+  const selectedToilet = selectedDateStr
+    ? toiletAttemptEntries.filter((t) => t.childId === selectedChildId && t.date === selectedDateStr)
+    : [];
+  const selectedFood = selectedDateStr
+    ? foodEntries.filter((f) => f.childId === selectedChildId && f.date === selectedDateStr)
     : [];
 
   return (
@@ -111,7 +103,7 @@ export default function CalendarPage() {
               const isCurrentMonth = isSameMonth(day, currentMonth);
               const isToday = isSameDay(day, new Date());
               const isSelected = selectedDate ? isSameDay(day, selectedDate) : false;
-              const hasEntries = data && (data.drinks > 0 || data.urine > 0 || data.bowel > 0);
+              const hasEntries = data && (data.drinks > 0 || data.urine > 0 || data.bowel > 0 || data.sleep > 0 || data.toilet > 0 || data.food > 0);
 
               return (
                 <button
@@ -133,6 +125,9 @@ export default function CalendarPage() {
                       {data.drinks > 0 && <div className="w-1 h-1 rounded-full bg-blue-400" />}
                       {data.urine > 0 && <div className="w-1 h-1 rounded-full bg-yellow-400" />}
                       {data.bowel > 0 && <div className="w-1 h-1 rounded-full bg-green-400" />}
+                      {data.sleep > 0 && <div className="w-1 h-1 rounded-full bg-indigo-400" />}
+                      {data.toilet > 0 && <div className="w-1 h-1 rounded-full bg-purple-400" />}
+                      {data.food > 0 && <div className="w-1 h-1 rounded-full bg-orange-400" />}
                     </div>
                   )}
                 </button>
@@ -141,16 +136,13 @@ export default function CalendarPage() {
           </div>
 
           {/* Legend */}
-          <div className="flex gap-4 justify-center mt-3 text-[10px] text-gray-400">
-            <span className="flex items-center gap-1">
-              <div className="w-2 h-2 rounded-full bg-blue-400" /> Drinks
-            </span>
-            <span className="flex items-center gap-1">
-              <div className="w-2 h-2 rounded-full bg-yellow-400" /> Urine
-            </span>
-            <span className="flex items-center gap-1">
-              <div className="w-2 h-2 rounded-full bg-green-400" /> Bowel
-            </span>
+          <div className="flex flex-wrap gap-3 justify-center mt-3 text-[10px] text-gray-400">
+            <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-blue-400" /> Drinks</span>
+            <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-yellow-400" /> Urine</span>
+            <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-green-400" /> Bowel</span>
+            <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-indigo-400" /> Sleep</span>
+            <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-purple-400" /> Attempt</span>
+            <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-orange-400" /> Food</span>
           </div>
         </div>
       </div>
@@ -162,7 +154,7 @@ export default function CalendarPage() {
             {format(selectedDate, 'EEEE, MMMM d, yyyy')}
           </h3>
 
-          {selectedDrinks.length === 0 && selectedUrine.length === 0 && selectedBowel.length === 0 ? (
+          {selectedDrinks.length === 0 && selectedUrine.length === 0 && selectedBowel.length === 0 && selectedSleep.length === 0 && selectedToilet.length === 0 && selectedFood.length === 0 ? (
             <div className="text-center py-8">
               <span className="text-3xl">📋</span>
               <p className="text-gray-400 text-sm mt-2">No entries for this date</p>
@@ -202,6 +194,45 @@ export default function CalendarPage() {
                     {b.notes && <span className="text-gray-400 text-xs ml-2">{b.notes}</span>}
                   </div>
                   <span className="text-xs text-gray-400">{b.time}</span>
+                </div>
+              ))}
+              {selectedSleep.map((s) => (
+                <div key={s.id} className="bg-[#eee8ff] rounded-xl p-3 flex items-center gap-3">
+                  <Moon size={16} className="text-indigo-500" />
+                  <div className="flex-1 text-sm">
+                    <span className="font-medium">Sleep: {s.eventType.replace(/_/g, ' ')}</span>
+                    {s.durationMinutes && <span className="text-xs text-gray-500 ml-1">({s.durationMinutes} min)</span>}
+                    {s.quality && <span className="text-xs text-indigo-600 ml-1">Quality {s.quality}/5</span>}
+                    {s.nighttimeEvent && <span className="text-xs ml-1">🌙</span>}
+                    {s.notes && <span className="text-gray-400 text-xs ml-2">{s.notes}</span>}
+                  </div>
+                  <span className="text-xs text-gray-400">{s.time}</span>
+                </div>
+              ))}
+              {selectedToilet.map((t) => (
+                <div key={t.id} className="bg-[#f3eeff] rounded-xl p-3 flex items-center gap-3">
+                  <Target size={16} className="text-purple-500" />
+                  <div className="flex-1 text-sm">
+                    <span className="font-medium">
+                      {t.outcome === 'success' ? '✅ Success' : t.outcome === 'failure' ? '❌ No result' : '🚫 Refused'}
+                    </span>
+                    {t.supervised && <span className="text-xs ml-1">👀</span>}
+                    {t.prompted && <span className="text-xs ml-1">🔔</span>}
+                    {t.durationMinutes && <span className="text-xs text-gray-500 ml-1">({t.durationMinutes} min)</span>}
+                    {t.notes && <span className="text-gray-400 text-xs ml-2">{t.notes}</span>}
+                  </div>
+                  <span className="text-xs text-gray-400">{t.time}</span>
+                </div>
+              ))}
+              {selectedFood.map((f) => (
+                <div key={f.id} className="bg-[#fff5eb] rounded-xl p-3 flex items-center gap-3">
+                  <Apple size={16} className="text-orange-500" />
+                  <div className="flex-1 text-sm">
+                    <span className="font-medium">{f.mealType}: {f.description}</span>
+                    {f.portions && <span className="text-xs text-gray-500 ml-1">({f.portions} portions)</span>}
+                    {f.notes && <span className="text-gray-400 text-xs ml-2">{f.notes}</span>}
+                  </div>
+                  <span className="text-xs text-gray-400">{f.time}</span>
                 </div>
               ))}
             </div>
