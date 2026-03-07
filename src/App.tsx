@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { BrowserRouter, Navigate, Route, Routes, useSearchParams } from 'react-router-dom';
+import { ThemeProvider } from './context/ThemeContext';
 import { AppProvider } from './context/AppContext';
 import { useApp } from './context/useApp';
 import BottomNav from './components/BottomNav';
@@ -54,7 +55,7 @@ function AppRoutes() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8f5ff] max-w-lg mx-auto relative">
+    <div className="min-h-screen bg-[var(--bg-primary)] max-w-lg mx-auto relative">
       <AdminAccessHandler />
       <Routes>
         <Route path="/" element={<DashboardPage />} />
@@ -74,10 +75,12 @@ function AppRoutes() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <AppProvider>
-        <AppRoutes />
-      </AppProvider>
-    </BrowserRouter>
+    <ThemeProvider>
+      <BrowserRouter>
+        <AppProvider>
+          <AppRoutes />
+        </AppProvider>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
