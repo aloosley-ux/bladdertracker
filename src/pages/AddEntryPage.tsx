@@ -6,6 +6,7 @@ import { useApp } from '../context/useApp';
 import { generateId } from '../utils/storage';
 import BristolStoolPicker from '../components/BristolStoolPicker';
 import BrandIcon from '../components/BrandIcon';
+import HelpPanel from '../components/HelpPanel';
 import type { BristolStoolType, BowelAmount, UrineEntry, SleepEventType, ToiletAttemptOutcome, MealType, MoodLevel, SensoryResponseType, TherapyType } from '../types';
 
 type EntryType = 'drink' | 'urine' | 'bowel' | 'sleep' | 'toilet' | 'food' | 'mood' | 'sensory' | 'medication' | 'therapy' | 'routine';
@@ -124,6 +125,13 @@ function DrinkForm() {
         <Droplets size={18} className="text-blue-500" /> Log a Drink
       </h2>
 
+      <HelpPanel title="Logging a Drink">
+        <p><strong>Amount (ml):</strong> How many millilitres was consumed. A standard cup is ~200ml, a bottle ~500ml.</p>
+        <p><strong>Type:</strong> Choose the vessel or drink category — cup, beaker, bottle, sippy cup, or other.</p>
+        <p><strong>Time:</strong> The time the drink was consumed or offered (defaults to now).</p>
+        <p><strong>Notes:</strong> Optional — e.g., "refused half", "added squash".</p>
+      </HelpPanel>
+
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className="text-xs font-medium text-gray-600">Date</label>
@@ -241,6 +249,14 @@ function UrineForm() {
       <h2 className="text-base font-bold text-gray-800 flex items-center gap-2">
         <CloudRain size={18} className="text-yellow-500" /> Log Urine Event
       </h2>
+
+      <HelpPanel title="Logging a Urine Event">
+        <p><strong>Wet:</strong> Tick if there was any urine in the pad/pants/toilet.</p>
+        <p><strong>Pass:</strong> Tick if urine was passed into the toilet successfully.</p>
+        <p><strong>Volume (ml):</strong> Measured output if a collection device or scales are used (optional).</p>
+        <p><strong>Urgency 1–5:</strong> How urgently did they need to go? 1 = none, 5 = desperate.</p>
+        <p><strong>Leakage:</strong> Amount of leakage if any — none, small, moderate, or large.</p>
+      </HelpPanel>
 
       <div className="grid grid-cols-2 gap-3">
         <div>
@@ -378,6 +394,13 @@ function BowelForm() {
         <Stethoscope size={18} className="text-green-500" /> Log Bowel Event
       </h2>
 
+      <HelpPanel title="Logging a Bowel Movement">
+        <p><strong>Bristol Type 1–7:</strong> The Bristol Stool Scale describes stool consistency. Types 1–2 are hard (constipation), Types 3–4 are ideal, Types 5–7 are loose (potential diarrhoea).</p>
+        <p><strong>Amount:</strong> Estimated quantity — small, medium, or large.</p>
+        <p><strong>Location:</strong> Where it happened — toilet, pad, or pants.</p>
+        <p><strong>Laxatives given:</strong> Tick if a laxative was administered today.</p>
+      </HelpPanel>
+
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className="text-xs font-medium text-gray-600">Date</label>
@@ -511,6 +534,13 @@ function SleepForm() {
         <Moon size={18} className="text-indigo-500" /> Log Sleep Event
       </h2>
 
+      <HelpPanel title="Logging a Sleep Event">
+        <p><strong>Event type:</strong> onset (going to sleep), wake (waking up), nap (daytime sleep), or disturbed (interrupted sleep).</p>
+        <p><strong>Duration:</strong> How long they slept in minutes (optional but helpful for patterns).</p>
+        <p><strong>Quality 1–5:</strong> How restful was the sleep? 1 = very poor, 5 = excellent.</p>
+        <p><strong>Nighttime event:</strong> Tick if this happened between 10pm and 6am.</p>
+      </HelpPanel>
+
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className="text-xs font-medium text-gray-600">Date</label>
@@ -631,6 +661,13 @@ function ToiletAttemptForm() {
         <Target size={18} className="text-purple-500" /> Log Toilet Attempt
       </h2>
 
+      <HelpPanel title="Logging a Toilet Attempt">
+        <p><strong>Outcome:</strong> Success (produced something), failure (sat but nothing happened), or refused (would not attempt).</p>
+        <p><strong>Prompted:</strong> Tick if you reminded or asked them to try.</p>
+        <p><strong>Supervised:</strong> Tick if a carer was present during the attempt.</p>
+        <p><strong>Duration:</strong> How many minutes they sat on the toilet (optional).</p>
+      </HelpPanel>
+
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className="text-xs font-medium text-gray-600">Date</label>
@@ -738,6 +775,13 @@ function FoodForm() {
         <Apple size={18} className="text-orange-500" /> Log Food
       </h2>
 
+      <HelpPanel title="Logging a Meal or Snack">
+        <p><strong>Meal type:</strong> Breakfast, lunch, dinner, or snack.</p>
+        <p><strong>Description:</strong> What was eaten — keep it brief, e.g., "pasta with tomato sauce".</p>
+        <p><strong>Portions:</strong> Estimated portions eaten — 0.25, 0.5, 0.75, 1, or 1.5+.</p>
+        <p><strong>Notes:</strong> Any observations — e.g., "refused vegetables", "ate well", "new food tried".</p>
+      </HelpPanel>
+
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className="text-xs font-medium text-gray-600">Date</label>
@@ -820,6 +864,11 @@ function MoodForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4 rounded-[2rem] bg-white p-5 shadow-[0_24px_70px_rgba(139,77,255,0.08)]">
       <h2 className="text-lg font-bold text-gray-900">😊 Log Mood</h2>
+      <HelpPanel title="Logging Mood">
+        <p><strong>Level 1–5:</strong> Overall emotional state. 1 = very distressed, 2 = upset, 3 = neutral/calm, 4 = happy, 5 = very happy/excited.</p>
+        <p><strong>Triggers:</strong> What may have caused this mood — e.g., "transition to school", "new sensory input", "slept well".</p>
+        <p><strong>Notes:</strong> Any additional context about behaviour or environment.</p>
+      </HelpPanel>
       <div className="grid grid-cols-2 gap-3">
         <div><label className="text-xs font-medium text-gray-600">Date</label><input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={inputCls} /></div>
         <div><label className="text-xs font-medium text-gray-600">Time</label><input type="time" value={time} onChange={(e) => setTime(e.target.value)} className={inputCls} /></div>
@@ -862,6 +911,11 @@ function SensoryForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4 rounded-[2rem] bg-white p-5 shadow-[0_24px_70px_rgba(139,77,255,0.08)]">
       <h2 className="text-lg font-bold text-gray-900">🎨 Log Sensory Event</h2>
+      <HelpPanel title="Logging a Sensory Event">
+        <p><strong>Sensory type:</strong> Which sense was involved — touch (tactile), sound (auditory), sight (visual), taste (gustatory), smell (olfactory), movement (vestibular), body position (proprioceptive), or other.</p>
+        <p><strong>Response:</strong> How they responded — seeking (wanted more), avoiding (moved away/covered ears etc.), or neutral.</p>
+        <p><strong>Intensity 1–5:</strong> How strong was the sensory event? 1 = barely noticeable, 5 = overwhelming.</p>
+      </HelpPanel>
       <div className="grid grid-cols-2 gap-3">
         <div><label className="text-xs font-medium text-gray-600">Date</label><input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={inputCls} /></div>
         <div><label className="text-xs font-medium text-gray-600">Time</label><input type="time" value={time} onChange={(e) => setTime(e.target.value)} className={inputCls} /></div>
@@ -918,6 +972,11 @@ function MedicationForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4 rounded-[2rem] bg-white p-5 shadow-[0_24px_70px_rgba(139,77,255,0.08)]">
       <h2 className="text-lg font-bold text-gray-900">💊 Log Medication</h2>
+      <HelpPanel title="Logging a Medication">
+        <p><strong>Medication name:</strong> The name of the medication as prescribed.</p>
+        <p><strong>Dosage:</strong> The dose given — e.g., "5mg", "1 tablet", "10ml".</p>
+        <p><strong>Administered:</strong> Tick if the medication was successfully given. Untick if the dose was missed or refused.</p>
+      </HelpPanel>
       <div className="grid grid-cols-2 gap-3">
         <div><label className="text-xs font-medium text-gray-600">Date</label><input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={inputCls} /></div>
         <div><label className="text-xs font-medium text-gray-600">Time</label><input type="time" value={time} onChange={(e) => setTime(e.target.value)} className={inputCls} /></div>
@@ -957,6 +1016,12 @@ function TherapyForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4 rounded-[2rem] bg-white p-5 shadow-[0_24px_70px_rgba(139,77,255,0.08)]">
       <h2 className="text-lg font-bold text-gray-900">🧩 Log Therapy Session</h2>
+      <HelpPanel title="Logging a Therapy Session">
+        <p><strong>Therapy type:</strong> Speech & Language (SALT), Occupational Therapy (OT), Physiotherapy (PT), Applied Behaviour Analysis (ABA), Behavioural, Music, Art, or Other.</p>
+        <p><strong>Provider:</strong> The therapist's name or organisation (optional but useful for multi-provider families).</p>
+        <p><strong>Duration:</strong> Length of the session in minutes.</p>
+        <p><strong>Goals worked on:</strong> Brief notes on what was targeted, e.g., "requesting using PECS", "hand washing routine".</p>
+      </HelpPanel>
       <div className="grid grid-cols-2 gap-3">
         <div><label className="text-xs font-medium text-gray-600">Date</label><input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={inputCls} /></div>
         <div><label className="text-xs font-medium text-gray-600">Time</label><input type="time" value={time} onChange={(e) => setTime(e.target.value)} className={inputCls} /></div>
@@ -1000,6 +1065,12 @@ function RoutineForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4 rounded-[2rem] bg-white p-5 shadow-[0_24px_70px_rgba(139,77,255,0.08)]">
       <h2 className="text-lg font-bold text-gray-900">📋 Log Routine</h2>
+      <HelpPanel title="Logging a Routine">
+        <p><strong>Routine name:</strong> A short label for this routine step — e.g., "Morning teeth brushing", "Getting dressed", "School pickup".</p>
+        <p><strong>Completed:</strong> Tick if the routine was completed as expected.</p>
+        <p><strong>Duration:</strong> How long the routine took in minutes (optional).</p>
+        <p><strong>Notes:</strong> Any challenges, adaptations needed, or successes worth noting.</p>
+      </HelpPanel>
       <div className="grid grid-cols-2 gap-3">
         <div><label className="text-xs font-medium text-gray-600">Date</label><input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={inputCls} /></div>
         <div><label className="text-xs font-medium text-gray-600">Time</label><input type="time" value={time} onChange={(e) => setTime(e.target.value)} className={inputCls} /></div>
