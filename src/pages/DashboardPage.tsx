@@ -1,14 +1,14 @@
-import { useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { format, isSameDay } from 'date-fns';
-import { Bell, CloudRain, Download, Droplets, Plus, Sparkles, Stethoscope, UsersRound } from 'lucide-react';
+import { Bell, CloudRain, Download, Droplets, Stethoscope, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useApp } from '../context/useApp';
 import CalendarStrip from '../components/CalendarStrip';
 import EntryCard from '../components/EntryCard';
+import BrandIcon from '../components/BrandIcon';
 
 export default function DashboardPage() {
   const {
-    user,
     selectedChild,
     drinks,
     urineEntries,
@@ -23,7 +23,13 @@ export default function DashboardPage() {
   } = useApp();
 
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [goalDismissed, setGoalDismissed] = useState(false);
   const dateStr = format(selectedDate, 'yyyy-MM-dd');
+
+  // Scroll to top whenever this page mounts
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, []);
 
   const dayDrinks = useMemo(
     () => drinks.filter((drink) => drink.childId === selectedChildId && drink.date === dateStr),
@@ -47,10 +53,11 @@ export default function DashboardPage() {
   if (!selectedChild) {
     return (
       <div className="px-4 pb-20 pt-8">
+        <div className="mb-6 flex flex-col items-center gap-1">
+          <BrandIcon size={52} />
+          <p className="text-xs font-semibold uppercase tracking-widest text-lavender-500">Journal</p>
+        </div>
         <div className="rounded-[2rem] bg-white p-6 text-center shadow-[0_24px_70px_rgba(139,77,255,0.08)]">
-          <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-lavender-50 text-lavender-600">
-            <UsersRound size={30} />
-          </div>
           <h1 className="text-2xl font-bold text-gray-900">No child profile yet</h1>
           <p className="mt-2 text-sm text-gray-500">
             Add a child in Settings or accept a caregiver invite to start journaling.
@@ -70,21 +77,25 @@ export default function DashboardPage() {
 
   return (
     <div className="pb-20">
+      {/* Brand header */}
       <div className="rounded-b-[2rem] bg-[linear-gradient(180deg,#fbf7f2_0%,#ffffff_100%)] px-4 pb-4 pt-5 shadow-sm">
-        <div className="mb-4 flex items-start justify-between gap-3">
-          <div>
-            <p className="text-xs font-medium uppercase tracking-[0.24em] text-lavender-500">AI journal style calm UI</p>
-            <h1 className="mt-1 text-3xl font-bold text-gray-900">
-              Your personal journaling hub for {selectedChild?.name}
-            </h1>
-            <p className="mt-2 text-sm text-gray-500">Hello {user?.name}, capture entries, share safely, and prepare for clinics or school reviews.</p>
+        <div className="mb-3 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <BrandIcon size={44} />
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-widest text-lavender-500">Journal</p>
+              <h1 className="text-lg font-bold leading-snug text-gray-900">
+                Your Journal for {selectedChild?.name}
+              </h1>
+              <p className="text-xs text-gray-500">Quickly capture entries, review progress, and be prepared for care discussions.</p>
+            </div>
           </div>
           <button
             onClick={exportData}
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-lavender-600 shadow-sm ring-1 ring-lavender-100 transition hover:bg-lavender-50"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-lavender-600 shadow-sm ring-1 ring-lavender-100 transition hover:bg-lavender-50"
             title="Export diary"
           >
-            <Download size={18} />
+            <Download size={16} />
           </button>
         </div>
 
@@ -106,42 +117,49 @@ export default function DashboardPage() {
       </div>
 
       <div className="space-y-4 px-4 pt-4">
-        <section className="rounded-[2rem] bg-[linear-gradient(135deg,#f3e6ff_0%,#fef7f5_60%,#e8fbff_100%)] p-5 shadow-[0_24px_60px_rgba(139,77,255,0.08)] ring-1 ring-white/70">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-lavender-500">Let’s begin your journal</p>
-              <h2 className="mt-1 text-xl font-bold text-gray-900">Quick actions for today</h2>
-              <p className="mt-2 text-sm text-gray-600">Record drinks, share with caregivers, and keep a confident audit trail.</p>
-            </div>
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/80 text-lavender-600 shadow-sm">
-              <Sparkles size={22} />
-            </div>
-          </div>
+        {/* Entries heading — near top for immediate visibility */}
+        <div className="px-1">
+          <h2 className="text-sm font-bold text-gray-700">
+            {isSameDay(selectedDate, new Date()) ? "Today's" : format(selectedDate, 'EEE, MMM d')} Entries
+          </h2>
+        </div>
 
-          <div className="mt-5 grid grid-cols-2 gap-3">
-            <Link to="/add" className="rounded-[1.5rem] bg-white px-4 py-4 shadow-sm ring-1 ring-lavender-100">
-              <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-2xl bg-lavender-50 text-lavender-600">
-                <Plus size={18} />
-              </div>
-              <div className="text-sm font-semibold text-gray-900">Start journaling</div>
-              <div className="mt-1 text-xs text-gray-500">Add bladder or bowel events.</div>
-            </Link>
-            <Link to="/caregiver" className="rounded-[1.5rem] bg-white px-4 py-4 shadow-sm ring-1 ring-lavender-100">
-              <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-2xl bg-[#eef9ff] text-sky-600">
-                <UsersRound size={18} />
-              </div>
-              <div className="text-sm font-semibold text-gray-900">Caregiver portal</div>
-              <div className="mt-1 text-xs text-gray-500">Manage invites and imports.</div>
-            </Link>
-          </div>
+        {/* Quick action buttons — Drink, Urine, Bowel */}
+        <section className="grid grid-cols-3 gap-3">
+          <Link
+            to="/add"
+            state={{ tab: 'drink' }}
+            className="flex flex-col items-center gap-2 rounded-[1.5rem] bg-[#eef8ff] py-4 shadow-sm ring-1 ring-sky-100 transition hover:bg-sky-50"
+          >
+            <span className="text-2xl">🥤</span>
+            <span className="text-xs font-semibold text-sky-700">Drink</span>
+          </Link>
+          <Link
+            to="/add"
+            state={{ tab: 'urine' }}
+            className="flex flex-col items-center gap-2 rounded-[1.5rem] bg-peach py-4 shadow-sm ring-1 ring-amber-100 transition hover:bg-amber-50"
+          >
+            <span className="text-2xl">💦</span>
+            <span className="text-xs font-semibold text-amber-700">Urine</span>
+          </Link>
+          <Link
+            to="/add"
+            state={{ tab: 'bowel' }}
+            className="flex flex-col items-center gap-2 rounded-[1.5rem] bg-mint py-4 shadow-sm ring-1 ring-emerald-100 transition hover:bg-emerald-50"
+          >
+            <span className="text-2xl">🚽</span>
+            <span className="text-xs font-semibold text-emerald-700">Bowel</span>
+          </Link>
         </section>
 
+        {/* Summary stats */}
         <section className="grid grid-cols-3 gap-3">
           <SummaryCard icon={<Droplets size={18} className="text-sky-500" />} label="Drinks" value={`${totalMl}ml`} sub={`${dayDrinks.length} entries`} bg="bg-sky-light" />
           <SummaryCard icon={<CloudRain size={18} className="text-amber-500" />} label="Urine" value={`${wetCount + passCount}`} sub={totalOutput > 0 ? `${totalOutput}ml output` : `${wetCount} wet · ${passCount} pass`} bg="bg-peach" />
           <SummaryCard icon={<Stethoscope size={18} className="text-emerald-500" />} label="Bowel" value={`${bowelCount}`} sub="events" bg="bg-mint" />
         </section>
 
+        {/* Fluid balance */}
         {totalOutput > 0 && (
           <section className="rounded-[1.75rem] bg-gradient-to-r from-sky-50 to-amber-50 p-4 shadow-sm ring-1 ring-white/80">
             <div className="flex items-center justify-between">
@@ -160,34 +178,39 @@ export default function DashboardPage() {
           </section>
         )}
 
-        <section className="rounded-[1.75rem] bg-white p-5 shadow-sm ring-1 ring-black/5">
-          <div className="flex items-start gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-lavender-50 text-lavender-600">
-              <Bell size={18} />
+        {/* Today's goal — dismissable banner */}
+        {!goalDismissed && (
+          <section className="rounded-[1.75rem] bg-white p-5 shadow-sm ring-1 ring-black/5">
+            <div className="flex items-start gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-lavender-50 text-lavender-600">
+                <Bell size={18} />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-sm font-semibold text-gray-900">Today&apos;s goal</h3>
+                <ul className="mt-2 space-y-2 text-sm text-gray-500">
+                  <li>Spend quality time reviewing hydration before school pick-up.</li>
+                  <li>Prompt toilet visits every 2–3 hours where appropriate.</li>
+                  <li>Use the caregiver portal for bulk imports or shared notes.</li>
+                </ul>
+              </div>
+              <button
+                onClick={() => setGoalDismissed(true)}
+                className="ml-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-gray-400 transition hover:bg-gray-100"
+                title="Dismiss"
+              >
+                <X size={14} />
+              </button>
             </div>
-            <div>
-              <h3 className="text-sm font-semibold text-gray-900">Today&apos;s goal</h3>
-              <ul className="mt-2 space-y-2 text-sm text-gray-500">
-                <li>Spend quality time reviewing hydration before school pick-up.</li>
-                <li>Prompt toilet visits every 2-3 hours where appropriate.</li>
-                <li>Use the caregiver portal for bulk imports or shared notes.</li>
-              </ul>
-            </div>
-          </div>
-        </section>
+          </section>
+        )}
 
-        <div className="mb-3 mt-1 px-1">
-          <h2 className="text-sm font-bold text-gray-700">
-            {isSameDay(selectedDate, new Date()) ? "Today's" : format(selectedDate, 'EEE, MMM d')} Entries
-          </h2>
-        </div>
-
+        {/* Entries feed */}
         <div className="space-y-3">
           {dayDrinks.length === 0 && dayUrine.length === 0 && dayBowel.length === 0 && (
             <div className="rounded-[1.75rem] bg-white py-12 text-center shadow-sm ring-1 ring-black/5">
               <span className="text-4xl">📋</span>
               <p className="mt-2 text-sm text-gray-400">No entries yet for this day</p>
-              <p className="mt-1 text-xs text-gray-300">Tap “Start journaling” above to begin</p>
+              <p className="mt-1 text-xs text-gray-300">Tap Drink, Urine, or Bowel above to begin</p>
             </div>
           )}
 

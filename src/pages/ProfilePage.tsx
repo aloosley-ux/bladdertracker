@@ -1,8 +1,9 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { Baby, Download, LogOut, Shield, Trash2 } from 'lucide-react';
 import { useApp } from '../context/useApp';
 import { generateId } from '../utils/storage';
+import BrandIcon from '../components/BrandIcon';
 import type { Child } from '../types';
 
 export default function ProfilePage() {
@@ -10,6 +11,11 @@ export default function ProfilePage() {
   const [showAddChild, setShowAddChild] = useState(false);
   const [childName, setChildName] = useState('');
   const [childDob, setChildDob] = useState('');
+
+  // Scroll to top on mount
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, []);
 
   const userInitials = useMemo(
     () =>
@@ -45,9 +51,14 @@ export default function ProfilePage() {
   return (
     <div className="pb-20">
       <div className="bg-[linear-gradient(180deg,#fbf7f2_0%,#ffffff_100%)] px-4 pb-4 pt-5">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-lavender-500">Settings</p>
-        <h1 className="mt-2 text-3xl font-bold text-gray-900">Security, profiles, and audit</h1>
-        <p className="mt-2 text-sm text-gray-500">Designed for a calmer, production-style experience with clearer ownership and data handling.</p>
+        <div className="flex items-center gap-3">
+          <BrandIcon size={40} />
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-widest text-lavender-500">Settings</p>
+            <h1 className="text-lg font-bold leading-snug text-gray-900">Security, profiles, and audit</h1>
+            <p className="text-xs text-gray-500">Designed for a calmer, production-style experience with clearer ownership and data handling.</p>
+          </div>
+        </div>
       </div>
 
       <div className="space-y-4 px-4 pt-4">

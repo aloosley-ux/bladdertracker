@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { format, startOfDay, subDays } from 'date-fns';
 import {
   Bar,
@@ -15,12 +15,18 @@ import {
 import { CalendarDays, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useApp } from '../context/useApp';
+import BrandIcon from '../components/BrandIcon';
 
 type Period = '7d' | '14d' | '30d';
 
 export default function ChartsPage() {
   const { drinks, urineEntries, bowelEntries, selectedChildId, selectedChild } = useApp();
   const [period, setPeriod] = useState<Period>('7d');
+
+  // Scroll to top on mount
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, []);
 
   const days = period === '7d' ? 7 : period === '14d' ? 14 : 30;
 
@@ -64,71 +70,74 @@ export default function ChartsPage() {
   return (
     <div className="pb-20">
       <div className="bg-[linear-gradient(180deg,#fbf7f2_0%,#ffffff_100%)] px-4 pb-4 pt-5">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-lavender-500">Explore</p>
-        <div className="mt-2 flex items-start justify-between gap-3">
+        <div className="mb-3 flex items-center gap-3">
+          <BrandIcon size={40} />
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Patterns and trends</h1>
-            <p className="mt-1 text-sm text-gray-500">A calm, visual snapshot for {selectedChild?.name ?? 'your selected child'}.</p>
+            <p className="text-[11px] font-semibold uppercase tracking-widest text-lavender-500">Explore</p>
+            <h1 className="text-lg font-bold leading-snug text-gray-900">Patterns and trends</h1>
+            <p className="text-xs text-gray-500">A calm, visual snapshot for {selectedChild?.name ?? 'your selected child'}.</p>
+          </div>
+        </div>
+
+        <div className="mt-3 flex items-center justify-between gap-2">
+          <div className="flex-1 grid grid-cols-3 gap-2 rounded-2xl bg-[#f6f1ff] p-1 text-sm">
+            {(['7d', '14d', '30d'] as Period[]).map((item) => (
+              <button
+                key={item}
+                onClick={() => setPeriod(item)}
+                className={`rounded-2xl px-3 py-2 font-medium transition-all ${
+                  period === item ? 'bg-white text-lavender-700 shadow-sm' : 'text-gray-500'
+                }`}
+              >
+                {item === '7d' ? '7 Days' : item === '14d' ? '14 Days' : '30 Days'}
+              </button>
+            ))}
           </div>
           <Link
             to="/calendar"
-            className="flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-lavender-700 shadow-sm ring-1 ring-lavender-100"
+            className="flex items-center gap-1.5 rounded-full bg-white px-3 py-2 text-sm font-semibold text-lavender-700 shadow-sm ring-1 ring-lavender-100 whitespace-nowrap"
           >
-            <CalendarDays size={16} /> Calendar <ChevronRight size={16} />
+            <CalendarDays size={14} /> Calendar <ChevronRight size={14} />
           </Link>
-        </div>
-
-        <div className="mt-4 grid grid-cols-3 gap-2 rounded-2xl bg-[#f6f1ff] p-1 text-sm">
-          {(['7d', '14d', '30d'] as Period[]).map((item) => (
-            <button
-              key={item}
-              onClick={() => setPeriod(item)}
-              className={`rounded-2xl px-3 py-2 font-medium transition-all ${
-                period === item ? 'bg-white text-lavender-700 shadow-sm' : 'text-gray-500'
-              }`}
-            >
-              {item === '7d' ? '7 Days' : item === '14d' ? '14 Days' : '30 Days'}
-            </button>
-          ))}
         </div>
       </div>
 
       <div className="space-y-4 px-4 pt-4">
-        <ChartCard title="💧 Fluid intake (ml)">
+        <ChartCard title="💧 Fluid intake">
           <ResponsiveContainer width="100%" height={220}>
-            <BarChart data={fluidData}>
+            <BarChart data={fluidData} margin={{ left: 8 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#ede7f7" />
-              <XAxis dataKey="date" tick={{ fontSize: 10 }} />
-              <YAxis tick={{ fontSize: 10 }} />
-              <Tooltip contentStyle={{ borderRadius: 16, border: 'none', boxShadow: '0 12px 32px rgba(28, 25, 63, 0.12)' }} />
-              <Bar dataKey="totalMl" fill="#8b4dff" radius={[10, 10, 0, 0]} name="ml" />
+              <XAxis dataKey="date" tick={{ fontSize: 10 }} label={{ value: 'Date', position: 'insideBottom', offset: -2, fontSize: 10, fill: '#9ca3af' }} />
+              <YAxis tick={{ fontSize: 10 }} label={{ value: 'ml', angle: -90, position: 'insideLeft', offset: 8, fontSize: 10, fill: '#9ca3af' }} />
+              <Tooltip contentStyle={{ borderRadius: 16, border: 'none', boxShadow: '0 12px 32px rgba(28, 25, 63, 0.12)' }} formatter={(v) => [`${v} ml`, 'Fluid intake']} />
+              <Bar dataKey="totalMl" fill="#8b4dff" radius={[10, 10, 0, 0]} name="Fluid intake (ml)" />
             </BarChart>
           </ResponsiveContainer>
         </ChartCard>
 
         <ChartCard title="📊 Events timeline">
           <ResponsiveContainer width="100%" height={220}>
-            <LineChart data={eventData}>
+            <LineChart data={eventData} margin={{ left: 8 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#ede7f7" />
-              <XAxis dataKey="date" tick={{ fontSize: 10 }} />
-              <YAxis tick={{ fontSize: 10 }} />
+              <XAxis dataKey="date" tick={{ fontSize: 10 }} label={{ value: 'Date', position: 'insideBottom', offset: -2, fontSize: 10, fill: '#9ca3af' }} />
+              <YAxis tick={{ fontSize: 10 }} label={{ value: 'Count', angle: -90, position: 'insideLeft', offset: 8, fontSize: 10, fill: '#9ca3af' }} />
               <Tooltip contentStyle={{ borderRadius: 16, border: 'none', boxShadow: '0 12px 32px rgba(28, 25, 63, 0.12)' }} />
               <Legend />
-              <Line type="monotone" dataKey="wet" stroke="#f4b52c" strokeWidth={2} dot={{ r: 3 }} />
-              <Line type="monotone" dataKey="pass" stroke="#22c55e" strokeWidth={2} dot={{ r: 3 }} />
-              <Line type="monotone" dataKey="bowel" stroke="#8b4dff" strokeWidth={2} dot={{ r: 3 }} />
+              <Line type="monotone" dataKey="wet" stroke="#f4b52c" strokeWidth={2} dot={{ r: 3 }} name="Wet" />
+              <Line type="monotone" dataKey="pass" stroke="#22c55e" strokeWidth={2} dot={{ r: 3 }} name="Pass" />
+              <Line type="monotone" dataKey="bowel" stroke="#8b4dff" strokeWidth={2} dot={{ r: 3 }} name="Bowel" />
             </LineChart>
           </ResponsiveContainer>
         </ChartCard>
 
         <ChartCard title="💩 Bristol stool distribution">
           <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={stoolTypeData}>
+            <BarChart data={stoolTypeData} margin={{ left: 8 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#ede7f7" />
-              <XAxis dataKey="type" tick={{ fontSize: 10 }} />
-              <YAxis tick={{ fontSize: 10 }} />
-              <Tooltip contentStyle={{ borderRadius: 16, border: 'none', boxShadow: '0 12px 32px rgba(28, 25, 63, 0.12)' }} />
-              <Bar dataKey="count" fill="#22c55e" radius={[10, 10, 0, 0]} />
+              <XAxis dataKey="type" tick={{ fontSize: 10 }} label={{ value: 'Stool type', position: 'insideBottom', offset: -2, fontSize: 10, fill: '#9ca3af' }} />
+              <YAxis tick={{ fontSize: 10 }} label={{ value: 'Count', angle: -90, position: 'insideLeft', offset: 8, fontSize: 10, fill: '#9ca3af' }} />
+              <Tooltip contentStyle={{ borderRadius: 16, border: 'none', boxShadow: '0 12px 32px rgba(28, 25, 63, 0.12)' }} formatter={(v) => [v, 'Occurrences']} />
+              <Bar dataKey="count" fill="#22c55e" radius={[10, 10, 0, 0]} name="Occurrences" />
             </BarChart>
           </ResponsiveContainer>
           <p className="mt-2 text-xs text-gray-400">Types 3–4 are usually ideal. Use this alongside clinical advice and your care team&apos;s guidance.</p>

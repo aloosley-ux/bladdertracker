@@ -1,8 +1,9 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { Copy, FileUp, MailPlus, Shield, UsersRound } from 'lucide-react';
 import { useApp } from '../context/useApp';
 import { getImportTemplateDescription, parseImportFile } from '../utils/importers';
+import BrandIcon from '../components/BrandIcon';
 import type { UserRole } from '../types';
 
 const inviteRoles: UserRole[] = ['parent', 'caregiver', 'schoolAdmin'];
@@ -30,6 +31,11 @@ export default function CaregiverPortalPage() {
   const [statusMessage, setStatusMessage] = useState('');
   const [importMessage, setImportMessage] = useState('');
   const [importing, setImporting] = useState(false);
+
+  // Scroll to top on mount
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, []);
 
   const pendingReceivedInvites = useMemo(
     () => invites.filter((invite) => invite.status === 'pending' && invite.email === user?.email),
@@ -75,9 +81,14 @@ export default function CaregiverPortalPage() {
   return (
     <div className="pb-20">
       <div className="bg-[linear-gradient(180deg,#fbf7f2_0%,#ffffff_100%)] px-4 pb-4 pt-5">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-lavender-500">Caregiver portal</p>
-        <h1 className="mt-2 text-3xl font-bold text-gray-900">Collaborative diary management</h1>
-        <p className="mt-2 text-sm text-gray-500">Invite parents or staff, import shared updates, and keep an audit-friendly workflow.</p>
+        <div className="mb-2 flex items-center gap-3">
+          <BrandIcon size={40} />
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-widest text-lavender-500">Caregiver Portal</p>
+            <h1 className="text-lg font-bold leading-snug text-gray-900">Collaborative diary management</h1>
+            <p className="text-xs text-gray-500">Invite parents or staff, import shared updates, and keep an audit-friendly workflow.</p>
+          </div>
+        </div>
       </div>
 
       <div className="space-y-4 px-4 pt-4">

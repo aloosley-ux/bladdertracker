@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 72" fill="none" aria-label="BladderTracker logo">
+  <!-- Body of bladder shape -->
+  <rect x="4" y="14" width="48" height="46" rx="20" fill="white" stroke="#e9e0ff" stroke-width="1.5"/>
+  <!-- Left inlet bump -->
+  <circle cx="14" cy="12" r="10" fill="#f0e8ff"/>
+  <!-- Right inlet bump -->
+  <circle cx="42" cy="12" r="10" fill="#f0e8ff"/>
+  <!-- Control panel band -->
+  <rect x="10" y="26" width="36" height="12" rx="6" fill="#203674"/>
+  <!-- Left indicator dot -->
+  <circle cx="19" cy="32" r="3.5" fill="#67e8f9" style="filter:drop-shadow(0 0 4px rgba(34,211,238,0.7))"/>
+  <!-- Right indicator dot -->
+  <circle cx="37" cy="32" r="3.5" fill="#67e8f9" style="filter:drop-shadow(0 0 4px rgba(34,211,238,0.7))"/>
+  <!-- Outlet square -->
+  <rect x="20" y="47" width="16" height="10" rx="4" fill="url(#outlet)"/>
+  <!-- Left handle bump -->
+  <ellipse cx="14" cy="60" rx="5" ry="7" fill="#28478f"/>
+  <!-- Right handle bump -->
+  <ellipse cx="42" cy="60" rx="5" ry="7" fill="#28478f"/>
+  <defs>
+    <linearGradient id="outlet" x1="20" y1="47" x2="36" y2="57" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#bae6fd"/>
+      <stop offset="100%" stop-color="#38bdf8"/>
+    </linearGradient>
+  </defs>
+</svg>
