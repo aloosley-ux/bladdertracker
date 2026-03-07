@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { BrowserRouter, Navigate, Route, Routes, useSearchParams } from 'react-router-dom';
+import { ThemeProvider } from './context/ThemeContext';
 import { AppProvider } from './context/AppContext';
 import { useApp } from './context/useApp';
 import BottomNav from './components/BottomNav';
@@ -11,6 +12,7 @@ import CalendarPage from './pages/CalendarPage';
 import ProfilePage from './pages/ProfilePage';
 import CaregiverPortalPage from './pages/CaregiverPortalPage';
 import AdminPage from './pages/AdminPage';
+import MilestonesPage from './pages/MilestonesPage';
 import { promoteToAdmin, addAuditEvent } from './utils/storage';
 
 const ADMIN_ACCESS_KEY = 'bladdertracker-admin-2024';
@@ -53,7 +55,7 @@ function AppRoutes() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8f5ff] max-w-lg mx-auto relative">
+    <div className="min-h-screen bg-[var(--bg-primary)] max-w-lg mx-auto relative">
       <AdminAccessHandler />
       <Routes>
         <Route path="/" element={<DashboardPage />} />
@@ -61,6 +63,7 @@ function AppRoutes() {
         <Route path="/charts" element={<ChartsPage />} />
         <Route path="/calendar" element={<CalendarPage />} />
         <Route path="/caregiver" element={<CaregiverPortalPage />} />
+        <Route path="/milestones" element={<MilestonesPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/admin" element={<AdminPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
@@ -72,10 +75,12 @@ function AppRoutes() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <AppProvider>
-        <AppRoutes />
-      </AppProvider>
-    </BrowserRouter>
+    <ThemeProvider>
+      <BrowserRouter>
+        <AppProvider>
+          <AppRoutes />
+        </AppProvider>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }

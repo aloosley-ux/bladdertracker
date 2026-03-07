@@ -5,15 +5,24 @@ import type {
   CaregiverInvite,
   Child,
   DrinkEntry,
+  EnabledModules,
   FoodEntry,
   ImportSummary,
   ImportedDiaryPayload,
+  MedicationEntry,
+  Milestone,
+  ModuleId,
+  MoodEntry,
   NotificationItem,
+  RoutineEntry,
+  SensoryEntry,
   SleepEntry,
+  TherapyEntry,
   ToiletAttemptEntry,
   UrineEntry,
   User,
 } from '../types';
+import { DEFAULT_MODULES } from '../types';
 
 const STORAGE_KEYS = {
   USER: 'bt_user',
@@ -25,6 +34,13 @@ const STORAGE_KEYS = {
   SLEEP: 'bt_sleep',
   TOILET_ATTEMPTS: 'bt_toilet_attempts',
   FOOD: 'bt_food',
+  MOOD: 'bt_mood',
+  SENSORY: 'bt_sensory',
+  MEDICATION: 'bt_medication',
+  THERAPY: 'bt_therapy',
+  ROUTINE: 'bt_routine',
+  MILESTONES: 'bt_milestones',
+  ENABLED_MODULES: 'bt_enabled_modules',
   INVITES: 'bt_invites',
   NOTIFICATIONS: 'bt_notifications',
   AUDIT: 'bt_audit',
@@ -323,6 +339,181 @@ export function deleteFoodEntry(id: string): void {
   setItem(STORAGE_KEYS.FOOD, getFoodEntries().filter((entry) => entry.id !== id));
 }
 
+// Mood entries
+export function getMoodEntries(childFilter?: string | string[]): MoodEntry[] {
+  const entries = getItem<MoodEntry[]>(STORAGE_KEYS.MOOD, []);
+  const childIds = typeof childFilter === 'string' ? [childFilter] : childFilter;
+  return entries.filter((entry) => matchesChildId(childIds, entry.childId));
+}
+
+export function addMoodEntry(entry: MoodEntry): void {
+  const entries = getMoodEntries();
+  entries.push(entry);
+  setItem(STORAGE_KEYS.MOOD, entries);
+}
+
+export function updateMoodEntry(entry: MoodEntry): void {
+  const entries = getMoodEntries();
+  const index = entries.findIndex((item) => item.id === entry.id);
+  if (index !== -1) {
+    entries[index] = entry;
+    setItem(STORAGE_KEYS.MOOD, entries);
+  }
+}
+
+export function deleteMoodEntry(id: string): void {
+  setItem(STORAGE_KEYS.MOOD, getMoodEntries().filter((entry) => entry.id !== id));
+}
+
+// Sensory entries
+export function getSensoryEntries(childFilter?: string | string[]): SensoryEntry[] {
+  const entries = getItem<SensoryEntry[]>(STORAGE_KEYS.SENSORY, []);
+  const childIds = typeof childFilter === 'string' ? [childFilter] : childFilter;
+  return entries.filter((entry) => matchesChildId(childIds, entry.childId));
+}
+
+export function addSensoryEntry(entry: SensoryEntry): void {
+  const entries = getSensoryEntries();
+  entries.push(entry);
+  setItem(STORAGE_KEYS.SENSORY, entries);
+}
+
+export function updateSensoryEntry(entry: SensoryEntry): void {
+  const entries = getSensoryEntries();
+  const index = entries.findIndex((item) => item.id === entry.id);
+  if (index !== -1) {
+    entries[index] = entry;
+    setItem(STORAGE_KEYS.SENSORY, entries);
+  }
+}
+
+export function deleteSensoryEntry(id: string): void {
+  setItem(STORAGE_KEYS.SENSORY, getSensoryEntries().filter((entry) => entry.id !== id));
+}
+
+// Medication entries
+export function getMedicationEntries(childFilter?: string | string[]): MedicationEntry[] {
+  const entries = getItem<MedicationEntry[]>(STORAGE_KEYS.MEDICATION, []);
+  const childIds = typeof childFilter === 'string' ? [childFilter] : childFilter;
+  return entries.filter((entry) => matchesChildId(childIds, entry.childId));
+}
+
+export function addMedicationEntry(entry: MedicationEntry): void {
+  const entries = getMedicationEntries();
+  entries.push(entry);
+  setItem(STORAGE_KEYS.MEDICATION, entries);
+}
+
+export function updateMedicationEntry(entry: MedicationEntry): void {
+  const entries = getMedicationEntries();
+  const index = entries.findIndex((item) => item.id === entry.id);
+  if (index !== -1) {
+    entries[index] = entry;
+    setItem(STORAGE_KEYS.MEDICATION, entries);
+  }
+}
+
+export function deleteMedicationEntry(id: string): void {
+  setItem(STORAGE_KEYS.MEDICATION, getMedicationEntries().filter((entry) => entry.id !== id));
+}
+
+// Therapy entries
+export function getTherapyEntries(childFilter?: string | string[]): TherapyEntry[] {
+  const entries = getItem<TherapyEntry[]>(STORAGE_KEYS.THERAPY, []);
+  const childIds = typeof childFilter === 'string' ? [childFilter] : childFilter;
+  return entries.filter((entry) => matchesChildId(childIds, entry.childId));
+}
+
+export function addTherapyEntry(entry: TherapyEntry): void {
+  const entries = getTherapyEntries();
+  entries.push(entry);
+  setItem(STORAGE_KEYS.THERAPY, entries);
+}
+
+export function updateTherapyEntry(entry: TherapyEntry): void {
+  const entries = getTherapyEntries();
+  const index = entries.findIndex((item) => item.id === entry.id);
+  if (index !== -1) {
+    entries[index] = entry;
+    setItem(STORAGE_KEYS.THERAPY, entries);
+  }
+}
+
+export function deleteTherapyEntry(id: string): void {
+  setItem(STORAGE_KEYS.THERAPY, getTherapyEntries().filter((entry) => entry.id !== id));
+}
+
+// Routine entries
+export function getRoutineEntries(childFilter?: string | string[]): RoutineEntry[] {
+  const entries = getItem<RoutineEntry[]>(STORAGE_KEYS.ROUTINE, []);
+  const childIds = typeof childFilter === 'string' ? [childFilter] : childFilter;
+  return entries.filter((entry) => matchesChildId(childIds, entry.childId));
+}
+
+export function addRoutineEntry(entry: RoutineEntry): void {
+  const entries = getRoutineEntries();
+  entries.push(entry);
+  setItem(STORAGE_KEYS.ROUTINE, entries);
+}
+
+export function updateRoutineEntry(entry: RoutineEntry): void {
+  const entries = getRoutineEntries();
+  const index = entries.findIndex((item) => item.id === entry.id);
+  if (index !== -1) {
+    entries[index] = entry;
+    setItem(STORAGE_KEYS.ROUTINE, entries);
+  }
+}
+
+export function deleteRoutineEntry(id: string): void {
+  setItem(STORAGE_KEYS.ROUTINE, getRoutineEntries().filter((entry) => entry.id !== id));
+}
+
+// Milestones
+export function getMilestones(childFilter?: string | string[]): Milestone[] {
+  const milestones = getItem<Milestone[]>(STORAGE_KEYS.MILESTONES, []);
+  const childIds = typeof childFilter === 'string' ? [childFilter] : childFilter;
+  return milestones.filter((m) => matchesChildId(childIds, m.childId));
+}
+
+export function addMilestone(milestone: Milestone): void {
+  const milestones = getMilestones();
+  milestones.push(milestone);
+  setItem(STORAGE_KEYS.MILESTONES, milestones);
+}
+
+export function updateMilestone(milestone: Milestone): void {
+  const milestones = getMilestones();
+  const index = milestones.findIndex((m) => m.id === milestone.id);
+  if (index !== -1) {
+    milestones[index] = milestone;
+    setItem(STORAGE_KEYS.MILESTONES, milestones);
+  }
+}
+
+export function deleteMilestone(id: string): void {
+  setItem(STORAGE_KEYS.MILESTONES, getMilestones().filter((m) => m.id !== id));
+}
+
+// Module registry — per-child enabled modules
+export function getEnabledModules(childId: string): ModuleId[] {
+  const all = getItem<EnabledModules[]>(STORAGE_KEYS.ENABLED_MODULES, []);
+  const record = all.find((r) => r.childId === childId);
+  if (record) return record.modules;
+  return DEFAULT_MODULES.filter((m) => m.defaultEnabled).map((m) => m.id);
+}
+
+export function setEnabledModules(childId: string, modules: ModuleId[]): void {
+  const all = getItem<EnabledModules[]>(STORAGE_KEYS.ENABLED_MODULES, []);
+  const index = all.findIndex((r) => r.childId === childId);
+  if (index !== -1) {
+    all[index] = { childId, modules };
+  } else {
+    all.push({ childId, modules });
+  }
+  setItem(STORAGE_KEYS.ENABLED_MODULES, all);
+}
+
 // Remove child
 export function removeChild(childId: string): void {
   const children = getChildren();
@@ -334,6 +525,12 @@ export function removeChild(childId: string): void {
   setItem(STORAGE_KEYS.SLEEP, getSleepEntries().filter((e) => e.childId !== childId));
   setItem(STORAGE_KEYS.TOILET_ATTEMPTS, getToiletAttemptEntries().filter((e) => e.childId !== childId));
   setItem(STORAGE_KEYS.FOOD, getFoodEntries().filter((e) => e.childId !== childId));
+  setItem(STORAGE_KEYS.MOOD, getMoodEntries().filter((e) => e.childId !== childId));
+  setItem(STORAGE_KEYS.SENSORY, getSensoryEntries().filter((e) => e.childId !== childId));
+  setItem(STORAGE_KEYS.MEDICATION, getMedicationEntries().filter((e) => e.childId !== childId));
+  setItem(STORAGE_KEYS.THERAPY, getTherapyEntries().filter((e) => e.childId !== childId));
+  setItem(STORAGE_KEYS.ROUTINE, getRoutineEntries().filter((e) => e.childId !== childId));
+  setItem(STORAGE_KEYS.MILESTONES, getMilestones().filter((m) => m.childId !== childId));
 }
 
 // Invites
@@ -551,6 +748,11 @@ export function importDiaryPayload(payload: ImportedDiaryPayload, childId: strin
     sleepEntries: 0,
     toiletAttemptEntries: 0,
     foodEntries: 0,
+    moodEntries: 0,
+    sensoryEntries: 0,
+    medicationEntries: 0,
+    therapyEntries: 0,
+    routineEntries: 0,
     errors: [],
   };
 
@@ -694,8 +896,14 @@ export function exportToCSV(childId: string, childName: string): string {
   const sleep = getSleepEntries(childId);
   const toiletAttempts = getToiletAttemptEntries(childId);
   const food = getFoodEntries(childId);
+  const mood = getMoodEntries(childId);
+  const sensory = getSensoryEntries(childId);
+  const medication = getMedicationEntries(childId);
+  const therapy = getTherapyEntries(childId);
+  const routine = getRoutineEntries(childId);
+  const milestones = getMilestones(childId);
 
-  let csv = `Bladder & Bowel Diary Export for ${childName}\n`;
+  let csv = `Development Tracker Export for ${childName}\n`;
   csv += `Generated: ${new Date().toLocaleDateString()}\n\n`;
 
   csv += 'DRINKS\n';
@@ -732,6 +940,42 @@ export function exportToCSV(childId: string, childName: string): string {
   csv += 'Date,Time,Meal Type,Description,Portions,Notes\n';
   food.forEach((entry) => {
     csv += `${entry.date},${entry.time},${entry.mealType},"${entry.description}",${entry.portions ?? ''},"${entry.notes}"\n`;
+  });
+
+  csv += '\nMOOD ENTRIES\n';
+  csv += 'Date,Time,Level (1-5),Triggers,Notes\n';
+  mood.forEach((entry) => {
+    csv += `${entry.date},${entry.time},${entry.level},"${entry.triggers}","${entry.notes}"\n`;
+  });
+
+  csv += '\nSENSORY ENTRIES\n';
+  csv += 'Date,Time,Type,Response,Intensity (1-5),Notes\n';
+  sensory.forEach((entry) => {
+    csv += `${entry.date},${entry.time},${entry.sensoryType},${entry.response},${entry.intensity},"${entry.notes}"\n`;
+  });
+
+  csv += '\nMEDICATION ENTRIES\n';
+  csv += 'Date,Time,Name,Dosage,Administered,Notes\n';
+  medication.forEach((entry) => {
+    csv += `${entry.date},${entry.time},"${entry.name}","${entry.dosage}",${entry.administered},"${entry.notes}"\n`;
+  });
+
+  csv += '\nTHERAPY ENTRIES\n';
+  csv += 'Date,Time,Type,Provider,Duration (min),Goals,Notes\n';
+  therapy.forEach((entry) => {
+    csv += `${entry.date},${entry.time},${entry.therapyType},"${entry.provider}",${entry.durationMinutes},"${entry.goals}","${entry.notes}"\n`;
+  });
+
+  csv += '\nROUTINE ENTRIES\n';
+  csv += 'Date,Time,Routine,Completed,Duration (min),Notes\n';
+  routine.forEach((entry) => {
+    csv += `${entry.date},${entry.time},"${entry.routineName}",${entry.completed},${entry.durationMinutes ?? ''},"${entry.notes}"\n`;
+  });
+
+  csv += '\nMILESTONES\n';
+  csv += 'Name,Category,Status,Date Achieved,Description,Notes\n';
+  milestones.forEach((m) => {
+    csv += `"${m.name}",${m.category},${m.status},${m.dateAchieved ?? ''},"${m.description}","${m.notes}"\n`;
   });
 
   return csv;

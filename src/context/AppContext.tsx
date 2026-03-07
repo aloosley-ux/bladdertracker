@@ -8,6 +8,13 @@ import type {
   SleepEntry,
   ToiletAttemptEntry,
   FoodEntry,
+  MoodEntry,
+  SensoryEntry,
+  MedicationEntry,
+  TherapyEntry,
+  RoutineEntry,
+  Milestone,
+  ModuleId,
   ImportedDiaryPayload,
   UserRole,
   CaregiverInvite,
@@ -15,6 +22,7 @@ import type {
   AuditEvent,
   ImportSummary,
 } from '../types';
+import { EMPTY_IMPORT_SUMMARY } from '../types';
 import * as api from '../utils/api';
 import * as localStorage from '../utils/storage';
 import { AppContext } from './appContextDef';
@@ -35,6 +43,13 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
   const [sleepEntries, setSleepEntries] = useState<SleepEntry[]>([]);
   const [toiletAttemptEntries, setToiletAttemptEntries] = useState<ToiletAttemptEntry[]>([]);
   const [foodEntries, setFoodEntries] = useState<FoodEntry[]>([]);
+  const [moodEntries, setMoodEntries] = useState<MoodEntry[]>([]);
+  const [sensoryEntries, setSensoryEntries] = useState<SensoryEntry[]>([]);
+  const [medicationEntries, setMedicationEntries] = useState<MedicationEntry[]>([]);
+  const [therapyEntries, setTherapyEntries] = useState<TherapyEntry[]>([]);
+  const [routineEntries, setRoutineEntries] = useState<RoutineEntry[]>([]);
+  const [milestones, setMilestones] = useState<Milestone[]>([]);
+  const [enabledModules, setEnabledModulesState] = useState<ModuleId[]>([]);
   const [invites, setInvites] = useState<CaregiverInvite[]>([]);
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [auditTrail, setAuditTrail] = useState<AuditEvent[]>([]);
@@ -49,6 +64,13 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
       setSleepEntries([]);
       setToiletAttemptEntries([]);
       setFoodEntries([]);
+      setMoodEntries([]);
+      setSensoryEntries([]);
+      setMedicationEntries([]);
+      setTherapyEntries([]);
+      setRoutineEntries([]);
+      setMilestones([]);
+      setEnabledModulesState([]);
       setInvites([]);
       setNotifications([]);
       setAuditTrail([]);
@@ -102,6 +124,13 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
     setSleepEntries(localStorage.getSleepEntries(ids));
     setToiletAttemptEntries(localStorage.getToiletAttemptEntries(ids));
     setFoodEntries(localStorage.getFoodEntries(ids));
+    setMoodEntries(localStorage.getMoodEntries(ids));
+    setSensoryEntries(localStorage.getSensoryEntries(ids));
+    setMedicationEntries(localStorage.getMedicationEntries(ids));
+    setTherapyEntries(localStorage.getTherapyEntries(ids));
+    setRoutineEntries(localStorage.getRoutineEntries(ids));
+    setMilestones(localStorage.getMilestones(ids));
+    setEnabledModulesState(resolvedId ? localStorage.getEnabledModules(resolvedId) : []);
     setInvites(currentUser ? localStorage.getInvites(currentUser) : []);
     setNotifications(currentUser ? localStorage.getNotifications(currentUser.id) : []);
     setAuditTrail(currentUser ? localStorage.getAuditEvents(currentUser.id) : []);
@@ -165,6 +194,13 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
     setSleepEntries([]);
     setToiletAttemptEntries([]);
     setFoodEntries([]);
+    setMoodEntries([]);
+    setSensoryEntries([]);
+    setMedicationEntries([]);
+    setTherapyEntries([]);
+    setRoutineEntries([]);
+    setMilestones([]);
+    setEnabledModulesState([]);
     setInvites([]);
     setNotifications([]);
     setAuditTrail([]);
@@ -440,6 +476,80 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
     }
   };
 
+  // Mood entry CRUD (local-only for now)
+  const addMoodEntry = async (entry: MoodEntry) => {
+    localStorage.addMoodEntry(entry);
+    if (user) {
+      localStorage.addAuditEvent({ userId: user.id, action: 'Added mood entry', subject: entry.childId, detail: `Mood ${entry.level}/5 logged at ${entry.time}.` });
+    }
+    refreshLocalData(user, selectedChildId);
+  };
+  const updateMoodEntry = async (entry: MoodEntry) => { localStorage.updateMoodEntry(entry); refreshLocalData(user, selectedChildId); };
+  const deleteMoodEntry = async (id: string) => { localStorage.deleteMoodEntry(id); refreshLocalData(user, selectedChildId); };
+
+  // Sensory entry CRUD
+  const addSensoryEntry = async (entry: SensoryEntry) => {
+    localStorage.addSensoryEntry(entry);
+    if (user) {
+      localStorage.addAuditEvent({ userId: user.id, action: 'Added sensory entry', subject: entry.childId, detail: `${entry.sensoryType} (${entry.response}) logged at ${entry.time}.` });
+    }
+    refreshLocalData(user, selectedChildId);
+  };
+  const updateSensoryEntry = async (entry: SensoryEntry) => { localStorage.updateSensoryEntry(entry); refreshLocalData(user, selectedChildId); };
+  const deleteSensoryEntry = async (id: string) => { localStorage.deleteSensoryEntry(id); refreshLocalData(user, selectedChildId); };
+
+  // Medication entry CRUD
+  const addMedicationEntry = async (entry: MedicationEntry) => {
+    localStorage.addMedicationEntry(entry);
+    if (user) {
+      localStorage.addAuditEvent({ userId: user.id, action: 'Added medication entry', subject: entry.childId, detail: `${entry.name} ${entry.dosage} at ${entry.time}.` });
+    }
+    refreshLocalData(user, selectedChildId);
+  };
+  const updateMedicationEntry = async (entry: MedicationEntry) => { localStorage.updateMedicationEntry(entry); refreshLocalData(user, selectedChildId); };
+  const deleteMedicationEntry = async (id: string) => { localStorage.deleteMedicationEntry(id); refreshLocalData(user, selectedChildId); };
+
+  // Therapy entry CRUD
+  const addTherapyEntry = async (entry: TherapyEntry) => {
+    localStorage.addTherapyEntry(entry);
+    if (user) {
+      localStorage.addAuditEvent({ userId: user.id, action: 'Added therapy entry', subject: entry.childId, detail: `${entry.therapyType} session (${entry.durationMinutes}min) at ${entry.time}.` });
+    }
+    refreshLocalData(user, selectedChildId);
+  };
+  const updateTherapyEntry = async (entry: TherapyEntry) => { localStorage.updateTherapyEntry(entry); refreshLocalData(user, selectedChildId); };
+  const deleteTherapyEntry = async (id: string) => { localStorage.deleteTherapyEntry(id); refreshLocalData(user, selectedChildId); };
+
+  // Routine entry CRUD
+  const addRoutineEntry = async (entry: RoutineEntry) => {
+    localStorage.addRoutineEntry(entry);
+    if (user) {
+      localStorage.addAuditEvent({ userId: user.id, action: 'Added routine entry', subject: entry.childId, detail: `${entry.routineName} ${entry.completed ? 'completed' : 'incomplete'} at ${entry.time}.` });
+    }
+    refreshLocalData(user, selectedChildId);
+  };
+  const updateRoutineEntry = async (entry: RoutineEntry) => { localStorage.updateRoutineEntry(entry); refreshLocalData(user, selectedChildId); };
+  const deleteRoutineEntry = async (id: string) => { localStorage.deleteRoutineEntry(id); refreshLocalData(user, selectedChildId); };
+
+  // Milestone CRUD
+  const addMilestoneEntry = async (milestone: Milestone) => {
+    localStorage.addMilestone(milestone);
+    if (user) {
+      localStorage.addAuditEvent({ userId: user.id, action: 'Added milestone', subject: milestone.childId, detail: `"${milestone.name}" (${milestone.category}) created.` });
+    }
+    refreshLocalData(user, selectedChildId);
+  };
+  const updateMilestoneEntry = async (milestone: Milestone) => { localStorage.updateMilestone(milestone); refreshLocalData(user, selectedChildId); };
+  const deleteMilestoneEntry = async (id: string) => { localStorage.deleteMilestone(id); refreshLocalData(user, selectedChildId); };
+
+  // Module management
+  const setEnabledModulesForChild = (modules: ModuleId[]) => {
+    if (selectedChildId) {
+      localStorage.setEnabledModules(selectedChildId, modules);
+      setEnabledModulesState(modules);
+    }
+  };
+
   const exportData = async () => {
     const child = childrenList.find((c) => c.id === selectedChildId);
     if (!child) return;
@@ -529,7 +639,7 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
         await refreshCloudData(user);
         return summary;
       } catch {
-        return { drinks: 0, urineEntries: 0, bowelEntries: 0, sleepEntries: 0, toiletAttemptEntries: 0, foodEntries: 0, errors: ['Import failed'] };
+        return { ...EMPTY_IMPORT_SUMMARY, errors: ['Import failed'] };
       }
     } else {
       const summary = localStorage.importDiaryPayload(payload, childId, user?.id ?? '');
@@ -567,6 +677,13 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
     setSleepEntries([]);
     setToiletAttemptEntries([]);
     setFoodEntries([]);
+    setMoodEntries([]);
+    setSensoryEntries([]);
+    setMedicationEntries([]);
+    setTherapyEntries([]);
+    setRoutineEntries([]);
+    setMilestones([]);
+    setEnabledModulesState([]);
     setInvites([]);
     setNotifications([]);
     setAuditTrail([]);
@@ -577,7 +694,7 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
 
   if (!ready) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#f8f5ff]">
+      <div className="flex min-h-screen items-center justify-center bg-[var(--bg-primary)]">
         <div className="animate-pulse text-lavender-500 text-sm font-medium">Loading…</div>
       </div>
     );
@@ -596,6 +713,13 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
         sleepEntries,
         toiletAttemptEntries,
         foodEntries,
+        moodEntries,
+        sensoryEntries,
+        medicationEntries,
+        therapyEntries,
+        routineEntries,
+        milestones,
+        enabledModules,
         invites,
         notifications,
         auditTrail,
@@ -622,6 +746,25 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
         addFoodEntry,
         updateFoodEntry,
         deleteFoodEntry,
+        addMoodEntry,
+        updateMoodEntry,
+        deleteMoodEntry,
+        addSensoryEntry,
+        updateSensoryEntry,
+        deleteSensoryEntry,
+        addMedicationEntry,
+        updateMedicationEntry,
+        deleteMedicationEntry,
+        addTherapyEntry,
+        updateTherapyEntry,
+        deleteTherapyEntry,
+        addRoutineEntry,
+        updateRoutineEntry,
+        deleteRoutineEntry,
+        addMilestone: addMilestoneEntry,
+        updateMilestone: updateMilestoneEntry,
+        deleteMilestone: deleteMilestoneEntry,
+        setEnabledModules: setEnabledModulesForChild,
         exportData,
         createInvite,
         acceptInvite,

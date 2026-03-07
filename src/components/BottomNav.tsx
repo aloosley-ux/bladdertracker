@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { Compass, Crown, Home, Settings, UsersRound } from 'lucide-react';
+import { Compass, Crown, Home, Settings, UsersRound, Star } from 'lucide-react';
 import { useApp } from '../context/useApp';
 
 export default function BottomNav() {
@@ -8,6 +8,7 @@ export default function BottomNav() {
 
   const navItems = [
     { to: '/', icon: Home, label: 'Journal' },
+    { to: '/milestones', icon: Star, label: 'Milestones' },
     { to: '/charts', icon: Compass, label: 'Explore' },
     { to: '/caregiver', icon: UsersRound, label: 'Caregiver' },
     { to: '/profile', icon: Settings, label: 'Settings' },

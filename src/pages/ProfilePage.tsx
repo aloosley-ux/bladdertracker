@@ -1,14 +1,17 @@
 import { useEffect, useMemo, useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
-import { AlertTriangle, Baby, Crown, Download, LogOut, Shield, Trash2 } from 'lucide-react';
+import { AlertTriangle, Baby, Crown, Download, LogOut, Palette, Settings, Shield, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useApp } from '../context/useApp';
+import { useTheme } from '../context/useTheme';
 import { generateId } from '../utils/storage';
 import BrandBanner from '../components/BrandBanner';
-import type { Child } from '../types';
+import type { Child, ModuleId } from '../types';
+import { DEFAULT_MODULES } from '../types';
 
 export default function ProfilePage() {
-  const { user, children, selectedChild, selectChild, addChild, removeChild, exportData, auditTrail, logout, clearAllData } = useApp();
+  const { user, children, selectedChild, selectChild, addChild, removeChild, exportData, auditTrail, logout, clearAllData, enabledModules, setEnabledModules } = useApp();
+  const { theme, setTheme } = useTheme();
   const [showAddChild, setShowAddChild] = useState(false);
   const [childName, setChildName] = useState('');
   const [childDob, setChildDob] = useState('');
@@ -108,6 +111,57 @@ export default function ProfilePage() {
             </div>
           </div>
         </section>
+
+        {/* Theme switcher */}
+        <section className="rounded-[1.75rem] bg-white p-5 shadow-sm ring-1 ring-black/5">
+          <h3 className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-3">
+            <Palette size={16} className="text-lavender-500" /> Appearance
+          </h3>
+          <div className="flex gap-2">
+            {(['light', 'dark', 'high-contrast'] as const).map((t) => (
+              <button key={t} onClick={() => setTheme(t)}
+                className={`flex-1 rounded-xl py-2.5 text-xs font-semibold transition-all ${
+                  theme === t ? 'bg-lavender-500 text-white shadow-md' : 'bg-gray-100 text-gray-600 hover:bg-lavender-50'
+                }`}>
+                {t === 'light' ? '☀️ Light' : t === 'dark' ? '🌙 Dark' : '🔲 High Contrast'}
+              </button>
+            ))}
+          </div>
+        </section>
+
+        {/* Module management */}
+        {selectedChild && (
+          <section className="rounded-[1.75rem] bg-white p-5 shadow-sm ring-1 ring-black/5">
+            <h3 className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-1">
+              <Settings size={16} className="text-lavender-500" /> Modules for {selectedChild.name}
+            </h3>
+            <p className="text-xs text-gray-400 mb-3">Toggle tracker modules on or off for this child.</p>
+            <div className="space-y-2">
+              {DEFAULT_MODULES.map((mod) => {
+                const enabled = enabledModules.includes(mod.id);
+                return (
+                  <label key={mod.id} className="flex items-center justify-between rounded-xl bg-gray-50 px-3 py-2.5">
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg">{mod.icon}</span>
+                      <div>
+                        <span className="text-sm font-medium text-gray-700">{mod.label}</span>
+                        <p className="text-[10px] text-gray-400">{mod.description}</p>
+                      </div>
+                    </div>
+                    <input type="checkbox" checked={enabled}
+                      onChange={(e) => {
+                        const next = e.target.checked
+                          ? [...enabledModules, mod.id]
+                          : enabledModules.filter((m: ModuleId) => m !== mod.id);
+                        setEnabledModules(next);
+                      }}
+                      className="h-4 w-4 rounded border-gray-300 text-lavender-500 focus:ring-lavender-400" />
+                  </label>
+                );
+              })}
+            </div>
+          </section>
+        )}
 
         {/* Child profiles — only admin/parent can add/remove */}
         <section className="rounded-[1.75rem] bg-white p-5 shadow-sm ring-1 ring-black/5">
