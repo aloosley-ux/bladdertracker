@@ -412,7 +412,7 @@ export default function LogPage() {
             </p>
             <Link
               className="mt-4 inline-block rounded-full bg-lavender-500 px-5 py-3 text-sm font-semibold text-white"
-              to="/profile"
+              to="/settings"
             >
               Open settings
             </Link>
