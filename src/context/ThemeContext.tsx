@@ -1,13 +1,7 @@
-import { createContext, useContext, useState, type ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
+import { ThemeContext } from './themeContextDef';
 
 type Theme = 'light' | 'dark' | 'high-contrast';
-
-interface ThemeContextType {
-  theme: Theme;
-  setTheme: (theme: Theme) => void;
-}
-
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 const STORAGE_KEY = 'bt_theme';
 
@@ -17,7 +11,7 @@ function getInitialTheme(): Theme {
     if (stored === 'light' || stored === 'dark' || stored === 'high-contrast') {
       return stored;
     }
-  } catch {}
+  } catch { /* localStorage unavailable */ }
   return 'light';
 }
 
@@ -36,7 +30,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     setThemeState(next);
     try {
       localStorage.setItem(STORAGE_KEY, next);
-    } catch {}
+    } catch { /* localStorage unavailable */ }
     applyTheme(next);
   };
 
@@ -45,12 +39,4 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       {children}
     </ThemeContext.Provider>
   );
-}
-
-export function useTheme(): ThemeContextType {
-  const ctx = useContext(ThemeContext);
-  if (!ctx) {
-    throw new Error('useTheme must be used within a ThemeProvider');
-  }
-  return ctx;
 }

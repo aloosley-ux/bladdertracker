@@ -200,5 +200,123 @@ export async function migrate(): Promise<string[]> {
   `;
   log.push('food_entries table ready');
 
+  // Mood entries
+  await sql`
+    CREATE TABLE IF NOT EXISTS mood_entries (
+      id TEXT PRIMARY KEY,
+      child_id TEXT REFERENCES children(id) ON DELETE CASCADE,
+      date VARCHAR(20) NOT NULL,
+      time VARCHAR(10) NOT NULL,
+      level SMALLINT NOT NULL CHECK (level >= 1 AND level <= 5),
+      triggers TEXT DEFAULT '',
+      notes TEXT DEFAULT '',
+      created_by TEXT REFERENCES accounts(id),
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `;
+  log.push('mood_entries table ready');
+
+  // Sensory entries
+  await sql`
+    CREATE TABLE IF NOT EXISTS sensory_entries (
+      id TEXT PRIMARY KEY,
+      child_id TEXT REFERENCES children(id) ON DELETE CASCADE,
+      date VARCHAR(20) NOT NULL,
+      time VARCHAR(10) NOT NULL,
+      sensory_type VARCHAR(50) NOT NULL,
+      response VARCHAR(20) NOT NULL CHECK (response IN ('seeking', 'avoiding', 'neutral')),
+      intensity SMALLINT NOT NULL CHECK (intensity >= 1 AND intensity <= 5),
+      notes TEXT DEFAULT '',
+      created_by TEXT REFERENCES accounts(id),
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `;
+  log.push('sensory_entries table ready');
+
+  // Medication entries
+  await sql`
+    CREATE TABLE IF NOT EXISTS medication_entries (
+      id TEXT PRIMARY KEY,
+      child_id TEXT REFERENCES children(id) ON DELETE CASCADE,
+      date VARCHAR(20) NOT NULL,
+      time VARCHAR(10) NOT NULL,
+      name VARCHAR(255) NOT NULL,
+      dosage VARCHAR(100) DEFAULT '',
+      administered BOOLEAN DEFAULT TRUE,
+      notes TEXT DEFAULT '',
+      created_by TEXT REFERENCES accounts(id),
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `;
+  log.push('medication_entries table ready');
+
+  // Therapy entries
+  await sql`
+    CREATE TABLE IF NOT EXISTS therapy_entries (
+      id TEXT PRIMARY KEY,
+      child_id TEXT REFERENCES children(id) ON DELETE CASCADE,
+      date VARCHAR(20) NOT NULL,
+      time VARCHAR(10) NOT NULL,
+      therapy_type VARCHAR(30) NOT NULL CHECK (therapy_type IN ('speech', 'occupational', 'physical', 'behavioral', 'other')),
+      provider VARCHAR(255) DEFAULT '',
+      duration_minutes INTEGER NOT NULL,
+      goals TEXT DEFAULT '',
+      notes TEXT DEFAULT '',
+      created_by TEXT REFERENCES accounts(id),
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `;
+  log.push('therapy_entries table ready');
+
+  // Routine entries
+  await sql`
+    CREATE TABLE IF NOT EXISTS routine_entries (
+      id TEXT PRIMARY KEY,
+      child_id TEXT REFERENCES children(id) ON DELETE CASCADE,
+      date VARCHAR(20) NOT NULL,
+      time VARCHAR(10) NOT NULL,
+      routine_name VARCHAR(255) NOT NULL,
+      completed BOOLEAN DEFAULT TRUE,
+      duration_minutes INTEGER,
+      notes TEXT DEFAULT '',
+      created_by TEXT REFERENCES accounts(id),
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `;
+  log.push('routine_entries table ready');
+
+  // Milestones
+  await sql`
+    CREATE TABLE IF NOT EXISTS milestones (
+      id TEXT PRIMARY KEY,
+      child_id TEXT REFERENCES children(id) ON DELETE CASCADE,
+      name VARCHAR(255) NOT NULL,
+      description TEXT DEFAULT '',
+      category VARCHAR(30) NOT NULL CHECK (category IN ('speech', 'motor', 'social', 'cognitive', 'self_care', 'routine', 'sensory', 'other')),
+      status VARCHAR(20) NOT NULL DEFAULT 'not_started' CHECK (status IN ('not_started', 'in_progress', 'achieved')),
+      date_achieved VARCHAR(20),
+      notes TEXT DEFAULT '',
+      created_by TEXT REFERENCES accounts(id),
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `;
+  log.push('milestones table ready');
+
+  // Enabled modules per child
+  await sql`
+    CREATE TABLE IF NOT EXISTS enabled_modules (
+      id TEXT PRIMARY KEY,
+      child_id TEXT REFERENCES children(id) ON DELETE CASCADE,
+      module_id VARCHAR(50) NOT NULL,
+      UNIQUE(child_id, module_id)
+    )
+  `;
+  log.push('enabled_modules table ready');
+
+  // Update accounts role constraint to include new roles
+  await sql`ALTER TABLE accounts DROP CONSTRAINT IF EXISTS accounts_role_check`;
+  await sql`ALTER TABLE accounts ADD CONSTRAINT accounts_role_check CHECK (role IN ('admin', 'parent', 'caregiver', 'schoolAdmin', 'therapist', 'specialist'))`;
+  log.push('accounts role constraint updated');
+
   return log;
 }
