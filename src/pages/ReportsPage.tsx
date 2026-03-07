@@ -31,8 +31,9 @@ const ALL_EVENT_FILTERS = [
 type FilterKey = typeof ALL_EVENT_FILTERS[number]['key'];
 
 export default function ReportsPage() {
-  const { drinks, urineEntries, bowelEntries, sleepEntries, toiletAttemptEntries, foodEntries, selectedChildId, selectedChild, enabledModules } = useApp();
+  const { drinks, urineEntries, bowelEntries, sleepEntries, toiletAttemptEntries, foodEntries, milestones, selectedChildId, selectedChild, enabledModules, exportData } = useApp();
   const [period, setPeriod] = useState<Period>('7d');
+  const [confirmExport, setConfirmExport] = useState(false);
 
   // Derive which filter keys are currently enabled
   const enabledFilterKeys = useMemo<Set<FilterKey>>(() => {
@@ -118,6 +119,17 @@ export default function ReportsPage() {
     ];
   }, [toiletAttemptEntries, selectedChildId]);
 
+  const milestoneTrendData = useMemo(() => {
+    return Array.from({ length: days }, (_, index) => {
+      const date = startOfDay(subDays(new Date(), days - index - 1));
+      const dateStr = format(date, 'yyyy-MM-dd');
+      return {
+        date: format(date, 'dd/MM'),
+        achieved: milestones.filter((entry) => entry.childId === selectedChildId && entry.status === 'achieved' && entry.dateAchieved === dateStr).length,
+      };
+    });
+  }, [days, milestones, selectedChildId]);
+
   const stats = useMemo(() => {
     const childDrinks = drinks.filter((d) => d.childId === selectedChildId);
     const childUrine = urineEntries.filter((e) => e.childId === selectedChildId);
@@ -174,6 +186,19 @@ export default function ReportsPage() {
       </div>
 
       <div className="space-y-4 px-4">
+        <NhsCard>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h3 className="text-sm font-bold text-gray-700">Reports export</h3>
+              <p className="text-xs text-gray-500">Exports are de-identified unless your role permits named data sharing.</p>
+            </div>
+            <div className="flex gap-2">
+              <button onClick={() => setConfirmExport(true)} className="rounded-full bg-lavender-500 px-3 py-2 text-xs font-semibold text-white">Export CSV</button>
+              <button onClick={() => window.print()} className="rounded-full bg-gray-100 px-3 py-2 text-xs font-semibold text-gray-700">Export PDF</button>
+            </div>
+          </div>
+        </NhsCard>
+
         {/* Event filter toggles — only enabled modules [2] */}
         {EVENT_FILTERS.length > 0 && (
           <NhsCard>
@@ -280,8 +305,43 @@ export default function ReportsPage() {
               </ResponsiveContainer>
             </ChartCard>
           )}
+
+          <ChartCard title="⭐ Milestones achieved trend">
+            <ResponsiveContainer width="100%" height={200}>
+              <LineChart data={milestoneTrendData} margin={{ left: 8 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#ede7f7" />
+                <XAxis dataKey="date" tick={{ fontSize: 10 }} />
+                <YAxis tick={{ fontSize: 10 }} />
+                <Tooltip />
+                <Line type="monotone" dataKey="achieved" stroke="#a855f7" strokeWidth={2} dot={{ r: 3 }} name="Achieved milestones" />
+              </LineChart>
+            </ResponsiveContainer>
+          </ChartCard>
         </div>
       </div>
+
+      {confirmExport && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="w-full max-w-md rounded-2xl bg-white p-5">
+            <h3 className="text-base font-bold text-gray-900">Confirm export</h3>
+            <p className="mt-2 text-sm text-gray-600">
+              Please confirm you have consent to export this child&apos;s data. Exporting should only be used for agreed care/school workflows.
+            </p>
+            <div className="mt-4 flex justify-end gap-2">
+              <button onClick={() => setConfirmExport(false)} className="rounded-full bg-gray-100 px-4 py-2 text-xs font-semibold text-gray-700">Cancel</button>
+              <button
+                onClick={() => {
+                  exportData();
+                  setConfirmExport(false);
+                }}
+                className="rounded-full bg-lavender-500 px-4 py-2 text-xs font-semibold text-white"
+              >
+                Confirm CSV export
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

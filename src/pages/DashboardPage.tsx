@@ -27,6 +27,8 @@ export default function DashboardPage() {
     therapyEntries,
     routineEntries,
     milestones,
+    reminderPreferences,
+    setReminderPreferences,
     enabledModules,
     deleteDrink,
     deleteUrineEntry,
@@ -99,6 +101,11 @@ export default function DashboardPage() {
   const childMilestones = useMemo(
     () => milestones.filter((m) => m.childId === selectedChildId),
     [milestones, selectedChildId]
+  );
+  const dueReminders = reminderPreferences.filter((item) =>
+    item.childId === selectedChildId &&
+    item.enabled &&
+    (!item.snoozedUntil || new Date(item.snoozedUntil).getTime() <= today.getTime())
   );
 
   const totalMl = dayDrinks.reduce((sum, d) => sum + d.amountMl, 0);
@@ -198,6 +205,13 @@ export default function DashboardPage() {
             Reports
           </Link>
           <Link
+            to="/milestones"
+            className="inline-flex items-center gap-1.5 rounded-full bg-gray-100 px-4 py-2 text-xs font-semibold text-gray-700 transition hover:bg-gray-200"
+          >
+            <Star size={14} />
+            Milestones
+          </Link>
+          <Link
             to="/add"
             className="inline-flex items-center gap-1.5 rounded-full bg-lavender-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-lavender-600"
           >
@@ -208,6 +222,35 @@ export default function DashboardPage() {
       </div>
 
       <div className="space-y-4 px-4 pt-4">
+        {dueReminders.length > 0 && selectedChildId && (
+          <section aria-label="Reminders" className="rounded-2xl border border-violet-200 bg-violet-50 p-4">
+            <h2 className="text-sm font-bold text-violet-900">Reminders</h2>
+            <p className="mt-1 text-xs text-violet-700">
+              {dueReminders.length} reminder{dueReminders.length > 1 ? 's are' : ' is'} active for {selectedChild.name}.
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <Link to="/milestones" className="rounded-full bg-violet-700 px-4 py-2 text-xs font-semibold text-white">
+                Review milestones
+              </Link>
+              <button
+                type="button"
+                onClick={() =>
+                  setReminderPreferences(
+                    selectedChildId,
+                    dueReminders.map((entry) => ({
+                      ...entry,
+                      snoozedUntil: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+                    })),
+                  )
+                }
+                className="rounded-full bg-white px-4 py-2 text-xs font-semibold text-violet-800"
+              >
+                Snooze 1 hour
+              </button>
+            </div>
+          </section>
+        )}
+
         {/* ── Summary stat cards (above quick-add, matching mockup) ── */}
         <section aria-label="Today's summary" className="grid grid-cols-3 gap-3 md:grid-cols-4">
           {on('drinks') && <SummaryCard icon={<Droplets size={18} className="text-sky-500" />} label="Drinks" value={`${totalMl}ml`} sub={`${dayDrinks.length} entries`} accent="#0ea5e9" />}

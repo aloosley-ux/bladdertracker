@@ -14,6 +14,7 @@ import type {
   ModuleId,
   MoodEntry,
   NotificationItem,
+  ReminderPreference,
   RoutineEntry,
   SensoryEntry,
   SleepEntry,
@@ -43,6 +44,7 @@ const STORAGE_KEYS = {
   ENABLED_MODULES: 'bt_enabled_modules',
   INVITES: 'bt_invites',
   NOTIFICATIONS: 'bt_notifications',
+  REMINDER_PREFERENCES: 'bt_reminder_preferences',
   AUDIT: 'bt_audit',
 } as const;
 
@@ -679,6 +681,27 @@ export function markNotificationRead(id: string): void {
     notifications[index] = { ...notifications[index], read: true };
     setItem(STORAGE_KEYS.NOTIFICATIONS, notifications);
   }
+}
+
+export function getReminderPreferences(userId?: string): ReminderPreference[] {
+  const entries = getItem<ReminderPreference[]>(STORAGE_KEYS.REMINDER_PREFERENCES, []);
+  if (!userId) return entries;
+  return entries.filter((entry) => entry.userId === userId);
+}
+
+export function setReminderPreferences(preferences: ReminderPreference[]): void {
+  setItem(STORAGE_KEYS.REMINDER_PREFERENCES, preferences);
+}
+
+export function upsertReminderPreference(entry: ReminderPreference): void {
+  const preferences = getReminderPreferences();
+  const index = preferences.findIndex((item) => item.id === entry.id);
+  if (index >= 0) {
+    preferences[index] = entry;
+  } else {
+    preferences.push(entry);
+  }
+  setReminderPreferences(preferences);
 }
 
 export function getAuditEvents(userId?: string): AuditEvent[] {

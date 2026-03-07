@@ -13,6 +13,7 @@ import type {
   MoodEntry,
   NotificationItem,
   RoutineEntry,
+  ReminderPreference,
   SensoryEntry,
   SleepEntry,
   TherapyEntry,
@@ -443,6 +444,19 @@ export async function apiSetEnabledModules(childId: string, modules: ModuleId[])
   await request<{ ok: boolean }>('/modules', {
     method: 'POST',
     body: JSON.stringify({ action: 'set_enabled_modules', childId, modules }),
+  });
+}
+
+export async function apiGetReminderPreferences(childId?: string): Promise<ReminderPreference[]> {
+  const suffix = childId ? `&childId=${childId}` : '';
+  const { reminders } = await request<{ reminders: ReminderPreference[] }>(`/modules?type=reminder_preferences${suffix}`);
+  return reminders;
+}
+
+export async function apiSetReminderPreferences(childId: string, reminders: Array<Partial<ReminderPreference> & { moduleId: ReminderPreference['moduleId'] }>): Promise<void> {
+  await request<{ ok: boolean }>('/modules', {
+    method: 'POST',
+    body: JSON.stringify({ action: 'set_reminder_preferences', childId, reminders }),
   });
 }
 

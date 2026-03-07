@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, ClipboardList, BarChart3, Users, Settings, Crown } from 'lucide-react';
+import { LayoutDashboard, ClipboardList, BarChart3, Users, Settings, Crown, Star } from 'lucide-react';
 import { useApp } from '../context/useApp';
 
 export default function AppNav() {
@@ -10,6 +10,7 @@ export default function AppNav() {
     { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
     { to: '/log', icon: ClipboardList, label: 'Log' },
     { to: '/reports', icon: BarChart3, label: 'Reports' },
+    { to: '/milestones', icon: Star, label: 'Milestones' },
     { to: '/profiles', icon: Users, label: 'Profiles' },
     { to: '/settings', icon: Settings, label: 'Settings' },
     ...(isAdmin ? [{ to: '/admin', icon: Crown, label: 'Admin' }] : []),

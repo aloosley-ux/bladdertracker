@@ -14,6 +14,7 @@ import ProfilesPage from './pages/ProfilesPage';
 import AdminPage from './pages/AdminPage';
 import LogPage from './pages/LogPage';
 import HelpPage, { WelcomeModal } from './pages/HelpPage';
+import MilestonesPage from './pages/MilestonesPage';
 import { promoteToAdmin, addAuditEvent } from './utils/storage';
 
 const ADMIN_ACCESS_KEY = 'bladdertracker-admin-2024';
@@ -64,6 +65,7 @@ function AppRoutes() {
           <Route path="/log" element={<LogPage />} />
           <Route path="/add" element={<AddEntryPage />} />
           <Route path="/reports" element={<ReportsPage />} />
+          <Route path="/milestones" element={<MilestonesPage />} />
           <Route path="/calendar" element={<CalendarPage />} />
           <Route path="/profiles" element={<ProfilesPage />} />
           <Route path="/settings" element={<SettingsPage />} />
@@ -74,7 +76,6 @@ function AppRoutes() {
           <Route path="/charts" element={<Navigate to="/reports" replace />} />
           <Route path="/caregiver" element={<Navigate to="/profiles" replace />} />
           <Route path="/profile" element={<Navigate to="/settings" replace />} />
-          <Route path="/milestones" element={<Navigate to="/" replace />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>

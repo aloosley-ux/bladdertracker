@@ -14,6 +14,7 @@ import type {
   MoodEntry,
   NotificationItem,
   RoutineEntry,
+  ReminderPreference,
   SensoryEntry,
   SleepEntry,
   TherapyEntry,
@@ -42,6 +43,7 @@ interface AppState {
   enabledModules: ModuleId[];
   invites: CaregiverInvite[];
   notifications: NotificationItem[];
+  reminderPreferences: ReminderPreference[];
   auditTrail: AuditEvent[];
 }
 
@@ -93,6 +95,7 @@ export interface AppContextType extends AppState {
   acceptInvite: (token: string) => boolean | Promise<boolean>;
   importDiaryData: (payload: ImportedDiaryPayload, childId: string) => ImportSummary | Promise<ImportSummary>;
   markNotificationRead: (id: string) => void | Promise<void>;
+  setReminderPreferences: (childId: string, reminders: Array<Partial<ReminderPreference> & { moduleId: ReminderPreference['moduleId'] }>) => void | Promise<void>;
   clearAllData: () => void;
   selectedChild: Child | null;
 }

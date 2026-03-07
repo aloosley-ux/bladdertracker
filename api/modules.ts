@@ -36,8 +36,35 @@ async function handleGet(req: VercelRequest, res: VercelResponse, userId: string
     return;
   }
 
+  if (type === 'reminder_preferences') {
+    const childIds = await getAccessibleChildIds(userId);
+    if (!childIds.length) { res.status(200).json({ reminders: [] }); return; }
+    const childId = req.query.childId as string | undefined;
+    if (childId && !childIds.includes(childId)) { res.status(403).json({ error: 'Access denied' }); return; }
+
+    const result = childId
+      ? await sql`
+          SELECT id, user_id AS "userId", child_id AS "childId", module_id AS "moduleId",
+                 frequency, enabled, snoozed_until AS "snoozedUntil",
+                 next_reminder_at AS "nextReminderAt", created_at AS "createdAt", updated_at AS "updatedAt"
+          FROM reminder_preferences
+          WHERE user_id = ${userId} AND child_id = ${childId}
+          ORDER BY module_id ASC
+        `
+      : await sql`
+          SELECT id, user_id AS "userId", child_id AS "childId", module_id AS "moduleId",
+                 frequency, enabled, snoozed_until AS "snoozedUntil",
+                 next_reminder_at AS "nextReminderAt", created_at AS "createdAt", updated_at AS "updatedAt"
+          FROM reminder_preferences
+          WHERE user_id = ${userId} AND child_id = ANY(${childIds})
+          ORDER BY updated_at DESC
+        `;
+    res.status(200).json({ reminders: result.rows });
+    return;
+  }
+
   if (!type || !VALID_TYPES.has(type as NewTrackerType)) {
-    res.status(400).json({ error: 'Valid type required: mood, sensory, medication, therapy, routine, milestones, enabled_modules' });
+    res.status(400).json({ error: 'Valid type required: mood, sensory, medication, therapy, routine, milestones, enabled_modules, reminder_preferences' });
     return;
   }
 
@@ -82,8 +109,9 @@ async function handleGet(req: VercelRequest, res: VercelResponse, userId: string
   } else {
     // milestones
     result = await sql`
-      SELECT id, child_id AS "childId", name, description, category, status,
-             date_achieved AS "dateAchieved", notes, created_by AS "createdBy", created_at AS "createdAt"
+      SELECT id, child_id AS "childId", name, description, category, module_id AS "moduleId",
+             milestone_type AS "milestoneType", status, date_achieved AS "dateAchieved", notes,
+             source_role AS "sourceRole", created_by AS "createdBy", created_at AS "createdAt"
       FROM milestones WHERE child_id = ANY(${childIds}) ORDER BY created_at DESC
     `;
   }
@@ -111,6 +139,37 @@ async function handlePost(req: VercelRequest, res: VercelResponse, userId: strin
         INSERT INTO enabled_modules (id, child_id, module_id)
         VALUES (${generateId()}, ${childId}, ${moduleId})
         ON CONFLICT (child_id, module_id) DO NOTHING
+      `;
+    }
+    res.status(200).json({ ok: true });
+    return;
+  }
+
+  if (body.action === 'set_reminder_preferences') {
+    const { childId, reminders } = body;
+    if (!childId || !Array.isArray(reminders)) {
+      res.status(400).json({ error: 'childId and reminders array required' }); return;
+    }
+    const childIds = await getAccessibleChildIds(userId);
+    if (!childIds.includes(childId)) { res.status(403).json({ error: 'Access denied' }); return; }
+
+    await sql`DELETE FROM reminder_preferences WHERE user_id = ${userId} AND child_id = ${childId}`;
+    for (const reminder of reminders) {
+      const moduleId = reminder.moduleId ?? 'all';
+      const frequency = reminder.frequency === 'weekly' ? 'weekly' : 'daily';
+      const enabled = reminder.enabled !== false;
+      const snoozedUntil = reminder.snoozedUntil ?? null;
+      const nextReminderAt = enabled
+        ? reminder.nextReminderAt ?? (frequency === 'daily'
+          ? new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+          : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString())
+        : null;
+
+      await sql`
+        INSERT INTO reminder_preferences (
+          id, user_id, child_id, module_id, frequency, enabled, snoozed_until, next_reminder_at
+        )
+        VALUES (${generateId()}, ${userId}, ${childId}, ${moduleId}, ${frequency}, ${enabled}, ${snoozedUntil}, ${nextReminderAt})
       `;
     }
     res.status(200).json({ ok: true });
@@ -191,11 +250,20 @@ async function handlePost(req: VercelRequest, res: VercelResponse, userId: strin
     `;
   } else {
     // milestones
-    const { name = '', description = '', category = 'other', status = 'not_started', dateAchieved = null } = body;
+    const {
+      name = '',
+      description = '',
+      category = 'other',
+      moduleId = 'milestones',
+      milestoneType = 'developmental',
+      status = 'not_started',
+      dateAchieved = null,
+      sourceRole = null,
+    } = body;
     if (!name || !name.trim()) { res.status(400).json({ error: 'Milestone name is required' }); return; }
     await sql`
-      INSERT INTO milestones (id, child_id, name, description, category, status, date_achieved, notes, created_by)
-      VALUES (${id}, ${childId}, ${name.trim()}, ${description}, ${category}, ${status}, ${dateAchieved}, ${notes}, ${userId})
+      INSERT INTO milestones (id, child_id, name, description, category, module_id, milestone_type, status, date_achieved, notes, source_role, created_by)
+      VALUES (${id}, ${childId}, ${name.trim()}, ${description}, ${category}, ${moduleId}, ${milestoneType}, ${status}, ${dateAchieved}, ${notes}, ${sourceRole}, ${userId})
     `;
     await sql`
       INSERT INTO audit_events (id, user_id, action, subject, detail)
@@ -285,10 +353,20 @@ async function handlePut(req: VercelRequest, res: VercelResponse, userId: string
     if (!existing.rows.length || !childIds.includes(existing.rows[0].child_id)) {
       res.status(403).json({ error: 'Access denied' }); return;
     }
-    const { name = '', description = '', category = 'other', status = 'not_started', dateAchieved = null } = body;
+    const {
+      name = '',
+      description = '',
+      category = 'other',
+      moduleId = 'milestones',
+      milestoneType = 'developmental',
+      status = 'not_started',
+      dateAchieved = null,
+      sourceRole = null,
+    } = body;
     await sql`
       UPDATE milestones SET name=${name}, description=${description}, category=${category},
-        status=${status}, date_achieved=${dateAchieved}, notes=${notes}
+        module_id=${moduleId}, milestone_type=${milestoneType}, status=${status},
+        date_achieved=${dateAchieved}, notes=${notes}, source_role=${sourceRole}
       WHERE id = ${id}
     `;
   }

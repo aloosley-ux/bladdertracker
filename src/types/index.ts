@@ -73,9 +73,12 @@ export interface Milestone {
   name: string;
   description: string;
   category: MilestoneCategory;
+  moduleId?: ModuleId;
+  milestoneType?: 'developmental' | 'educational' | 'medical' | 'therapy' | 'custom';
   status: MilestoneStatus;
   dateAchieved?: string | null;
   notes: string;
+  sourceRole?: UserRole;
   createdBy: string;
   createdAt: string;
 }
@@ -287,6 +290,19 @@ export interface NotificationItem {
   message: string;
   createdAt: string;
   read: boolean;
+}
+
+export interface ReminderPreference {
+  id: string;
+  userId: string;
+  childId: string;
+  moduleId: ModuleId | 'all';
+  frequency: 'daily' | 'weekly';
+  enabled: boolean;
+  snoozedUntil?: string | null;
+  nextReminderAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface AuditEvent {
