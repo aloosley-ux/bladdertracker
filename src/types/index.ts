@@ -27,6 +27,7 @@ export interface Child {
   id: string;
   name: string;
   dateOfBirth: string;
+  dueDate?: string;
   avatar?: string;
   caregivers: string[];
   parentIds: string[];
@@ -47,7 +48,8 @@ export type ModuleId =
   | 'medication'
   | 'therapy'
   | 'routine'
-  | 'milestones';
+  | 'milestones'
+  | 'leaps';
 
 export interface TrackerModule {
   id: ModuleId;
@@ -61,6 +63,19 @@ export interface TrackerModule {
 export interface EnabledModules {
   childId: string;
   modules: ModuleId[];
+}
+
+// ── Developmental Leaps ──────────────────────────────────────────────
+export interface LeapSymptomLog {
+  id: string;
+  childId: string;
+  leapNumber: number;
+  date: string;
+  time: string;
+  symptoms: string[];           // emoji/icon ids
+  notes: string;
+  createdBy: string;
+  createdAt: string;
 }
 
 // ── Milestones ───────────────────────────────────────────────────────
@@ -365,4 +380,5 @@ export const DEFAULT_MODULES: TrackerModule[] = [
   { id: 'therapy', label: 'Therapy', icon: '🧩', description: 'Track therapy sessions and goals', builtIn: true, defaultEnabled: false },
   { id: 'routine', label: 'Routine', icon: '📋', description: 'Track daily routines and schedules', builtIn: true, defaultEnabled: false },
   { id: 'milestones', label: 'Milestones', icon: '⭐', description: 'Track developmental milestones', builtIn: true, defaultEnabled: true },
+  { id: 'leaps', label: 'Leaps', icon: '🌈', description: 'Baby age calculator, leap predictions & symptom logging', builtIn: true, defaultEnabled: false },
 ];

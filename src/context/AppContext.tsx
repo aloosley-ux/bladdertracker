@@ -14,6 +14,7 @@ import type {
   TherapyEntry,
   RoutineEntry,
   Milestone,
+  LeapSymptomLog,
   ModuleId,
   ImportedDiaryPayload,
   UserRole,
@@ -53,6 +54,7 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
   const [therapyEntries, setTherapyEntries] = useState<TherapyEntry[]>([]);
   const [routineEntries, setRoutineEntries] = useState<RoutineEntry[]>([]);
   const [milestones, setMilestones] = useState<Milestone[]>([]);
+  const [leapSymptomLogs, setLeapSymptomLogs] = useState<LeapSymptomLog[]>([]);
   const [enabledModules, setEnabledModulesState] = useState<ModuleId[]>([]);
   const [invites, setInvites] = useState<CaregiverInvite[]>([]);
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
@@ -81,6 +83,7 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
       setTherapyEntries([]);
       setRoutineEntries([]);
       setMilestones([]);
+      setLeapSymptomLogs([]);
       setEnabledModulesState([]);
       setInvites([]);
       setNotifications([]);
@@ -173,6 +176,7 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
     setTherapyEntries(localStorage.getTherapyEntries(ids));
     setRoutineEntries(localStorage.getRoutineEntries(ids));
     setMilestones(localStorage.getMilestones(ids));
+    setLeapSymptomLogs(localStorage.getLeapSymptomLogs(ids));
     setEnabledModulesState(resolvedId ? localStorage.getEnabledModules(resolvedId) : []);
     setInvites(currentUser ? localStorage.getInvites(currentUser) : []);
     setNotifications(currentUser ? localStorage.getNotifications(currentUser.id) : []);
@@ -244,6 +248,7 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
     setTherapyEntries([]);
     setRoutineEntries([]);
     setMilestones([]);
+    setLeapSymptomLogs([]);
     setEnabledModulesState([]);
     setInvites([]);
     setNotifications([]);
@@ -666,6 +671,20 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
     } else { localStorage.deleteMilestone(id); refreshLocalData(user, selectedChildId); }
   };
 
+  // Leap symptom log CRUD (local-only — no cloud API yet)
+  const addLeapSymptomLogEntry = (log: LeapSymptomLog) => {
+    localStorage.addLeapSymptomLog(log);
+    refreshLocalData(user, selectedChildId);
+  };
+  const updateLeapSymptomLogEntry = (log: LeapSymptomLog) => {
+    localStorage.updateLeapSymptomLog(log);
+    refreshLocalData(user, selectedChildId);
+  };
+  const deleteLeapSymptomLogEntry = (id: string) => {
+    localStorage.deleteLeapSymptomLog(id);
+    refreshLocalData(user, selectedChildId);
+  };
+
   // Module management
   const setEnabledModulesForChild = async (modules: ModuleId[]) => {
     // Update UI immediately so Dashboard/Log/Reports/AddEntry all re-render at once.
@@ -861,6 +880,7 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
     setTherapyEntries([]);
     setRoutineEntries([]);
     setMilestones([]);
+    setLeapSymptomLogs([]);
     setEnabledModulesState([]);
     setInvites([]);
     setNotifications([]);
@@ -898,6 +918,7 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
         therapyEntries,
         routineEntries,
         milestones,
+        leapSymptomLogs,
         enabledModules,
         invites,
         notifications,
@@ -944,6 +965,9 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
         addMilestone: addMilestoneEntry,
         updateMilestone: updateMilestoneEntry,
         deleteMilestone: deleteMilestoneEntry,
+        addLeapSymptomLog: addLeapSymptomLogEntry,
+        updateLeapSymptomLog: updateLeapSymptomLogEntry,
+        deleteLeapSymptomLog: deleteLeapSymptomLogEntry,
         setEnabledModules: setEnabledModulesForChild,
         exportData,
         createInvite,

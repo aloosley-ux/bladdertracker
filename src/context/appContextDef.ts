@@ -8,6 +8,7 @@ import type {
   FoodEntry,
   ImportSummary,
   ImportedDiaryPayload,
+  LeapSymptomLog,
   MedicationEntry,
   Milestone,
   ModuleId,
@@ -40,6 +41,7 @@ interface AppState {
   therapyEntries: TherapyEntry[];
   routineEntries: RoutineEntry[];
   milestones: Milestone[];
+  leapSymptomLogs: LeapSymptomLog[];
   enabledModules: ModuleId[];
   invites: CaregiverInvite[];
   notifications: NotificationItem[];
@@ -89,6 +91,9 @@ export interface AppContextType extends AppState {
   addMilestone: (milestone: Milestone) => void | Promise<void>;
   updateMilestone: (milestone: Milestone) => void | Promise<void>;
   deleteMilestone: (id: string) => void | Promise<void>;
+  addLeapSymptomLog: (log: LeapSymptomLog) => void | Promise<void>;
+  updateLeapSymptomLog: (log: LeapSymptomLog) => void | Promise<void>;
+  deleteLeapSymptomLog: (id: string) => void | Promise<void>;
   setEnabledModules: (modules: ModuleId[]) => void | Promise<void>;
   exportData: () => void | Promise<void>;
   createInvite: (email: string, role: UserRole, childId: string) => CaregiverInvite | null | Promise<CaregiverInvite | null>;
