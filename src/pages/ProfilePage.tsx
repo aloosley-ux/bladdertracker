@@ -366,7 +366,17 @@ interface ModuleSettingsProps {
 
 function ModuleSettings({ childName, initialModules, onSave }: ModuleSettingsProps) {
   const [pending, setPending] = useState<ModuleId[]>(initialModules);
+  const [prevInitialModules, setPrevInitialModules] = useState(initialModules);
   const [saved, setSaved] = useState(false);
+
+  // Render-phase sync: if initialModules changes (e.g., after cloud data refresh), reset
+  // pending to match. This is the React-recommended pattern for derived state from props
+  // (see https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes).
+  if (initialModules !== prevInitialModules) {
+    setPrevInitialModules(initialModules);
+    setPending(initialModules);
+    setSaved(false);
+  }
 
   return (
     <section className="rounded-[1.75rem] bg-white p-5 shadow-sm ring-1 ring-black/5">

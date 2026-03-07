@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, type ReactNode } from 'react';
+import { useState, useEffect, useCallback, useRef, type ReactNode } from 'react';
 import type {
   User,
   Child,
@@ -55,6 +55,12 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
   const [auditTrail, setAuditTrail] = useState<AuditEvent[]>([]);
   const [ready, setReady] = useState(false);
 
+  // Ref so refreshCloudData (which has an empty dep array) can always read the latest selectedChildId
+  const selectedChildIdRef = useRef<string | null>(null);
+  useEffect(() => {
+    selectedChildIdRef.current = selectedChildId;
+  }, [selectedChildId]);
+
   const refreshCloudData = useCallback(async (currentUser: User | null) => {
     if (!currentUser) {
       setChildrenList([]);
@@ -78,7 +84,11 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
     }
 
     try {
-      const [ch, dr, ur, bo, sl, ta, fo, mo, se, me, th, ro, mi, inv, notif, aud] = await Promise.all([
+      const [
+        childrenData, drinksData, urineData, bowelData, sleepData, toiletData, foodData,
+        moodData, sensoryData, medicationData, therapyData, routineData, milestonesData,
+        invitesData, notificationsData, auditData,
+      ] = await Promise.all([
         api.apiGetChildren(),
         api.apiGetDrinks(),
         api.apiGetUrineEntries(),
@@ -96,32 +106,39 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
         api.apiGetNotifications(),
         api.apiGetAuditEvents(),
       ]);
-      setChildrenList(ch);
-      setDrinks(dr);
-      setUrineEntries(ur);
-      setBowelEntries(bo);
-      setSleepEntries(sl);
-      setToiletAttemptEntries(ta);
-      setFoodEntries(fo);
-      setMoodEntries(mo);
-      setSensoryEntries(se);
-      setMedicationEntries(me);
-      setTherapyEntries(th);
-      setRoutineEntries(ro);
-      setMilestones(mi);
-      setInvites(inv);
-      setNotifications(notif);
-      setAuditTrail(aud);
+      setChildrenList(childrenData);
+      setDrinks(drinksData);
+      setUrineEntries(urineData);
+      setBowelEntries(bowelData);
+      setSleepEntries(sleepData);
+      setToiletAttemptEntries(toiletData);
+      setFoodEntries(foodData);
+      setMoodEntries(moodData);
+      setSensoryEntries(sensoryData);
+      setMedicationEntries(medicationData);
+      setTherapyEntries(therapyData);
+      setRoutineEntries(routineData);
+      setMilestones(milestonesData);
+      setInvites(invitesData);
+      setNotifications(notificationsData);
+      setAuditTrail(auditData);
 
-      setSelectedChildId((prev) => {
-        if (prev && ch.some((c) => c.id === prev)) return prev;
-        return ch[0]?.id ?? null;
-      });
+      // Resolve the selected child: keep current selection if still valid, else fall back to first.
+      // Use the ref (not closure-captured state) so we always get the latest selectedChildId.
+      const currentChildId = selectedChildIdRef.current;
+      const resolvedChildId =
+        currentChildId && childrenData.some((c) => c.id === currentChildId)
+          ? currentChildId
+          : childrenData[0]?.id ?? null;
+      setSelectedChildId(resolvedChildId);
 
-      // Load enabled modules for the first/current child
-      const resolvedChildId = ch[0]?.id;
+      // Load enabled modules for the resolved child, fall back to empty list on error
       if (resolvedChildId) {
-        api.apiGetEnabledModules(resolvedChildId).then(setEnabledModulesState).catch(() => {});
+        api.apiGetEnabledModules(resolvedChildId)
+          .then(setEnabledModulesState)
+          .catch(() => setEnabledModulesState([]));
+      } else {
+        setEnabledModulesState([]);
       }
     } catch {
       // If API calls fail, data stays as-is
@@ -247,7 +264,9 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
   const selectChild = (childId: string) => {
     setSelectedChildId(childId);
     if (cloud) {
-      api.apiGetEnabledModules(childId).then(setEnabledModulesState).catch(() => {});
+      api.apiGetEnabledModules(childId)
+        .then(setEnabledModulesState)
+        .catch(() => setEnabledModulesState([]));
     } else {
       setEnabledModulesState(localStorage.getEnabledModules(childId));
     }
