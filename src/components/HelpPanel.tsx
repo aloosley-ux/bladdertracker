@@ -1,9 +1,10 @@
 import { useState } from 'react';
+import type { ReactNode } from 'react';
 import { HelpCircle, X } from 'lucide-react';
 
 interface HelpPanelProps {
   title: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 export default function HelpPanel({ title, children }: HelpPanelProps) {
