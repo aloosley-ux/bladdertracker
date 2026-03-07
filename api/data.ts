@@ -55,17 +55,17 @@ async function handleExport(req: VercelRequest, res: VercelResponse) {
     SELECT date, time, location, amount, bristol_type, laxatives_given, notes FROM bowel_entries WHERE child_id = ${childId} ORDER BY date, time
   `;
 
-  let csv = `Bladder & Bowel Diary Export for ${childName}\n`;
+  let csv = `Bladder & Bowel Diary Export for ${escapeCsvField(childName)}\n`;
   csv += `Generated: ${new Date().toLocaleDateString()}\n\n`;
 
   csv += 'DRINKS\nDate,Time,Type,Amount (ml),Notes\n';
-  drinks.rows.forEach((r) => { csv += `${r.date},${r.time},${r.type},${r.amount_ml},"${r.notes}"\n`; });
+  drinks.rows.forEach((r) => { csv += `${r.date},${r.time},${r.type},${r.amount_ml},${escapeCsvField(r.notes)}\n`; });
 
   csv += '\nURINE EVENTS\nDate,Time,Wet,Pass,Notes\n';
-  urine.rows.forEach((r) => { csv += `${r.date},${r.time},${r.wet},${r.pass},"${r.notes}"\n`; });
+  urine.rows.forEach((r) => { csv += `${r.date},${r.time},${r.wet},${r.pass},${escapeCsvField(r.notes)}\n`; });
 
   csv += '\nBOWEL EVENTS\nDate,Time,Location,Amount,Bristol Type,Laxatives,Notes\n';
-  bowel.rows.forEach((r) => { csv += `${r.date},${r.time},${r.location},${r.amount},Type ${r.bristol_type},${r.laxatives_given},"${r.notes}"\n`; });
+  bowel.rows.forEach((r) => { csv += `${r.date},${r.time},${r.location},${r.amount},Type ${r.bristol_type},${r.laxatives_given},${escapeCsvField(r.notes)}\n`; });
 
   res.setHeader('Content-Type', 'text/csv; charset=utf-8');
   res.setHeader('Content-Disposition', `attachment; filename="bladder-diary-${childName.toLowerCase().replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.csv"`);
@@ -127,4 +127,12 @@ async function handleImport(req: VercelRequest, res: VercelResponse, userId: str
   `;
 
   res.status(200).json({ summary });
+}
+
+function escapeCsvField(value: string | null | undefined): string {
+  const str = value ?? '';
+  if (str.includes('"') || str.includes(',') || str.includes('\n') || str.includes('\r')) {
+    return `"${str.replace(/"/g, '""')}"`;
+  }
+  return `"${str}"`;
 }
