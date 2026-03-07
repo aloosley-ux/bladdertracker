@@ -220,6 +220,12 @@ export default function LoginPage() {
                       </button>
                     ))}
                   </div>
+                  {/* Role description */}
+                  <div className="rounded-xl bg-lavender-50 px-3 py-2 text-xs text-lavender-700 mt-2">
+                    {role === 'parent' && 'Full access: manage children, log all entries, invite others, and export data.'}
+                    {role === 'caregiver' && 'Can view and log entries for children you are invited to. Cannot manage child profiles or invites.'}
+                    {role === 'schoolAdmin' && 'School-based access: log school-time entries (food, routine, toilet). Cannot manage profiles.'}
+                  </div>
                 </Field>
               )}
 

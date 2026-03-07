@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
-import { AlertTriangle, Baby, Crown, Download, LogOut, Palette, Save, Settings, Shield, Trash2 } from 'lucide-react';
+import { AlertTriangle, Baby, Crown, Download, Globe, LogOut, Palette, Save, Settings, Shield, Trash2, UserCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useApp } from '../context/useApp';
 import { useTheme } from '../context/useTheme';
@@ -23,6 +23,12 @@ export default function ProfilePage() {
   // Clear data confirmation state
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [clearConfirmText, setClearConfirmText] = useState('');
+
+  // Delete account state
+  const [showDeleteAccount, setShowDeleteAccount] = useState(false);
+  const [deleteAccountText, setDeleteAccountText] = useState('');
+
+  const cloud = !!(typeof import.meta !== 'undefined' && import.meta.env?.VITE_USE_CLOUD);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
@@ -78,6 +84,17 @@ export default function ProfilePage() {
     setClearConfirmText('');
   };
 
+  const handleDeleteAccount = async () => {
+    if (deleteAccountText !== 'DELETE MY ACCOUNT') return;
+    try {
+      await import('../utils/api').then(m => m.apiDeleteAccount());
+      clearAllData();
+    } catch {
+      // ignore, account may still be cleared locally
+      clearAllData();
+    }
+  };
+
   const formatRole = (role: string) => {
     if (role === 'schoolAdmin') return 'School admin';
     if (role === 'admin') return 'Administrator';
@@ -110,6 +127,50 @@ export default function ProfilePage() {
               <p className="text-xs text-gray-400">{user?.email}</p>
             </div>
           </div>
+        </section>
+
+        {/* Role & Permissions */}
+        <section className="rounded-[1.75rem] bg-white p-5 shadow-sm ring-1 ring-black/5" aria-labelledby="role-heading">
+          <h3 id="role-heading" className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-3">
+            <UserCheck size={16} className="text-lavender-500" /> Your Role & Access
+          </h3>
+          <div className="rounded-xl bg-lavender-50 p-3 mb-3">
+            <p className="text-xs font-semibold text-lavender-800 mb-1">{formatRole(user?.role ?? '')} — what you can do:</p>
+            <ul className="text-xs text-lavender-700 space-y-1 list-disc list-inside">
+              {(user?.role === 'admin' || user?.role === 'parent') && (
+                <>
+                  <li>Add, edit, and remove child profiles</li>
+                  <li>Log and delete all diary entries</li>
+                  <li>Invite caregivers, school admins, therapists, and specialists</li>
+                  <li>Toggle modules per child and export data</li>
+                </>
+              )}
+              {user?.role === 'caregiver' && (
+                <>
+                  <li>View and log diary entries for linked children</li>
+                  <li>Cannot add or remove child profiles</li>
+                  <li>Cannot invite other users or export data</li>
+                </>
+              )}
+              {user?.role === 'schoolAdmin' && (
+                <>
+                  <li>View diary entries for linked children</li>
+                  <li>Log school-time entries (food, routine, toilet attempts)</li>
+                  <li>Cannot modify child profiles or invite users</li>
+                </>
+              )}
+              {(user?.role === 'therapist' || user?.role === 'specialist') && (
+                <>
+                  <li>View all diary entries for linked children</li>
+                  <li>Log therapy and milestone entries</li>
+                  <li>Read-only access to personal profile data</li>
+                </>
+              )}
+            </ul>
+          </div>
+          <p className="text-[10px] text-gray-400">
+            Roles are assigned at invite time. Contact the account owner to change your role.
+          </p>
         </section>
 
         {/* Theme switcher */}
@@ -248,6 +309,72 @@ export default function ProfilePage() {
           <div className="mt-3 rounded-[1.5rem] bg-[#faf7ff] p-4 text-sm text-gray-600 ring-1 ring-lavender-100">
             Passwords are securely hashed before storage, invites are role-scoped, and audit activity is tracked. When connected to cloud storage, your data syncs across devices with NHS/school-grade privacy.
           </div>
+        </section>
+
+        {/* Data & Privacy (GDPR) */}
+        <section className="rounded-[1.75rem] bg-white p-5 shadow-sm ring-1 ring-black/5" aria-labelledby="gdpr-heading">
+          <h3 id="gdpr-heading" className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-3">
+            <Globe size={16} className="text-lavender-500" /> Data & Privacy
+          </h3>
+          <p className="text-xs text-gray-400 mb-4">
+            Your data is stored securely. You have the right to export or permanently delete your account and all associated records at any time.
+          </p>
+          <div className="space-y-2">
+            <button
+              onClick={exportData}
+              className="flex w-full items-center gap-3 rounded-[1.5rem] bg-lavender-50 p-4 text-left ring-1 ring-lavender-100 hover:bg-lavender-100 transition"
+              aria-label="Export your diary data as a CSV file"
+            >
+              <Download size={18} className="text-lavender-600" />
+              <div>
+                <div className="text-sm font-semibold text-gray-900">Export my data</div>
+                <div className="text-xs text-gray-500">Download all diary entries as a CSV file.</div>
+              </div>
+            </button>
+            {cloud && (
+              <button
+                onClick={() => setShowDeleteAccount(true)}
+                className="flex w-full items-center gap-3 rounded-[1.5rem] bg-rose-50 p-4 text-left ring-1 ring-rose-100 hover:bg-rose-100 transition"
+                aria-label="Permanently delete your account"
+              >
+                <Trash2 size={18} className="text-rose-500" />
+                <div>
+                  <div className="text-sm font-semibold text-rose-700">Delete my account</div>
+                  <div className="text-xs text-rose-500">Permanently removes your account and all data. Cannot be undone.</div>
+                </div>
+              </button>
+            )}
+          </div>
+
+          {showDeleteAccount && (
+            <div className="mt-4 rounded-[1.5rem] bg-rose-50 p-4 ring-1 ring-rose-200">
+              <p className="text-sm font-semibold text-rose-700 mb-2">This will permanently delete your account and all data.</p>
+              <p className="text-xs text-rose-600 mb-3">Type <strong>DELETE MY ACCOUNT</strong> to confirm:</p>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={deleteAccountText}
+                  onChange={(e) => setDeleteAccountText(e.target.value)}
+                  placeholder="DELETE MY ACCOUNT"
+                  className="flex-1 rounded-xl border border-rose-200 bg-white px-3 py-2 text-xs outline-none focus:border-rose-400"
+                  aria-label="Type DELETE MY ACCOUNT to confirm"
+                />
+                <button
+                  onClick={handleDeleteAccount}
+                  disabled={deleteAccountText !== 'DELETE MY ACCOUNT'}
+                  className="rounded-xl bg-rose-500 px-4 py-2 text-xs font-semibold text-white disabled:opacity-40"
+                >
+                  Delete
+                </button>
+                <button
+                  onClick={() => { setShowDeleteAccount(false); setDeleteAccountText(''); }}
+                  className="rounded-xl bg-gray-100 px-3 py-2 text-xs font-semibold text-gray-600"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
         </section>
 
         {/* Audit trail */}

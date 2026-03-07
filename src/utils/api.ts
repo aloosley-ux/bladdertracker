@@ -445,3 +445,7 @@ export async function apiSetEnabledModules(childId: string, modules: ModuleId[])
     body: JSON.stringify({ action: 'set_enabled_modules', childId, modules }),
   });
 }
+
+export async function apiDeleteAccount(): Promise<void> {
+  await request<{ ok: boolean }>('/auth', { method: 'DELETE' });
+}
