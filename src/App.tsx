@@ -3,7 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes, useSearchParams } from 'react-r
 import { ThemeProvider } from './context/ThemeContext';
 import { AppProvider } from './context/AppContext';
 import { useApp } from './context/useApp';
-import BottomNav from './components/BottomNav';
+import AppNav from './components/AppNav';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import TodayPage from './pages/TodayPage';
@@ -58,6 +58,7 @@ function AppRoutes() {
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] max-w-2xl mx-auto relative">
       <AdminAccessHandler />
+      <AppNav />
       <Routes>
         <Route path="/" element={<TodayPage />} />
         <Route path="/journal" element={<DashboardPage />} />
@@ -70,7 +71,6 @@ function AppRoutes() {
         <Route path="/admin" element={<AdminPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-      <BottomNav />
     </div>
   );
 }
