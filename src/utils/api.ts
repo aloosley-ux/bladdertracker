@@ -4,9 +4,12 @@ import type {
   CaregiverInvite,
   Child,
   DrinkEntry,
+  FoodEntry,
   ImportedDiaryPayload,
   ImportSummary,
   NotificationItem,
+  SleepEntry,
+  ToiletAttemptEntry,
   UrineEntry,
   User,
   UserRole,
@@ -92,6 +95,10 @@ export async function apiUpdateChild(child: Partial<Child> & { id: string }): Pr
     method: 'PUT',
     body: JSON.stringify(child),
   });
+}
+
+export async function apiDeleteChild(childId: string): Promise<void> {
+  await request<{ ok: boolean }>(`/children?id=${childId}`, { method: 'DELETE' });
 }
 
 // Drinks

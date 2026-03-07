@@ -5,6 +5,9 @@ import type {
   DrinkEntry,
   UrineEntry,
   BowelEntry,
+  SleepEntry,
+  ToiletAttemptEntry,
+  FoodEntry,
   ImportedDiaryPayload,
   UserRole,
   CaregiverInvite,
@@ -29,6 +32,9 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
   const [drinks, setDrinks] = useState<DrinkEntry[]>([]);
   const [urineEntries, setUrineEntries] = useState<UrineEntry[]>([]);
   const [bowelEntries, setBowelEntries] = useState<BowelEntry[]>([]);
+  const [sleepEntries, setSleepEntries] = useState<SleepEntry[]>([]);
+  const [toiletAttemptEntries, setToiletAttemptEntries] = useState<ToiletAttemptEntry[]>([]);
+  const [foodEntries, setFoodEntries] = useState<FoodEntry[]>([]);
   const [invites, setInvites] = useState<CaregiverInvite[]>([]);
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [auditTrail, setAuditTrail] = useState<AuditEvent[]>([]);
@@ -40,6 +46,9 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
       setDrinks([]);
       setUrineEntries([]);
       setBowelEntries([]);
+      setSleepEntries([]);
+      setToiletAttemptEntries([]);
+      setFoodEntries([]);
       setInvites([]);
       setNotifications([]);
       setAuditTrail([]);
@@ -84,6 +93,9 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
     setDrinks(localStorage.getDrinks(ids));
     setUrineEntries(localStorage.getUrineEntries(ids));
     setBowelEntries(localStorage.getBowelEntries(ids));
+    setSleepEntries(localStorage.getSleepEntries(ids));
+    setToiletAttemptEntries(localStorage.getToiletAttemptEntries(ids));
+    setFoodEntries(localStorage.getFoodEntries(ids));
     setInvites(currentUser ? localStorage.getInvites(currentUser) : []);
     setNotifications(currentUser ? localStorage.getNotifications(currentUser.id) : []);
     setAuditTrail(currentUser ? localStorage.getAuditEvents(currentUser.id) : []);
@@ -144,6 +156,9 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
     setDrinks([]);
     setUrineEntries([]);
     setBowelEntries([]);
+    setSleepEntries([]);
+    setToiletAttemptEntries([]);
+    setFoodEntries([]);
     setInvites([]);
     setNotifications([]);
     setAuditTrail([]);
@@ -171,6 +186,30 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
 
   const selectChild = (childId: string) => {
     setSelectedChildId(childId);
+  };
+
+  const removeChild = async (childId: string) => {
+    const child = childrenList.find((c) => c.id === childId);
+    if (!child) return;
+
+    if (cloud) {
+      try {
+        await api.apiDeleteChild(childId);
+        await refreshCloudData(user);
+      } catch { /* ignore */ }
+    } else {
+      localStorage.removeChild(childId);
+      if (user) {
+        localStorage.addAuditEvent({
+          userId: user.id,
+          action: 'Removed child profile',
+          subject: child.name,
+          detail: `Permanently removed child profile and all associated diary entries.`,
+        });
+      }
+      const nextId = selectedChildId === childId ? null : selectedChildId;
+      refreshLocalData(user, nextId);
+    }
   };
 
   const addDrink = async (drink: DrinkEntry) => {
@@ -287,6 +326,114 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
     }
   };
 
+  // Sleep entry CRUD
+  const addSleepEntry = async (entry: SleepEntry) => {
+    if (cloud) {
+      try { await api.apiAddSleepEntry(entry); await refreshCloudData(user); } catch { /* ignore */ }
+    } else {
+      localStorage.addSleepEntry(entry);
+      if (user) {
+        localStorage.addAuditEvent({
+          userId: user.id,
+          action: 'Added sleep entry',
+          subject: entry.childId,
+          detail: `Sleep ${entry.eventType} logged at ${entry.time}.`,
+        });
+      }
+      refreshLocalData(user, selectedChildId);
+    }
+  };
+
+  const updateSleepEntry = async (entry: SleepEntry) => {
+    if (cloud) {
+      try { await api.apiUpdateSleepEntry(entry); await refreshCloudData(user); } catch { /* ignore */ }
+    } else {
+      localStorage.updateSleepEntry(entry);
+      refreshLocalData(user, selectedChildId);
+    }
+  };
+
+  const deleteSleepEntry = async (id: string) => {
+    if (cloud) {
+      try { await api.apiDeleteSleepEntry(id); await refreshCloudData(user); } catch { /* ignore */ }
+    } else {
+      localStorage.deleteSleepEntry(id);
+      refreshLocalData(user, selectedChildId);
+    }
+  };
+
+  // Toilet attempt entry CRUD
+  const addToiletAttemptEntry = async (entry: ToiletAttemptEntry) => {
+    if (cloud) {
+      try { await api.apiAddToiletAttemptEntry(entry); await refreshCloudData(user); } catch { /* ignore */ }
+    } else {
+      localStorage.addToiletAttemptEntry(entry);
+      if (user) {
+        localStorage.addAuditEvent({
+          userId: user.id,
+          action: 'Added toilet attempt',
+          subject: entry.childId,
+          detail: `Toilet attempt (${entry.outcome}) logged at ${entry.time}.`,
+        });
+      }
+      refreshLocalData(user, selectedChildId);
+    }
+  };
+
+  const updateToiletAttemptEntry = async (entry: ToiletAttemptEntry) => {
+    if (cloud) {
+      try { await api.apiUpdateToiletAttemptEntry(entry); await refreshCloudData(user); } catch { /* ignore */ }
+    } else {
+      localStorage.updateToiletAttemptEntry(entry);
+      refreshLocalData(user, selectedChildId);
+    }
+  };
+
+  const deleteToiletAttemptEntry = async (id: string) => {
+    if (cloud) {
+      try { await api.apiDeleteToiletAttemptEntry(id); await refreshCloudData(user); } catch { /* ignore */ }
+    } else {
+      localStorage.deleteToiletAttemptEntry(id);
+      refreshLocalData(user, selectedChildId);
+    }
+  };
+
+  // Food entry CRUD
+  const addFoodEntry = async (entry: FoodEntry) => {
+    if (cloud) {
+      try { await api.apiAddFoodEntry(entry); await refreshCloudData(user); } catch { /* ignore */ }
+    } else {
+      localStorage.addFoodEntry(entry);
+      if (user) {
+        localStorage.addAuditEvent({
+          userId: user.id,
+          action: 'Added food entry',
+          subject: entry.childId,
+          detail: `${entry.mealType} logged at ${entry.time}.`,
+        });
+      }
+      refreshLocalData(user, selectedChildId);
+    }
+  };
+
+  const updateFoodEntry = async (entry: FoodEntry) => {
+    if (cloud) {
+      try { await api.apiUpdateFoodEntry(entry); await refreshCloudData(user); } catch { /* ignore */ }
+    } else {
+      localStorage.updateFoodEntry(entry);
+      refreshLocalData(user, selectedChildId);
+    }
+  };
+
+  const deleteFoodEntry = async (id: string) => {
+    if (cloud) {
+      try { await api.apiDeleteFoodEntry(id); await refreshCloudData(user); } catch { /* ignore */ }
+    } else {
+      localStorage.deleteFoodEntry(id);
+      refreshLocalData(user, selectedChildId);
+    }
+  };
+
   const exportData = async () => {
     const child = childrenList.find((c) => c.id === selectedChildId);
     if (!child) return;
@@ -376,7 +523,7 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
         await refreshCloudData(user);
         return summary;
       } catch {
-        return { drinks: 0, urineEntries: 0, bowelEntries: 0, errors: ['Import failed'] };
+        return { drinks: 0, urineEntries: 0, bowelEntries: 0, sleepEntries: 0, toiletAttemptEntries: 0, foodEntries: 0, errors: ['Import failed'] };
       }
     } else {
       const summary = localStorage.importDiaryPayload(payload, childId, user?.id ?? '');
@@ -411,6 +558,9 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
     setDrinks([]);
     setUrineEntries([]);
     setBowelEntries([]);
+    setSleepEntries([]);
+    setToiletAttemptEntries([]);
+    setFoodEntries([]);
     setInvites([]);
     setNotifications([]);
     setAuditTrail([]);
@@ -437,22 +587,35 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
         drinks,
         urineEntries,
         bowelEntries,
+        sleepEntries,
+        toiletAttemptEntries,
+        foodEntries,
         invites,
         notifications,
         auditTrail,
         login,
         logout,
         addChild,
+        removeChild,
         selectChild,
-        addDrink: addDrink,
-        updateDrink: updateDrink,
-        deleteDrink: deleteDrink,
-        addUrineEntry: addUrineEntry,
-        updateUrineEntry: updateUrineEntry,
-        deleteUrineEntry: deleteUrineEntry,
-        addBowelEntry: addBowelEntry,
-        updateBowelEntry: updateBowelEntry,
-        deleteBowelEntry: deleteBowelEntry,
+        addDrink,
+        updateDrink,
+        deleteDrink,
+        addUrineEntry,
+        updateUrineEntry,
+        deleteUrineEntry,
+        addBowelEntry,
+        updateBowelEntry,
+        deleteBowelEntry,
+        addSleepEntry,
+        updateSleepEntry,
+        deleteSleepEntry,
+        addToiletAttemptEntry,
+        updateToiletAttemptEntry,
+        deleteToiletAttemptEntry,
+        addFoodEntry,
+        updateFoodEntry,
+        deleteFoodEntry,
         exportData,
         createInvite,
         acceptInvite,

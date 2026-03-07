@@ -5,9 +5,12 @@ import type {
   CaregiverInvite,
   Child,
   DrinkEntry,
+  FoodEntry,
   ImportSummary,
   ImportedDiaryPayload,
   NotificationItem,
+  SleepEntry,
+  ToiletAttemptEntry,
   UrineEntry,
   User,
 } from '../types';
@@ -19,6 +22,9 @@ const STORAGE_KEYS = {
   DRINKS: 'bt_drinks',
   URINE: 'bt_urine',
   BOWEL: 'bt_bowel',
+  SLEEP: 'bt_sleep',
+  TOILET_ATTEMPTS: 'bt_toilet_attempts',
+  FOOD: 'bt_food',
   INVITES: 'bt_invites',
   NOTIFICATIONS: 'bt_notifications',
   AUDIT: 'bt_audit',
@@ -239,6 +245,97 @@ export function deleteBowelEntry(id: string): void {
   setItem(STORAGE_KEYS.BOWEL, getBowelEntries().filter((entry) => entry.id !== id));
 }
 
+// Sleep entries
+export function getSleepEntries(childFilter?: string | string[]): SleepEntry[] {
+  const entries = getItem<SleepEntry[]>(STORAGE_KEYS.SLEEP, []);
+  const childIds = typeof childFilter === 'string' ? [childFilter] : childFilter;
+  return entries.filter((entry) => matchesChildId(childIds, entry.childId));
+}
+
+export function addSleepEntry(entry: SleepEntry): void {
+  const entries = getSleepEntries();
+  entries.push(entry);
+  setItem(STORAGE_KEYS.SLEEP, entries);
+}
+
+export function updateSleepEntry(entry: SleepEntry): void {
+  const entries = getSleepEntries();
+  const index = entries.findIndex((item) => item.id === entry.id);
+  if (index !== -1) {
+    entries[index] = entry;
+    setItem(STORAGE_KEYS.SLEEP, entries);
+  }
+}
+
+export function deleteSleepEntry(id: string): void {
+  setItem(STORAGE_KEYS.SLEEP, getSleepEntries().filter((entry) => entry.id !== id));
+}
+
+// Toilet attempt entries
+export function getToiletAttemptEntries(childFilter?: string | string[]): ToiletAttemptEntry[] {
+  const entries = getItem<ToiletAttemptEntry[]>(STORAGE_KEYS.TOILET_ATTEMPTS, []);
+  const childIds = typeof childFilter === 'string' ? [childFilter] : childFilter;
+  return entries.filter((entry) => matchesChildId(childIds, entry.childId));
+}
+
+export function addToiletAttemptEntry(entry: ToiletAttemptEntry): void {
+  const entries = getToiletAttemptEntries();
+  entries.push(entry);
+  setItem(STORAGE_KEYS.TOILET_ATTEMPTS, entries);
+}
+
+export function updateToiletAttemptEntry(entry: ToiletAttemptEntry): void {
+  const entries = getToiletAttemptEntries();
+  const index = entries.findIndex((item) => item.id === entry.id);
+  if (index !== -1) {
+    entries[index] = entry;
+    setItem(STORAGE_KEYS.TOILET_ATTEMPTS, entries);
+  }
+}
+
+export function deleteToiletAttemptEntry(id: string): void {
+  setItem(STORAGE_KEYS.TOILET_ATTEMPTS, getToiletAttemptEntries().filter((entry) => entry.id !== id));
+}
+
+// Food entries
+export function getFoodEntries(childFilter?: string | string[]): FoodEntry[] {
+  const entries = getItem<FoodEntry[]>(STORAGE_KEYS.FOOD, []);
+  const childIds = typeof childFilter === 'string' ? [childFilter] : childFilter;
+  return entries.filter((entry) => matchesChildId(childIds, entry.childId));
+}
+
+export function addFoodEntry(entry: FoodEntry): void {
+  const entries = getFoodEntries();
+  entries.push(entry);
+  setItem(STORAGE_KEYS.FOOD, entries);
+}
+
+export function updateFoodEntry(entry: FoodEntry): void {
+  const entries = getFoodEntries();
+  const index = entries.findIndex((item) => item.id === entry.id);
+  if (index !== -1) {
+    entries[index] = entry;
+    setItem(STORAGE_KEYS.FOOD, entries);
+  }
+}
+
+export function deleteFoodEntry(id: string): void {
+  setItem(STORAGE_KEYS.FOOD, getFoodEntries().filter((entry) => entry.id !== id));
+}
+
+// Remove child
+export function removeChild(childId: string): void {
+  const children = getChildren();
+  setChildren(children.filter((child) => child.id !== childId));
+  // Remove associated entries
+  setItem(STORAGE_KEYS.DRINKS, getDrinks().filter((e) => e.childId !== childId));
+  setItem(STORAGE_KEYS.URINE, getUrineEntries().filter((e) => e.childId !== childId));
+  setItem(STORAGE_KEYS.BOWEL, getBowelEntries().filter((e) => e.childId !== childId));
+  setItem(STORAGE_KEYS.SLEEP, getSleepEntries().filter((e) => e.childId !== childId));
+  setItem(STORAGE_KEYS.TOILET_ATTEMPTS, getToiletAttemptEntries().filter((e) => e.childId !== childId));
+  setItem(STORAGE_KEYS.FOOD, getFoodEntries().filter((e) => e.childId !== childId));
+}
+
 // Invites
 export function getInvites(user?: User | null): CaregiverInvite[] {
   const invites = getItem<CaregiverInvite[]>(STORAGE_KEYS.INVITES, []);
@@ -425,6 +522,9 @@ export function importDiaryPayload(payload: ImportedDiaryPayload, childId: strin
     drinks: 0,
     urineEntries: 0,
     bowelEntries: 0,
+    sleepEntries: 0,
+    toiletAttemptEntries: 0,
+    foodEntries: 0,
     errors: [],
   };
 
@@ -493,6 +593,71 @@ export function importDiaryPayload(payload: ImportedDiaryPayload, childId: strin
     summary.bowelEntries += 1;
   });
 
+  payload.sleepEntries?.forEach((entry, index) => {
+    if (!entry.date || !entry.time) {
+      summary.errors.push(`Sleep data row ${index + 1} is missing date or time.`);
+      return;
+    }
+
+    addSleepEntry({
+      id: generateId(),
+      childId,
+      date: entry.date,
+      time: entry.time,
+      eventType: entry.eventType ?? 'onset',
+      durationMinutes: entry.durationMinutes ?? null,
+      quality: entry.quality ?? null,
+      nighttimeEvent: Boolean(entry.nighttimeEvent),
+      notes: entry.notes ?? '',
+      createdBy: userId,
+      createdAt: new Date().toISOString(),
+    });
+    summary.sleepEntries += 1;
+  });
+
+  payload.toiletAttemptEntries?.forEach((entry, index) => {
+    if (!entry.date || !entry.time) {
+      summary.errors.push(`Toilet attempt row ${index + 1} is missing date or time.`);
+      return;
+    }
+
+    addToiletAttemptEntry({
+      id: generateId(),
+      childId,
+      date: entry.date,
+      time: entry.time,
+      outcome: entry.outcome ?? 'no_event',
+      supervised: Boolean(entry.supervised),
+      prompted: Boolean(entry.prompted),
+      durationMinutes: entry.durationMinutes ?? null,
+      notes: entry.notes ?? '',
+      createdBy: userId,
+      createdAt: new Date().toISOString(),
+    });
+    summary.toiletAttemptEntries += 1;
+  });
+
+  payload.foodEntries?.forEach((entry, index) => {
+    if (!entry.date || !entry.time) {
+      summary.errors.push(`Food data row ${index + 1} is missing date or time.`);
+      return;
+    }
+
+    addFoodEntry({
+      id: generateId(),
+      childId,
+      date: entry.date,
+      time: entry.time,
+      mealType: entry.mealType ?? 'snack',
+      description: entry.description ?? '',
+      portions: entry.portions ?? null,
+      notes: entry.notes ?? '',
+      createdBy: userId,
+      createdAt: new Date().toISOString(),
+    });
+    summary.foodEntries += 1;
+  });
+
   return summary;
 }
 
@@ -500,6 +665,9 @@ export function exportToCSV(childId: string, childName: string): string {
   const drinks = getDrinks(childId);
   const urine = getUrineEntries(childId);
   const bowel = getBowelEntries(childId);
+  const sleep = getSleepEntries(childId);
+  const toiletAttempts = getToiletAttemptEntries(childId);
+  const food = getFoodEntries(childId);
 
   let csv = `Bladder & Bowel Diary Export for ${childName}\n`;
   csv += `Generated: ${new Date().toLocaleDateString()}\n\n`;
@@ -520,6 +688,24 @@ export function exportToCSV(childId: string, childName: string): string {
   csv += 'Date,Time,Location,Amount,Bristol Type,Laxatives,Notes\n';
   bowel.forEach((entry) => {
     csv += `${entry.date},${entry.time},${entry.location},${entry.amount},Type ${entry.bristolType},${entry.laxativesGiven},"${entry.notes}"\n`;
+  });
+
+  csv += '\nSLEEP EVENTS\n';
+  csv += 'Date,Time,Event Type,Duration (min),Quality,Nighttime Event,Notes\n';
+  sleep.forEach((entry) => {
+    csv += `${entry.date},${entry.time},${entry.eventType},${entry.durationMinutes ?? ''},${entry.quality ?? ''},${entry.nighttimeEvent ?? ''},"${entry.notes}"\n`;
+  });
+
+  csv += '\nTOILET ATTEMPTS\n';
+  csv += 'Date,Time,Outcome,Supervised,Prompted,Duration (min),Notes\n';
+  toiletAttempts.forEach((entry) => {
+    csv += `${entry.date},${entry.time},${entry.outcome},${entry.supervised},${entry.prompted},${entry.durationMinutes ?? ''},"${entry.notes}"\n`;
+  });
+
+  csv += '\nFOOD ENTRIES\n';
+  csv += 'Date,Time,Meal Type,Description,Portions,Notes\n';
+  food.forEach((entry) => {
+    csv += `${entry.date},${entry.time},${entry.mealType},"${entry.description}",${entry.portions ?? ''},"${entry.notes}"\n`;
   });
 
   return csv;
