@@ -1,0 +1,171 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 370" fill="none" role="img" aria-label="BladderTracker logo">
+  <defs>
+    <!--
+      Brand palette (from style guide):
+        Primary purple : #786CF6
+        Soft Lavender  : #B8AFFF
+        Trust Green    : #44CC3A
+        Background     : #F6F7FF
+    -->
+
+    <!-- Body: lavender highlight → primary purple -->
+    <radialGradient id="bodyG" cx="36%" cy="30%" r="68%">
+      <stop offset="0%"   stop-color="#d4ccff"/>
+      <stop offset="45%"  stop-color="#a99cf8"/>
+      <stop offset="100%" stop-color="#786CF6"/>
+    </radialGradient>
+
+    <!-- Horn/arm: slightly darker than soft lavender -->
+    <linearGradient id="hornG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#c0b8ff"/>
+      <stop offset="100%" stop-color="#8f86f8"/>
+    </linearGradient>
+
+    <!-- Leg gradient matches body -->
+    <radialGradient id="legG" cx="38%" cy="28%" r="65%">
+      <stop offset="0%"   stop-color="#c8c0ff"/>
+      <stop offset="100%" stop-color="#786CF6"/>
+    </radialGradient>
+
+    <!-- Magnifying-glass lens: trust green tint -->
+    <radialGradient id="lensG" cx="32%" cy="32%" r="65%">
+      <stop offset="0%"   stop-color="#ffffff"/>
+      <stop offset="60%"  stop-color="#d4f7d2"/>
+      <stop offset="100%" stop-color="#a8eea5"/>
+    </radialGradient>
+
+    <!-- Subtle drop shadow on body -->
+    <filter id="bodyShad" x="-14%" y="-8%" width="128%" height="130%">
+      <feDropShadow dx="0" dy="5" stdDeviation="10"
+                    flood-color="#5a50d0" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- ─── Ground ellipse shadow ─── -->
+  <ellipse cx="194" cy="278" rx="94" ry="13" fill="#B8AFFF" opacity="0.35"/>
+
+  <!-- ═══════════════════════════════════════
+       BODY
+       ═══════════════════════════════════════ -->
+  <!-- Dark-purple outline ring -->
+  <ellipse cx="194" cy="193" rx="113" ry="88" fill="#5a50cc"/>
+  <!-- Body fill -->
+  <ellipse cx="194" cy="191" rx="108" ry="83" fill="url(#bodyG)" filter="url(#bodyShad)"/>
+
+  <!-- Gloss highlight (top-left) -->
+  <ellipse cx="162" cy="147" rx="32" ry="21"
+           fill="white" opacity="0.40" transform="rotate(-28 162 147)"/>
+  <!-- Secondary shine dots -->
+  <circle cx="150" cy="174" r="9"   fill="white" opacity="0.40"/>
+  <circle cx="165" cy="160" r="5"   fill="white" opacity="0.30"/>
+  <circle cx="136" cy="167" r="3.5" fill="white" opacity="0.26"/>
+
+  <!-- ═══════════════════════════════════════
+       HORNS  (two curved antler-like bumps)
+       ═══════════════════════════════════════ -->
+  <!-- Left horn – outline -->
+  <ellipse cx="138" cy="124" rx="19" ry="35" fill="#5a50cc" transform="rotate(-20 138 124)"/>
+  <!-- Left horn – fill -->
+  <ellipse cx="138" cy="122" rx="14" ry="30" fill="url(#hornG)" transform="rotate(-20 138 122)"/>
+
+  <!-- Right horn – outline -->
+  <ellipse cx="252" cy="124" rx="19" ry="35" fill="#5a50cc" transform="rotate(20 252 124)"/>
+  <!-- Right horn – fill -->
+  <ellipse cx="252" cy="122" rx="14" ry="30" fill="url(#hornG)" transform="rotate(20 252 122)"/>
+
+  <!-- ═══════════════════════════════════════
+       FACE
+       ═══════════════════════════════════════ -->
+  <!-- Left eye sclera -->
+  <ellipse cx="163" cy="188" rx="19" ry="20" fill="white"/>
+  <!-- Right eye sclera -->
+  <ellipse cx="218" cy="188" rx="19" ry="20" fill="white"/>
+  <!-- Pupils -->
+  <circle cx="166" cy="191" r="12" fill="#1a1040"/>
+  <circle cx="221" cy="191" r="12" fill="#1a1040"/>
+  <!-- Main shine spots -->
+  <circle cx="173" cy="184" r="5"   fill="white"/>
+  <circle cx="228" cy="184" r="5"   fill="white"/>
+  <!-- Small secondary shine -->
+  <circle cx="160" cy="195" r="2.8" fill="white" opacity="0.75"/>
+  <circle cx="215" cy="195" r="2.8" fill="white" opacity="0.75"/>
+
+  <!-- Open happy mouth -->
+  <!-- Outer (dark lip arc) -->
+  <path d="M167,218 Q192,242 218,218" fill="#5a50cc"/>
+  <!-- Inner mouth (pink) -->
+  <path d="M171,218 Q192,237 214,218" fill="#ff8faa"/>
+  <!-- Tongue -->
+  <ellipse cx="193" cy="232" rx="11" ry="7" fill="#ff6888" opacity="0.85"/>
+
+  <!-- Rosy cheeks -->
+  <ellipse cx="135" cy="212" rx="17" ry="11" fill="#ffb3c0" opacity="0.62"/>
+  <ellipse cx="249" cy="210" rx="17" ry="11" fill="#ffb3c0" opacity="0.62"/>
+
+  <!-- ═══════════════════════════════════════
+       LEGS  (4 stubby feet)
+       ═══════════════════════════════════════ -->
+  <!-- Outlines -->
+  <ellipse cx="143" cy="264" rx="17" ry="21" fill="#5a50cc"/>
+  <ellipse cx="171" cy="269" rx="16" ry="20" fill="#5a50cc"/>
+  <ellipse cx="213" cy="269" rx="16" ry="20" fill="#5a50cc"/>
+  <ellipse cx="245" cy="264" rx="17" ry="21" fill="#5a50cc"/>
+  <!-- Fills -->
+  <ellipse cx="143" cy="263" rx="13" ry="18" fill="url(#legG)"/>
+  <ellipse cx="171" cy="268" rx="12" ry="17" fill="url(#legG)"/>
+  <ellipse cx="213" cy="268" rx="12" ry="17" fill="url(#legG)"/>
+  <ellipse cx="245" cy="263" rx="13" ry="18" fill="url(#legG)"/>
+
+  <!-- ═══════════════════════════════════════
+       LEFT ARM  (small raised stub)
+       ═══════════════════════════════════════ -->
+  <ellipse cx="97"  cy="197" rx="17" ry="11" fill="#5a50cc" transform="rotate(-28 97 197)"/>
+  <ellipse cx="96"  cy="196" rx="13" ry="8"  fill="url(#legG)" transform="rotate(-28 96 196)"/>
+
+  <!-- ═══════════════════════════════════════
+       RIGHT ARM + MAGNIFYING GLASS
+       ═══════════════════════════════════════ -->
+  <!-- Arm stub -->
+  <ellipse cx="286" cy="206" rx="17" ry="11" fill="#5a50cc" transform="rotate(24 286 206)"/>
+  <ellipse cx="285" cy="205" rx="13" ry="8"  fill="url(#legG)" transform="rotate(24 285 205)"/>
+
+  <!-- Handle (rotated pill) -->
+  <rect x="303" y="220" width="10" height="32" rx="5"
+        fill="#786CF6" transform="rotate(42 308 236)"/>
+
+  <!-- Lens outer ring (dark purple border) -->
+  <circle cx="300" cy="188" r="33" fill="#5a50cc"/>
+  <!-- Lens white surround -->
+  <circle cx="300" cy="188" r="29" fill="white"/>
+  <!-- Lens tinted fill (trust-green tint) -->
+  <circle cx="300" cy="188" r="27" fill="url(#lensG)"/>
+  <!-- Lens glare -->
+  <ellipse cx="290" cy="177" rx="9" ry="6"
+           fill="white" opacity="0.68" transform="rotate(-22 290 177)"/>
+
+  <!-- ═══════════════════════════════════════
+       SPARKLES  (above mascot, #B8AFFF)
+       ═══════════════════════════════════════ -->
+  <!-- Centre sparkle (largest) -->
+  <path d="M194,87 L197,97 L207,100 L197,103 L194,113 L191,103 L181,100 L191,97 Z"
+        fill="#B8AFFF"/>
+  <!-- Left sparkle -->
+  <path d="M160,102 L162,109 L169,111 L162,113 L160,120 L158,113 L151,111 L158,109 Z"
+        fill="#B8AFFF" opacity="0.82"/>
+  <!-- Right sparkle -->
+  <path d="M230,97 L232,104 L239,106 L232,108 L230,115 L228,108 L221,106 L228,104 Z"
+        fill="#B8AFFF" opacity="0.76"/>
+
+  <!-- ═══════════════════════════════════════
+       WORDMARK  "BladderTracker"
+       ═══════════════════════════════════════ -->
+  <text
+    x="210" y="338"
+    text-anchor="middle"
+    font-family="'Nunito', 'Varela Round', 'Fredoka One', 'Arial Rounded MT Bold', Arial, sans-serif"
+    font-size="52"
+    font-weight="800"
+    fill="#786CF6"
+    letter-spacing="-0.5"
+  >BladderTracker</text>
+</svg>

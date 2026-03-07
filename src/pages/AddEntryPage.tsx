@@ -1,17 +1,25 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { Droplets, CloudRain, Stethoscope, ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useApp } from '../context/useApp';
 import { generateId } from '../utils/storage';
 import BristolStoolPicker from '../components/BristolStoolPicker';
+import BrandIcon from '../components/BrandIcon';
 import type { BristolStoolType, BowelAmount, UrineEntry } from '../types';
 
 type EntryType = 'drink' | 'urine' | 'bowel';
 
 export default function AddEntryPage() {
-  const [activeTab, setActiveTab] = useState<EntryType>('drink');
+  const location = useLocation();
+  const initialTab: EntryType = (location.state as { tab?: EntryType } | null)?.tab ?? 'drink';
+  const [activeTab, setActiveTab] = useState<EntryType>(initialTab);
   const navigate = useNavigate();
+
+  // Scroll to top on mount
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, []);
 
   const tabs: { type: EntryType; icon: typeof Droplets; label: string; color: string }[] = [
     { type: 'drink', icon: Droplets, label: 'Drink', color: 'text-blue-500' },
@@ -21,33 +29,35 @@ export default function AddEntryPage() {
 
   return (
     <div className="pb-20">
-      {/* Header */}
-      <div className="bg-white px-4 pt-4 pb-3 flex items-center gap-3">
-        <button
-          onClick={() => navigate('/')}
-          className="w-9 h-9 rounded-full bg-gray-50 flex items-center justify-center text-gray-500 hover:bg-lavender-50"
-        >
-          <ArrowLeft size={18} />
-        </button>
-        <h1 className="text-lg font-bold text-gray-800">Add Entry</h1>
-      </div>
-
-      {/* Tabs */}
-      <div className="px-4 mt-3 flex gap-2">
-        {tabs.map(({ type, icon: Icon, label, color }) => (
+      {/* Brand header */}
+      <div className="bg-[linear-gradient(180deg,#fbf7f2_0%,#ffffff_100%)] px-4 pt-4 pb-3">
+        <div className="mb-3 flex items-center gap-3">
           <button
-            key={type}
-            onClick={() => setActiveTab(type)}
-            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-medium transition-all ${
-              activeTab === type
-                ? 'bg-lavender-500 text-white shadow-md'
-                : 'bg-white text-gray-500 hover:bg-lavender-50'
-            }`}
+            onClick={() => navigate('/')}
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-gray-500 shadow-sm ring-1 ring-black/5 hover:bg-lavender-50"
           >
-            <Icon size={16} className={activeTab === type ? 'text-white' : color} />
-            {label}
+            <ArrowLeft size={18} />
           </button>
-        ))}
+          <BrandIcon width={110} />
+        </div>
+
+        {/* Tabs */}
+        <div className="flex gap-2">
+          {tabs.map(({ type, icon: Icon, label, color }) => (
+            <button
+              key={type}
+              onClick={() => setActiveTab(type)}
+              className={`flex flex-1 items-center justify-center gap-2 rounded-xl py-3 text-sm font-medium transition-all ${
+                activeTab === type
+                  ? 'bg-lavender-500 text-white shadow-md'
+                  : 'bg-white text-gray-500 shadow-sm ring-1 ring-black/5 hover:bg-lavender-50'
+              }`}
+            >
+              <Icon size={16} className={activeTab === type ? 'text-white' : color} />
+              {label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Forms */}
@@ -70,11 +80,11 @@ function DrinkForm() {
   const [notes, setNotes] = useState('');
 
   const drinkTypes = [
-    { value: 'cup' as const, label: '🥤 Cup', emoji: '🥤' },
-    { value: 'beaker' as const, label: '🍶 Beaker', emoji: '🍶' },
-    { value: 'bottle' as const, label: '🍼 Bottle', emoji: '🍼' },
-    { value: 'sippy' as const, label: '🧃 Sippy', emoji: '🧃' },
-    { value: 'other' as const, label: '🫗 Other', emoji: '🫗' },
+    { value: 'cup' as const, label: '🥤 Cup' },
+    { value: 'beaker' as const, label: '🍶 Beaker' },
+    { value: 'bottle' as const, label: '🍼 Bottle' },
+    { value: 'sippy' as const, label: '🧃 Sippy' },
+    { value: 'other' as const, label: '🫗 Other' },
   ];
 
   const quickAmounts = [50, 100, 150, 200, 250, 300];
@@ -97,7 +107,7 @@ function DrinkForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-3xl p-5 shadow-sm space-y-4">
+    <form onSubmit={handleSubmit} className="rounded-3xl bg-[#eef8ff] p-5 shadow-sm space-y-4">
       <h2 className="text-base font-bold text-gray-800 flex items-center gap-2">
         <Droplets size={18} className="text-blue-500" /> Log a Drink
       </h2>
@@ -106,12 +116,12 @@ function DrinkForm() {
         <div>
           <label className="text-xs font-medium text-gray-600">Date</label>
           <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
-            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
+            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
         </div>
         <div>
           <label className="text-xs font-medium text-gray-600">Time</label>
           <input type="time" value={time} onChange={(e) => setTime(e.target.value)}
-            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
+            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
         </div>
       </div>
 
@@ -123,7 +133,7 @@ function DrinkForm() {
               className={`px-3 py-2 rounded-xl text-sm transition-all ${
                 type === dt.value
                   ? 'bg-lavender-500 text-white shadow-md'
-                  : 'bg-gray-50 text-gray-600 hover:bg-lavender-50'
+                  : 'bg-white text-gray-600 hover:bg-lavender-50'
               }`}>
               {dt.label}
             </button>
@@ -135,13 +145,13 @@ function DrinkForm() {
         <label className="text-xs font-medium text-gray-600">Amount (ml)</label>
         <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)}
           placeholder="Enter amount in ml"
-          className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm"
+          className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm"
           min="0" required />
         <div className="flex gap-2 mt-2 flex-wrap">
           {quickAmounts.map((qa) => (
             <button key={qa} type="button" onClick={() => setAmount(String(qa))}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                amount === String(qa) ? 'bg-blue-100 text-blue-700' : 'bg-gray-50 text-gray-500 hover:bg-blue-50'
+                amount === String(qa) ? 'bg-sky-200 text-sky-800' : 'bg-white text-gray-500 hover:bg-sky-50'
               }`}>
               {qa}ml
             </button>
@@ -153,7 +163,7 @@ function DrinkForm() {
         <label className="text-xs font-medium text-gray-600">Notes</label>
         <textarea value={notes} onChange={(e) => setNotes(e.target.value)}
           placeholder="Optional notes..."
-          className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm resize-none"
+          className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm resize-none"
           rows={2} />
       </div>
 
@@ -215,7 +225,7 @@ function UrineForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-3xl p-5 shadow-sm space-y-4">
+    <form onSubmit={handleSubmit} className="rounded-3xl bg-peach p-5 shadow-sm space-y-4">
       <h2 className="text-base font-bold text-gray-800 flex items-center gap-2">
         <CloudRain size={18} className="text-yellow-500" /> Log Urine Event
       </h2>
@@ -224,12 +234,12 @@ function UrineForm() {
         <div>
           <label className="text-xs font-medium text-gray-600">Date</label>
           <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
-            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
+            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
         </div>
         <div>
           <label className="text-xs font-medium text-gray-600">Time</label>
           <input type="time" value={time} onChange={(e) => setTime(e.target.value)}
-            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
+            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
         </div>
       </div>
 
@@ -257,13 +267,13 @@ function UrineForm() {
         <label className="text-xs font-medium text-gray-600">Volume (ml) <span className="text-gray-400 font-normal">— optional</span></label>
         <input type="number" value={volumeMl} onChange={(e) => setVolumeMl(e.target.value)}
           placeholder="Measured output in ml"
-          className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm"
+          className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm"
           min="0" />
         <div className="flex gap-2 mt-2 flex-wrap">
           {quickVolumes.map((v) => (
             <button key={v} type="button" onClick={() => setVolumeMl(String(v))}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                volumeMl === String(v) ? 'bg-amber-100 text-amber-700' : 'bg-gray-50 text-gray-500 hover:bg-amber-50'
+                volumeMl === String(v) ? 'bg-amber-100 text-amber-700' : 'bg-white text-gray-500 hover:bg-amber-50'
               }`}>
               {v}ml
             </button>
@@ -279,7 +289,7 @@ function UrineForm() {
               className={`flex-1 flex flex-col items-center gap-0.5 py-2 rounded-xl text-xs font-medium transition-all ${
                 urgency === u.value
                   ? 'bg-amber-100 text-amber-800 ring-2 ring-amber-300'
-                  : 'bg-gray-50 text-gray-500 hover:bg-amber-50'
+                  : 'bg-white text-gray-500 hover:bg-amber-50'
               }`}>
               <span className="text-lg">{u.emoji}</span>
               <span>{u.label}</span>
@@ -296,7 +306,7 @@ function UrineForm() {
               className={`flex-1 py-2.5 rounded-xl text-xs font-medium transition-all ${
                 leakageAmount === l.value
                   ? 'bg-blue-100 text-blue-700 ring-2 ring-blue-300'
-                  : 'bg-gray-50 text-gray-500 hover:bg-blue-50'
+                  : 'bg-white text-gray-500 hover:bg-blue-50'
               }`}>
               {l.emoji} {l.label}
             </button>
@@ -308,7 +318,7 @@ function UrineForm() {
         <label className="text-xs font-medium text-gray-600">Notes</label>
         <textarea value={notes} onChange={(e) => setNotes(e.target.value)}
           placeholder="Optional notes..."
-          className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm resize-none"
+          className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm resize-none"
           rows={2} />
       </div>
 
@@ -351,7 +361,7 @@ function BowelForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-3xl p-5 shadow-sm space-y-4">
+    <form onSubmit={handleSubmit} className="rounded-3xl bg-mint p-5 shadow-sm space-y-4">
       <h2 className="text-base font-bold text-gray-800 flex items-center gap-2">
         <Stethoscope size={18} className="text-green-500" /> Log Bowel Event
       </h2>
@@ -360,12 +370,12 @@ function BowelForm() {
         <div>
           <label className="text-xs font-medium text-gray-600">Date</label>
           <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
-            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
+            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
         </div>
         <div>
           <label className="text-xs font-medium text-gray-600">Time</label>
           <input type="time" value={time} onChange={(e) => setTime(e.target.value)}
-            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
+            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
         </div>
       </div>
 
@@ -377,7 +387,7 @@ function BowelForm() {
               className={`flex-1 py-3 rounded-xl text-sm font-medium transition-all ${
                 location === loc
                   ? 'bg-lavender-500 text-white shadow-md'
-                  : 'bg-gray-50 text-gray-600 hover:bg-lavender-50'
+                  : 'bg-white text-gray-600 hover:bg-lavender-50'
               }`}>
               {loc === 'toilet' ? '🚽 Toilet' : '👶 Nappy'}
             </button>
@@ -393,7 +403,7 @@ function BowelForm() {
               className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all ${
                 amount === size
                   ? 'bg-lavender-500 text-white shadow-md'
-                  : 'bg-gray-50 text-gray-600 hover:bg-lavender-50'
+                  : 'bg-white text-gray-600 hover:bg-lavender-50'
               }`}>
               {size === 'S' ? '🔹 Small' : size === 'M' ? '🔸 Medium' : '🔶 Large'}
             </button>
@@ -408,13 +418,13 @@ function BowelForm() {
         <div className="flex gap-3">
           <button type="button" onClick={() => setLaxatives(true)}
             className={`flex-1 py-3 rounded-xl text-sm font-medium transition-all ${
-              laxatives ? 'bg-lavender-500 text-white shadow-md' : 'bg-gray-50 text-gray-600 hover:bg-lavender-50'
+              laxatives ? 'bg-lavender-500 text-white shadow-md' : 'bg-white text-gray-600 hover:bg-lavender-50'
             }`}>
             💊 Yes
           </button>
           <button type="button" onClick={() => setLaxatives(false)}
             className={`flex-1 py-3 rounded-xl text-sm font-medium transition-all ${
-              !laxatives ? 'bg-lavender-500 text-white shadow-md' : 'bg-gray-50 text-gray-600 hover:bg-lavender-50'
+              !laxatives ? 'bg-lavender-500 text-white shadow-md' : 'bg-white text-gray-600 hover:bg-lavender-50'
             }`}>
             ❌ No
           </button>
@@ -425,7 +435,7 @@ function BowelForm() {
         <label className="text-xs font-medium text-gray-600">Notes</label>
         <textarea value={notes} onChange={(e) => setNotes(e.target.value)}
           placeholder="Optional notes..."
-          className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm resize-none"
+          className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm resize-none"
           rows={2} />
       </div>
 
