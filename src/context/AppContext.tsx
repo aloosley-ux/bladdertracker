@@ -658,6 +658,12 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
 
   // Module management
   const setEnabledModulesForChild = async (modules: ModuleId[]) => {
+    // Update UI immediately so Dashboard/Log/Reports/AddEntry all re-render at once.
+    // In cloud mode: if the API call fails, the in-memory state stays correct for this
+    // session, but the DB retains the old value. The next login/page-reload will reload
+    // from DB. This is acceptable — optimistic UI gives the best responsiveness.
+    setEnabledModulesState(modules);
+    // Persist in background (localStorage is synchronous; cloud is fire-and-forget)
     if (cloud) {
       if (selectedChildId) {
         try { await api.apiSetEnabledModules(selectedChildId, modules); } catch { /* ignore */ }
@@ -667,7 +673,6 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
         localStorage.setEnabledModules(selectedChildId, modules);
       }
     }
-    setEnabledModulesState(modules);
   };
 
   const exportData = async () => {

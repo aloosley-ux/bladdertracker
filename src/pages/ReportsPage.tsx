@@ -15,24 +15,48 @@ import {
 import { CalendarDays, ChevronRight, Filter } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useApp } from '../context/useApp';
+import { DEFAULT_MODULES } from '../types';
 
 type Period = '7d' | '14d' | '30d';
 
-const EVENT_FILTERS = [
-  { key: 'drinks', label: '💧 Drinks', color: '#8b4dff' },
-  { key: 'urine', label: '💦 Urine', color: '#f4b52c' },
+const ALL_EVENT_FILTERS = [
+  { key: 'drinks', label: '💧 Drinks', color: '#0ea5e9' },
+  { key: 'urine', label: '💦 Urine', color: '#f59e0b' },
   { key: 'bowel', label: '🚽 Bowel', color: '#22c55e' },
   { key: 'sleep', label: '🌙 Sleep', color: '#6366f1' },
   { key: 'toilet', label: '🎯 Attempts', color: '#a855f7' },
   { key: 'food', label: '🍽️ Food', color: '#f97316' },
 ] as const;
 
-type FilterKey = typeof EVENT_FILTERS[number]['key'];
+type FilterKey = typeof ALL_EVENT_FILTERS[number]['key'];
 
 export default function ReportsPage() {
-  const { drinks, urineEntries, bowelEntries, sleepEntries, toiletAttemptEntries, foodEntries, selectedChildId, selectedChild } = useApp();
+  const { drinks, urineEntries, bowelEntries, sleepEntries, toiletAttemptEntries, foodEntries, selectedChildId, selectedChild, enabledModules } = useApp();
   const [period, setPeriod] = useState<Period>('7d');
-  const [activeFilters, setActiveFilters] = useState<Set<FilterKey>>(new Set(['drinks', 'urine', 'bowel', 'sleep', 'toilet', 'food']));
+
+  // Derive which filter keys are currently enabled
+  const enabledFilterKeys = useMemo<Set<FilterKey>>(() => {
+    const src = enabledModules.length > 0
+      ? enabledModules
+      : DEFAULT_MODULES.filter((m) => m.defaultEnabled).map((m) => m.id);
+    const srcSet = new Set(src);
+    return new Set(ALL_EVENT_FILTERS.map((f) => f.key).filter((k) => srcSet.has(k)) as FilterKey[]);
+  }, [enabledModules]);
+
+  // Visible filter chips = only enabled module filters
+  const EVENT_FILTERS = useMemo(
+    () => ALL_EVENT_FILTERS.filter((f) => enabledFilterKeys.has(f.key)),
+    [enabledFilterKeys],
+  );
+
+  const [activeFilters, setActiveFilters] = useState<Set<FilterKey>>(
+    () => new Set(ALL_EVENT_FILTERS.map((f) => f.key).filter((k) => enabledFilterKeys.has(k))),
+  );
+
+  // When enabled modules change, remove disabled ones from activeFilters
+  useEffect(() => {
+    setActiveFilters((prev) => new Set([...prev].filter((k) => enabledFilterKeys.has(k))));
+  }, [enabledFilterKeys]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'auto' });
@@ -150,45 +174,48 @@ export default function ReportsPage() {
       </div>
 
       <div className="space-y-4 px-4">
-        {/* Event filter toggles */}
-        <NhsCard>
-          <h3 className="text-xs font-bold text-gray-600 flex items-center gap-1.5 mb-3">
-            <Filter size={12} /> Show/hide event types
-          </h3>
-          <div className="flex flex-wrap gap-2">
-            {EVENT_FILTERS.map(({ key, label, color }) => (
-              <button
-                key={key}
-                onClick={() => toggleFilter(key)}
-                className={`rounded-xl px-3 py-1.5 text-xs font-semibold transition-all ${
-                  activeFilters.has(key)
-                    ? 'text-white shadow-sm'
-                    : 'bg-gray-100 text-gray-400'
-                }`}
-                style={activeFilters.has(key) ? { backgroundColor: color } : undefined}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-        </NhsCard>
+        {/* Event filter toggles — only enabled modules [2] */}
+        {EVENT_FILTERS.length > 0 && (
+          <NhsCard>
+            <h3 className="text-xs font-bold text-gray-600 flex items-center gap-1.5 mb-3">
+              <Filter size={12} /> Show/hide event types
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {EVENT_FILTERS.map(({ key, label, color }) => (
+                <button
+                  key={key}
+                  onClick={() => toggleFilter(key)}
+                  aria-pressed={activeFilters.has(key)}
+                  className={`rounded-full px-3 py-1.5 text-xs font-semibold transition-all ${
+                    activeFilters.has(key)
+                      ? 'text-white shadow-sm'
+                      : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                  }`}
+                  style={activeFilters.has(key) ? { backgroundColor: color } : undefined}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </NhsCard>
+        )}
 
-        {/* Module summary */}
+        {/* Module summary — filtered to enabled modules */}
         <NhsCard>
           <h3 className="text-sm font-bold text-gray-700 mb-3">📈 {days}-day summary for {selectedChild?.name ?? 'child'}</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
-            <StatTile emoji="💧" text={`${stats.drinks} drinks · avg ${stats.avgMl}ml/day`} bg="bg-blue-50" />
-            <StatTile emoji="💦" text={`${stats.urineEvents} urine events`} bg="bg-amber-50" />
-            <StatTile emoji="🚽" text={`${stats.bowelEvents} bowel events`} bg="bg-green-50" />
-            <StatTile emoji="🌙" text={`${stats.sleepEvents} sleep events`} bg="bg-indigo-50" />
-            <StatTile emoji="🎯" text={`${stats.toiletAttempts} attempts (${stats.toiletSuccess} ✅)`} bg="bg-purple-50" />
-            <StatTile emoji="🍽️" text={`${stats.meals} meals logged`} bg="bg-orange-50" />
+            {enabledFilterKeys.has('drinks') && <StatTile emoji="💧" text={`${stats.drinks} drinks · avg ${stats.avgMl}ml/day`} bg="bg-sky-50" />}
+            {enabledFilterKeys.has('urine') && <StatTile emoji="💦" text={`${stats.urineEvents} urine events`} bg="bg-amber-50" />}
+            {enabledFilterKeys.has('bowel') && <StatTile emoji="🚽" text={`${stats.bowelEvents} bowel events`} bg="bg-emerald-50" />}
+            {enabledFilterKeys.has('sleep') && <StatTile emoji="🌙" text={`${stats.sleepEvents} sleep events`} bg="bg-indigo-50" />}
+            {enabledFilterKeys.has('toilet') && <StatTile emoji="🎯" text={`${stats.toiletAttempts} attempts (${stats.toiletSuccess} ✅)`} bg="bg-purple-50" />}
+            {enabledFilterKeys.has('food') && <StatTile emoji="🍽️" text={`${stats.meals} meals logged`} bg="bg-orange-50" />}
           </div>
         </NhsCard>
 
         {/* Charts in responsive grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {activeFilters.has('drinks') && (
+          {enabledFilterKeys.has('drinks') && activeFilters.has('drinks') && (
             <ChartCard title="💧 Fluid intake">
               <ResponsiveContainer width="100%" height={220}>
                 <BarChart data={fluidData} margin={{ left: 8 }}>
@@ -202,28 +229,30 @@ export default function ReportsPage() {
             </ChartCard>
           )}
 
-          {/* Events timeline */}
-          <ChartCard title="📊 Events timeline">
-            <ResponsiveContainer width="100%" height={240}>
-              <LineChart data={eventData} margin={{ left: 8 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#ede7f7" />
-                <XAxis dataKey="date" tick={{ fontSize: 10 }} label={{ value: 'Date', position: 'insideBottom', offset: -2, fontSize: 10, fill: '#9ca3af' }} />
-                <YAxis tick={{ fontSize: 10 }} label={{ value: 'Count', angle: -90, position: 'insideLeft', offset: 8, fontSize: 10, fill: '#9ca3af' }} />
-                <Tooltip contentStyle={{ borderRadius: 16, border: 'none', boxShadow: '0 12px 32px rgba(28, 25, 63, 0.12)' }} />
-                <Legend />
-                {activeFilters.has('urine') && <>
-                  <Line type="monotone" dataKey="wet" stroke="#f4b52c" strokeWidth={2} dot={{ r: 3 }} name="Wet" />
-                  <Line type="monotone" dataKey="pass" stroke="#22c55e" strokeWidth={2} dot={{ r: 3 }} name="Pass" />
-                </>}
-                {activeFilters.has('bowel') && <Line type="monotone" dataKey="bowel" stroke="#8b4dff" strokeWidth={2} dot={{ r: 3 }} name="Bowel" />}
-                {activeFilters.has('sleep') && <Line type="monotone" dataKey="sleep" stroke="#6366f1" strokeWidth={2} dot={{ r: 3 }} name="Sleep" />}
-                {activeFilters.has('toilet') && <Line type="monotone" dataKey="toilet" stroke="#a855f7" strokeWidth={2} dot={{ r: 3 }} name="Attempts" />}
-                {activeFilters.has('food') && <Line type="monotone" dataKey="food" stroke="#f97316" strokeWidth={2} dot={{ r: 3 }} name="Food" />}
-              </LineChart>
-            </ResponsiveContainer>
-          </ChartCard>
+          {/* Events timeline — only if at least one event module is enabled */}
+          {(enabledFilterKeys.has('urine') || enabledFilterKeys.has('bowel') || enabledFilterKeys.has('sleep') || enabledFilterKeys.has('toilet') || enabledFilterKeys.has('food')) && (
+            <ChartCard title="📊 Events timeline">
+              <ResponsiveContainer width="100%" height={240}>
+                <LineChart data={eventData} margin={{ left: 8 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#ede7f7" />
+                  <XAxis dataKey="date" tick={{ fontSize: 10 }} label={{ value: 'Date', position: 'insideBottom', offset: -2, fontSize: 10, fill: '#9ca3af' }} />
+                  <YAxis tick={{ fontSize: 10 }} label={{ value: 'Count', angle: -90, position: 'insideLeft', offset: 8, fontSize: 10, fill: '#9ca3af' }} />
+                  <Tooltip contentStyle={{ borderRadius: 16, border: 'none', boxShadow: '0 12px 32px rgba(28, 25, 63, 0.12)' }} />
+                  <Legend />
+                  {enabledFilterKeys.has('urine') && activeFilters.has('urine') && <>
+                    <Line type="monotone" dataKey="wet" stroke="#f59e0b" strokeWidth={2} dot={{ r: 3 }} name="Wet" />
+                    <Line type="monotone" dataKey="pass" stroke="#22c55e" strokeWidth={2} dot={{ r: 3 }} name="Pass" />
+                  </>}
+                  {enabledFilterKeys.has('bowel') && activeFilters.has('bowel') && <Line type="monotone" dataKey="bowel" stroke="#8b4dff" strokeWidth={2} dot={{ r: 3 }} name="Bowel" />}
+                  {enabledFilterKeys.has('sleep') && activeFilters.has('sleep') && <Line type="monotone" dataKey="sleep" stroke="#6366f1" strokeWidth={2} dot={{ r: 3 }} name="Sleep" />}
+                  {enabledFilterKeys.has('toilet') && activeFilters.has('toilet') && <Line type="monotone" dataKey="toilet" stroke="#a855f7" strokeWidth={2} dot={{ r: 3 }} name="Attempts" />}
+                  {enabledFilterKeys.has('food') && activeFilters.has('food') && <Line type="monotone" dataKey="food" stroke="#f97316" strokeWidth={2} dot={{ r: 3 }} name="Food" />}
+                </LineChart>
+              </ResponsiveContainer>
+            </ChartCard>
+          )}
 
-          {activeFilters.has('bowel') && (
+          {enabledFilterKeys.has('bowel') && activeFilters.has('bowel') && (
             <ChartCard title="💩 Bristol stool distribution">
               <ResponsiveContainer width="100%" height={200}>
                 <BarChart data={stoolTypeData} margin={{ left: 8 }}>
@@ -238,7 +267,7 @@ export default function ReportsPage() {
             </ChartCard>
           )}
 
-          {activeFilters.has('toilet') && (
+          {enabledFilterKeys.has('toilet') && activeFilters.has('toilet') && (
             <ChartCard title="🎯 Toilet attempt outcomes">
               <ResponsiveContainer width="100%" height={180}>
                 <BarChart data={toiletOutcomeData} margin={{ left: 8 }}>

@@ -4,6 +4,10 @@ import { Apple, BarChart3, BookOpen, CloudRain, ClipboardList, Droplets, Moon, P
 import { Link } from 'react-router-dom';
 import { useApp } from '../context/useApp';
 import EntryCard from '../components/EntryCard';
+import { DEFAULT_MODULES } from '../types';
+
+/** Fallback used during the brief loading window before enabledModules is populated. */
+const DEFAULT_ENABLED = new Set(DEFAULT_MODULES.filter((m) => m.defaultEnabled).map((m) => m.id));
 
 export default function DashboardPage() {
   const {
@@ -23,6 +27,7 @@ export default function DashboardPage() {
     therapyEntries,
     routineEntries,
     milestones,
+    enabledModules,
     deleteDrink,
     deleteUrineEntry,
     deleteBowelEntry,
@@ -35,6 +40,13 @@ export default function DashboardPage() {
     deleteTherapyEntry,
     deleteRoutineEntry,
   } = useApp();
+
+  // Use default-enabled set as fallback during the brief startup loading window
+  const enabled = useMemo(
+    () => (enabledModules.length > 0 ? new Set(enabledModules) : DEFAULT_ENABLED),
+    [enabledModules]
+  );
+  const on = (id: string) => enabled.has(id as Parameters<typeof enabled.has>[0]);
 
   const today = new Date();
   const dateStr = format(today, 'yyyy-MM-dd');
@@ -106,9 +118,17 @@ export default function DashboardPage() {
   const urineSub = totalOutput > 0 ? `${totalOutput}ml output` : `${wetCount} wet · ${passCount} pass`;
 
   const hasEntries =
-    dayDrinks.length + dayUrine.length + dayBowel.length + daySleep.length +
-    dayToilet.length + dayFood.length + dayMood.length + daySensory.length +
-    dayMedication.length + dayTherapy.length + dayRoutine.length > 0;
+    (on('drinks') && dayDrinks.length > 0) ||
+    (on('urine') && dayUrine.length > 0) ||
+    (on('bowel') && dayBowel.length > 0) ||
+    (on('sleep') && daySleep.length > 0) ||
+    (on('toilet') && dayToilet.length > 0) ||
+    (on('food') && dayFood.length > 0) ||
+    (on('mood') && dayMood.length > 0) ||
+    (on('sensory') && daySensory.length > 0) ||
+    (on('medication') && dayMedication.length > 0) ||
+    (on('therapy') && dayTherapy.length > 0) ||
+    (on('routine') && dayRoutine.length > 0);
 
   if (!selectedChild) {
     return (
@@ -121,7 +141,7 @@ export default function DashboardPage() {
               Add a child in Settings or accept a caregiver invite to start tracking.
             </p>
             <div className="mt-5 flex justify-center gap-3">
-              <Link className="rounded-full bg-blue-600 px-4 py-3 text-sm font-semibold text-white" to="/settings">
+              <Link className="rounded-full bg-lavender-500 px-4 py-3 text-sm font-semibold text-white" to="/settings">
                 Open settings
               </Link>
               <Link className="rounded-full bg-gray-100 px-4 py-3 text-sm font-semibold text-gray-700" to="/profiles">
@@ -136,7 +156,7 @@ export default function DashboardPage() {
 
   return (
     <div className="pb-20 bg-white min-h-screen">
-      {/* Header */}
+      {/* ── Header ──────────────────────────────────────────────────── */}
       <div className="bg-white pb-4">
         <div className="flex flex-col gap-1 px-4 pt-6">
           <h1 className="text-xl font-bold leading-snug text-gray-900" aria-label="Dashboard heading">
@@ -179,7 +199,7 @@ export default function DashboardPage() {
           </Link>
           <Link
             to="/add"
-            className="inline-flex items-center gap-1.5 rounded-full bg-blue-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-blue-700"
+            className="inline-flex items-center gap-1.5 rounded-full bg-lavender-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-lavender-600"
           >
             <Plus size={14} />
             Add Entry
@@ -188,123 +208,63 @@ export default function DashboardPage() {
       </div>
 
       <div className="space-y-4 px-4 pt-4">
-        {/* Quick-add buttons */}
-        <section aria-label="Quick add buttons" className="grid grid-cols-3 gap-3 md:grid-cols-4">
-          <Link
-            to="/add" state={{ tab: 'drink' }}
-            className="relative flex flex-col items-center gap-2 rounded-2xl bg-white py-4 shadow-sm ring-1 ring-black/5 transition hover:bg-gray-50 active:scale-95"
-          >
-            <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-sky-500 text-[11px] font-bold leading-none text-white shadow-sm">+</span>
-            <span className="text-2xl">🥤</span>
-            <span className="text-xs font-semibold text-gray-700">Drink</span>
-          </Link>
-          <Link
-            to="/add" state={{ tab: 'urine' }}
-            className="relative flex flex-col items-center gap-2 rounded-2xl bg-white py-4 shadow-sm ring-1 ring-black/5 transition hover:bg-gray-50 active:scale-95"
-          >
-            <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-amber-500 text-[11px] font-bold leading-none text-white shadow-sm">+</span>
-            <span className="text-2xl">💦</span>
-            <span className="text-xs font-semibold text-gray-700">Urine</span>
-          </Link>
-          <Link
-            to="/add" state={{ tab: 'bowel' }}
-            className="relative flex flex-col items-center gap-2 rounded-2xl bg-white py-4 shadow-sm ring-1 ring-black/5 transition hover:bg-gray-50 active:scale-95"
-          >
-            <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 text-[11px] font-bold leading-none text-white shadow-sm">+</span>
-            <span className="text-2xl">🚽</span>
-            <span className="text-xs font-semibold text-gray-700">Bowel</span>
-          </Link>
-          <Link
-            to="/add" state={{ tab: 'sleep' }}
-            className="relative flex flex-col items-center gap-2 rounded-2xl bg-white py-4 shadow-sm ring-1 ring-black/5 transition hover:bg-gray-50 active:scale-95"
-          >
-            <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-indigo-500 text-[11px] font-bold leading-none text-white shadow-sm">+</span>
-            <span className="text-2xl">🌙</span>
-            <span className="text-xs font-semibold text-gray-700">Sleep</span>
-          </Link>
-          <Link
-            to="/add" state={{ tab: 'toilet' }}
-            className="relative flex flex-col items-center gap-2 rounded-2xl bg-white py-4 shadow-sm ring-1 ring-black/5 transition hover:bg-gray-50 active:scale-95"
-          >
-            <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-purple-500 text-[11px] font-bold leading-none text-white shadow-sm">+</span>
-            <span className="text-2xl">🎯</span>
-            <span className="text-xs font-semibold text-gray-700">Attempt</span>
-          </Link>
-          <Link
-            to="/add" state={{ tab: 'food' }}
-            className="relative flex flex-col items-center gap-2 rounded-2xl bg-white py-4 shadow-sm ring-1 ring-black/5 transition hover:bg-gray-50 active:scale-95"
-          >
-            <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-orange-500 text-[11px] font-bold leading-none text-white shadow-sm">+</span>
-            <span className="text-2xl">🍽️</span>
-            <span className="text-xs font-semibold text-gray-700">Food</span>
-          </Link>
-          <Link
-            to="/add" state={{ tab: 'mood' }}
-            className="relative flex flex-col items-center gap-2 rounded-2xl bg-white py-4 shadow-sm ring-1 ring-black/5 transition hover:bg-gray-50 active:scale-95"
-          >
-            <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-pink-500 text-[11px] font-bold leading-none text-white shadow-sm">+</span>
-            <span className="text-2xl">😊</span>
-            <span className="text-xs font-semibold text-gray-700">Mood</span>
-          </Link>
-          <Link
-            to="/add" state={{ tab: 'sensory' }}
-            className="relative flex flex-col items-center gap-2 rounded-2xl bg-white py-4 shadow-sm ring-1 ring-black/5 transition hover:bg-gray-50 active:scale-95"
-          >
-            <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-teal-500 text-[11px] font-bold leading-none text-white shadow-sm">+</span>
-            <span className="text-2xl">🎨</span>
-            <span className="text-xs font-semibold text-gray-700">Sensory</span>
-          </Link>
-          <Link
-            to="/add" state={{ tab: 'medication' }}
-            className="relative flex flex-col items-center gap-2 rounded-2xl bg-white py-4 shadow-sm ring-1 ring-black/5 transition hover:bg-gray-50 active:scale-95"
-          >
-            <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[11px] font-bold leading-none text-white shadow-sm">+</span>
-            <span className="text-2xl">💊</span>
-            <span className="text-xs font-semibold text-gray-700">Meds</span>
-          </Link>
-          <Link
-            to="/add" state={{ tab: 'therapy' }}
-            className="relative flex flex-col items-center gap-2 rounded-2xl bg-white py-4 shadow-sm ring-1 ring-black/5 transition hover:bg-gray-50 active:scale-95"
-          >
-            <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-cyan-500 text-[11px] font-bold leading-none text-white shadow-sm">+</span>
-            <span className="text-2xl">🧩</span>
-            <span className="text-xs font-semibold text-gray-700">Therapy</span>
-          </Link>
-          <Link
-            to="/add" state={{ tab: 'routine' }}
-            className="relative flex flex-col items-center gap-2 rounded-2xl bg-white py-4 shadow-sm ring-1 ring-black/5 transition hover:bg-gray-50 active:scale-95"
-          >
-            <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-lime-500 text-[11px] font-bold leading-none text-white shadow-sm">+</span>
-            <span className="text-2xl">📋</span>
-            <span className="text-xs font-semibold text-gray-700">Routine</span>
-          </Link>
-          <Link
-            to="/add"
-            className="relative flex flex-col items-center gap-2 rounded-2xl bg-white py-4 shadow-sm ring-1 ring-black/5 transition hover:bg-gray-50 active:scale-95"
-          >
-            <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-yellow-500 text-[11px] font-bold leading-none text-white shadow-sm">⭐</span>
-            <span className="text-2xl">⭐</span>
-            <span className="text-xs font-semibold text-gray-700">Milestones</span>
-          </Link>
-        </section>
-
-        {/* Summary stat cards */}
+        {/* ── Summary stat cards (above quick-add, matching mockup) ── */}
         <section aria-label="Today's summary" className="grid grid-cols-3 gap-3 md:grid-cols-4">
-          <SummaryCard icon={<Droplets size={18} className="text-sky-500" />} label="Drinks" value={`${totalMl}ml`} sub={`${dayDrinks.length} entries`} />
-          <SummaryCard icon={<CloudRain size={18} className="text-amber-500" />} label="Urine" value={`${wetCount + passCount}`} sub={urineSub} />
-          <SummaryCard icon={<Stethoscope size={18} className="text-emerald-500" />} label="Bowel" value={`${bowelCount}`} sub="events" />
-          <SummaryCard icon={<Moon size={18} className="text-indigo-500" />} label="Sleep" value={`${sleepCount}`} sub="events" />
-          <SummaryCard icon={<Target size={18} className="text-purple-500" />} label="Attempts" value={`${toiletCount}`} sub="logged" />
-          <SummaryCard icon={<Apple size={18} className="text-orange-500" />} label="Food" value={`${foodCount}`} sub="meals" />
-          <SummaryCard icon={<Smile size={18} className="text-pink-500" />} label="Mood" value={`${moodCount}`} sub="entries" />
-          <SummaryCard icon={<Palette size={18} className="text-teal-500" />} label="Sensory" value={`${sensoryCount}`} sub="events" />
-          <SummaryCard icon={<Pill size={18} className="text-red-500" />} label="Meds" value={`${medicationCount}`} sub="doses" />
-          <SummaryCard icon={<Puzzle size={18} className="text-cyan-500" />} label="Therapy" value={`${therapyCount}`} sub="sessions" />
-          <SummaryCard icon={<ClipboardList size={18} className="text-lime-600" />} label="Routine" value={`${routineCount}`} sub="entries" />
-          <SummaryCard icon={<Star size={18} className="text-yellow-500" />} label="Milestones" value={`${milestoneAchieved}`} sub={`of ${childMilestones.length}`} />
+          {on('drinks') && <SummaryCard icon={<Droplets size={18} className="text-sky-500" />} label="Drinks" value={`${totalMl}ml`} sub={`${dayDrinks.length} entries`} accent="#0ea5e9" />}
+          {on('urine') && <SummaryCard icon={<CloudRain size={18} className="text-amber-500" />} label="Urine" value={`${wetCount + passCount}`} sub={urineSub} accent="#f59e0b" />}
+          {on('bowel') && <SummaryCard icon={<Stethoscope size={18} className="text-emerald-500" />} label="Bowel" value={`${bowelCount}`} sub="events" accent="#22c55e" />}
+          {on('sleep') && <SummaryCard icon={<Moon size={18} className="text-indigo-500" />} label="Sleep" value={`${sleepCount}`} sub="events" accent="#6366f1" />}
+          {on('toilet') && <SummaryCard icon={<Target size={18} className="text-purple-500" />} label="Attempts" value={`${toiletCount}`} sub="logged" accent="#a855f7" />}
+          {on('food') && <SummaryCard icon={<Apple size={18} className="text-orange-500" />} label="Food" value={`${foodCount}`} sub="meals" accent="#f97316" />}
+          {on('mood') && <SummaryCard icon={<Smile size={18} className="text-pink-500" />} label="Mood" value={`${moodCount}`} sub="entries" accent="#ec4899" />}
+          {on('sensory') && <SummaryCard icon={<Palette size={18} className="text-teal-500" />} label="Sensory" value={`${sensoryCount}`} sub="events" accent="#14b8a6" />}
+          {on('medication') && <SummaryCard icon={<Pill size={18} className="text-red-500" />} label="Meds" value={`${medicationCount}`} sub="doses" accent="#ef4444" />}
+          {on('therapy') && <SummaryCard icon={<Puzzle size={18} className="text-cyan-500" />} label="Therapy" value={`${therapyCount}`} sub="sessions" accent="#06b6d4" />}
+          {on('routine') && <SummaryCard icon={<ClipboardList size={18} className="text-lime-600" />} label="Routine" value={`${routineCount}`} sub="entries" accent="#84cc16" />}
+          {on('milestones') && <SummaryCard icon={<Star size={18} className="text-yellow-500" />} label="Milestones" value={`${milestoneAchieved}`} sub={`of ${childMilestones.length}`} accent="#eab308" />}
         </section>
 
-        {/* Today's entries feed */}
+        {/* ── Quick-add buttons (only enabled modules) [1] large tap targets ── */}
+        <section aria-label="Quick log" className="grid grid-cols-3 gap-3 md:grid-cols-4">
+          {on('drinks') && (
+            <QuickAddBtn to="/add" tab="drink" emoji="🥤" label="Drink" accent="#0ea5e9" />
+          )}
+          {on('urine') && (
+            <QuickAddBtn to="/add" tab="urine" emoji="💦" label="Urine" accent="#f59e0b" />
+          )}
+          {on('bowel') && (
+            <QuickAddBtn to="/add" tab="bowel" emoji="🚽" label="Bowel" accent="#22c55e" />
+          )}
+          {on('sleep') && (
+            <QuickAddBtn to="/add" tab="sleep" emoji="🌙" label="Sleep" accent="#6366f1" />
+          )}
+          {on('toilet') && (
+            <QuickAddBtn to="/add" tab="toilet" emoji="🎯" label="Attempt" accent="#a855f7" />
+          )}
+          {on('food') && (
+            <QuickAddBtn to="/add" tab="food" emoji="🍽️" label="Food" accent="#f97316" />
+          )}
+          {on('mood') && (
+            <QuickAddBtn to="/add" tab="mood" emoji="😊" label="Mood" accent="#ec4899" />
+          )}
+          {on('sensory') && (
+            <QuickAddBtn to="/add" tab="sensory" emoji="🎨" label="Sensory" accent="#14b8a6" />
+          )}
+          {on('medication') && (
+            <QuickAddBtn to="/add" tab="medication" emoji="💊" label="Meds" accent="#ef4444" />
+          )}
+          {on('therapy') && (
+            <QuickAddBtn to="/add" tab="therapy" emoji="🧩" label="Therapy" accent="#06b6d4" />
+          )}
+          {on('routine') && (
+            <QuickAddBtn to="/add" tab="routine" emoji="📋" label="Routine" accent="#84cc16" />
+          )}
+          {on('milestones') && (
+            <QuickAddBtn to="/add" tab={undefined} emoji="⭐" label="Milestones" accent="#eab308" />
+          )}
+        </section>
+
+        {/* ── Today's entries feed ──────────────────────────────────── */}
         <div aria-label="Today's entries" className="space-y-3">
           {!hasEntries && (
             <div className="rounded-2xl bg-white py-12 text-center shadow-sm ring-1 ring-black/5">
@@ -313,7 +273,7 @@ export default function DashboardPage() {
             </div>
           )}
 
-          {dayDrinks.map((drink) => (
+          {on('drinks') && dayDrinks.map((drink) => (
             <EntryCard
               key={drink.id}
               icon={<Droplets size={18} className="text-sky-500" />}
@@ -325,7 +285,7 @@ export default function DashboardPage() {
             />
           ))}
 
-          {dayUrine.map((entry) => {
+          {on('urine') && dayUrine.map((entry) => {
             const parts = [entry.wet ? 'Wet' : '', entry.pass ? 'Pass' : ''].filter(Boolean).join(' · ') || 'Event';
             const details = [
               entry.volumeMl ? `${entry.volumeMl}ml` : '',
@@ -345,7 +305,7 @@ export default function DashboardPage() {
             );
           })}
 
-          {dayBowel.map((entry) => (
+          {on('bowel') && dayBowel.map((entry) => (
             <EntryCard
               key={entry.id}
               icon={<Stethoscope size={18} className="text-emerald-500" />}
@@ -357,7 +317,7 @@ export default function DashboardPage() {
             />
           ))}
 
-          {daySleep.map((entry) => (
+          {on('sleep') && daySleep.map((entry) => (
             <EntryCard
               key={entry.id}
               icon={<Moon size={18} className="text-indigo-500" />}
@@ -373,7 +333,7 @@ export default function DashboardPage() {
             />
           ))}
 
-          {dayToilet.map((entry) => (
+          {on('toilet') && dayToilet.map((entry) => (
             <EntryCard
               key={entry.id}
               icon={<Target size={18} className="text-purple-500" />}
@@ -390,7 +350,7 @@ export default function DashboardPage() {
             />
           ))}
 
-          {dayFood.map((entry) => (
+          {on('food') && dayFood.map((entry) => (
             <EntryCard
               key={entry.id}
               icon={<Apple size={18} className="text-orange-500" />}
@@ -405,7 +365,7 @@ export default function DashboardPage() {
             />
           ))}
 
-          {dayMood.map((entry) => (
+          {on('mood') && dayMood.map((entry) => (
             <EntryCard
               key={entry.id}
               icon={<Smile size={18} className="text-pink-500" />}
@@ -417,7 +377,7 @@ export default function DashboardPage() {
             />
           ))}
 
-          {daySensory.map((entry) => (
+          {on('sensory') && daySensory.map((entry) => (
             <EntryCard
               key={entry.id}
               icon={<Palette size={18} className="text-teal-500" />}
@@ -429,7 +389,7 @@ export default function DashboardPage() {
             />
           ))}
 
-          {dayMedication.map((entry) => (
+          {on('medication') && dayMedication.map((entry) => (
             <EntryCard
               key={entry.id}
               icon={<Pill size={18} className="text-red-500" />}
@@ -441,7 +401,7 @@ export default function DashboardPage() {
             />
           ))}
 
-          {dayTherapy.map((entry) => (
+          {on('therapy') && dayTherapy.map((entry) => (
             <EntryCard
               key={entry.id}
               icon={<Puzzle size={18} className="text-cyan-500" />}
@@ -453,7 +413,7 @@ export default function DashboardPage() {
             />
           ))}
 
-          {dayRoutine.map((entry) => (
+          {on('routine') && dayRoutine.map((entry) => (
             <EntryCard
               key={entry.id}
               icon={<ClipboardList size={18} className="text-lime-600" />}
@@ -470,12 +430,37 @@ export default function DashboardPage() {
   );
 }
 
-function SummaryCard({ icon, label, value, sub }: { icon: ReactNode; label: string; value: string; sub: string }) {
+/** Quick-add tile — large tap target [1], coloured accent badge */
+function QuickAddBtn({ to, tab, emoji, label, accent }: {
+  to: string; tab?: string; emoji: string; label: string; accent: string;
+}) {
   return (
-    <div className="rounded-2xl bg-white p-3 text-center shadow-sm ring-1 ring-black/5">
+    <Link
+      to={to}
+      state={tab ? { tab } : undefined}
+      className="relative flex flex-col items-center gap-2 rounded-2xl bg-white py-5 shadow-sm ring-1 ring-black/5 transition hover:bg-gray-50 active:scale-95"
+      aria-label={`Add ${label} entry`}
+    >
+      <span
+        className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full text-[11px] font-bold leading-none text-white shadow-sm"
+        style={{ background: accent }}
+      >+</span>
+      <span className="text-3xl">{emoji}</span>
+      <span className="text-xs font-semibold text-gray-700">{label}</span>
+    </Link>
+  );
+}
+
+/** Summary stat card with coloured top border [3] high-contrast */
+function SummaryCard({ icon, label, value, sub, accent }: { icon: ReactNode; label: string; value: string; sub: string; accent: string }) {
+  return (
+    <div
+      className="rounded-2xl bg-white p-3 text-center shadow-sm ring-1 ring-black/5 overflow-hidden relative"
+      style={{ borderTop: `3px solid ${accent}` }}
+    >
       <div className="mb-1 flex justify-center">{icon}</div>
-      <div className="text-lg font-bold text-gray-800">{value}</div>
-      <div className="text-[10px] font-semibold uppercase text-gray-600">{label}</div>
+      <div className="text-base font-bold text-gray-800 leading-tight">{value}</div>
+      <div className="text-[10px] font-semibold uppercase tracking-wide text-gray-600 mt-0.5">{label}</div>
       <div className="text-[10px] text-gray-400">{sub}</div>
     </div>
   );
