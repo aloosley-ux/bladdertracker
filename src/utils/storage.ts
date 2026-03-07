@@ -9,6 +9,7 @@ import type {
   FoodEntry,
   ImportSummary,
   ImportedDiaryPayload,
+  LeapDiaryEntry,
   LeapSymptomLog,
   MedicationEntry,
   Milestone,
@@ -48,6 +49,7 @@ const STORAGE_KEYS = {
   NOTIFICATIONS: 'bt_notifications',
   REMINDER_PREFERENCES: 'bt_reminder_preferences',
   AUDIT: 'bt_audit',
+  LEAP_DIARY: 'bt_leap_diary',
 } as const;
 
 function getItem<T>(key: string, fallback: T): T {
@@ -525,6 +527,32 @@ export function deleteLeapSymptomLog(id: string): void {
   setItem(STORAGE_KEYS.LEAP_SYMPTOM_LOGS, getLeapSymptomLogs().filter((l) => l.id !== id));
 }
 
+// Leap diary entries
+export function getLeapDiaryEntries(childFilter?: string | string[]): LeapDiaryEntry[] {
+  const entries = getItem<LeapDiaryEntry[]>(STORAGE_KEYS.LEAP_DIARY, []);
+  const childIds = typeof childFilter === 'string' ? [childFilter] : childFilter;
+  return entries.filter((e) => matchesChildId(childIds, e.childId));
+}
+
+export function addLeapDiaryEntry(entry: LeapDiaryEntry): void {
+  const entries = getLeapDiaryEntries();
+  entries.push(entry);
+  setItem(STORAGE_KEYS.LEAP_DIARY, entries);
+}
+
+export function updateLeapDiaryEntry(entry: LeapDiaryEntry): void {
+  const entries = getLeapDiaryEntries();
+  const index = entries.findIndex((e) => e.id === entry.id);
+  if (index !== -1) {
+    entries[index] = entry;
+    setItem(STORAGE_KEYS.LEAP_DIARY, entries);
+  }
+}
+
+export function deleteLeapDiaryEntry(id: string): void {
+  setItem(STORAGE_KEYS.LEAP_DIARY, getLeapDiaryEntries().filter((e) => e.id !== id));
+}
+
 // Module registry — per-child enabled modules
 export function getEnabledModules(childId: string): ModuleId[] {
   const all = getItem<EnabledModules[]>(STORAGE_KEYS.ENABLED_MODULES, []);
@@ -562,6 +590,7 @@ export function removeChild(childId: string): void {
   setItem(STORAGE_KEYS.ROUTINE, getRoutineEntries().filter((e) => e.childId !== childId));
   setItem(STORAGE_KEYS.MILESTONES, getMilestones().filter((m) => m.childId !== childId));
   setItem(STORAGE_KEYS.LEAP_SYMPTOM_LOGS, getLeapSymptomLogs().filter((l) => l.childId !== childId));
+  setItem(STORAGE_KEYS.LEAP_DIARY, getLeapDiaryEntries().filter((e) => e.childId !== childId));
 }
 
 // Invites

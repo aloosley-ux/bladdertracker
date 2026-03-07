@@ -1,9 +1,9 @@
 import { useMemo, useState, useEffect } from 'react';
-import { format, parseISO } from 'date-fns';
-import { Baby, Calendar, ChevronDown, ChevronUp, Plus, Trash2, X } from 'lucide-react';
+import { format, parseISO, addDays } from 'date-fns';
+import { Baby, Bell, BellOff, BookOpen, Calendar, ChevronDown, ChevronUp, Edit2, Plus, Trash2, X } from 'lucide-react';
 import { useApp } from '../context/useApp';
 import { generateId, updateChild } from '../utils/storage';
-import type { LeapSymptomLog, Child } from '../types';
+import type { LeapDiaryEntry, LeapSymptomLog, Child } from '../types';
 import {
   computeChildAge,
   predictLeaps,
@@ -11,6 +11,7 @@ import {
   getCurrentLeap,
   getNextLeap,
   SYMPTOM_OPTIONS,
+  LEAP_CHART,
   type LeapPrediction,
   type LeapStatus,
 } from '../data/leapData';
@@ -495,6 +496,482 @@ function SymptomLogger({ child }: { child: Child }) {
   );
 }
 
+// ── Section 4: Leap Diary / Notes ────────────────────────────────────
+
+const MOOD_OPTIONS = [
+  { id: 'great', emoji: '😄', label: 'Great' },
+  { id: 'good', emoji: '🙂', label: 'Good' },
+  { id: 'neutral', emoji: '😐', label: 'Neutral' },
+  { id: 'hard', emoji: '😣', label: 'Hard day' },
+  { id: 'rough', emoji: '😢', label: 'Rough' },
+];
+
+function LeapDiary({ child }: { child: Child }) {
+  const { user, leapDiaryEntries, addLeapDiaryEntry, updateLeapDiaryEntry, deleteLeapDiaryEntry } = useApp();
+  const [showForm, setShowForm] = useState(false);
+  const [editingEntry, setEditingEntry] = useState<LeapDiaryEntry | null>(null);
+  const [title, setTitle] = useState('');
+  const [body, setBody] = useState('');
+  const [mood, setMood] = useState('');
+  const [filterLeap, setFilterLeap] = useState<number | 'all'>('all');
+
+  const refDate = getLeapReferenceDate(child.dateOfBirth, child.dueDate);
+  const currentLeap = getCurrentLeap(refDate, new Date());
+
+  const childEntries = useMemo(() => {
+    let entries = leapDiaryEntries.filter((e) => e.childId === child.id);
+    if (filterLeap !== 'all') entries = entries.filter((e) => e.leapNumber === filterLeap);
+    return entries.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  }, [leapDiaryEntries, child.id, filterLeap]);
+
+  const openNew = () => {
+    setEditingEntry(null);
+    setTitle('');
+    setBody('');
+    setMood('');
+    setShowForm(true);
+  };
+
+  const openEdit = (entry: LeapDiaryEntry) => {
+    setEditingEntry(entry);
+    setTitle(entry.title);
+    setBody(entry.body);
+    setMood(entry.mood ?? '');
+    setShowForm(true);
+  };
+
+  const handleClose = () => {
+    setShowForm(false);
+    setEditingEntry(null);
+    setTitle('');
+    setBody('');
+    setMood('');
+  };
+
+  const handleSubmit = () => {
+    if (!user || !title.trim() || !body.trim()) return;
+    const now = new Date();
+    if (editingEntry) {
+      updateLeapDiaryEntry({
+        ...editingEntry,
+        title: title.trim(),
+        body: body.trim(),
+        mood: mood || undefined,
+        updatedAt: now.toISOString(),
+      });
+    } else {
+      const entry: LeapDiaryEntry = {
+        id: generateId(),
+        childId: child.id,
+        leapNumber: currentLeap?.leap.number ?? 0,
+        date: format(now, 'yyyy-MM-dd'),
+        title: title.trim(),
+        body: body.trim(),
+        mood: mood || undefined,
+        createdBy: user.id,
+        createdAt: now.toISOString(),
+        updatedAt: now.toISOString(),
+      };
+      addLeapDiaryEntry(entry);
+    }
+    handleClose();
+  };
+
+  const leapsWithEntries = useMemo(() => {
+    const used = new Set(leapDiaryEntries.filter((e) => e.childId === child.id).map((e) => e.leapNumber));
+    return LEAP_CHART.filter((l) => used.has(l.number));
+  }, [leapDiaryEntries, child.id]);
+
+  return (
+    <section aria-labelledby="diary-heading" className="rounded-2xl bg-white border border-lavender-100 shadow-sm p-5">
+      <div className="flex items-center justify-between mb-4">
+        <h2 id="diary-heading" className="flex items-center gap-2 text-lg font-bold text-lavender-700">
+          <BookOpen size={22} aria-hidden="true" />
+          Leap Diary
+        </h2>
+        <button
+          onClick={showForm ? handleClose : openNew}
+          className="flex items-center gap-1.5 rounded-lg bg-lavender-600 px-3 py-2 text-sm font-medium text-white hover:bg-lavender-700 transition-colors"
+          aria-label={showForm ? 'Close diary form' : 'Add a diary note'}
+        >
+          {showForm ? <X size={16} /> : <Plus size={16} />}
+          {showForm ? 'Close' : 'Add note'}
+        </button>
+      </div>
+
+      {/* Write/Edit form */}
+      {showForm && (
+        <div className="mb-5 rounded-xl border border-lavender-200 bg-lavender-50/50 p-4 space-y-3">
+          <p className="text-sm font-semibold text-gray-700">
+            {editingEntry ? 'Edit diary note' : `New note${currentLeap ? ` — Leap ${currentLeap.leap.number}: ${currentLeap.leap.title}` : ''}`}
+          </p>
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Title…"
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-lavender-400 focus:ring-2 focus:ring-lavender-200"
+            aria-label="Diary note title"
+          />
+          <textarea
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+            placeholder="Write about what you observed today…"
+            rows={4}
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-lavender-400 focus:ring-2 focus:ring-lavender-200"
+            aria-label="Diary note body"
+          />
+          {/* Mood picker */}
+          <div>
+            <p id="diary-mood-label" className="text-xs font-medium text-gray-600 mb-2">Today&apos;s mood</p>
+            <div className="flex gap-2 flex-wrap" role="group" aria-labelledby="diary-mood-label">
+              {MOOD_OPTIONS.map((m) => (
+                <button
+                  key={m.id}
+                  onClick={() => setMood(mood === m.id ? '' : m.id)}
+                  aria-pressed={mood === m.id}
+                  className={`flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium border transition-all ${
+                    mood === m.id
+                      ? 'bg-lavender-600 text-white border-lavender-600'
+                      : 'bg-white text-gray-600 border-gray-200 hover:border-lavender-300'
+                  }`}
+                >
+                  <span aria-hidden="true">{m.emoji}</span> {m.label}
+                </button>
+              ))}
+            </div>
+          </div>
+          <button
+            onClick={handleSubmit}
+            disabled={!title.trim() || !body.trim()}
+            className="w-full rounded-lg bg-lavender-600 px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-40 hover:bg-lavender-700 transition-colors"
+          >
+            {editingEntry ? 'Save changes' : 'Save note'}
+          </button>
+        </div>
+      )}
+
+      {/* Filter by leap */}
+      {leapsWithEntries.length > 0 && (
+        <div className="flex flex-wrap gap-2 mb-4" role="group" aria-label="Filter diary by leap">
+          <button
+            onClick={() => setFilterLeap('all')}
+            aria-pressed={filterLeap === 'all'}
+            className={`rounded-full px-3 py-1 text-xs font-medium border transition-all ${
+              filterLeap === 'all' ? 'bg-lavender-600 text-white border-lavender-600' : 'bg-white text-gray-600 border-gray-200'
+            }`}
+          >
+            All leaps
+          </button>
+          {leapsWithEntries.map((l) => (
+            <button
+              key={l.number}
+              onClick={() => setFilterLeap(l.number)}
+              aria-pressed={filterLeap === l.number}
+              className={`rounded-full px-3 py-1 text-xs font-medium border transition-all ${
+                filterLeap === l.number ? 'bg-lavender-600 text-white border-lavender-600' : 'bg-white text-gray-600 border-gray-200'
+              }`}
+            >
+              Leap {l.number}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Entry list */}
+      <div className="space-y-3" role="list" aria-label="Diary notes">
+        {childEntries.map((entry) => {
+          const moodOpt = MOOD_OPTIONS.find((m) => m.id === entry.mood);
+          const leapDef = LEAP_CHART.find((l) => l.number === entry.leapNumber);
+          return (
+            <div key={entry.id} role="listitem" className="rounded-xl border border-gray-100 bg-gray-50/50 p-4">
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-wrap items-center gap-2 mb-1">
+                    {moodOpt && <span aria-hidden="true" title={moodOpt.label}>{moodOpt.emoji}</span>}
+                    <span className="font-semibold text-sm text-gray-800">{entry.title}</span>
+                    {leapDef && entry.leapNumber > 0 && (
+                      <span className="rounded-full bg-lavender-100 px-2 py-0.5 text-[11px] font-medium text-lavender-700">
+                        Leap {leapDef.number}: {leapDef.title}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm text-gray-700 whitespace-pre-wrap mb-2">{entry.body}</p>
+                  <p className="text-[11px] text-gray-400">{entry.date}</p>
+                </div>
+                <div className="flex gap-1 shrink-0">
+                  <button
+                    onClick={() => openEdit(entry)}
+                    className="p-1.5 rounded-lg text-gray-400 hover:text-lavender-600 hover:bg-lavender-50 transition-colors"
+                    aria-label={`Edit note: ${entry.title}`}
+                  >
+                    <Edit2 size={14} />
+                  </button>
+                  <button
+                    onClick={() => deleteLeapDiaryEntry(entry.id)}
+                    className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                    aria-label={`Delete note: ${entry.title}`}
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+        {childEntries.length === 0 && (
+          <p className="text-sm text-gray-400 italic py-4 text-center">
+            No diary notes yet. Tap &quot;Add note&quot; to record your observations.
+          </p>
+        )}
+      </div>
+    </section>
+  );
+}
+
+// ── Section 5: Custom Leap Notifications ─────────────────────────────
+
+function LeapNotifications({ child }: { child: Child }) {
+  const { user, reminderPreferences, setReminderPreferences } = useApp();
+
+  const leapPref = reminderPreferences.find(
+    (p) => p.childId === child.id && p.moduleId === 'leaps',
+  );
+
+  const [enabled, setEnabled] = useState(leapPref?.enabled ?? false);
+  const [frequency, setFrequency] = useState<'daily' | 'weekly'>(leapPref?.frequency ?? 'daily');
+  const [saved, setSaved] = useState(false);
+
+  const handleSave = async () => {
+    if (!user) return;
+    await setReminderPreferences(child.id, [{ moduleId: 'leaps', frequency, enabled }]);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  };
+
+  const refDate = getLeapReferenceDate(child.dateOfBirth, child.dueDate);
+  const currentLeap = getCurrentLeap(refDate, new Date());
+  const nextLeap = getNextLeap(refDate, new Date());
+
+  // Compute when next reminder would fire
+  const nextAt = leapPref?.nextReminderAt
+    ? new Date(leapPref.nextReminderAt)
+    : null;
+
+  return (
+    <section aria-labelledby="notifications-heading" className="rounded-2xl bg-white border border-lavender-100 shadow-sm p-5">
+      <h2 id="notifications-heading" className="flex items-center gap-2 text-lg font-bold text-lavender-700 mb-4">
+        <Bell size={22} aria-hidden="true" />
+        Leap Reminders
+      </h2>
+
+      {/* Status banner */}
+      {currentLeap && (
+        <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800" role="status">
+          ⛈️ <strong>Leap {currentLeap.leap.number}</strong> ({currentLeap.leap.title}) is currently active.
+          {currentLeap.status === 'stormy' ? ' Stormy phase in progress.' : ' Sunny phase — skills emerging!'}
+        </div>
+      )}
+      {!currentLeap && nextLeap && (
+        <div className="mb-4 rounded-xl border border-sky-200 bg-sky-50 p-3 text-sm text-sky-800" role="status">
+          🔜 Next leap: <strong>Leap {nextLeap.leap.number}</strong> ({nextLeap.leap.title}) starts around{' '}
+          {format(nextLeap.stormyStart, 'd MMM yyyy')}.
+        </div>
+      )}
+
+      {/* Toggle & frequency */}
+      <div className="space-y-4">
+        <label className="flex items-center justify-between gap-3 cursor-pointer">
+          <span className="flex items-center gap-2 text-sm font-medium text-gray-700">
+            {enabled ? <Bell size={16} className="text-lavender-600" aria-hidden="true" /> : <BellOff size={16} className="text-gray-400" aria-hidden="true" />}
+            Enable leap reminders
+          </span>
+          <button
+            role="switch"
+            aria-checked={enabled}
+            onClick={() => setEnabled((v) => !v)}
+            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-lavender-400 ${
+              enabled ? 'bg-lavender-600' : 'bg-gray-300'
+            }`}
+          >
+            <span
+              className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
+                enabled ? 'translate-x-6' : 'translate-x-1'
+              }`}
+            />
+          </button>
+        </label>
+
+        {enabled && (
+          <div>
+            <p className="text-xs font-medium text-gray-600 mb-2">Reminder frequency</p>
+            <div className="flex gap-2" role="group" aria-label="Notification frequency">
+              {(['daily', 'weekly'] as const).map((f) => (
+                <button
+                  key={f}
+                  onClick={() => setFrequency(f)}
+                  aria-pressed={frequency === f}
+                  className={`rounded-lg px-4 py-2 text-sm font-medium border transition-all ${
+                    frequency === f
+                      ? 'bg-lavender-600 text-white border-lavender-600'
+                      : 'bg-white text-gray-600 border-gray-200 hover:border-lavender-300'
+                  }`}
+                >
+                  {f === 'daily' ? '📅 Daily' : '📆 Weekly'}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <button
+          onClick={handleSave}
+          className="w-full rounded-lg bg-lavender-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-lavender-700 transition-colors"
+        >
+          {saved ? '✅ Saved!' : 'Save notification settings'}
+        </button>
+
+        {nextAt && (
+          <p className="text-xs text-gray-400 text-center">
+            Next reminder: {format(nextAt, 'd MMM yyyy')}
+          </p>
+        )}
+      </div>
+
+      {/* How reminders work */}
+      <div className="mt-5 rounded-xl border border-gray-100 bg-gray-50 p-3">
+        <p className="text-xs font-semibold text-gray-600 mb-1">How reminders work</p>
+        <ul className="text-xs text-gray-500 space-y-1 list-disc list-inside">
+          <li>Reminders appear as in-app notifications in your notification centre.</li>
+          <li>Daily reminders fire every day; weekly reminders fire once per week.</li>
+          <li>Use them to keep a habit of checking the leap tracker regularly.</li>
+          <li>The next reminder date is shown below the save button when set.</li>
+        </ul>
+      </div>
+    </section>
+  );
+}
+
+// ── Section 6: Widgets & Calendar Integration ─────────────────────────
+
+function generateICS(predictions: LeapPrediction[], childName: string): string {
+  const now = new Date();
+  const stamp = format(now, "yyyyMMdd'T'HHmmss'Z'");
+
+  const events = predictions
+    .filter((p) => p.status !== 'past')
+    .flatMap((p) => {
+      const uid1 = `leap-${p.leap.number}-stormy@bladdertracker`;
+      const uid2 = `leap-${p.leap.number}-sunny@bladdertracker`;
+      const stormyEnd = format(addDays(p.peakDate, 1), 'yyyyMMdd');
+      const sunnyEnd = format(addDays(p.sunnyDate, 1), 'yyyyMMdd');
+      return [
+        `BEGIN:VEVENT\r\nUID:${uid1}\r\nDTSTAMP:${stamp}\r\nDTSTART;VALUE=DATE:${format(p.stormyStart, 'yyyyMMdd')}\r\nDTEND;VALUE=DATE:${stormyEnd}\r\nSUMMARY:⛈️ ${childName} Leap ${p.leap.number} – Stormy Phase\r\nDESCRIPTION:${p.leap.title}: ${p.leap.description}\r\nEND:VEVENT`,
+        `BEGIN:VEVENT\r\nUID:${uid2}\r\nDTSTAMP:${stamp}\r\nDTSTART;VALUE=DATE:${format(p.peakDate, 'yyyyMMdd')}\r\nDTEND;VALUE=DATE:${sunnyEnd}\r\nSUMMARY:🌟 ${childName} Leap ${p.leap.number} – Sunny Phase\r\nDESCRIPTION:${p.leap.title}: Skills emerging — ${p.leap.skills.join(', ')}\r\nEND:VEVENT`,
+      ];
+    });
+
+  return [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//BladderTracker//Leap Calendar//EN',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    ...events,
+    'END:VCALENDAR',
+  ].join('\r\n');
+}
+
+function LeapCalendarWidget({ child }: { child: Child }) {
+  const refDate = getLeapReferenceDate(child.dateOfBirth, child.dueDate);
+  const predictions = useMemo(() => predictLeaps(refDate, new Date()), [refDate]);
+  const currentLeap = getCurrentLeap(refDate, new Date());
+  const nextLeap = getNextLeap(refDate, new Date());
+
+  const upcomingLeaps = predictions.filter(
+    (p) => p.status === 'upcoming' || p.status === 'stormy' || p.status === 'current',
+  ).slice(0, 3);
+
+  const handleExportICS = () => {
+    const ics = generateICS(predictions, child.name);
+    const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${child.name.toLowerCase().replace(/\s+/g, '-')}-leaps-calendar.ics`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  return (
+    <section aria-labelledby="calendar-heading" className="rounded-2xl bg-white border border-lavender-100 shadow-sm p-5">
+      <h2 id="calendar-heading" className="flex items-center gap-2 text-lg font-bold text-lavender-700 mb-4">
+        <Calendar size={22} aria-hidden="true" />
+        Calendar &amp; Widget
+      </h2>
+
+      {/* Mini widget card */}
+      <div className="mb-5 rounded-2xl bg-gradient-to-br from-lavender-500 to-purple-600 p-5 text-white shadow-md" role="region" aria-label="Leap summary widget">
+        <p className="text-xs font-semibold uppercase tracking-wider opacity-80 mb-1">{child.name}</p>
+        {currentLeap ? (
+          <>
+            <p className="text-lg font-extrabold">
+              {currentLeap.status === 'stormy' ? '⛈️' : '🌟'} Leap {currentLeap.leap.number}: {currentLeap.leap.title}
+            </p>
+            <p className="text-sm opacity-90 mt-1">{currentLeap.leap.description}</p>
+            <p className="text-xs opacity-70 mt-2">
+              {currentLeap.status === 'stormy' ? 'Stormy phase' : 'Sunny / skill phase'} — ends ~{format(currentLeap.sunnyDate, 'd MMM yyyy')}
+            </p>
+          </>
+        ) : nextLeap ? (
+          <>
+            <p className="text-lg font-extrabold">🔜 Next: Leap {nextLeap.leap.number}</p>
+            <p className="text-sm opacity-90 mt-1">{nextLeap.leap.title}</p>
+            <p className="text-xs opacity-70 mt-2">Starts around {format(nextLeap.stormyStart, 'd MMM yyyy')}</p>
+          </>
+        ) : (
+          <p className="text-base font-semibold opacity-90">🎉 All developmental leaps complete!</p>
+        )}
+      </div>
+
+      {/* Upcoming leaps */}
+      {upcomingLeaps.length > 0 && (
+        <div className="mb-5">
+          <h3 className="text-sm font-semibold text-gray-600 mb-2">Upcoming &amp; active leaps</h3>
+          <div className="space-y-2">
+            {upcomingLeaps.map((p) => (
+              <div key={p.leap.number} className={`rounded-xl border-2 p-3 ${STATUS_COLOURS[p.status]}`}>
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold text-sm">Leap {p.leap.number}: {p.leap.title}</span>
+                  <span className="text-xs font-medium">{STATUS_LABELS[p.status]}</span>
+                </div>
+                <p className="text-xs mt-1 opacity-80">
+                  {format(p.stormyStart, 'd MMM')} – {format(p.sunnyDate, 'd MMM yyyy')}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Calendar export */}
+      <div className="rounded-xl border border-gray-100 bg-gray-50 p-4">
+        <p className="text-sm font-semibold text-gray-700 mb-1">📅 Export to Calendar</p>
+        <p className="text-xs text-gray-500 mb-3">
+          Download an ICS file with all upcoming leap periods to add to Google Calendar, Apple Calendar, or Outlook.
+        </p>
+        <button
+          onClick={handleExportICS}
+          className="w-full rounded-lg border-2 border-lavender-300 bg-white px-4 py-2.5 text-sm font-semibold text-lavender-700 hover:bg-lavender-50 transition-colors"
+          aria-label="Export leap calendar as ICS file"
+        >
+          📥 Download Leap Calendar (.ics)
+        </button>
+      </div>
+    </section>
+  );
+}
+
 // ── Page Component ───────────────────────────────────────────────────
 
 export default function LeapsPage() {
@@ -551,6 +1028,9 @@ export default function LeapsPage() {
       <AgeCalculator child={effectiveChild} />
       <LeapTimeline child={effectiveChild} />
       <SymptomLogger child={effectiveChild} />
+      <LeapDiary child={effectiveChild} />
+      <LeapNotifications key={effectiveChild.id} child={effectiveChild} />
+      <LeapCalendarWidget child={effectiveChild} />
     </div>
   );
 }
