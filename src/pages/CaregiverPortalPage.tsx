@@ -6,10 +6,17 @@ import { getImportTemplateDescription, parseImportFile } from '../utils/importer
 import BrandBanner from '../components/BrandBanner';
 import type { UserRole } from '../types';
 
-const inviteRoles: UserRole[] = ['parent', 'caregiver', 'schoolAdmin'];
+function getInviteRoles(userRole: UserRole | undefined): UserRole[] {
+  if (userRole === 'admin') return ['admin', 'parent', 'caregiver', 'schoolAdmin'];
+  if (userRole === 'parent') return ['parent', 'caregiver', 'schoolAdmin'];
+  if (userRole === 'schoolAdmin') return ['caregiver'];
+  return [];
+}
 
 function formatRole(role: UserRole): string {
-  return role === 'schoolAdmin' ? 'School admin' : role;
+  if (role === 'schoolAdmin') return 'School admin';
+  if (role === 'admin') return 'Admin';
+  return role.charAt(0).toUpperCase() + role.slice(1);
 }
 
 export default function CaregiverPortalPage() {
@@ -31,6 +38,8 @@ export default function CaregiverPortalPage() {
   const [statusMessage, setStatusMessage] = useState('');
   const [importMessage, setImportMessage] = useState('');
   const [importing, setImporting] = useState(false);
+  const inviteRoles = getInviteRoles(user?.role);
+  const canManageInvites = user?.role === 'admin' || user?.role === 'parent' || user?.role === 'schoolAdmin';
 
   // Scroll to top on mount
   useEffect(() => {
@@ -67,7 +76,7 @@ export default function CaregiverPortalPage() {
     try {
       const payload = await parseImportFile(file);
       const summary = await importDiaryData(payload, selectedChildId);
-      const total = summary.drinks + summary.urineEntries + summary.bowelEntries;
+      const total = summary.drinks + summary.urineEntries + summary.bowelEntries + summary.sleepEntries + summary.toiletAttemptEntries + summary.foodEntries;
       const errorText = summary.errors.length > 0 ? ` ${summary.errors.join(' ')}` : '';
       setImportMessage(`Imported ${total} records.${errorText}`);
     } catch {
@@ -134,70 +143,72 @@ export default function CaregiverPortalPage() {
           </div>
         </section>
 
-        <section className="rounded-[1.75rem] bg-white p-5 shadow-sm ring-1 ring-black/5">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-lavender-50 text-lavender-600">
-              <MailPlus size={18} />
+        {canManageInvites && (
+          <section className="rounded-[1.75rem] bg-white p-5 shadow-sm ring-1 ring-black/5">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-lavender-50 text-lavender-600">
+                <MailPlus size={18} />
+              </div>
+              <div>
+                <h2 className="text-sm font-bold text-gray-700">Secure invites</h2>
+                <p className="mt-1 text-xs text-gray-400">Generate role-specific access links for parents, caregivers, or school admins.</p>
+              </div>
             </div>
-            <div>
-              <h2 className="text-sm font-bold text-gray-700">Secure invites</h2>
-              <p className="mt-1 text-xs text-gray-400">Generate role-specific access links for parents, caregivers, or school admins.</p>
-            </div>
-          </div>
 
-          <form onSubmit={handleInvite} className="mt-4 space-y-3">
-            <input
-              type="email"
-              value={inviteEmail}
-              onChange={(event) => setInviteEmail(event.target.value)}
-              placeholder="caregiver@example.org"
-              className="input-card"
-              required
-            />
-            <div className="grid grid-cols-3 gap-2">
-              {inviteRoles.map((role) => (
-                <button
-                  key={role}
-                  type="button"
-                  onClick={() => setInviteRole(role)}
-                  className={`rounded-2xl border px-3 py-2 text-xs font-semibold capitalize transition-all ${
-                    inviteRole === role
-                      ? 'border-lavender-300 bg-lavender-50 text-lavender-700'
-                      : 'border-gray-200 text-gray-500 hover:border-lavender-200 hover:bg-lavender-50/60'
-                  }`}
-                >
-                  {formatRole(role)}
-                </button>
+            <form onSubmit={handleInvite} className="mt-4 space-y-3">
+              <input
+                type="email"
+                value={inviteEmail}
+                onChange={(event) => setInviteEmail(event.target.value)}
+                placeholder="caregiver@example.org"
+                className="input-card"
+                required
+              />
+              <div className="grid grid-cols-3 gap-2">
+                {inviteRoles.map((role) => (
+                  <button
+                    key={role}
+                    type="button"
+                    onClick={() => setInviteRole(role)}
+                    className={`rounded-2xl border px-3 py-2 text-xs font-semibold capitalize transition-all ${
+                      inviteRole === role
+                        ? 'border-lavender-300 bg-lavender-50 text-lavender-700'
+                        : 'border-gray-200 text-gray-500 hover:border-lavender-200 hover:bg-lavender-50/60'
+                    }`}
+                  >
+                    {formatRole(role)}
+                  </button>
+                ))}
+              </div>
+              <button className="w-full rounded-full bg-lavender-500 px-4 py-3 text-sm font-semibold text-white shadow-[0_16px_30px_rgba(139,77,255,0.24)]">
+                Create secure invite
+              </button>
+            </form>
+            {statusMessage && <p className="mt-3 rounded-2xl bg-lavender-50 px-4 py-3 text-sm text-lavender-700">{statusMessage}</p>}
+
+            <div className="mt-4 space-y-3">
+              {sentInvites.slice(0, 4).map((invite) => (
+                <div key={invite.id} className="rounded-[1.5rem] bg-[#faf7ff] px-4 py-3 ring-1 ring-lavender-100">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <div className="text-sm font-semibold text-gray-900">{invite.email}</div>
+                      <div className="mt-1 text-xs text-gray-500">
+                        {invite.childName} · {formatRole(invite.role)} · {invite.status}
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => navigator.clipboard.writeText(invite.link)}
+                      className="flex items-center gap-1 rounded-full bg-white px-3 py-1 text-[11px] font-semibold text-lavender-700 ring-1 ring-lavender-100"
+                    >
+                      <Copy size={12} /> Copy link
+                    </button>
+                  </div>
+                </div>
               ))}
             </div>
-            <button className="w-full rounded-full bg-lavender-500 px-4 py-3 text-sm font-semibold text-white shadow-[0_16px_30px_rgba(139,77,255,0.24)]">
-              Create secure invite
-            </button>
-          </form>
-          {statusMessage && <p className="mt-3 rounded-2xl bg-lavender-50 px-4 py-3 text-sm text-lavender-700">{statusMessage}</p>}
-
-          <div className="mt-4 space-y-3">
-            {sentInvites.slice(0, 4).map((invite) => (
-              <div key={invite.id} className="rounded-[1.5rem] bg-[#faf7ff] px-4 py-3 ring-1 ring-lavender-100">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <div className="text-sm font-semibold text-gray-900">{invite.email}</div>
-                    <div className="mt-1 text-xs text-gray-500">
-                      {invite.childName} · {formatRole(invite.role)} · {invite.status}
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => navigator.clipboard.writeText(invite.link)}
-                    className="flex items-center gap-1 rounded-full bg-white px-3 py-1 text-[11px] font-semibold text-lavender-700 ring-1 ring-lavender-100"
-                  >
-                    <Copy size={12} /> Copy link
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
+          </section>
+        )}
 
         <section className="rounded-[1.75rem] bg-white p-5 shadow-sm ring-1 ring-black/5">
           <div className="flex items-center gap-3">

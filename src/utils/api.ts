@@ -4,9 +4,12 @@ import type {
   CaregiverInvite,
   Child,
   DrinkEntry,
+  FoodEntry,
   ImportedDiaryPayload,
   ImportSummary,
   NotificationItem,
+  SleepEntry,
+  ToiletAttemptEntry,
   UrineEntry,
   User,
   UserRole,
@@ -94,6 +97,10 @@ export async function apiUpdateChild(child: Partial<Child> & { id: string }): Pr
   });
 }
 
+export async function apiDeleteChild(childId: string): Promise<void> {
+  await request<{ ok: boolean }>(`/children?id=${childId}`, { method: 'DELETE' });
+}
+
 // Drinks
 export async function apiGetDrinks(): Promise<DrinkEntry[]> {
   const { drinks } = await request<{ drinks: DrinkEntry[] }>('/drinks');
@@ -158,6 +165,72 @@ export async function apiUpdateBowelEntry(entry: BowelEntry): Promise<void> {
 
 export async function apiDeleteBowelEntry(id: string): Promise<void> {
   await request<{ ok: boolean }>(`/bowel?id=${id}`, { method: 'DELETE' });
+}
+
+// Sleep (via consolidated /trackers endpoint — stays within 12 serverless function limit)
+export async function apiGetSleepEntries(): Promise<SleepEntry[]> {
+  const { entries } = await request<{ entries: SleepEntry[] }>('/trackers?type=sleep');
+  return entries;
+}
+
+export async function apiAddSleepEntry(entry: Omit<SleepEntry, 'id' | 'createdBy' | 'createdAt'>): Promise<string> {
+  const { id } = await request<{ id: string }>('/trackers', {
+    method: 'POST',
+    body: JSON.stringify({ ...entry, trackerType: 'sleep' }),
+  });
+  return id;
+}
+
+export async function apiUpdateSleepEntry(entry: SleepEntry): Promise<void> {
+  await request<{ ok: boolean }>('/trackers', { method: 'PUT', body: JSON.stringify({ ...entry, trackerType: 'sleep' }) });
+}
+
+export async function apiDeleteSleepEntry(id: string): Promise<void> {
+  await request<{ ok: boolean }>(`/trackers?type=sleep&id=${id}`, { method: 'DELETE' });
+}
+
+// Toilet Attempts
+export async function apiGetToiletAttemptEntries(): Promise<ToiletAttemptEntry[]> {
+  const { entries } = await request<{ entries: ToiletAttemptEntry[] }>('/trackers?type=toilet_attempt');
+  return entries;
+}
+
+export async function apiAddToiletAttemptEntry(entry: Omit<ToiletAttemptEntry, 'id' | 'createdBy' | 'createdAt'>): Promise<string> {
+  const { id } = await request<{ id: string }>('/trackers', {
+    method: 'POST',
+    body: JSON.stringify({ ...entry, trackerType: 'toilet_attempt' }),
+  });
+  return id;
+}
+
+export async function apiUpdateToiletAttemptEntry(entry: ToiletAttemptEntry): Promise<void> {
+  await request<{ ok: boolean }>('/trackers', { method: 'PUT', body: JSON.stringify({ ...entry, trackerType: 'toilet_attempt' }) });
+}
+
+export async function apiDeleteToiletAttemptEntry(id: string): Promise<void> {
+  await request<{ ok: boolean }>(`/trackers?type=toilet_attempt&id=${id}`, { method: 'DELETE' });
+}
+
+// Food
+export async function apiGetFoodEntries(): Promise<FoodEntry[]> {
+  const { entries } = await request<{ entries: FoodEntry[] }>('/trackers?type=food');
+  return entries;
+}
+
+export async function apiAddFoodEntry(entry: Omit<FoodEntry, 'id' | 'createdBy' | 'createdAt'>): Promise<string> {
+  const { id } = await request<{ id: string }>('/trackers', {
+    method: 'POST',
+    body: JSON.stringify({ ...entry, trackerType: 'food' }),
+  });
+  return id;
+}
+
+export async function apiUpdateFoodEntry(entry: FoodEntry): Promise<void> {
+  await request<{ ok: boolean }>('/trackers', { method: 'PUT', body: JSON.stringify({ ...entry, trackerType: 'food' }) });
+}
+
+export async function apiDeleteFoodEntry(id: string): Promise<void> {
+  await request<{ ok: boolean }>(`/trackers?type=food&id=${id}`, { method: 'DELETE' });
 }
 
 // Invites

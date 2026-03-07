@@ -5,9 +5,12 @@ import type {
   CaregiverInvite,
   Child,
   DrinkEntry,
+  FoodEntry,
   ImportSummary,
   ImportedDiaryPayload,
   NotificationItem,
+  SleepEntry,
+  ToiletAttemptEntry,
   UrineEntry,
   User,
   UserRole,
@@ -20,6 +23,9 @@ interface AppState {
   drinks: DrinkEntry[];
   urineEntries: UrineEntry[];
   bowelEntries: BowelEntry[];
+  sleepEntries: SleepEntry[];
+  toiletAttemptEntries: ToiletAttemptEntry[];
+  foodEntries: FoodEntry[];
   invites: CaregiverInvite[];
   notifications: NotificationItem[];
   auditTrail: AuditEvent[];
@@ -29,6 +35,7 @@ export interface AppContextType extends AppState {
   login: (user: User) => void;
   logout: () => void | Promise<void>;
   addChild: (child: Child) => void | Promise<void>;
+  removeChild: (childId: string) => void | Promise<void>;
   selectChild: (childId: string) => void;
   addDrink: (drink: DrinkEntry) => void | Promise<void>;
   updateDrink: (drink: DrinkEntry) => void | Promise<void>;
@@ -39,6 +46,15 @@ export interface AppContextType extends AppState {
   addBowelEntry: (entry: BowelEntry) => void | Promise<void>;
   updateBowelEntry: (entry: BowelEntry) => void | Promise<void>;
   deleteBowelEntry: (id: string) => void | Promise<void>;
+  addSleepEntry: (entry: SleepEntry) => void | Promise<void>;
+  updateSleepEntry: (entry: SleepEntry) => void | Promise<void>;
+  deleteSleepEntry: (id: string) => void | Promise<void>;
+  addToiletAttemptEntry: (entry: ToiletAttemptEntry) => void | Promise<void>;
+  updateToiletAttemptEntry: (entry: ToiletAttemptEntry) => void | Promise<void>;
+  deleteToiletAttemptEntry: (id: string) => void | Promise<void>;
+  addFoodEntry: (entry: FoodEntry) => void | Promise<void>;
+  updateFoodEntry: (entry: FoodEntry) => void | Promise<void>;
+  deleteFoodEntry: (id: string) => void | Promise<void>;
   exportData: () => void | Promise<void>;
   createInvite: (email: string, role: UserRole, childId: string) => CaregiverInvite | null | Promise<CaregiverInvite | null>;
   acceptInvite: (token: string) => boolean | Promise<boolean>;

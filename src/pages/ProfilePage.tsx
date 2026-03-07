@@ -1,21 +1,33 @@
 import { useEffect, useMemo, useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
-import { Baby, Download, LogOut, Shield, Trash2 } from 'lucide-react';
+import { AlertTriangle, Baby, Crown, Download, LogOut, Shield, Trash2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useApp } from '../context/useApp';
 import { generateId } from '../utils/storage';
 import BrandBanner from '../components/BrandBanner';
 import type { Child } from '../types';
 
 export default function ProfilePage() {
-  const { user, children, selectedChild, selectChild, addChild, exportData, auditTrail, logout, clearAllData } = useApp();
+  const { user, children, selectedChild, selectChild, addChild, removeChild, exportData, auditTrail, logout, clearAllData } = useApp();
   const [showAddChild, setShowAddChild] = useState(false);
   const [childName, setChildName] = useState('');
   const [childDob, setChildDob] = useState('');
 
-  // Scroll to top on mount
+  // Child removal state
+  const [removeTargetId, setRemoveTargetId] = useState<string | null>(null);
+  const [removeConfirmText, setRemoveConfirmText] = useState('');
+
+  // Clear data confirmation state
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
+  const [clearConfirmText, setClearConfirmText] = useState('');
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, []);
+
+  const isAdmin = user?.role === 'admin';
+  const isParent = user?.role === 'parent';
+  const canManageChildren = isAdmin || isParent;
 
   const userInitials = useMemo(
     () =>
@@ -36,8 +48,8 @@ export default function ProfilePage() {
       id: generateId(),
       name: childName.trim(),
       dateOfBirth: childDob,
-      caregivers: user.role === 'parent' ? [] : [user.id],
-      parentIds: user.role === 'parent' ? [user.id] : [],
+      caregivers: user.role === 'parent' || user.role === 'admin' ? [] : [user.id],
+      parentIds: user.role === 'parent' || user.role === 'admin' ? [user.id] : [],
       createdBy: user.id,
       lastUpdatedAt: new Date().toISOString(),
     };
@@ -46,6 +58,27 @@ export default function ProfilePage() {
     setChildName('');
     setChildDob('');
     setShowAddChild(false);
+  };
+
+  const handleRemoveChild = (childId: string) => {
+    const child = children.find((c) => c.id === childId);
+    if (!child || removeConfirmText !== child.name) return;
+    removeChild(childId);
+    setRemoveTargetId(null);
+    setRemoveConfirmText('');
+  };
+
+  const handleClearAllData = () => {
+    if (clearConfirmText !== 'DELETE') return;
+    clearAllData();
+    setShowClearConfirm(false);
+    setClearConfirmText('');
+  };
+
+  const formatRole = (role: string) => {
+    if (role === 'schoolAdmin') return 'School admin';
+    if (role === 'admin') return 'Administrator';
+    return role.charAt(0).toUpperCase() + role.slice(1);
   };
 
   return (
@@ -59,6 +92,7 @@ export default function ProfilePage() {
       </div>
 
       <div className="space-y-4 px-4 pt-4">
+        {/* User profile card */}
         <section className="rounded-[1.75rem] bg-white p-5 shadow-sm ring-1 ring-black/5">
           <div className="flex items-center gap-4">
             <div className="flex h-14 w-14 items-center justify-center rounded-[1.25rem] bg-lavender-50 text-lg font-bold text-lavender-700">
@@ -66,38 +100,96 @@ export default function ProfilePage() {
             </div>
             <div>
               <h2 className="text-lg font-bold text-gray-900">{user?.name}</h2>
-              <p className="text-sm capitalize text-gray-500">{user?.role === 'schoolAdmin' ? 'School admin' : user?.role}</p>
+              <p className="text-sm text-gray-500 flex items-center gap-1.5">
+                {isAdmin && <Crown size={12} className="text-amber-500" />}
+                {formatRole(user?.role ?? '')}
+              </p>
               <p className="text-xs text-gray-400">{user?.email}</p>
             </div>
           </div>
         </section>
 
+        {/* Child profiles — only admin/parent can add/remove */}
         <section className="rounded-[1.75rem] bg-white p-5 shadow-sm ring-1 ring-black/5">
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-sm font-bold text-gray-700 flex items-center gap-2">
               <Baby size={16} className="text-lavender-500" /> Child profiles
             </h3>
-            <button onClick={() => setShowAddChild((value) => !value)} className="text-xs font-semibold text-lavender-600">
-              + Add child
-            </button>
+            {canManageChildren && (
+              <button onClick={() => setShowAddChild((v) => !v)} className="text-xs font-semibold text-lavender-600">
+                + Add child
+              </button>
+            )}
           </div>
 
           <div className="space-y-2">
             {children.map((child) => (
-              <button
-                key={child.id}
-                onClick={() => selectChild(child.id)}
-                className={`w-full rounded-[1.5rem] p-4 text-left ring-1 transition-all ${
-                  selectedChild?.id === child.id ? 'bg-lavender-50 ring-lavender-200' : 'bg-[#faf7ff] ring-lavender-100'
-                }`}
-              >
-                <div className="text-sm font-semibold text-gray-900">{child.name}</div>
-                <div className="mt-1 text-xs text-gray-500">{child.dateOfBirth || 'DOB not recorded'}</div>
-              </button>
+              <div key={child.id} className="relative">
+                <button
+                  onClick={() => selectChild(child.id)}
+                  className={`w-full rounded-[1.5rem] p-4 text-left ring-1 transition-all ${
+                    selectedChild?.id === child.id ? 'bg-lavender-50 ring-lavender-200' : 'bg-[#faf7ff] ring-lavender-100'
+                  }`}
+                >
+                  <div className="text-sm font-semibold text-gray-900">{child.name}</div>
+                  <div className="mt-1 text-xs text-gray-500">{child.dateOfBirth || 'DOB not recorded'}</div>
+                </button>
+
+                {/* Remove child button — admin/parent only */}
+                {canManageChildren && (
+                  <button
+                    onClick={() => { setRemoveTargetId(removeTargetId === child.id ? null : child.id); setRemoveConfirmText(''); }}
+                    className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-rose-50 text-rose-400 hover:bg-rose-100 transition"
+                    title={`Remove ${child.name}`}
+                  >
+                    <Trash2 size={12} />
+                  </button>
+                )}
+
+                {/* Remove child confirmation modal */}
+                {removeTargetId === child.id && (
+                  <div className="mt-2 rounded-[1.5rem] bg-rose-50 p-4 ring-1 ring-rose-200">
+                    <div className="flex items-start gap-2 mb-3">
+                      <AlertTriangle size={16} className="text-rose-500 mt-0.5 shrink-0" />
+                      <div>
+                        <p className="text-sm font-semibold text-rose-700">Remove {child.name}?</p>
+                        <p className="text-xs text-rose-600 mt-1">
+                          This action is <strong>irreversible</strong>. All diary entries, sleep records, food logs, and toilet attempt data for this child will be permanently deleted.
+                        </p>
+                      </div>
+                    </div>
+                    <p className="text-xs text-rose-600 mb-2">
+                      Type <strong>{child.name}</strong> to confirm:
+                    </p>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={removeConfirmText}
+                        onChange={(e) => setRemoveConfirmText(e.target.value)}
+                        placeholder={child.name}
+                        className="flex-1 rounded-xl border border-rose-200 bg-white px-3 py-2 text-xs outline-none focus:border-rose-400"
+                      />
+                      <button
+                        onClick={() => handleRemoveChild(child.id)}
+                        disabled={removeConfirmText !== child.name}
+                        className="rounded-xl bg-rose-500 px-4 py-2 text-xs font-semibold text-white disabled:opacity-40"
+                      >
+                        Remove
+                      </button>
+                      <button
+                        onClick={() => { setRemoveTargetId(null); setRemoveConfirmText(''); }}
+                        className="rounded-xl bg-gray-100 px-3 py-2 text-xs font-semibold text-gray-600"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             ))}
           </div>
 
-          {showAddChild && (
+          {showAddChild && canManageChildren && (
             <form onSubmit={handleAddChild} className="mt-4 space-y-3 rounded-[1.5rem] bg-[#faf7ff] p-4 ring-1 ring-lavender-100">
               <input
                 type="text"
@@ -118,6 +210,7 @@ export default function ProfilePage() {
           )}
         </section>
 
+        {/* Privacy & security */}
         <section className="rounded-[1.75rem] bg-white p-5 shadow-sm ring-1 ring-black/5">
           <h3 className="text-sm font-bold text-gray-700 flex items-center gap-2">
             <Shield size={16} className="text-lavender-500" /> Privacy & security
@@ -127,6 +220,7 @@ export default function ProfilePage() {
           </div>
         </section>
 
+        {/* Audit trail */}
         <section className="rounded-[1.75rem] bg-white p-5 shadow-sm ring-1 ring-black/5">
           <h3 className="text-sm font-bold text-gray-700">Recent audit trail</h3>
           <div className="mt-3 space-y-3">
@@ -143,21 +237,32 @@ export default function ProfilePage() {
           </div>
         </section>
 
+        {/* Admin link */}
+        {isAdmin && (
+          <Link
+            to="/admin"
+            className="flex w-full items-center gap-3 rounded-[1.75rem] bg-amber-50 p-5 shadow-sm ring-1 ring-amber-200"
+          >
+            <Crown size={18} className="text-amber-500" />
+            <div>
+              <div className="text-sm font-semibold text-amber-800">Admin panel</div>
+              <div className="text-xs text-amber-600">Manage users, roles, passwords, and system data.</div>
+            </div>
+          </Link>
+        )}
+
+        {/* Actions */}
         <section className="rounded-[1.75rem] bg-white p-5 shadow-sm ring-1 ring-black/5 space-y-2">
           <button onClick={exportData} className="flex w-full items-center gap-3 rounded-[1.5rem] bg-[#faf7ff] p-4 text-left ring-1 ring-lavender-100">
             <Download size={18} className="text-lavender-500" />
             <div>
               <div className="text-sm font-semibold text-gray-900">Export diary</div>
-              <div className="text-xs text-gray-500">Download the current child&apos;s journal as CSV.</div>
+              <div className="text-xs text-gray-500">Download {selectedChild?.name ? `${selectedChild.name}'s` : 'the current child\'s'} journal as CSV.</div>
             </div>
           </button>
 
           <button
-            onClick={() => {
-              if (confirm('Clear all saved app data? This cannot be undone.')) {
-                clearAllData();
-              }
-            }}
+            onClick={() => setShowClearConfirm(true)}
             className="flex w-full items-center gap-3 rounded-[1.5rem] bg-[#fff4f5] p-4 text-left ring-1 ring-rose-100"
           >
             <Trash2 size={18} className="text-rose-500" />
@@ -166,6 +271,46 @@ export default function ProfilePage() {
               <div className="text-xs text-gray-500">Remove all saved app data from this browser.</div>
             </div>
           </button>
+
+          {/* Clear data confirmation */}
+          {showClearConfirm && (
+            <div className="rounded-[1.5rem] bg-rose-50 p-4 ring-1 ring-rose-200">
+              <div className="flex items-start gap-2 mb-3">
+                <AlertTriangle size={16} className="text-rose-500 mt-0.5 shrink-0" />
+                <div>
+                  <p className="text-sm font-semibold text-rose-700">Clear all saved data?</p>
+                  <p className="text-xs text-rose-600 mt-1">
+                    This will <strong>permanently delete</strong> all accounts, children, diary entries, invites, and audit history from this browser. This cannot be undone.
+                  </p>
+                </div>
+              </div>
+              <p className="text-xs text-rose-600 mb-2">
+                Type <strong>DELETE</strong> to confirm:
+              </p>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={clearConfirmText}
+                  onChange={(e) => setClearConfirmText(e.target.value)}
+                  placeholder="DELETE"
+                  className="flex-1 rounded-xl border border-rose-200 bg-white px-3 py-2 text-xs outline-none focus:border-rose-400"
+                />
+                <button
+                  onClick={handleClearAllData}
+                  disabled={clearConfirmText !== 'DELETE'}
+                  className="rounded-xl bg-rose-500 px-4 py-2 text-xs font-semibold text-white disabled:opacity-40"
+                >
+                  Clear all
+                </button>
+                <button
+                  onClick={() => { setShowClearConfirm(false); setClearConfirmText(''); }}
+                  className="rounded-xl bg-gray-100 px-3 py-2 text-xs font-semibold text-gray-600"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
 
           <button onClick={logout} className="flex w-full items-center gap-3 rounded-[1.5rem] bg-[#faf7ff] p-4 text-left ring-1 ring-lavender-100">
             <LogOut size={18} className="text-rose-500" />

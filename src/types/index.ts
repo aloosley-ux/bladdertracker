@@ -1,4 +1,4 @@
-export type UserRole = 'parent' | 'caregiver' | 'schoolAdmin';
+export type UserRole = 'admin' | 'parent' | 'caregiver' | 'schoolAdmin';
 
 export interface User {
   id: string;
@@ -73,12 +73,65 @@ export interface BowelEntry {
   createdAt: string;
 }
 
+// Sleep tracking
+export type SleepEventType = 'onset' | 'wake' | 'nap_start' | 'nap_end';
+
+export interface SleepEntry {
+  id: string;
+  childId: string;
+  date: string;
+  time: string;
+  eventType: SleepEventType;
+  durationMinutes?: number | null;
+  quality?: 1 | 2 | 3 | 4 | 5 | null;
+  nighttimeEvent?: boolean;
+  notes: string;
+  createdBy: string;
+  createdAt: string;
+}
+
+// Toilet attempt tracking
+export type ToiletAttemptOutcome = 'success' | 'failure' | 'no_event';
+
+export interface ToiletAttemptEntry {
+  id: string;
+  childId: string;
+  date: string;
+  time: string;
+  outcome: ToiletAttemptOutcome;
+  supervised: boolean;
+  prompted: boolean;
+  durationMinutes?: number | null;
+  notes: string;
+  createdBy: string;
+  createdAt: string;
+}
+
+// Food tracking
+export type MealType = 'breakfast' | 'lunch' | 'dinner' | 'snack';
+
+export interface FoodEntry {
+  id: string;
+  childId: string;
+  date: string;
+  time: string;
+  mealType: MealType;
+  description: string;
+  portions?: number | null;
+  notes: string;
+  createdBy: string;
+  createdAt: string;
+}
+
 export interface DailyLog {
   date: string;
   childId: string;
   drinks: DrinkEntry[];
   urineEvents: UrineEntry[];
   bowelEvents: BowelEntry[];
+  sleepEvents: SleepEntry[];
+  toiletAttempts: ToiletAttemptEntry[];
+  foodEntries: FoodEntry[];
 }
 
 export interface CaregiverInvite {
@@ -117,11 +170,17 @@ export interface ImportedDiaryPayload {
   drinks?: Array<Partial<DrinkEntry>>;
   urineEntries?: Array<Partial<UrineEntry>>;
   bowelEntries?: Array<Partial<BowelEntry>>;
+  sleepEntries?: Array<Partial<SleepEntry>>;
+  toiletAttemptEntries?: Array<Partial<ToiletAttemptEntry>>;
+  foodEntries?: Array<Partial<FoodEntry>>;
 }
 
 export interface ImportSummary {
   drinks: number;
   urineEntries: number;
   bowelEntries: number;
+  sleepEntries: number;
+  toiletAttemptEntries: number;
+  foodEntries: number;
   errors: string[];
 }
