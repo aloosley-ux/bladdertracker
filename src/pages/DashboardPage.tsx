@@ -39,6 +39,7 @@ export default function DashboardPage() {
   );
 
   const totalMl = dayDrinks.reduce((sum, drink) => sum + drink.amountMl, 0);
+  const totalOutput = dayUrine.reduce((sum, entry) => sum + (entry.volumeMl || 0), 0);
   const wetCount = dayUrine.filter((entry) => entry.wet).length;
   const passCount = dayUrine.filter((entry) => entry.pass).length;
   const bowelCount = dayBowel.length;
@@ -137,9 +138,27 @@ export default function DashboardPage() {
 
         <section className="grid grid-cols-3 gap-3">
           <SummaryCard icon={<Droplets size={18} className="text-sky-500" />} label="Drinks" value={`${totalMl}ml`} sub={`${dayDrinks.length} entries`} bg="bg-sky-light" />
-          <SummaryCard icon={<CloudRain size={18} className="text-amber-500" />} label="Urine" value={`${wetCount + passCount}`} sub={`${wetCount} wet · ${passCount} pass`} bg="bg-peach" />
+          <SummaryCard icon={<CloudRain size={18} className="text-amber-500" />} label="Urine" value={`${wetCount + passCount}`} sub={totalOutput > 0 ? `${totalOutput}ml output` : `${wetCount} wet · ${passCount} pass`} bg="bg-peach" />
           <SummaryCard icon={<Stethoscope size={18} className="text-emerald-500" />} label="Bowel" value={`${bowelCount}`} sub="events" bg="bg-mint" />
         </section>
+
+        {totalOutput > 0 && (
+          <section className="rounded-[1.75rem] bg-gradient-to-r from-sky-50 to-amber-50 p-4 shadow-sm ring-1 ring-white/80">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white text-lavender-600 shadow-sm">⚖️</div>
+                <div>
+                  <h3 className="text-sm font-bold text-gray-800">Daily Fluid Balance</h3>
+                  <p className="text-xs text-gray-500">Intake vs measured output</p>
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-lg font-bold text-gray-800">{totalMl > 0 ? `${Math.round((totalOutput / totalMl) * 100)}%` : '—'}</div>
+                <div className="text-[10px] text-gray-500">{totalMl}ml in · {totalOutput}ml out</div>
+              </div>
+            </div>
+          </section>
+        )}
 
         <section className="rounded-[1.75rem] bg-white p-5 shadow-sm ring-1 ring-black/5">
           <div className="flex items-start gap-3">
@@ -184,17 +203,25 @@ export default function DashboardPage() {
             />
           ))}
 
-          {dayUrine.map((entry) => (
-            <EntryCard
-              key={entry.id}
-              icon={<CloudRain size={18} className="text-amber-500" />}
-              title={`Urine: ${entry.wet ? 'Wet' : ''} ${entry.pass ? 'Pass' : ''}`}
-              subtitle={entry.notes}
-              time={entry.time}
-              color="bg-peach"
-              onDelete={() => deleteUrineEntry(entry.id)}
-            />
-          ))}
+          {dayUrine.map((entry) => {
+            const parts = [entry.wet ? 'Wet' : '', entry.pass ? 'Pass' : ''].filter(Boolean).join(' · ') || 'Event';
+            const details = [
+              entry.volumeMl ? `${entry.volumeMl}ml` : '',
+              entry.urgency ? `Urgency ${entry.urgency}/5` : '',
+              entry.leakageAmount && entry.leakageAmount !== 'none' ? `Leak: ${entry.leakageAmount}` : '',
+            ].filter(Boolean).join(' · ');
+            return (
+              <EntryCard
+                key={entry.id}
+                icon={<CloudRain size={18} className="text-amber-500" />}
+                title={`Urine: ${parts}`}
+                subtitle={[details, entry.notes].filter(Boolean).join(' — ')}
+                time={entry.time}
+                color="bg-peach"
+                onDelete={() => deleteUrineEntry(entry.id)}
+              />
+            );
+          })}
 
           {dayBowel.map((entry) => (
             <EntryCard

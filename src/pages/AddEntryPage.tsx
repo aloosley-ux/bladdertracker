@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/useApp';
 import { generateId } from '../utils/storage';
 import BristolStoolPicker from '../components/BristolStoolPicker';
-import type { BristolStoolType, BowelAmount } from '../types';
+import type { BristolStoolType, BowelAmount, UrineEntry } from '../types';
 
 type EntryType = 'drink' | 'urine' | 'bowel';
 
@@ -172,7 +172,27 @@ function UrineForm() {
   const [date, setDate] = useState(format(new Date(), 'yyyy-MM-dd'));
   const [wet, setWet] = useState(false);
   const [pass, setPass] = useState(false);
+  const [volumeMl, setVolumeMl] = useState('');
+  const [urgency, setUrgency] = useState<number | null>(null);
+  const [leakageAmount, setLeakageAmount] = useState<string | null>(null);
   const [notes, setNotes] = useState('');
+
+  const quickVolumes = [50, 100, 150, 200, 250, 300];
+
+  const urgencyLabels = [
+    { value: 1, label: 'None', emoji: '😌' },
+    { value: 2, label: 'Mild', emoji: '🙂' },
+    { value: 3, label: 'Moderate', emoji: '😐' },
+    { value: 4, label: 'Strong', emoji: '😣' },
+    { value: 5, label: 'Severe', emoji: '🆘' },
+  ];
+
+  const leakageOptions = [
+    { value: 'none', label: 'None', emoji: '✅' },
+    { value: 'small', label: 'Small', emoji: '💧' },
+    { value: 'medium', label: 'Medium', emoji: '💦' },
+    { value: 'large', label: 'Large', emoji: '🌊' },
+  ];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -184,6 +204,9 @@ function UrineForm() {
       time,
       wet,
       pass,
+      volumeMl: volumeMl ? Number(volumeMl) : null,
+      urgency: (urgency ?? null) as UrineEntry['urgency'],
+      leakageAmount: (leakageAmount ?? null) as UrineEntry['leakageAmount'],
       notes,
       createdBy: user?.id ?? '',
       createdAt: new Date().toISOString(),
@@ -227,6 +250,57 @@ function UrineForm() {
             <span className="text-2xl">🚽</span>
             <div className="text-sm font-medium text-gray-700">Pass</div>
           </label>
+        </div>
+      </div>
+
+      <div>
+        <label className="text-xs font-medium text-gray-600">Volume (ml) <span className="text-gray-400 font-normal">— optional</span></label>
+        <input type="number" value={volumeMl} onChange={(e) => setVolumeMl(e.target.value)}
+          placeholder="Measured output in ml"
+          className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm"
+          min="0" />
+        <div className="flex gap-2 mt-2 flex-wrap">
+          {quickVolumes.map((v) => (
+            <button key={v} type="button" onClick={() => setVolumeMl(String(v))}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                volumeMl === String(v) ? 'bg-amber-100 text-amber-700' : 'bg-gray-50 text-gray-500 hover:bg-amber-50'
+              }`}>
+              {v}ml
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <label className="text-xs font-medium text-gray-600 block mb-2">Urgency <span className="text-gray-400 font-normal">— optional</span></label>
+        <div className="flex gap-1.5">
+          {urgencyLabels.map((u) => (
+            <button key={u.value} type="button" onClick={() => setUrgency(urgency === u.value ? null : u.value)}
+              className={`flex-1 flex flex-col items-center gap-0.5 py-2 rounded-xl text-xs font-medium transition-all ${
+                urgency === u.value
+                  ? 'bg-amber-100 text-amber-800 ring-2 ring-amber-300'
+                  : 'bg-gray-50 text-gray-500 hover:bg-amber-50'
+              }`}>
+              <span className="text-lg">{u.emoji}</span>
+              <span>{u.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <label className="text-xs font-medium text-gray-600 block mb-2">Leakage <span className="text-gray-400 font-normal">— optional</span></label>
+        <div className="flex gap-2">
+          {leakageOptions.map((l) => (
+            <button key={l.value} type="button" onClick={() => setLeakageAmount(leakageAmount === l.value ? null : l.value)}
+              className={`flex-1 py-2.5 rounded-xl text-xs font-medium transition-all ${
+                leakageAmount === l.value
+                  ? 'bg-blue-100 text-blue-700 ring-2 ring-blue-300'
+                  : 'bg-gray-50 text-gray-500 hover:bg-blue-50'
+              }`}>
+              {l.emoji} {l.label}
+            </button>
+          ))}
         </div>
       </div>
 

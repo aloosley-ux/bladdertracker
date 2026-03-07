@@ -151,136 +151,127 @@ export default function LoginPage() {
   const submitHandler = mode === 'register' ? handleRegister : mode === 'login' ? handleLogin : handleReset;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#f8f1ff] via-[#fbf7f2] to-white px-4 py-8">
-      <div className="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-sm flex-col justify-center gap-6">
-        <section className="rounded-[2rem] bg-white/80 px-6 pb-6 pt-8 text-center shadow-[0_30px_80px_rgba(139,77,255,0.12)] ring-1 ring-white/70 backdrop-blur">
-          <div className="mx-auto mb-6 flex h-52 w-full max-w-[15rem] items-center justify-center rounded-[2rem] bg-[radial-gradient(circle_at_top,#f2e7ff_0%,#eef8ff_60%,#ffffff_100%)]">
-            <div className="relative flex h-40 w-32 items-center justify-center rounded-[40%] border border-white/70 bg-white shadow-xl">
-              <div className="absolute -top-5 left-4 h-10 w-10 rounded-full bg-slate-100" />
-              <div className="absolute -top-5 right-4 h-10 w-10 rounded-full bg-slate-100" />
-              <div className="absolute inset-x-4 top-9 rounded-[999px] bg-[#203674] px-4 py-5 shadow-inner">
-                <div className="flex items-center justify-between">
-                  <span className="h-6 w-6 rounded-full bg-cyan-300 shadow-[0_0_20px_rgba(34,211,238,0.7)]" />
-                  <span className="h-6 w-6 rounded-full bg-cyan-300 shadow-[0_0_20px_rgba(34,211,238,0.7)]" />
+    <div className="min-h-screen bg-gradient-to-b from-[#f8f1ff] via-[#fbf7f2] to-white px-4 py-6">
+      <div className="mx-auto flex min-h-[calc(100vh-3rem)] w-full max-w-sm flex-col justify-center">
+        <div className="overflow-hidden rounded-[2rem] bg-white shadow-[0_30px_80px_rgba(139,77,255,0.12)] ring-1 ring-black/5">
+          {/* Header */}
+          <div className="bg-[radial-gradient(ellipse_at_top,#f2e7ff_0%,#eef8ff_50%,#ffffff_100%)] px-6 pb-5 pt-7 text-center">
+            <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center">
+              <div className="relative flex h-[4.5rem] w-14 items-center justify-center rounded-[40%] border border-white/70 bg-white shadow-lg">
+                <div className="absolute -top-2.5 left-1 h-5 w-5 rounded-full bg-slate-100" />
+                <div className="absolute -top-2.5 right-1 h-5 w-5 rounded-full bg-slate-100" />
+                <div className="absolute inset-x-1.5 top-4 rounded-[999px] bg-[#203674] px-2 py-2 shadow-inner">
+                  <div className="flex items-center justify-between">
+                    <span className="h-2.5 w-2.5 rounded-full bg-cyan-300 shadow-[0_0_10px_rgba(34,211,238,0.7)]" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-cyan-300 shadow-[0_0_10px_rgba(34,211,238,0.7)]" />
+                  </div>
                 </div>
+                <div className="absolute bottom-3 h-6 w-6 rounded-lg bg-gradient-to-b from-cyan-200 to-sky-400 shadow-inner" />
+                <div className="absolute -bottom-1.5 left-2 h-4 w-3 rounded-full bg-[#28478f]" />
+                <div className="absolute -bottom-1.5 right-2 h-4 w-3 rounded-full bg-[#28478f]" />
               </div>
-              <div className="absolute bottom-8 h-16 w-16 rounded-[1.4rem] bg-gradient-to-b from-cyan-200 to-sky-400 shadow-inner" />
-              <div className="absolute -bottom-3 left-5 h-10 w-7 rounded-full bg-[#28478f]" />
-              <div className="absolute -bottom-3 right-5 h-10 w-7 rounded-full bg-[#28478f]" />
+            </div>
+            <p className="text-xs font-bold tracking-wide text-lavender-500 uppercase">BladderTracker</p>
+            <h1 className="mt-1 text-2xl font-bold tracking-tight text-gray-900">
+              Smarter journaling for families &amp; schools
+            </h1>
+            <div className="mt-3 flex items-center justify-center gap-3 text-[11px] text-gray-500">
+              <span className="inline-flex items-center gap-1"><ShieldCheck size={12} className="text-lavender-400" /> Secure</span>
+              <span className="text-gray-300">·</span>
+              <span className="inline-flex items-center gap-1"><Mail size={12} className="text-lavender-400" /> Invites</span>
+              <span className="text-gray-300">·</span>
+              <span className="inline-flex items-center gap-1"><Sparkles size={12} className="text-lavender-400" /> {cloud ? 'Cloud sync' : 'Private'}</span>
             </div>
           </div>
 
-          <p className="text-sm font-semibold text-lavender-600">BladderTracker</p>
-          <h1 className="mt-2 text-4xl font-bold tracking-tight text-gray-900">
-            Smarter journaling for families and schools
-          </h1>
-          <p className="mt-3 text-sm leading-6 text-gray-500">
-            {cloud
-              ? 'Cloud-synced diary accounts, caregiver invites, and school-ready journaling — your data is available across all your devices.'
-              : 'Secure diary accounts, caregiver invites, and calm school-ready journaling — powered by local storage for privacy.'}
-          </p>
-          <div className="mt-5 grid grid-cols-3 gap-2 text-left text-[11px] text-gray-600">
-            <FeaturePill icon={<ShieldCheck size={14} />} label="Secure sign-in" />
-            <FeaturePill icon={<Mail size={14} />} label="Email invites" />
-            <FeaturePill icon={<Sparkles size={14} />} label={cloud ? 'Cloud sync' : 'Pastel cards'} />
-          </div>
-        </section>
+          {/* Tabs + Form */}
+          <div className="px-5 pb-6 pt-4">
+            <div className="mb-5 grid grid-cols-3 rounded-2xl bg-[#f6f1ff] p-1 text-sm">
+              {(['register', 'login', 'reset'] as AuthMode[]).map((item) => (
+                <button
+                  key={item}
+                  type="button"
+                  onClick={() => { setMode(item); setError(''); setMessage(''); }}
+                  className={`rounded-2xl px-3 py-2 font-medium transition-all ${
+                    mode === item ? 'bg-white text-lavender-700 shadow-sm' : 'text-gray-500'
+                  }`}
+                >
+                  {item === 'register' ? 'Get started' : item === 'login' ? 'Sign in' : 'Reset'}
+                </button>
+              ))}
+            </div>
 
-        <section className="rounded-[2rem] bg-white p-5 shadow-[0_20px_60px_rgba(20,20,43,0.08)] ring-1 ring-black/5">
-          <div className="mb-5 grid grid-cols-3 rounded-2xl bg-[#f6f1ff] p-1 text-sm">
-            {(['register', 'login', 'reset'] as AuthMode[]).map((item) => (
-              <button
-                key={item}
-                type="button"
-                onClick={() => { setMode(item); setError(''); setMessage(''); }}
-                className={`rounded-2xl px-3 py-2 font-medium transition-all ${
-                  mode === item ? 'bg-white text-lavender-700 shadow-sm' : 'text-gray-500'
-                }`}
-              >
-                {item === 'register' ? 'Get started' : item === 'login' ? 'Sign in' : 'Reset'}
-              </button>
-            ))}
-          </div>
+            <form onSubmit={submitHandler} className="space-y-3.5">
+              {mode === 'register' && (
+                <Field label="Full name">
+                  <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Amina Patel" className="input-card" required />
+                </Field>
+              )}
 
-          <form onSubmit={submitHandler} className="space-y-4">
-            {mode === 'register' && (
-              <Field label="Full name">
-                <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Amina Patel" className="input-card" required />
+              <Field label="Email address">
+                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.org" className="input-card" required />
               </Field>
-            )}
 
-            <Field label="Email address">
-              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.org" className="input-card" required />
-            </Field>
+              {mode === 'register' && (
+                <Field label="Role">
+                  <div className="grid grid-cols-3 gap-2">
+                    {roleOptions.map((option) => (
+                      <button
+                        key={option.value}
+                        type="button"
+                        onClick={() => setRole(option.value)}
+                        className={`rounded-2xl border px-3 py-2 text-xs font-semibold transition-all ${
+                          role === option.value
+                            ? 'border-lavender-300 bg-lavender-50 text-lavender-700'
+                            : 'border-gray-200 text-gray-500 hover:border-lavender-200 hover:bg-lavender-50/60'
+                        }`}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                </Field>
+              )}
 
-            {mode === 'register' && (
-              <Field label="Role">
-                <div className="grid grid-cols-3 gap-2">
-                  {roleOptions.map((option) => (
-                    <button
-                      key={option.value}
-                      type="button"
-                      onClick={() => setRole(option.value)}
-                      className={`rounded-2xl border px-3 py-2 text-xs font-semibold transition-all ${
-                        role === option.value
-                          ? 'border-lavender-300 bg-lavender-50 text-lavender-700'
-                          : 'border-gray-200 text-gray-500 hover:border-lavender-200 hover:bg-lavender-50/60'
-                      }`}
-                    >
-                      {option.label}
-                    </button>
-                  ))}
+              <Field label={mode === 'reset' ? 'New password' : 'Password'}>
+                <div className="relative">
+                  <LockKeyhole size={16} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="At least 8 characters" className="input-card pl-11" required />
                 </div>
               </Field>
-            )}
 
-            <Field label={mode === 'reset' ? 'New password' : 'Password'}>
-              <div className="relative">
-                <LockKeyhole size={16} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="At least 8 characters" className="input-card pl-11" required />
-              </div>
-            </Field>
+              {mode !== 'login' && (
+                <Field label={mode === 'reset' ? 'Confirm new password' : 'Confirm password'}>
+                  <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Repeat your password" className="input-card" required />
+                </Field>
+              )}
 
-            {mode !== 'login' && (
-              <Field label={mode === 'reset' ? 'Confirm new password' : 'Confirm password'}>
-                <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Repeat your password" className="input-card" required />
-              </Field>
-            )}
+              {pendingInvites.length > 0 && (
+                <div className="rounded-2xl border border-lavender-100 bg-lavender-50 px-4 py-3 text-xs text-lavender-800">
+                  {pendingInvites.length} secure invite{pendingInvites.length > 1 ? 's are' : ' is'} waiting for this email.
+                </div>
+              )}
 
-            {pendingInvites.length > 0 && (
-              <div className="rounded-2xl border border-lavender-100 bg-lavender-50 px-4 py-3 text-xs text-lavender-800">
-                {pendingInvites.length} secure invite{pendingInvites.length > 1 ? 's are' : ' is'} waiting for this email.
-              </div>
-            )}
+              {error && <p className="rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-600">{error}</p>}
+              {message && <p className="rounded-2xl bg-emerald-50 px-4 py-3 text-sm text-emerald-700">{message}</p>}
 
-            {error && <p className="rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-600">{error}</p>}
-            {message && <p className="rounded-2xl bg-emerald-50 px-4 py-3 text-sm text-emerald-700">{message}</p>}
-
-            <button
-              type="submit"
-              disabled={submitting}
-              className="w-full rounded-full bg-lavender-500 px-4 py-3 text-sm font-semibold text-white shadow-[0_16px_30px_rgba(139,77,255,0.28)] transition-all hover:bg-lavender-600 disabled:cursor-not-allowed disabled:opacity-70"
-            >
-              {submitting
-                ? 'Please wait…'
-                : mode === 'register'
-                  ? 'Get started'
-                  : mode === 'login'
-                    ? 'Sign in securely'
-                    : 'Reset password'}
-            </button>
-          </form>
-        </section>
+              <button
+                type="submit"
+                disabled={submitting}
+                className="w-full rounded-full bg-lavender-500 px-4 py-3 text-sm font-semibold text-white shadow-[0_16px_30px_rgba(139,77,255,0.28)] transition-all hover:bg-lavender-600 disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                {submitting
+                  ? 'Please wait…'
+                  : mode === 'register'
+                    ? 'Get started'
+                    : mode === 'login'
+                      ? 'Sign in securely'
+                      : 'Reset password'}
+              </button>
+            </form>
+          </div>
+        </div>
       </div>
-    </div>
-  );
-}
-
-function FeaturePill({ icon, label }: { icon: ReactNode; label: string }) {
-  return (
-    <div className="rounded-2xl bg-white/70 px-3 py-2 text-center shadow-sm ring-1 ring-lavender-100">
-      <div className="mb-1 flex justify-center text-lavender-600">{icon}</div>
-      <span>{label}</span>
     </div>
   );
 }

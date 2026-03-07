@@ -37,6 +37,9 @@ export interface DrinkEntry {
   createdAt: string;
 }
 
+export type LeakageAmount = 'none' | 'small' | 'medium' | 'large';
+export type UrgencyLevel = 1 | 2 | 3 | 4 | 5;
+
 export interface UrineEntry {
   id: string;
   childId: string;
@@ -44,6 +47,9 @@ export interface UrineEntry {
   time: string;
   wet: boolean;
   pass: boolean;
+  volumeMl?: number | null;
+  urgency?: UrgencyLevel | null;
+  leakageAmount?: LeakageAmount | null;
   notes: string;
   createdBy: string;
   createdAt: string;
