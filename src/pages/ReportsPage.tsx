@@ -26,12 +26,21 @@ const ALL_EVENT_FILTERS = [
   { key: 'sleep', label: '🌙 Sleep', color: '#6366f1' },
   { key: 'toilet', label: '🎯 Attempts', color: '#a855f7' },
   { key: 'food', label: '🍽️ Food', color: '#f97316' },
+  { key: 'mood', label: '😊 Mood', color: '#ec4899' },
+  { key: 'sensory', label: '🎨 Sensory', color: '#14b8a6' },
+  { key: 'medication', label: '💊 Medication', color: '#64748b' },
+  { key: 'therapy', label: '🧩 Therapy', color: '#8b5cf6' },
+  { key: 'routine', label: '📋 Routine', color: '#78716c' },
 ] as const;
 
 type FilterKey = typeof ALL_EVENT_FILTERS[number]['key'];
 
 export default function ReportsPage() {
-  const { drinks, urineEntries, bowelEntries, sleepEntries, toiletAttemptEntries, foodEntries, milestones, selectedChildId, selectedChild, enabledModules, exportData } = useApp();
+  const {
+    drinks, urineEntries, bowelEntries, sleepEntries, toiletAttemptEntries, foodEntries,
+    moodEntries, sensoryEntries, medicationEntries, therapyEntries, routineEntries,
+    milestones, selectedChildId, selectedChild, enabledModules, exportData,
+  } = useApp();
   const [period, setPeriod] = useState<Period>('7d');
   const [confirmExport, setConfirmExport] = useState(false);
 
@@ -90,17 +99,25 @@ export default function ReportsPage() {
     return Array.from({ length: days }, (_, index) => {
       const date = startOfDay(subDays(new Date(), days - index - 1));
       const dateStr = format(date, 'yyyy-MM-dd');
+      const forChild = <T extends { childId: string; date: string }>(arr: T[]) =>
+        arr.filter((e) => e.childId === selectedChildId && e.date === dateStr).length;
       return {
         date: format(date, 'dd/MM'),
         wet: urineEntries.filter((e) => e.childId === selectedChildId && e.date === dateStr && e.wet).length,
         pass: urineEntries.filter((e) => e.childId === selectedChildId && e.date === dateStr && e.pass).length,
-        bowel: bowelEntries.filter((e) => e.childId === selectedChildId && e.date === dateStr).length,
-        sleep: sleepEntries.filter((e) => e.childId === selectedChildId && e.date === dateStr).length,
-        toilet: toiletAttemptEntries.filter((e) => e.childId === selectedChildId && e.date === dateStr).length,
-        food: foodEntries.filter((e) => e.childId === selectedChildId && e.date === dateStr).length,
+        bowel: forChild(bowelEntries),
+        sleep: forChild(sleepEntries),
+        toilet: forChild(toiletAttemptEntries),
+        food: forChild(foodEntries),
+        mood: forChild(moodEntries),
+        sensory: forChild(sensoryEntries),
+        medication: forChild(medicationEntries),
+        therapy: forChild(therapyEntries),
+        routine: forChild(routineEntries),
       };
     });
-  }, [days, urineEntries, bowelEntries, sleepEntries, toiletAttemptEntries, foodEntries, selectedChildId]);
+  }, [days, urineEntries, bowelEntries, sleepEntries, toiletAttemptEntries, foodEntries,
+    moodEntries, sensoryEntries, medicationEntries, therapyEntries, routineEntries, selectedChildId]);
 
   const stoolTypeData = useMemo(() => {
     const childBowel = bowelEntries.filter((e) => e.childId === selectedChildId);
@@ -118,6 +135,18 @@ export default function ReportsPage() {
       { outcome: 'Refused', count: childAttempts.filter((e) => e.outcome === 'no_event').length },
     ];
   }, [toiletAttemptEntries, selectedChildId]);
+
+  const moodTrendData = useMemo(() => {
+    return Array.from({ length: days }, (_, index) => {
+      const date = startOfDay(subDays(new Date(), days - index - 1));
+      const dateStr = format(date, 'yyyy-MM-dd');
+      const dayEntries = moodEntries.filter((e) => e.childId === selectedChildId && e.date === dateStr);
+      const avg = dayEntries.length
+        ? Math.round((dayEntries.reduce((s, e) => s + e.level, 0) / dayEntries.length) * 10) / 10
+        : null;
+      return { date: format(date, 'dd/MM'), avgMood: avg, count: dayEntries.length };
+    });
+  }, [days, moodEntries, selectedChildId]);
 
   const milestoneTrendData = useMemo(() => {
     return Array.from({ length: days }, (_, index) => {
@@ -137,8 +166,15 @@ export default function ReportsPage() {
     const childSleep = sleepEntries.filter((e) => e.childId === selectedChildId);
     const childToilet = toiletAttemptEntries.filter((e) => e.childId === selectedChildId);
     const childFood = foodEntries.filter((e) => e.childId === selectedChildId);
+    const childMood = moodEntries.filter((e) => e.childId === selectedChildId);
+    const childSensory = sensoryEntries.filter((e) => e.childId === selectedChildId);
+    const childMedication = medicationEntries.filter((e) => e.childId === selectedChildId);
+    const childTherapy = therapyEntries.filter((e) => e.childId === selectedChildId);
+    const childRoutine = routineEntries.filter((e) => e.childId === selectedChildId);
     const cutoff = format(subDays(new Date(), days), 'yyyy-MM-dd');
     const inPeriod = (date: string) => date >= cutoff;
+
+    const recentMood = childMood.filter((e) => inPeriod(e.date));
 
     return {
       drinks: childDrinks.filter((d) => inPeriod(d.date)).length,
@@ -149,8 +185,19 @@ export default function ReportsPage() {
       toiletAttempts: childToilet.filter((e) => inPeriod(e.date)).length,
       toiletSuccess: childToilet.filter((e) => inPeriod(e.date) && e.outcome === 'success').length,
       meals: childFood.filter((e) => inPeriod(e.date)).length,
+      newFoods: childFood.filter((e) => inPeriod(e.date) && e.isTrying).length,
+      moodLogs: recentMood.length,
+      avgMood: recentMood.length
+        ? Math.round((recentMood.reduce((s, e) => s + e.level, 0) / recentMood.length) * 10) / 10
+        : null,
+      sensoryLogs: childSensory.filter((e) => inPeriod(e.date)).length,
+      medicationLogs: childMedication.filter((e) => inPeriod(e.date)).length,
+      therapySessions: childTherapy.filter((e) => inPeriod(e.date)).length,
+      routineChecks: childRoutine.filter((e) => inPeriod(e.date)).length,
+      routineCompleted: childRoutine.filter((e) => inPeriod(e.date) && e.completed).length,
     };
-  }, [drinks, urineEntries, bowelEntries, sleepEntries, toiletAttemptEntries, foodEntries, selectedChildId, days]);
+  }, [drinks, urineEntries, bowelEntries, sleepEntries, toiletAttemptEntries, foodEntries,
+    moodEntries, sensoryEntries, medicationEntries, therapyEntries, routineEntries, selectedChildId, days]);
 
   return (
     <div className="min-h-screen bg-white pb-20">
@@ -234,7 +281,16 @@ export default function ReportsPage() {
             {enabledFilterKeys.has('bowel') && <StatTile emoji="🚽" text={`${stats.bowelEvents} bowel events`} bg="bg-emerald-50" />}
             {enabledFilterKeys.has('sleep') && <StatTile emoji="🌙" text={`${stats.sleepEvents} sleep events`} bg="bg-indigo-50" />}
             {enabledFilterKeys.has('toilet') && <StatTile emoji="🎯" text={`${stats.toiletAttempts} attempts (${stats.toiletSuccess} ✅)`} bg="bg-purple-50" />}
-            {enabledFilterKeys.has('food') && <StatTile emoji="🍽️" text={`${stats.meals} meals logged`} bg="bg-orange-50" />}
+            {enabledFilterKeys.has('food') && <StatTile emoji="🍽️" text={`${stats.meals} meals · ${stats.newFoods} new foods tried`} bg="bg-orange-50" />}
+            {enabledFilterKeys.has('mood') && (
+              <StatTile emoji="😊" text={`${stats.moodLogs} mood logs${stats.avgMood !== null ? ` · avg ${stats.avgMood}/5` : ''}`} bg="bg-pink-50" />
+            )}
+            {enabledFilterKeys.has('sensory') && <StatTile emoji="🎨" text={`${stats.sensoryLogs} sensory observations`} bg="bg-teal-50" />}
+            {enabledFilterKeys.has('medication') && <StatTile emoji="💊" text={`${stats.medicationLogs} medication logs`} bg="bg-slate-50" />}
+            {enabledFilterKeys.has('therapy') && <StatTile emoji="🧩" text={`${stats.therapySessions} therapy sessions`} bg="bg-violet-50" />}
+            {enabledFilterKeys.has('routine') && (
+              <StatTile emoji="📋" text={`${stats.routineChecks} routines · ${stats.routineCompleted} completed`} bg="bg-stone-50" />
+            )}
           </div>
         </NhsCard>
 
@@ -274,6 +330,41 @@ export default function ReportsPage() {
                   {enabledFilterKeys.has('food') && activeFilters.has('food') && <Line type="monotone" dataKey="food" stroke="#f97316" strokeWidth={2} dot={{ r: 3 }} name="Food" />}
                 </LineChart>
               </ResponsiveContainer>
+            </ChartCard>
+          )}
+
+          {/* Extended module charts (#17) */}
+          {(enabledFilterKeys.has('mood') || enabledFilterKeys.has('sensory') || enabledFilterKeys.has('medication') || enabledFilterKeys.has('therapy') || enabledFilterKeys.has('routine')) && (
+            <ChartCard title="📊 Extended modules timeline">
+              <ResponsiveContainer width="100%" height={240}>
+                <LineChart data={eventData} margin={{ left: 8 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#ede7f7" />
+                  <XAxis dataKey="date" tick={{ fontSize: 10 }} />
+                  <YAxis tick={{ fontSize: 10 }} label={{ value: 'Count', angle: -90, position: 'insideLeft', offset: 8, fontSize: 10, fill: '#9ca3af' }} />
+                  <Tooltip contentStyle={{ borderRadius: 16, border: 'none', boxShadow: '0 12px 32px rgba(28, 25, 63, 0.12)' }} />
+                  <Legend />
+                  {enabledFilterKeys.has('mood') && activeFilters.has('mood') && <Line type="monotone" dataKey="mood" stroke="#ec4899" strokeWidth={2} dot={{ r: 3 }} name="Mood" />}
+                  {enabledFilterKeys.has('sensory') && activeFilters.has('sensory') && <Line type="monotone" dataKey="sensory" stroke="#14b8a6" strokeWidth={2} dot={{ r: 3 }} name="Sensory" />}
+                  {enabledFilterKeys.has('medication') && activeFilters.has('medication') && <Line type="monotone" dataKey="medication" stroke="#64748b" strokeWidth={2} dot={{ r: 3 }} name="Medication" />}
+                  {enabledFilterKeys.has('therapy') && activeFilters.has('therapy') && <Line type="monotone" dataKey="therapy" stroke="#8b5cf6" strokeWidth={2} dot={{ r: 3 }} name="Therapy" />}
+                  {enabledFilterKeys.has('routine') && activeFilters.has('routine') && <Line type="monotone" dataKey="routine" stroke="#78716c" strokeWidth={2} dot={{ r: 3 }} name="Routine" />}
+                </LineChart>
+              </ResponsiveContainer>
+            </ChartCard>
+          )}
+
+          {enabledFilterKeys.has('mood') && activeFilters.has('mood') && (
+            <ChartCard title="😊 Mood trend (avg per day)">
+              <ResponsiveContainer width="100%" height={200}>
+                <LineChart data={moodTrendData} margin={{ left: 8 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#fce7f3" />
+                  <XAxis dataKey="date" tick={{ fontSize: 10 }} />
+                  <YAxis domain={[1, 5]} tick={{ fontSize: 10 }} label={{ value: '1–5', angle: -90, position: 'insideLeft', offset: 8, fontSize: 10, fill: '#9ca3af' }} />
+                  <Tooltip contentStyle={{ borderRadius: 16, border: 'none', boxShadow: '0 12px 32px rgba(28, 25, 63, 0.12)' }} />
+                  <Line type="monotone" dataKey="avgMood" stroke="#ec4899" strokeWidth={2} dot={{ r: 3 }} name="Avg mood" connectNulls />
+                </LineChart>
+              </ResponsiveContainer>
+              <p className="mt-2 text-xs text-gray-400">Average daily mood rating (1 = very low, 5 = excellent). Gaps indicate no data for that day.</p>
             </ChartCard>
           )}
 

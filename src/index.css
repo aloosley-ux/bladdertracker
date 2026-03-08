@@ -143,3 +143,54 @@ select:focus-visible {
   outline: 3px solid #7c2df7;
   outline-offset: 3px;
 }
+
+/* ── Minimum touch target sizes (#29) ───────────────────────────── */
+/* All interactive elements meet WCAG 2.5.5 minimum 44×44px target */
+button,
+[role="button"],
+a {
+  min-height: 44px;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+/* Small icon-only or pill buttons may still be visually smaller;
+   use a larger invisible tap area via padding compensation */
+button.btn-compact {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* ── High-contrast logical grouping improvements (#31) ──────────── */
+[data-theme="high-contrast"] section,
+[data-theme="high-contrast"] [role="region"] {
+  border: 2px solid #ffffff;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+}
+
+[data-theme="high-contrast"] button {
+  border: 2px solid #ffffff;
+}
+
+[data-theme="high-contrast"] button:focus-visible {
+  outline: 4px solid #ffff00;
+  outline-offset: 4px;
+}
+
+/* ── Screen-reader-only utility ─────────────────────────────────── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

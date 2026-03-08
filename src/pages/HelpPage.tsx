@@ -6,11 +6,13 @@ import {
   ChevronDown,
   ChevronUp,
   HelpCircle,
+  Image,
   Shield,
   X,
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/useApp';
+import AssetPlaceholder from '../components/AssetPlaceholder';
 
 const ONBOARDING_KEY = 'bt_onboarding_seen';
 
@@ -190,6 +192,191 @@ export default function HelpPage() {
           <p className="text-xs text-gray-600 leading-relaxed">
             For additional support, please contact your care team or administrator.
           </p>
+        </section>
+
+        {/* ── UI Asset Showcase & Handoff (#18–#27) ─────────────── */}
+        {/* These placeholders indicate where branded assets should go once provided.
+            Asset handoff: supply final files at the paths listed and remove these placeholders. */}
+        <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
+          <h2 className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-4">
+            <Image size={16} className="text-lavender-500" />
+            UI Assets — Designer Handoff (#18–#27)
+          </h2>
+          <p className="text-xs text-gray-500 mb-4">
+            The following placeholders mark where branded visual assets should be placed.
+            Replace each <code className="bg-gray-100 px-1 rounded">src</code> with the real asset
+            once it has been produced by the design team.
+          </p>
+
+          <div className="space-y-4">
+            {/* #19 Mascot & Logo */}
+            <div>
+              <p className="text-xs font-semibold text-gray-600 mb-2">🐾 Mascot &amp; Logo (#19)</p>
+              <div className="flex flex-wrap gap-3 items-start">
+                <div className="flex flex-col items-center gap-1">
+                  {/* Replace: /assets/mascot-wave.png — friendly character welcoming users */}
+                  <AssetPlaceholder
+                    src="/assets/mascot-wave.png"
+                    alt="BladderTracker mascot waving hello — a friendly character that greets users on the onboarding screen"
+                    width={80} height={80}
+                    issueRef="19"
+                  />
+                  <span className="text-[9px] text-gray-400">mascot-wave.png</span>
+                </div>
+                <div className="flex flex-col items-center gap-1">
+                  {/* Replace: /assets/logo-full.svg — full horizontal logo */}
+                  <AssetPlaceholder
+                    src="/assets/logo-full.svg"
+                    alt="BladderTracker full logo — wordmark with droplet icon, horizontal layout"
+                    width={160} height={48}
+                    issueRef="19"
+                  />
+                  <span className="text-[9px] text-gray-400">logo-full.svg</span>
+                </div>
+                <div className="flex flex-col items-center gap-1">
+                  {/* Replace: /assets/logo-icon.svg — icon-only mark */}
+                  <AssetPlaceholder
+                    src="/assets/logo-icon.svg"
+                    alt="BladderTracker logo mark — icon-only droplet symbol for favicons and app icons"
+                    width={48} height={48}
+                    issueRef="19"
+                  />
+                  <span className="text-[9px] text-gray-400">logo-icon.svg</span>
+                </div>
+              </div>
+            </div>
+
+            {/* #20 Tracker & Entry Icons */}
+            <div>
+              <p className="text-xs font-semibold text-gray-600 mb-2">🎨 Tracker &amp; Entry Icons (#20)</p>
+              <div className="flex flex-wrap gap-2 items-start">
+                {[
+                  { file: 'icon-drinks.svg', alt: 'Custom drinks tracker icon — a glass of water with bubbles' },
+                  { file: 'icon-urine.svg', alt: 'Custom urine tracker icon — droplet with measurement lines' },
+                  { file: 'icon-bowel.svg', alt: 'Custom bowel tracker icon — Bristol stool chart abstract' },
+                  { file: 'icon-sleep.svg', alt: 'Custom sleep tracker icon — moon and stars' },
+                  { file: 'icon-toilet.svg', alt: 'Custom toilet attempt icon — toilet with success star' },
+                  { file: 'icon-food.svg', alt: 'Custom food tracker icon — plate with fork and spoon' },
+                ].map(({ file, alt }) => (
+                  <div key={file} className="flex flex-col items-center gap-1">
+                    <AssetPlaceholder src={`/assets/icons/${file}`} alt={alt} width={40} height={40} issueRef="20" />
+                    <span className="text-[8px] text-gray-400 max-w-[48px] text-center leading-tight">{file.replace('icon-', '').replace('.svg', '')}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* #21 Calendar, Cards & Backgrounds */}
+            <div>
+              <p className="text-xs font-semibold text-gray-600 mb-2">📅 Calendar &amp; Backgrounds (#21)</p>
+              <div className="flex flex-wrap gap-2 items-start">
+                <div className="flex flex-col items-center gap-1">
+                  <AssetPlaceholder
+                    src="/assets/bg-dashboard.jpg"
+                    alt="Dashboard hero background — soft lavender gradient with abstract childlike shapes"
+                    width={120} height={60}
+                    issueRef="21"
+                  />
+                  <span className="text-[9px] text-gray-400">bg-dashboard.jpg</span>
+                </div>
+                <div className="flex flex-col items-center gap-1">
+                  <AssetPlaceholder
+                    src="/assets/card-leaps.png"
+                    alt="Leaps module card banner — rainbow arc with baby silhouette representing developmental stages"
+                    width={120} height={60}
+                    issueRef="21"
+                  />
+                  <span className="text-[9px] text-gray-400">card-leaps.png</span>
+                </div>
+              </div>
+            </div>
+
+            {/* #22 Charts & Data Visualization */}
+            <div>
+              <p className="text-xs font-semibold text-gray-600 mb-2">📊 Charts &amp; Data Visualisation (#22)</p>
+              <AssetPlaceholder
+                src="/assets/chart-empty-state.svg"
+                alt="Empty state illustration for charts — a simple line chart with a magnifying glass and 'No data yet' text"
+                width="100%" height={80}
+                issueRef="22"
+              />
+            </div>
+
+            {/* #23 Navigation Bar Icons */}
+            <div>
+              <p className="text-xs font-semibold text-gray-600 mb-2">🧭 Navigation Icons (#23)</p>
+              <div className="flex flex-wrap gap-2 items-start">
+                {[
+                  { file: 'nav-home.svg', alt: 'Bottom nav home icon — house shape with heart' },
+                  { file: 'nav-log.svg', alt: 'Bottom nav log icon — clipboard with pencil' },
+                  { file: 'nav-reports.svg', alt: 'Bottom nav reports icon — bar chart with upward trend' },
+                  { file: 'nav-calendar.svg', alt: 'Bottom nav calendar icon — monthly grid with highlighted day' },
+                  { file: 'nav-profile.svg', alt: 'Bottom nav profile icon — person silhouette with badge' },
+                ].map(({ file, alt }) => (
+                  <div key={file} className="flex flex-col items-center gap-1">
+                    <AssetPlaceholder src={`/assets/nav/${file}`} alt={alt} width={36} height={36} issueRef="23" />
+                    <span className="text-[8px] text-gray-400">{file.replace('nav-', '').replace('.svg', '')}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* #25 Brand/Illustration Moments */}
+            <div>
+              <p className="text-xs font-semibold text-gray-600 mb-2">✨ Brand Illustrations (#25)</p>
+              <div className="flex flex-wrap gap-3 items-start">
+                <div className="flex flex-col items-center gap-1">
+                  <AssetPlaceholder
+                    src="/assets/illustration-success.svg"
+                    alt="Success moment illustration — child pumping fist, confetti, and 'Well done!' text"
+                    width={100} height={80}
+                    issueRef="25"
+                  />
+                  <span className="text-[9px] text-gray-400">illustration-success.svg</span>
+                </div>
+                <div className="flex flex-col items-center gap-1">
+                  <AssetPlaceholder
+                    src="/assets/illustration-leap.svg"
+                    alt="Leap milestone illustration — baby jumping through rainbow arc representing a developmental leap"
+                    width={100} height={80}
+                    issueRef="25"
+                  />
+                  <span className="text-[9px] text-gray-400">illustration-leap.svg</span>
+                </div>
+              </div>
+            </div>
+
+            {/* #26 Accessibility Variants */}
+            <div>
+              <p className="text-xs font-semibold text-gray-600 mb-2">♿ Accessibility Icon Variants (#26)</p>
+              <div className="flex flex-wrap gap-2 items-start">
+                {[
+                  { file: 'icon-drinks-hc.svg', alt: 'High-contrast drinks icon — bold black outline on white background' },
+                  { file: 'icon-urine-hc.svg', alt: 'High-contrast urine icon — bold black outline on white background' },
+                  { file: 'icon-bowel-hc.svg', alt: 'High-contrast bowel icon — bold black outline on white background' },
+                ].map(({ file, alt }) => (
+                  <div key={file} className="flex flex-col items-center gap-1">
+                    <AssetPlaceholder src={`/assets/icons/hc/${file}`} alt={alt} width={40} height={40} issueRef="26" />
+                    <span className="text-[8px] text-gray-400 max-w-[48px] text-center leading-tight">{file}</span>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-gray-400 mt-2">
+                High-contrast variants should be supplied as SVG with thick stroke outlines.
+                They are used when <code className="bg-gray-100 px-1 rounded">data-theme=&quot;high-contrast&quot;</code> is active.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-4 rounded-lg bg-amber-50 border border-amber-200 p-3 text-xs text-amber-700">
+            <strong>Asset handoff checklist:</strong>
+            <ul className="mt-1 space-y-0.5 list-disc list-inside">
+              <li>Place final SVG/PNG files at the paths shown above (under <code>/public/assets/</code>)</li>
+              <li>Ensure each asset has a descriptive file name matching its placeholder path</li>
+              <li>High-contrast variants go in <code>/public/assets/icons/hc/</code></li>
+              <li>Once all placeholders are replaced, remove this section from HelpPage</li>
+            </ul>
+          </div>
         </section>
 
         {/* ── Navigation links ───────────────────────────────────── */}
