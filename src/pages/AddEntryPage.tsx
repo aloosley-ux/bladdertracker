@@ -612,7 +612,7 @@ function SleepForm() {
         <p><strong>Sleep onset delay:</strong> Minutes from bedtime until child actually fell asleep.</p>
         <p><strong>Duration:</strong> How long they slept in minutes (optional but helpful for patterns).</p>
         <p><strong>Quality 1–5:</strong> How restful was the sleep? 1 = very poor, 5 = excellent.</p>
-        <p><strong>Night activity:</strong> Tick if there was a nighttime bladder/bowel event that disrupted sleep.</p>
+        <p><strong>Night bladder/bowel activity disrupted sleep:</strong> Tick if a nighttime bladder/bowel event interrupted sleep.</p>
       </HelpPanel>
 
       <div className="grid grid-cols-2 gap-3">

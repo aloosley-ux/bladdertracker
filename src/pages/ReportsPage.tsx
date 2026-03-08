@@ -188,7 +188,7 @@ export default function ReportsPage() {
       newFoods: childFood.filter((e) => inPeriod(e.date) && e.isTrying).length,
       moodLogs: recentMood.length,
       avgMood: recentMood.length
-        ? Math.round(recentMood.reduce((s, e) => s + e.level, 0) / recentMood.length * 10) / 10
+        ? Math.round((recentMood.reduce((s, e) => s + e.level, 0) / recentMood.length) * 10) / 10
         : null,
       sensoryLogs: childSensory.filter((e) => inPeriod(e.date)).length,
       medicationLogs: childMedication.filter((e) => inPeriod(e.date)).length,

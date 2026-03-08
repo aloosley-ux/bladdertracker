@@ -1002,7 +1002,8 @@ function LeapProgressChart({ child }: { child: Child }) {
     stormy: 'bg-amber-400',
     current: 'bg-emerald-400',
     upcoming: 'bg-sky-300',
-    future: 'bg-lavender-100',
+    // 'future' uses a border in addition to the fill to remain visible on white backgrounds
+    future: 'bg-lavender-100 border border-lavender-200',
   };
 
   return (

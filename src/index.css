@@ -148,9 +148,7 @@ select:focus-visible {
 /* All interactive elements meet WCAG 2.5.5 minimum 44×44px target */
 button,
 [role="button"],
-a,
-input[type="checkbox"],
-input[type="radio"] {
+a {
   min-height: 44px;
 }
 
