@@ -8,7 +8,7 @@ import BristolStoolPicker from '../components/BristolStoolPicker';
 import BrandIcon from '../components/BrandIcon';
 import HelpPanel from '../components/HelpPanel';
 import { DEFAULT_MODULES } from '../types';
-import type { ModuleId, BristolStoolType, BowelAmount, UrineEntry, SleepEventType, ToiletAttemptOutcome, MealType, MoodLevel, SensoryResponseType, TherapyType } from '../types';
+import type { ModuleId, BristolStoolType, BowelAmount, UrineEntry, SleepEventType, ToiletAttemptOutcome, MealType, FoodTexture, FoodAcceptance, MoodLevel, SensoryResponseType, TherapyType } from '../types';
 
 type EntryType = 'drink' | 'urine' | 'bowel' | 'sleep' | 'toilet' | 'food' | 'mood' | 'sensory' | 'medication' | 'therapy' | 'routine';
 
@@ -555,9 +555,12 @@ function SleepForm() {
   const [time, setTime] = useState(format(new Date(), 'HH:mm'));
   const [date, setDate] = useState(format(new Date(), 'yyyy-MM-dd'));
   const [eventType, setEventType] = useState<SleepEventType>('onset');
+  const [bedtime, setBedtime] = useState('');
+  const [sleepOnsetMinutes, setSleepOnsetMinutes] = useState('');
   const [duration, setDuration] = useState('');
   const [quality, setQuality] = useState<number | null>(null);
   const [nighttimeEvent, setNighttimeEvent] = useState(false);
+  const [nightActivity, setNightActivity] = useState(false);
   const [notes, setNotes] = useState('');
 
   const sleepEvents: { value: SleepEventType; label: string; emoji: string }[] = [
@@ -584,9 +587,12 @@ function SleepForm() {
       date,
       time,
       eventType,
+      bedtime: bedtime || null,
+      sleepOnsetMinutes: sleepOnsetMinutes ? Number(sleepOnsetMinutes) : null,
       durationMinutes: duration ? Number(duration) : null,
       quality: (quality ?? null) as 1 | 2 | 3 | 4 | 5 | null,
       nighttimeEvent,
+      nightActivity,
       notes,
       createdBy: user?.id ?? '',
       createdAt: new Date().toISOString(),
@@ -602,9 +608,11 @@ function SleepForm() {
 
       <HelpPanel title="Logging a Sleep Event">
         <p><strong>Event type:</strong> onset (going to sleep), wake (waking up), nap (daytime sleep), or disturbed (interrupted sleep).</p>
+        <p><strong>Bedtime:</strong> When child was put to bed (before falling asleep). Helps track sleep onset latency.</p>
+        <p><strong>Sleep onset delay:</strong> Minutes from bedtime until child actually fell asleep.</p>
         <p><strong>Duration:</strong> How long they slept in minutes (optional but helpful for patterns).</p>
         <p><strong>Quality 1–5:</strong> How restful was the sleep? 1 = very poor, 5 = excellent.</p>
-        <p><strong>Nighttime event:</strong> Tick if this happened between 10pm and 6am.</p>
+        <p><strong>Night activity:</strong> Tick if there was a nighttime bladder/bowel event that disrupted sleep.</p>
       </HelpPanel>
 
       <div className="grid grid-cols-2 gap-3">
@@ -636,6 +644,28 @@ function SleepForm() {
         </div>
       </div>
 
+      {/* Sleep start fields shown only for 'onset' events (#16) */}
+      {eventType === 'onset' && (
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="text-xs font-medium text-gray-600">
+              Bedtime <span className="text-gray-400 font-normal">— optional</span>
+            </label>
+            <input type="time" value={bedtime} onChange={(e) => setBedtime(e.target.value)}
+              className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
+          </div>
+          <div>
+            <label className="text-xs font-medium text-gray-600">
+              Onset delay (mins) <span className="text-gray-400 font-normal">— optional</span>
+            </label>
+            <input type="number" value={sleepOnsetMinutes} onChange={(e) => setSleepOnsetMinutes(e.target.value)}
+              placeholder="e.g. 20"
+              className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm"
+              min="0" max="360" />
+          </div>
+        </div>
+      )}
+
       <div>
         <label className="text-xs font-medium text-gray-600">Duration (minutes) <span className="text-gray-400 font-normal">— optional</span></label>
         <input type="number" value={duration} onChange={(e) => setDuration(e.target.value)}
@@ -661,11 +691,16 @@ function SleepForm() {
         </div>
       </div>
 
-      <div>
+      <div className="space-y-2">
         <label className="flex items-center gap-3 cursor-pointer">
           <input type="checkbox" checked={nighttimeEvent} onChange={(e) => setNighttimeEvent(e.target.checked)}
             className="h-5 w-5 rounded border-gray-300 text-indigo-500 focus:ring-indigo-200" />
-          <span className="text-sm font-medium text-gray-700">🌙 Nighttime bladder/bowel event linked</span>
+          <span className="text-sm font-medium text-gray-700">🌙 Nighttime event (10pm–6am)</span>
+        </label>
+        <label className="flex items-center gap-3 cursor-pointer">
+          <input type="checkbox" checked={nightActivity} onChange={(e) => setNightActivity(e.target.checked)}
+            className="h-5 w-5 rounded border-gray-300 text-indigo-500 focus:ring-indigo-200" />
+          <span className="text-sm font-medium text-gray-700">🚽 Night bladder/bowel activity disrupted sleep</span>
         </label>
       </div>
 
@@ -808,6 +843,9 @@ function FoodForm() {
   const [mealType, setMealType] = useState<MealType>('snack');
   const [description, setDescription] = useState('');
   const [portions, setPortions] = useState('');
+  const [isTrying, setIsTrying] = useState(false);
+  const [texture, setTexture] = useState<FoodTexture | ''>('');
+  const [accepted, setAccepted] = useState<FoodAcceptance | ''>('');
   const [notes, setNotes] = useState('');
 
   const mealTypes: { value: MealType; label: string; emoji: string }[] = [
@@ -815,6 +853,22 @@ function FoodForm() {
     { value: 'lunch', label: 'Lunch', emoji: '☀️' },
     { value: 'dinner', label: 'Dinner', emoji: '🌙' },
     { value: 'snack', label: 'Snack', emoji: '🍎' },
+  ];
+
+  const textures: { value: FoodTexture; label: string }[] = [
+    { value: 'pureed', label: 'Puréed' },
+    { value: 'mashed', label: 'Mashed' },
+    { value: 'soft', label: 'Soft' },
+    { value: 'chopped', label: 'Chopped' },
+    { value: 'whole', label: 'Whole' },
+    { value: 'mixed', label: 'Mixed' },
+  ];
+
+  const acceptanceOptions: { value: FoodAcceptance; label: string; emoji: string }[] = [
+    { value: 'accepted', label: 'Accepted', emoji: '✅' },
+    { value: 'refused', label: 'Refused', emoji: '❌' },
+    { value: 'partial', label: 'Partial', emoji: '🔶' },
+    { value: 'first_try', label: 'First try!', emoji: '⭐' },
   ];
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -828,6 +882,9 @@ function FoodForm() {
       mealType,
       description: description.trim(),
       portions: portions ? Number(portions) : null,
+      isTrying,
+      texture: texture || null,
+      accepted: accepted || null,
       notes,
       createdBy: user?.id ?? '',
       createdAt: new Date().toISOString(),
@@ -844,8 +901,10 @@ function FoodForm() {
       <HelpPanel title="Logging a Meal or Snack">
         <p><strong>Meal type:</strong> Breakfast, lunch, dinner, or snack.</p>
         <p><strong>Description:</strong> What was eaten — keep it brief, e.g., "pasta with tomato sauce".</p>
+        <p><strong>New food:</strong> Toggle on if this is the first time trying this food.</p>
+        <p><strong>Texture &amp; Acceptance:</strong> Track texture and whether child accepted it (helpful for feeding therapy).</p>
         <p><strong>Portions:</strong> Estimated portions eaten — 0.25, 0.5, 0.75, 1, or 1.5+.</p>
-        <p><strong>Notes:</strong> Any observations — e.g., "refused vegetables", "ate well", "new food tried".</p>
+        <p><strong>Notes:</strong> Any observations — e.g., "refused vegetables", "ate well".</p>
       </HelpPanel>
 
       <div className="grid grid-cols-2 gap-3">
@@ -884,6 +943,55 @@ function FoodForm() {
           className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm"
           required />
       </div>
+
+      {/* Food Trying Tracker fields (#15) */}
+      <div>
+        <label className="flex items-center gap-3 cursor-pointer">
+          <input type="checkbox" checked={isTrying} onChange={(e) => setIsTrying(e.target.checked)}
+            className="h-5 w-5 rounded border-gray-300 text-orange-500 focus:ring-orange-200" />
+          <span className="text-sm font-medium text-gray-700">⭐ New food — trying for the first time</span>
+        </label>
+      </div>
+
+      {isTrying && (
+        <>
+          <div>
+            <label className="text-xs font-medium text-gray-600 block mb-2">
+              Texture <span className="text-gray-400 font-normal">— optional</span>
+            </label>
+            <div className="grid grid-cols-3 gap-2">
+              {textures.map((t) => (
+                <button key={t.value} type="button" onClick={() => setTexture(texture === t.value ? '' : t.value)}
+                  className={`py-2 rounded-xl text-xs font-medium transition-all ${
+                    texture === t.value
+                      ? 'bg-orange-400 text-white shadow-md'
+                      : 'bg-white text-gray-600 hover:bg-orange-50'
+                  }`}>
+                  {t.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label className="text-xs font-medium text-gray-600 block mb-2">
+              Acceptance <span className="text-gray-400 font-normal">— optional</span>
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              {acceptanceOptions.map((a) => (
+                <button key={a.value} type="button" onClick={() => setAccepted(accepted === a.value ? '' : a.value)}
+                  className={`py-2.5 rounded-xl text-xs font-medium transition-all ${
+                    accepted === a.value
+                      ? 'bg-orange-500 text-white shadow-md'
+                      : 'bg-white text-gray-600 hover:bg-orange-50'
+                  }`}>
+                  {a.emoji} {a.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
 
       <div>
         <label className="text-xs font-medium text-gray-600">Portions <span className="text-gray-400 font-normal">— optional</span></label>

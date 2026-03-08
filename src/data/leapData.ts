@@ -34,6 +34,10 @@ export interface LeapDefinition {
   title: string;
   description: string;
   skills: string[];
+  /** Practical tips for parents during this leap */
+  parentalTips: string[];
+  /** External resource links for further reading */
+  resourceLinks?: Array<{ label: string; url: string }>;
 }
 
 /**
@@ -50,6 +54,12 @@ export const LEAP_CHART: LeapDefinition[] = [
     title: 'Changing Sensations',
     description: 'Baby becomes more aware of sensory changes in the world around them.',
     skills: ['More alert', 'Better focus', 'Smiles more'],
+    parentalTips: [
+      'Offer extra skin-to-skin contact for comfort.',
+      'Keep the environment calm and predictable during fussy periods.',
+      'Talk softly and make eye contact to stimulate new awareness.',
+      'Respond quickly to cries — baby is adjusting to a whole new sensory world.',
+    ],
   },
   {
     number: 2,
@@ -59,6 +69,12 @@ export const LEAP_CHART: LeapDefinition[] = [
     title: 'Patterns',
     description: 'Baby starts to recognise simple patterns in sights, sounds, and movement.',
     skills: ['Discovers hands', 'Tracks objects', 'Simple patterns'],
+    parentalTips: [
+      'Introduce high-contrast black-and-white images for visual stimulation.',
+      'Repeat simple sounds and gestures — repetition builds pattern recognition.',
+      'Hang a mobile above the cot and let baby track the movement.',
+      'Try gentle rhythmic movements like rocking or swaying.',
+    ],
   },
   {
     number: 3,
@@ -68,6 +84,12 @@ export const LEAP_CHART: LeapDefinition[] = [
     title: 'Smooth Transitions',
     description: 'Movements become smoother and more purposeful.',
     skills: ['Reaches for objects', 'Smoother head turns', 'Babbles more'],
+    parentalTips: [
+      'Place colourful objects just within reach to encourage deliberate grasping.',
+      'Give tummy time daily to support muscle control.',
+      'Respond to babbles with conversation — it encourages communication.',
+      'Use a baby gym with different textures and sounds to explore.',
+    ],
   },
   {
     number: 4,
@@ -77,6 +99,12 @@ export const LEAP_CHART: LeapDefinition[] = [
     title: 'Events',
     description: 'Baby begins to understand short sequences of events.',
     skills: ['Grasps deliberately', 'Anticipates events', 'Cause & effect'],
+    parentalTips: [
+      'Introduce simple cause-and-effect toys (press a button → sound plays).',
+      'Keep daily routines consistent — baby is learning to anticipate sequences.',
+      'Play "peek-a-boo" to build object permanence and event expectation.',
+      'Narrate daily activities: "Now we are going to bath time!"',
+    ],
   },
   {
     number: 5,
@@ -86,6 +114,12 @@ export const LEAP_CHART: LeapDefinition[] = [
     title: 'Relationships',
     description: 'Baby starts to understand spatial and temporal relationships.',
     skills: ['Distance awareness', 'Separation anxiety', 'Investigates objects'],
+    parentalTips: [
+      'Practise short separations to build trust that you always return.',
+      'Let baby explore safe environments from different distances.',
+      'Offer comfort objects (a soft toy or blanket) to ease anxiety.',
+      'Hide toys under blankets and encourage baby to find them.',
+    ],
   },
   {
     number: 6,
@@ -95,6 +129,12 @@ export const LEAP_CHART: LeapDefinition[] = [
     title: 'Categories',
     description: 'Baby learns to group objects, people, and sensations into categories.',
     skills: ['Sorts objects', 'Recognises groups', 'Imitates more'],
+    parentalTips: [
+      'Introduce sorting toys (shapes, colours) to support categorisation.',
+      'Name object groups during play: "These are all soft things."',
+      'Encourage imitation games — copy their actions and let them copy yours.',
+      'Read picture books together and name animals, objects, and colours.',
+    ],
   },
   {
     number: 7,
@@ -104,6 +144,12 @@ export const LEAP_CHART: LeapDefinition[] = [
     title: 'Sequences',
     description: 'Baby understands that things happen in a particular order.',
     skills: ['Follows routines', 'Builds/stacks', 'Multi-step actions'],
+    parentalTips: [
+      'Use consistent bedtime or mealtime sequences to reinforce order.',
+      'Offer stacking cups or nesting toys for hands-on sequence practice.',
+      'Give simple two-step instructions and celebrate when followed.',
+      'Demonstrate activities step-by-step and let baby copy each stage.',
+    ],
   },
   {
     number: 8,
@@ -113,6 +159,12 @@ export const LEAP_CHART: LeapDefinition[] = [
     title: 'Programmes',
     description: 'Baby can carry out a "programme" — a flexible sequence of steps.',
     skills: ['Pretend play', 'Problem solving', 'More independent'],
+    parentalTips: [
+      'Encourage pretend play: toy kitchen, doll-feeding, or building dens.',
+      'Offer simple puzzles to nurture problem-solving confidence.',
+      'Allow safe independent exploration — watch from a little distance.',
+      'Celebrate attempts and effort, not just outcomes.',
+    ],
   },
   {
     number: 9,
@@ -122,6 +174,12 @@ export const LEAP_CHART: LeapDefinition[] = [
     title: 'Principles',
     description: 'Toddler begins to understand general rules and principles.',
     skills: ['Negotiates', 'Tests boundaries', 'Plans ahead'],
+    parentalTips: [
+      'Set clear, consistent boundaries with calm explanations.',
+      'Acknowledge feelings before redirecting behaviour.',
+      'Offer limited choices to support autonomy: "red cup or blue cup?"',
+      'Use visual schedules to help toddlers understand what comes next.',
+    ],
   },
   {
     number: 10,
@@ -131,6 +189,12 @@ export const LEAP_CHART: LeapDefinition[] = [
     title: 'Systems',
     description: 'Toddler begins to understand complex systems and adapt behaviour.',
     skills: ['Conscience emerging', 'Strategy', 'Empathy'],
+    parentalTips: [
+      'Model empathy — name your own feelings and acknowledge theirs.',
+      'Encourage cooperative play and taking turns with others.',
+      'Introduce simple role responsibilities ("your job is to put toys away").',
+      'Read stories with moral themes to nurture emerging conscience.',
+    ],
   },
 ];
 

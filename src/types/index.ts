@@ -169,9 +169,15 @@ export interface SleepEntry {
   date: string;
   time: string;
   eventType: SleepEventType;
+  /** Time child was put to bed (HH:mm), recorded when eventType is 'onset' */
+  bedtime?: string | null;
+  /** Minutes from bedtime until child actually fell asleep (sleep onset latency) */
+  sleepOnsetMinutes?: number | null;
   durationMinutes?: number | null;
   quality?: 1 | 2 | 3 | 4 | 5 | null;
   nighttimeEvent?: boolean;
+  /** Indicates a night waking or nighttime activity (bladder/bowel) event */
+  nightActivity?: boolean;
   notes: string;
   createdBy: string;
   createdAt: string;
@@ -196,6 +202,8 @@ export interface ToiletAttemptEntry {
 
 // Food tracking
 export type MealType = 'breakfast' | 'lunch' | 'dinner' | 'snack';
+export type FoodTexture = 'pureed' | 'mashed' | 'soft' | 'chopped' | 'whole' | 'mixed';
+export type FoodAcceptance = 'accepted' | 'refused' | 'partial' | 'first_try';
 
 export interface FoodEntry {
   id: string;
@@ -205,6 +213,12 @@ export interface FoodEntry {
   mealType: MealType;
   description: string;
   portions?: number | null;
+  /** True when this is a new food being tried for the first time */
+  isTrying?: boolean;
+  /** Texture of the food (relevant for sensory/feeding therapy) */
+  texture?: FoodTexture | null;
+  /** Child's acceptance of the food */
+  accepted?: FoodAcceptance | null;
   notes: string;
   createdBy: string;
   createdAt: string;
