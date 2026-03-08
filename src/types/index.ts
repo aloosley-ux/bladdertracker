@@ -66,6 +66,19 @@ export interface EnabledModules {
 }
 
 // ── Developmental Leaps ──────────────────────────────────────────────
+export interface LeapDiaryEntry {
+  id: string;
+  childId: string;
+  leapNumber: number;
+  date: string;
+  title: string;
+  body: string;
+  mood?: string;
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface LeapSymptomLog {
   id: string;
   childId: string;
