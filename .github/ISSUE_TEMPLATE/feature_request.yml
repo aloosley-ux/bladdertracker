@@ -1,0 +1,84 @@
+name: Feature request
+description: Propose a new capability or meaningful product improvement
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for product, UX, engineering, or workflow improvements.
+        Please keep requests outcome-focused and grounded in the current repo state.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or opportunity
+      description: What user or contributor problem should this solve?
+      placeholder: Parents can export data, but there is no concise printable summary for appointments.
+    validations:
+      required: true
+
+  - type: textarea
+    id: user_story
+    attributes:
+      label: User story
+      placeholder: As a parent preparing for a clinic review, I want a clean summary so that I can share the most important patterns quickly.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed_outcome
+    attributes:
+      label: Proposed outcome
+      description: Describe the desired end state rather than prescribing implementation too early.
+      placeholder: Add a printable summary view with key trends, totals, and milestone highlights.
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope boundaries
+      description: Clarify what is in scope and what should stay out of scope.
+      placeholder: |
+        In scope:
+        - Printable summary page
+        - Reuse existing report data
+
+        Out of scope:
+        - Full PDF generation service
+        - New authentication changes
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      placeholder: |
+        - [ ] A user can generate a summary for the selected child
+        - [ ] Summary works in local and cloud mode
+        - [ ] Output is readable on mobile and desktop
+    validations:
+      required: true
+
+  - type: input
+    id: surfaces
+    attributes:
+      label: Affected pages, modules, or docs
+      placeholder: ReportsPage, Settings export flow, docs/API.md, README
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Related issues, docs, or roadmap context
+      description: Link any related GitHub issues or `docs/PROJECT_PLAN.md` sections.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues for related requests or duplicates.
+          required: true
+        - label: I described the user value and not just the implementation idea.
+          required: true

@@ -126,6 +126,33 @@ npm run lint
 npm run dev
 ```
 
+## Documentation Expectations
+
+Please keep documentation in sync with the code you change.
+
+- Update `README.md` when product behaviour, setup, routes, environment variables, or public-facing positioning changes.
+- Update `docs/MODULES.md` when tracker labels, fields, or module defaults change.
+- Update `docs/API.md` when request/response contracts, auth behaviour, or security notes change.
+- Update `docs/ARCHITECTURE.md` when infrastructure, routing, storage, or major component structure changes.
+- Update `docs/Onboarding.md` when first-run flow, key pages, or user guidance changes.
+
+## Opening Issues Well
+
+Before opening a new issue:
+
+1. Search existing issues to avoid duplicates or stale reopenings.
+2. Use the matching issue template for **bug reports**, **feature requests**, or **documentation improvements**.
+3. Include the user problem, why it matters, scope boundaries, and clear acceptance criteria where possible.
+4. Link the issue to any relevant backlog context in `docs/PROJECT_PLAN.md` if the work is part of a larger initiative.
+
+For security concerns, please follow [`SECURITY.md`](./SECURITY.md) instead of filing a public issue with sensitive details.
+
+## Handling Sensitive Data
+
+- Never commit real child data, screenshots containing personal data, or production credentials.
+- Use anonymised examples in tests, fixtures, screenshots, and documentation.
+- When changing authentication, export, deletion, sharing, or health-data flows, review the user-facing copy in `README.md`, `GDPR.md`, and `docs/API.md`.
+
 ## Pull Request Guidelines
 
 - Keep changes **focused** — one feature or fix per PR.

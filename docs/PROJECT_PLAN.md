@@ -5,6 +5,10 @@
 
 ---
 
+> **Status note (March 2026 refresh):** This plan started as a full audit and some items have already been completed since the first draft. CI is now live, Vitest coverage exists for core routes/accessibility/storage flows, the app has an `ErrorBoundary`, the PWA manifest/service worker are in place, and admin promotion uses environment-configured keys. Read the backlog below as an active roadmap, not as a list of untouched findings.
+
+---
+
 ## 1. Executive Summary
 
 BladderTracker is a mature, feature-rich child development and continence tracking application with a solid technical foundation. The product addresses a genuine gap: combined bladder/bowel/sleep/sensory/therapy tracking with multi-caregiver support and NHS-inspired design. The codebase is TypeScript-strict, well-architected with a dual local/cloud mode, and comprehensively typed.
@@ -19,14 +23,14 @@ BladderTracker is a mature, feature-rich child development and continence tracki
 - Comprehensive documentation suite
 
 **Key areas requiring work:**
-- No automated test suite
+- Test coverage exists, but deeper API/integration/business-logic coverage is still needed
 - Several large page components (1000+ lines)
-- Documentation drift between files
+- Documentation and roadmap maintenance still need active ownership as features evolve
 - Unused/legacy page files in `src/pages/`
-- Missing CI/CD pipeline
+- Issue intake is inconsistent and public issue hygiene is still loose
 - Build chunk sizes exceed recommended limits
 - Content/label inconsistencies between docs and code
-- Module system docs reference 12 modules; actual count is 13 (leaps)
+- Release/readiness communication is still lightweight for a public-facing repository
 
 ---
 
@@ -48,43 +52,38 @@ BladderTracker is a mature, feature-rich child development and continence tracki
 
 | # | Area | Issue | Severity |
 |---|------|-------|----------|
-| H1 | Testing | Zero automated tests — no unit, integration, or e2e tests | Critical |
-| H2 | Documentation | Module count discrepancy: docs say 12, actual is 13 (leaps module missing from counts) | High |
-| H3 | Documentation | ARCHITECTURE.md references non-existent `users` and `sessions` tables (should be `accounts`) | High |
-| H4 | Documentation | ARCHITECTURE.md says Recharts v2; actual is v3.8 | Medium |
-| H5 | Documentation | MODULES.md says "Click Save Module Settings"; modules actually save instantly | Medium |
-| H6 | Code | 16 page files in `src/pages/` but only 11 are routed — 5 appear to be legacy/unused (`CaregiverPortalPage`, `ChartsPage`, `ProfilePage`, `TodayPage`, and redundant files) | High |
-| H7 | Code | `SettingsPage.tsx` (828 lines), `AddEntryPage.tsx` (1269 lines), `LeapsPage.tsx` (1143 lines) are oversized | Medium |
-| H8 | Build | `ReportsPage` chunk is 394KB (gzipped 116KB) — well above the 500KB warning threshold | Medium |
-| H9 | CI/CD | No GitHub Actions workflows — no automated build/lint/test on PRs | High |
-| H10 | Code | `test.png` (469KB) at repository root — appears to be a stale test artifact | Low |
-| H11 | Documentation | README code snippet for DEFAULT_MODULES uses old labels (`Urine`, `Toilet Attempts`, `Food`) but actual code uses `Wee`, `Toilet visits`, `Meals` | High |
-| H12 | Documentation | README "Contributing" section says "9 React page components" but there are 11 active + 5 legacy | Medium |
-| H13 | Documentation | CONTRIBUTING.md routes table is missing `/milestones`, `/leaps`, and `/help` routes | Medium |
+| H1 | Testing | Current automated coverage is helpful but still shallow outside smoke/accessibility/storage flows | High |
+| H2 | Issue hygiene | No structured issue intake for bugs, features, or documentation improvements | High |
+| H3 | Documentation | README is accurate but too dense for first-time GitHub visitors and needs clearer support/roadmap pathways | High |
+| H4 | Code | 16 page files in `src/pages/` but only 11 are routed — 5 appear to be legacy/unused (`CaregiverPortalPage`, `ChartsPage`, `ProfilePage`, `TodayPage`, and redundant files) | High |
+| H5 | Architecture | `SettingsPage.tsx` (828 lines), `AddEntryPage.tsx` (1269 lines), `LeapsPage.tsx` (1143 lines) are oversized | Medium |
+| H6 | Performance | `charts-vendor` chunk is still large and should be monitored as reporting features grow | Medium |
+| H7 | Repo management | Open GitHub issues include stale, duplicate, and implementation-complete items that should be triaged or closed | High |
+| H8 | Release readiness | The repo still lacks a changelog/release note discipline for public-facing updates | Medium |
 
 ### 2.3 Medium-Priority Issues
 
 | # | Area | Issue |
 |---|------|-------|
 | M1 | Content | README Feature Roadmap section reads more like a changelog than a roadmap |
-| M2 | Consistency | Module labels differ between DEFAULT_MODULES code (`Routines`) and MODULES.md doc (`Routine`) |
+| M2 | Consistency | Terminology should keep being standardised across README, onboarding, in-app help, and issues as tracker fields evolve |
 | M3 | Architecture | `src/content/presentation.ts` exists for content centralisation but adoption is unclear in all pages |
-| M4 | Architecture | No centralised error boundary component |
+| M4 | Architecture | Error handling exists via `ErrorBoundary`, but recovery and failure-state guidance are still lightly documented |
 | M5 | UX | Empty state handling varies across pages |
 | M6 | Accessibility | WCAG 2.1 AA compliance claimed but not verified by automated tools |
-| M7 | Security | Admin access via URL parameter (`?admin-access=bladdertracker-admin-2024`) is in source code |
+| M7 | Security | Security/disclosure guidance is not yet prominent enough for outside contributors |
 | M8 | Data | Theme preference not synced to cloud (localStorage only, as noted in Known Issues) |
-| M9 | API | `SameSite` cookie attribute is `Strict` in docs/API.md but `Lax` in README Security section |
+| M9 | API | API and contributor docs should continue to call out local-vs-cloud operational differences more clearly |
 
 ### 2.4 Low-Priority Issues
 
 | # | Area | Issue |
 |---|------|-------|
-| L1 | Assets | `test.png` at root should be in `.gitignore` or removed |
-| L2 | Performance | No service worker / PWA manifest despite "PWA" mentions |
-| L3 | Branding | Product name "BladderTracker" may be too narrow for the broader developmental tracking scope |
-| L4 | Documentation | Onboarding.md still references "Toilet Attempts" instead of "Toilet visits" |
-| L5 | Documentation | GDPR.md bowel location options say "toilet, nappy" but code uses "toilet, pad, pants" |
+| L1 | Assets | Public-facing repo screenshots and visual examples could be curated more intentionally |
+| L2 | Performance | PWA support exists, but install/offline behaviour is not yet documented or validated via Lighthouse in CI |
+| L3 | Branding | Product name "BladderTracker" may feel narrower than the broader developmental-tracking scope |
+| L4 | Documentation | Onboarding and support copy should continue to be kept in sync with new milestone/leap guidance |
+| L5 | Repo operations | Milestones, changelog, and release communication are still informal |
 
 ---
 
