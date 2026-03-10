@@ -257,13 +257,13 @@ export default function LoginPage() {
                 <Field label={mode === 'reset' ? 'Confirm new password' : 'Confirm password'}>
                   <div className="relative">
                     <input
-                        type={showConfirmPassword ? 'text' : 'password'}
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        placeholder="Repeat your password"
-                        autoComplete="new-password"
-                        className="input-card pr-11"
-                        required
+                      type={showConfirmPassword ? 'text' : 'password'}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="Repeat your password"
+                      autoComplete="new-password"
+                      className="input-card pr-11"
+                      required
                     />
                     <button
                       type="button"

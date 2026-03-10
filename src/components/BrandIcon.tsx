@@ -16,7 +16,7 @@ export default function BrandIcon({ width = 140, className = '' }: BrandIconProp
       src={brandIconUrl}
       alt="BladderTracker app logo"
       width={width}
-      className={`h-auto ${className}`.trim()}
+      className={className ? `h-auto ${className}` : 'h-auto'}
       draggable={false}
     />
   );
