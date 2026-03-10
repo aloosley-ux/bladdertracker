@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { format, isSameDay } from 'date-fns';
 import {
   Apple,
@@ -126,19 +126,18 @@ export default function LogPage() {
 
   const [selectedDate, setSelectedDate] = useState(new Date());
   // Initialize activeFilters from enabled modules; sync when enabledModules changes
-  const [activeFilters, setActiveFilters] = useState<Set<ModuleKey>>(
+  const [storedActiveFilters, setStoredActiveFilters] = useState<Set<ModuleKey>>(
     () => new Set(ALL_MODULE_KEYS.filter((k) => enabledKeys.has(k))),
   );
-
-  // When enabled modules change (e.g. Settings toggle), remove disabled ones from activeFilters
-  useEffect(() => {
-    setActiveFilters((prev) => new Set([...prev].filter((k) => enabledKeys.has(k))));
-  }, [enabledKeys]);
+  const activeFilters = useMemo(
+    () => new Set([...storedActiveFilters].filter((key) => enabledKeys.has(key))),
+    [storedActiveFilters, enabledKeys],
+  );
 
   const dateStr = format(selectedDate, 'yyyy-MM-dd');
 
   const toggleFilter = (key: ModuleKey) => {
-    setActiveFilters((prev) => {
+    setStoredActiveFilters((prev) => {
       const next = new Set(prev);
       if (next.has(key)) {
         next.delete(key);

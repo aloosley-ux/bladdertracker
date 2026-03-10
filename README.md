@@ -1,6 +1,6 @@
-# 🧩 Development Tracker
+# 🧩 BladderTracker
 
-**UK Child Development & Autism Tracker** — a comprehensive developmental tracking platform with an NHS-inspired design.
+**UK child development, continence, and autism tracker** — a comprehensive developmental tracking platform with an NHS-inspired design.
 
 Built for parents, caregivers, therapists, and educators to log daily activities, track developmental milestones, and collaborate on a child's progress — all from a responsive PWA with adaptive navigation.
 
@@ -147,14 +147,16 @@ Built for parents, caregivers, therapists, and educators to log daily activities
 
 | Page | Route | Nav Icon | Description |
 |------|-------|----------|-------------|
-| Dashboard | `/` | 📊 Dashboard | Today's overview, quick-add grid, daily stats |
+| Dashboard | `/` | 📊 Dashboard | Today's overview, reminders, quick-add actions, and daily stats |
 | Log | `/log` | 📋 Log | Full diary history with calendar-strip, filters, and entry management |
 | Add Entry | `/add` | — | 11 tabbed entry forms with in-app help guides |
-| Reports | `/reports` | 📈 Reports | Charts, trends, and period summaries |
+| Reports | `/reports` | 📈 Reports | Charts, trends, milestone summaries, and guided export |
+| Milestones | `/milestones` | ⭐ Milestones | Developmental milestone dashboard |
+| Leaps | `/leaps` | 🌈 Leaps | Developmental leap guidance, predictions, and symptom logging |
 | Calendar | `/calendar` | — | Monthly calendar view of all entries |
-| Milestones | `/milestones` | — | Developmental milestone dashboard |
-| Caregiver Portal | `/caregiver` | 👥 Care | Invite management & shared access |
-| Profile / Settings | `/profile` | ⚙️ Settings | Theme, module toggles (instant, no Save required), GDPR controls, role info |
+| Profiles | `/profiles` | 👥 Profiles | Child profiles, caregiver invites, access review, and notifications |
+| Settings | `/settings` | ⚙️ Settings | Themes, module toggles, reminders, import/export, GDPR, and support |
+| Help & Support | `/help` | — | Onboarding guidance, FAQs, accessibility, privacy, and support signposting |
 | Admin | `/admin` | 👑 Crown | System admin (admin role only) |
 | Login | — | — | Register / login / password reset with role descriptions |
 
@@ -169,7 +171,7 @@ Built for parents, caregivers, therapists, and educators to log daily activities
 │                                                 │
 │  ┌──────────┐  ┌──────────┐  ┌──────────────┐  │
 │  │ AppCtx   │  │ ThemeCtx │  │ React Router │  │
-│  │ useApp() │  │useTheme()│  │  9 pages     │  │
+│  │ useApp() │  │useTheme()│  │ lazy routes  │  │
 │  └────┬─────┘  └──────────┘  └──────────────┘  │
 │       │                                         │
 │  ┌────▼──────────────────────────────────────┐  │
@@ -496,7 +498,7 @@ See `src/components/HelpPanel.tsx` for the full component. It is collapsible, ke
 
 ## 📊 Clinical & Market Benchmarking
 
-| Feature | Development Tracker | CareZone | Ovia | MyTherapy | ASD-specific apps |
+| Feature | BladderTracker | CareZone | Ovia | MyTherapy | ASD-specific apps |
 |---------|:------------------:|:--------:|:----:|:---------:|:-----------------:|
 | Multi-tracker (11+) | ✅ | ❌ | Partial | ❌ | ❌ |
 | Developmental milestones | ✅ 8 categories | ❌ | Basic | ❌ | Partial |

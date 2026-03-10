@@ -528,7 +528,9 @@ interface ModuleSettingsProps {
 
 function ModuleSettings({ childName, initialModules, onSave }: ModuleSettingsProps) {
   const latestRef = useRef(initialModules);
-  latestRef.current = initialModules;
+  useEffect(() => {
+    latestRef.current = initialModules;
+  }, [initialModules]);
 
   const enabled = new Set(initialModules);
 
