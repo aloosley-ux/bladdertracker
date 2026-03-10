@@ -84,6 +84,14 @@ export async function apiResetPassword(email: string, password: string): Promise
   return user;
 }
 
+export async function apiPromoteToAdmin(key: string): Promise<User> {
+  const { user } = await request<{ user: User }>('/auth', {
+    method: 'POST',
+    body: JSON.stringify({ action: 'promote', key }),
+  });
+  return user;
+}
+
 // Children
 export async function apiGetChildren(): Promise<Child[]> {
   const { children } = await request<{ children: Child[] }>('/children');

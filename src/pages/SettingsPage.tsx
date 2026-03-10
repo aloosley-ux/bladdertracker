@@ -325,6 +325,7 @@ export default function SettingsPage() {
                         <button
                           role="switch"
                           aria-checked={enabled}
+                          aria-label={`Toggle ${moduleId} reminders`}
                           className="nhs-toggle"
                           data-on={enabled}
                           onClick={() => {
@@ -797,7 +798,6 @@ function ModuleSettings({ childName, initialModules, onSave }: ModuleSettingsPro
               key={mod.id}
               className="flex cursor-pointer items-center justify-between rounded-xl bg-gray-50 px-3 py-3 transition-colors hover:bg-lavender-50"
               onClick={() => toggle(mod.id, !isOn)}
-              role="row"
             >
               <div className="flex items-center gap-3">
                 <span

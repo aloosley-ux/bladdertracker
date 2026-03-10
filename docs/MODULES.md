@@ -20,14 +20,16 @@ This document describes each tracker module, what it records, who should use it,
 
 ---
 
-## 💦 Urine
+## 💦 Wee
+
+**Clinical name:** Urine
 
 **Purpose:** Track voiding patterns including whether events are wet (leakage) or pass (toilet success), volume output, urgency, and leakage severity.
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `wet` | boolean | True if urine was present in pad/pants |
-| `pass` | boolean | True if urine was passed into the toilet |
+| `wet` | boolean | True if wee was present in pad/pants |
+| `pass` | boolean | True if wee was passed into the toilet |
 | `volumeMl` | number \| null | Measured volume if using collection device or scales |
 | `urgency` | number \| null | Urgency scale 1–5: 1 = no urgency, 5 = urgent/desperate |
 | `leakageAmount` | string | `none`, `small`, `moderate`, `large` |
@@ -77,7 +79,9 @@ This document describes each tracker module, what it records, who should use it,
 
 ---
 
-## 🎯 Toilet Attempts
+## 🎯 Toilet visits
+
+**Clinical name:** Toilet attempts
 
 **Purpose:** Track structured toilet training sessions to measure success rates, identify optimal timing, and support positive reinforcement planning.
 
@@ -91,7 +95,9 @@ This document describes each tracker module, what it records, who should use it,
 
 ---
 
-## 🍽️ Food
+## 🍽️ Meals
+
+**Clinical name:** Food
 
 **Purpose:** Track dietary intake to correlate with bowel patterns, energy levels, and fluid balance.
 
@@ -169,7 +175,9 @@ This document describes each tracker module, what it records, who should use it,
 
 ---
 
-## 📋 Routine
+## 📋 Routines
+
+**Clinical name:** Routine
 
 **Purpose:** Track daily routine completion to identify difficulties with transitions, build consistency, and celebrate achievements.
 

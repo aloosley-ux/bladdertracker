@@ -23,7 +23,7 @@ export default function AppNav() {
       {/* Desktop: sticky top navigation bar */}
       <nav
         role="navigation"
-        aria-label="Main navigation"
+        aria-label="Primary navigation"
         className="sticky top-0 z-50 hidden border-b border-lavender-100 bg-white md:block"
       >
         <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-6">
@@ -61,7 +61,7 @@ export default function AppNav() {
       {/* Mobile: fixed bottom navigation bar */}
       <nav
         role="navigation"
-        aria-label="Main navigation"
+        aria-label="Mobile navigation"
         className="fixed bottom-0 left-0 right-0 z-50 border-t border-lavender-100/80 bg-white/95 backdrop-blur safe-area-bottom md:hidden"
       >
         <div className="mx-auto flex h-17 max-w-2xl items-center justify-around px-2">

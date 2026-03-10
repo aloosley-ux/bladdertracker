@@ -4,11 +4,11 @@ import { ThemeProvider } from './context/ThemeContext';
 import { AppProvider } from './context/AppContext';
 import { useApp } from './context/useApp';
 import AppNav from './components/AppNav';
+import ErrorBoundary from './components/ErrorBoundary';
 import LoginPage from './pages/LoginPage';
 import HelpPage, { WelcomeModal } from './pages/HelpPage';
 import { promoteToAdmin, addAuditEvent } from './utils/storage';
-
-const ADMIN_ACCESS_KEY = 'bladdertracker-admin-2024';
+import { apiPromoteToAdmin } from './utils/api';
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 const AddEntryPage = lazy(() => import('./pages/AddEntryPage'));
 const ReportsPage = lazy(() => import('./pages/ReportsPage'));
@@ -47,23 +47,36 @@ function AdminAccessHandler() {
 
   useEffect(() => {
     const adminKey = searchParams.get('admin-access');
-    if (adminKey === ADMIN_ACCESS_KEY && user && user.role !== 'admin') {
-      const promoted = promoteToAdmin(user.id);
-      if (promoted) {
-        addAuditEvent({
-          userId: user.id,
-          action: 'Promoted to admin',
-          subject: user.name,
-          detail: 'Account promoted to admin via secure URL.',
-        });
-        login(promoted);
-        searchParams.delete('admin-access');
-        setSearchParams(searchParams, { replace: true });
-      }
-    } else if (adminKey && adminKey !== ADMIN_ACCESS_KEY) {
+    if (!adminKey || !user || user.role === 'admin') return;
+
+    const clearAdminAccess = () => {
       searchParams.delete('admin-access');
       setSearchParams(searchParams, { replace: true });
-    }
+    };
+
+    const attemptPromotion = async () => {
+      try {
+        const isCloudMode = Boolean(import.meta.env.VITE_USE_CLOUD);
+        if (isCloudMode) {
+          const promoted = await apiPromoteToAdmin(adminKey);
+          login(promoted);
+        } else if (adminKey === import.meta.env.VITE_ADMIN_KEY) {
+          const promoted = promoteToAdmin(user.id);
+          if (!promoted) return;
+          addAuditEvent({
+            userId: user.id,
+            action: 'Promoted to admin',
+            subject: user.name,
+            detail: 'Account promoted to admin via local admin access key.',
+          });
+          login(promoted);
+        }
+      } finally {
+        clearAdminAccess();
+      }
+    };
+
+    void attemptPromotion();
   }, [searchParams, user, login, setSearchParams]);
 
   return null;
@@ -88,27 +101,29 @@ function AppRoutes() {
       <WelcomeModal />
       <AdminAccessHandler />
       <main id="main-content" className="mx-auto max-w-5xl px-0 md:px-6 pb-20 md:pb-6 pt-0 md:pt-4">
-        <Suspense fallback={<RouteLoadingFallback />}>
-          <Routes>
-            <Route path="/" element={<DashboardPage />} />
-            <Route path="/log" element={<LogPage />} />
-            <Route path="/add" element={<AddEntryPage />} />
-            <Route path="/reports" element={<ReportsPage />} />
-            <Route path="/milestones" element={<MilestonesPage />} />
-            <Route path="/leaps" element={<LeapsPage />} />
-            <Route path="/calendar" element={<CalendarPage />} />
-            <Route path="/profiles" element={<ProfilesPage />} />
-            <Route path="/settings" element={<SettingsPage />} />
-            <Route path="/help" element={<HelpPage />} />
-            <Route path="/admin" element={<AdminPage />} />
-            {/* Legacy redirects */}
-            <Route path="/journal" element={<Navigate to="/log" replace />} />
-            <Route path="/charts" element={<Navigate to="/reports" replace />} />
-            <Route path="/caregiver" element={<Navigate to="/profiles" replace />} />
-            <Route path="/profile" element={<Navigate to="/settings" replace />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </Suspense>
+        <ErrorBoundary>
+          <Suspense fallback={<RouteLoadingFallback />}>
+            <Routes>
+              <Route path="/" element={<DashboardPage />} />
+              <Route path="/log" element={<LogPage />} />
+              <Route path="/add" element={<AddEntryPage />} />
+              <Route path="/reports" element={<ReportsPage />} />
+              <Route path="/milestones" element={<MilestonesPage />} />
+              <Route path="/leaps" element={<LeapsPage />} />
+              <Route path="/calendar" element={<CalendarPage />} />
+              <Route path="/profiles" element={<ProfilesPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/help" element={<HelpPage />} />
+              <Route path="/admin" element={<AdminPage />} />
+              {/* Legacy redirects */}
+              <Route path="/journal" element={<Navigate to="/log" replace />} />
+              <Route path="/charts" element={<Navigate to="/reports" replace />} />
+              <Route path="/caregiver" element={<Navigate to="/profiles" replace />} />
+              <Route path="/profile" element={<Navigate to="/settings" replace />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </Suspense>
+        </ErrorBoundary>
       </main>
     </div>
   );
