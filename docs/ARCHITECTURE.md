@@ -41,6 +41,9 @@ bladdertracker/
 │   ├── ARCHITECTURE.md         # This file
 │   └── MODULES.md              # Per-module field documentation
 ├── src/
+│   ├── assets/
+│   │   ├── brand-icon.svg      # Primary logo asset
+│   │   └── index.ts            # Central asset registry
 │   ├── components/
 │   │   ├── AppNav.tsx          # Responsive top/bottom navigation shell
 │   │   ├── BrandBanner.tsx     # App header
@@ -121,9 +124,9 @@ Route components are lazy-loaded in `src/App.tsx` so the initial mobile shell ca
 
 ## Module System
 
-Modules are defined in `src/types/index.ts` as `DEFAULT_MODULES: TrackerModule[]`. Each module has:
+Modules are defined in `src/types/index.ts` as `DEFAULT_MODULES: TrackerModule[]`. Shared UI wording, calmer labels, celebration copy, and role names are layered on top in `src/content/presentation.ts`. Each module has:
 - `id: ModuleId` — unique string identifier
-- `label` — display name
+- `label` — base display name
 - `icon` — emoji
 - `description` — one-line description for the Settings UI
 - `defaultEnabled` — whether enabled by default for new children

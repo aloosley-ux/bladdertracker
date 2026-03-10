@@ -15,13 +15,14 @@ import {
 } from '../utils/storage';
 import type { AccountRecord, User, UserRole } from '../types';
 import BrandIcon from '../components/BrandIcon';
+import { BRAND } from '../content/presentation';
 
 type AuthMode = 'register' | 'login' | 'reset';
 
 const roleOptions: { value: UserRole; label: string }[] = [
   { value: 'parent', label: 'Parent' },
   { value: 'caregiver', label: 'Caregiver' },
-  { value: 'schoolAdmin', label: 'School admin' },
+  { value: 'schoolAdmin', label: 'School staff' },
 ];
 
 function isCloudMode(): boolean {
@@ -163,12 +164,12 @@ export default function LoginPage() {
               <BrandIcon width={180} />
             </div>
             <h1 className="mt-1 text-xl font-bold tracking-tight text-gray-900">
-              Smarter journaling for families &amp; schools
+              {BRAND.heroTitle}
             </h1>
             <div className="mt-3 flex items-center justify-center gap-3 text-[11px] text-gray-500">
               <span className="inline-flex items-center gap-1"><ShieldCheck size={12} className="text-lavender-400" /> Secure</span>
               <span className="text-gray-300">·</span>
-              <span className="inline-flex items-center gap-1"><Mail size={12} className="text-lavender-400" /> Invites</span>
+              <span className="inline-flex items-center gap-1"><Mail size={12} className="text-lavender-400" /> Shared access</span>
               <span className="text-gray-300">·</span>
               <span className="inline-flex items-center gap-1"><Sparkles size={12} className="text-lavender-400" /> {cloud ? 'Cloud sync' : 'Private'}</span>
             </div>
@@ -224,7 +225,7 @@ export default function LoginPage() {
                   <div className="rounded-xl bg-lavender-50 px-3 py-2 text-xs text-lavender-700 mt-2">
                     {role === 'parent' && 'Full access: manage children, log all entries, invite others, and export data.'}
                     {role === 'caregiver' && 'Can view and log entries for children you are invited to. Cannot manage child profiles or invites.'}
-                    {role === 'schoolAdmin' && 'School-based access: log school-time entries (food, routine, toilet). Cannot manage profiles.'}
+                    {role === 'schoolAdmin' && 'School-based access: log day-to-day support updates such as meals, routines, and toilet visits. Cannot manage family profiles.'}
                   </div>
                 </Field>
               )}

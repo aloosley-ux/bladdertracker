@@ -15,17 +15,18 @@ import {
 import { CalendarDays, ChevronRight, Filter } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useApp } from '../context/useApp';
+import { getModuleLabel, TOILET_OUTCOME_LABELS } from '../content/presentation';
 import { DEFAULT_MODULES } from '../types';
 
 type Period = '7d' | '14d' | '30d';
 
 const ALL_EVENT_FILTERS = [
-  { key: 'drinks', label: '💧 Drinks', color: '#0ea5e9' },
-  { key: 'urine', label: '💦 Urine', color: '#f59e0b' },
-  { key: 'bowel', label: '🚽 Bowel', color: '#22c55e' },
+  { key: 'drinks', label: `💧 ${getModuleLabel('drinks', 'report')}`, color: '#0ea5e9' },
+  { key: 'urine', label: `💦 ${getModuleLabel('urine', 'report')}`, color: '#f59e0b' },
+  { key: 'bowel', label: `🚽 ${getModuleLabel('bowel', 'report')}`, color: '#22c55e' },
   { key: 'sleep', label: '🌙 Sleep', color: '#6366f1' },
-  { key: 'toilet', label: '🎯 Attempts', color: '#a855f7' },
-  { key: 'food', label: '🍽️ Food', color: '#f97316' },
+  { key: 'toilet', label: `🎯 ${getModuleLabel('toilet', 'report')}`, color: '#a855f7' },
+  { key: 'food', label: `🍽️ ${getModuleLabel('food', 'report')}`, color: '#f97316' },
   { key: 'mood', label: '😊 Mood', color: '#ec4899' },
   { key: 'sensory', label: '🎨 Sensory', color: '#14b8a6' },
   { key: 'medication', label: '💊 Medication', color: '#64748b' },
@@ -129,9 +130,9 @@ export default function ReportsPage() {
   const toiletOutcomeData = useMemo(() => {
     const childAttempts = toiletAttemptEntries.filter((e) => e.childId === selectedChildId);
     return [
-      { outcome: 'Success', count: childAttempts.filter((e) => e.outcome === 'success').length },
-      { outcome: 'No result', count: childAttempts.filter((e) => e.outcome === 'failure').length },
-      { outcome: 'Refused', count: childAttempts.filter((e) => e.outcome === 'no_event').length },
+      { outcome: TOILET_OUTCOME_LABELS.success, count: childAttempts.filter((e) => e.outcome === 'success').length },
+      { outcome: TOILET_OUTCOME_LABELS.failure, count: childAttempts.filter((e) => e.outcome === 'failure').length },
+      { outcome: TOILET_OUTCOME_LABELS.no_event, count: childAttempts.filter((e) => e.outcome === 'no_event').length },
     ];
   }, [toiletAttemptEntries, selectedChildId]);
 
@@ -202,9 +203,9 @@ export default function ReportsPage() {
     <div className="min-h-screen bg-white pb-20">
       {/* Header */}
       <div className="px-4 pt-6 pb-4">
-        <h1 className="text-xl font-bold text-gray-900">Reports &mdash; Summary &amp; Trends</h1>
+        <h1 className="text-xl font-bold text-gray-900">Trends &mdash; Reports</h1>
         <p className="mt-1 text-sm text-gray-500">
-          A visual snapshot for {selectedChild?.name ?? 'your selected child'}.
+          A calm visual summary for {selectedChild?.name ?? 'your selected child'}.
         </p>
       </div>
 
@@ -235,12 +236,12 @@ export default function ReportsPage() {
         <NhsCard>
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
-              <h3 className="text-sm font-bold text-gray-700">Reports export</h3>
-              <p className="text-xs text-gray-500">Exports are de-identified unless your role permits named data sharing.</p>
+              <h3 className="text-sm font-bold text-gray-700">Shareable summaries</h3>
+              <p className="text-xs text-gray-500">Exports are de-identified unless your role allows named sharing.</p>
             </div>
             <div className="flex gap-2">
-              <button onClick={() => setConfirmExport(true)} className="rounded-full bg-lavender-500 px-3 py-2 text-xs font-semibold text-white">Export CSV</button>
-              <button onClick={() => window.print()} className="rounded-full bg-gray-100 px-3 py-2 text-xs font-semibold text-gray-700">Export PDF</button>
+              <button onClick={() => setConfirmExport(true)} className="rounded-full bg-lavender-500 px-3 py-2 text-xs font-semibold text-white">Download CSV</button>
+              <button onClick={() => window.print()} className="rounded-full bg-gray-100 px-3 py-2 text-xs font-semibold text-gray-700">Print / PDF</button>
             </div>
           </div>
         </NhsCard>
@@ -276,10 +277,10 @@ export default function ReportsPage() {
           <h3 className="text-sm font-bold text-gray-700 mb-3">📈 {days}-day summary for {selectedChild?.name ?? 'child'}</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
             {enabledFilterKeys.has('drinks') && <StatTile emoji="💧" text={`${stats.drinks} drinks · avg ${stats.avgMl}ml/day`} bg="bg-sky-50" />}
-            {enabledFilterKeys.has('urine') && <StatTile emoji="💦" text={`${stats.urineEvents} urine events`} bg="bg-amber-50" />}
-            {enabledFilterKeys.has('bowel') && <StatTile emoji="🚽" text={`${stats.bowelEvents} bowel events`} bg="bg-emerald-50" />}
+            {enabledFilterKeys.has('urine') && <StatTile emoji="💦" text={`${stats.urineEvents} wee updates`} bg="bg-amber-50" />}
+            {enabledFilterKeys.has('bowel') && <StatTile emoji="🚽" text={`${stats.bowelEvents} poo updates`} bg="bg-emerald-50" />}
             {enabledFilterKeys.has('sleep') && <StatTile emoji="🌙" text={`${stats.sleepEvents} sleep events`} bg="bg-indigo-50" />}
-            {enabledFilterKeys.has('toilet') && <StatTile emoji="🎯" text={`${stats.toiletAttempts} attempts (${stats.toiletSuccess} ✅)`} bg="bg-purple-50" />}
+            {enabledFilterKeys.has('toilet') && <StatTile emoji="🎯" text={`${stats.toiletAttempts} toilet visits (${stats.toiletSuccess} successful)`} bg="bg-purple-50" />}
             {enabledFilterKeys.has('food') && <StatTile emoji="🍽️" text={`${stats.meals} meals · ${stats.newFoods} new foods tried`} bg="bg-orange-50" />}
             {enabledFilterKeys.has('mood') && (
               <StatTile emoji="😊" text={`${stats.moodLogs} mood logs${stats.avgMood !== null ? ` · avg ${stats.avgMood}/5` : ''}`} bg="bg-pink-50" />
@@ -320,13 +321,13 @@ export default function ReportsPage() {
                   <Tooltip contentStyle={{ borderRadius: 16, border: 'none', boxShadow: '0 12px 32px rgba(28, 25, 63, 0.12)' }} />
                   <Legend />
                   {enabledFilterKeys.has('urine') && activeFilters.has('urine') && <>
-                    <Line type="monotone" dataKey="wet" stroke="#f59e0b" strokeWidth={2} dot={{ r: 3 }} name="Wet" />
-                    <Line type="monotone" dataKey="pass" stroke="#22c55e" strokeWidth={2} dot={{ r: 3 }} name="Pass" />
+                    <Line type="monotone" dataKey="wet" stroke="#f59e0b" strokeWidth={2} dot={{ r: 3 }} name="Wet clothes" />
+                    <Line type="monotone" dataKey="pass" stroke="#22c55e" strokeWidth={2} dot={{ r: 3 }} name="Used toilet" />
                   </>}
-                  {enabledFilterKeys.has('bowel') && activeFilters.has('bowel') && <Line type="monotone" dataKey="bowel" stroke="#8b4dff" strokeWidth={2} dot={{ r: 3 }} name="Bowel" />}
+                  {enabledFilterKeys.has('bowel') && activeFilters.has('bowel') && <Line type="monotone" dataKey="bowel" stroke="#8b4dff" strokeWidth={2} dot={{ r: 3 }} name="Poo" />}
                   {enabledFilterKeys.has('sleep') && activeFilters.has('sleep') && <Line type="monotone" dataKey="sleep" stroke="#6366f1" strokeWidth={2} dot={{ r: 3 }} name="Sleep" />}
-                  {enabledFilterKeys.has('toilet') && activeFilters.has('toilet') && <Line type="monotone" dataKey="toilet" stroke="#a855f7" strokeWidth={2} dot={{ r: 3 }} name="Attempts" />}
-                  {enabledFilterKeys.has('food') && activeFilters.has('food') && <Line type="monotone" dataKey="food" stroke="#f97316" strokeWidth={2} dot={{ r: 3 }} name="Food" />}
+                  {enabledFilterKeys.has('toilet') && activeFilters.has('toilet') && <Line type="monotone" dataKey="toilet" stroke="#a855f7" strokeWidth={2} dot={{ r: 3 }} name="Toilet visits" />}
+                  {enabledFilterKeys.has('food') && activeFilters.has('food') && <Line type="monotone" dataKey="food" stroke="#f97316" strokeWidth={2} dot={{ r: 3 }} name="Meals" />}
                 </LineChart>
               </ResponsiveContainer>
             </ChartCard>
@@ -390,7 +391,7 @@ export default function ReportsPage() {
                   <XAxis dataKey="outcome" tick={{ fontSize: 10 }} />
                   <YAxis tick={{ fontSize: 10 }} label={{ value: 'Count', angle: -90, position: 'insideLeft', offset: 8, fontSize: 10, fill: '#9ca3af' }} />
                   <Tooltip contentStyle={{ borderRadius: 16, border: 'none', boxShadow: '0 12px 32px rgba(28, 25, 63, 0.12)' }} />
-                  <Bar dataKey="count" fill="#a855f7" radius={[10, 10, 0, 0]} name="Attempts" />
+                  <Bar dataKey="count" fill="#a855f7" radius={[10, 10, 0, 0]} name="Toilet visits" />
                 </BarChart>
               </ResponsiveContainer>
             </ChartCard>

@@ -1,8 +1,8 @@
 # 🧩 BladderTracker
 
-**UK child development, continence, and autism tracker** — a comprehensive developmental tracking platform with an NHS-inspired design.
+**Calm tracking for families, caregivers, and care teams** — a child development, continence, SEND, and daily routine tracker with NHS-style clarity and a mobile-first layout.
 
-Built for parents, caregivers, therapists, and educators to log daily activities, track developmental milestones, and collaborate on a child's progress — all from a responsive PWA with adaptive navigation.
+Built for tired, busy, real-world use: one-handed on a phone, during routines, school handovers, and care conversations. The product uses plain-English labels in the UI (for example **Wee**, **Poo**, and **Toilet visits**) while keeping the underlying data model stable for reporting and clinical workflows.
 
 [![React 19](https://img.shields.io/badge/React-19-61dafb)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178c6)](https://www.typescriptlang.org)
@@ -44,7 +44,7 @@ Built for parents, caregivers, therapists, and educators to log daily activities
 ### 1) Milestones timeline & calendar
 - `/milestones` now provides a milestone timeline with **weekly / monthly / annual zoom**, date markers, and milestone cards.
 - Filters are available for **module, milestone type, status, category, and time window**.
-- “**Jump to today**” and “**Jump to next leap**” controls are included.
+- “**Jump to today**” and “**Next upcoming milestone**” controls are included.
 - Custom milestones support module-scoped entries, milestone type, target date, diary notes, and role source metadata.
 
 ### 2) Contextual guidance panels
@@ -114,11 +114,11 @@ Built for parents, caregivers, therapists, and educators to log daily activities
 | # | Module | Icon | Description | Default |
 |---|--------|------|-------------|---------|
 | 1 | **Drinks** | 🥤 | Fluid intake (cup, beaker, bottle, sippy) with mL amounts | ✅ |
-| 2 | **Urine** | 💦 | Wet/pass events, volume, urgency 1–5, leakage tracking | ✅ |
-| 3 | **Bowel** | 🚽 | Bristol Stool Scale 1–7, location, laxative tracking | ✅ |
-| 4 | **Sleep** | 🌙 | Onset/wake/nap events, duration, quality 1–5 | ✅ |
-| 5 | **Toilet Attempts** | 🎯 | Training outcomes (success/failure), prompted/supervised | ✅ |
-| 6 | **Food** | 🍽️ | Meals (breakfast/lunch/dinner/snack), portions | ✅ |
+| 2 | **Wee** | 💦 | Wet clothes / used toilet updates, measured amount, urgency, and leaks | ✅ |
+| 3 | **Poo** | 🚽 | Poo consistency, location, amount, and laxative tracking | ✅ |
+| 4 | **Sleep** | 🌙 | Bedtime, sleep onset, wakes, naps, and quality | ✅ |
+| 5 | **Toilet visits** | 🎯 | Toilet sits, prompts, adult support, and outcomes | ✅ |
+| 6 | **Meals** | 🍽️ | Meals, snacks, portions, new foods, and acceptance | ✅ |
 | 7 | **Mood** | 😊 | Emotional level 1–5 with trigger logging | ⬜ |
 | 8 | **Sensory** | 🎨 | Sensory type, response (seeking/avoiding/neutral), intensity | ⬜ |
 | 9 | **Medication** | 💊 | Medication name, dosage, administered status | ⬜ |
@@ -131,9 +131,9 @@ Built for parents, caregivers, therapists, and educators to log daily activities
 | Capability | Details |
 |------------|---------|
 | 🏥 **NHS-Inspired UI** | Responsive layout with top navigation on desktop and bottom navigation on mobile |
-| 📱 **Full-Width Responsive Layout** | Adapts seamlessly across mobile, tablet, and desktop viewports |
+| 📱 **Mobile-First Layout** | Larger quick actions, shorter nav labels, and calmer one-handed flows on phones |
 | 🏆 **Milestone Engine** | Full CRUD for developmental milestones across 8 categories with status workflow |
-| 🔀 **Module Registry** | Per-child module toggling via `DEFAULT_MODULES` + localStorage/DB persistence |
+| 🔀 **Module Registry** | Per-child module toggling via `DEFAULT_MODULES` with UI wording and helper copy centralized in `src/content/presentation.ts` |
 | 👥 **6 User Roles** | admin, parent, caregiver, schoolAdmin, therapist, specialist |
 | 🌗 **Theme System** | Light, Dark, High Contrast with CSS custom properties |
 | 📊 **Charts & Calendar** | Recharts-powered data visualization + calendar view |
@@ -142,14 +142,16 @@ Built for parents, caregivers, therapists, and educators to log daily activities
 | 📝 **Audit Trail** | Timestamped logging of all create/update/delete operations |
 | ☁️ **Cloud Storage** | All 11 tracker types + milestones + enabled_modules persist to Neon Postgres via `VITE_USE_CLOUD=true`. Local mode uses localStorage as fallback. |
 | 📥 **Data Import** | Bulk import via CSV/Excel for all entry types |
+| 🎉 **Gentle celebrations** | Supportive, non-punitive celebration banners for milestones and daily effort |
+| 🧱 **Brand & asset registry** | Brand copy in `src/content/presentation.ts` and asset references in `src/assets/index.ts` for easier updates |
 
 ### Pages
 
 | Page | Route | Nav Icon | Description |
 |------|-------|----------|-------------|
-| Dashboard | `/` | 📊 Dashboard | Today's overview, reminders, quick-add actions, and daily stats |
-| Log | `/log` | 📋 Log | Full diary history with calendar-strip, filters, and entry management |
-| Add Entry | `/add` | — | 11 tabbed entry forms with in-app help guides |
+| Today | `/` | 📊 Today | Today's overview, reminders, supportive celebrations, and thumb-friendly quick actions |
+| Diary | `/log` | 📋 Diary | Full diary history with calendar-strip, filters, and entry management |
+| Add an update | `/add` | — | Fast tabbed entry forms with calmer wording and one-handed quick logging |
 | Reports | `/reports` | 📈 Reports | Charts, trends, milestone summaries, and guided export |
 | Milestones | `/milestones` | ⭐ Milestones | Developmental milestone dashboard |
 | Leaps | `/leaps` | 🌈 Leaps | Developmental leap guidance, predictions, and symptom logging |
@@ -161,6 +163,14 @@ Built for parents, caregivers, therapists, and educators to log daily activities
 | Login | — | — | Register / login / password reset with role descriptions |
 
 ---
+
+## 🧭 Product & UX principles
+
+- **Plain-English first:** the UI now prefers family-friendly labels such as **Wee**, **Poo**, and **Toilet visits** while preserving the existing internal schema.
+- **One-handed mobile use:** primary quick actions are larger, shorter, and grouped for thumb-friendly use on phones.
+- **Gentle encouragement:** celebration banners recognise effort and progress without streak pressure or guilt-based nudges.
+- **Maintainable content:** shared product wording, celebration copy, role labels, and brand strings live in `src/content/presentation.ts`.
+- **Updateable assets:** app-wide asset references now flow through `src/assets/index.ts`, making future brand refreshes easier.
 
 ## 🏗 Architecture
 
@@ -678,7 +688,7 @@ Changes apply **instantly** (no Save button) and persist to localStorage (local 
 ### Automated checks run
 - `npm run build` ✅
 - `npx tsc --project tsconfig.api.json --noEmit` ✅
-- `npm run lint` ⚠️ currently has pre-existing warnings/errors outside this roadmap scope
+- `npm run lint` ✅
 
 ### Manual QA checklist
 - [ ] Milestones timeline: weekly/monthly/annual zoom, filters, and jump controls

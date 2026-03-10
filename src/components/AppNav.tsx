@@ -1,20 +1,21 @@
 import { NavLink } from 'react-router-dom';
 import { LayoutDashboard, ClipboardList, BarChart3, Users, Settings, Crown, Star, Rainbow } from 'lucide-react';
 import { useApp } from '../context/useApp';
+import { BRAND } from '../content/presentation';
 
 export default function AppNav() {
   const { user } = useApp();
   const isAdmin = user?.role === 'admin';
 
   const navItems = [
-    { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
-    { to: '/log', icon: ClipboardList, label: 'Log' },
-    { to: '/reports', icon: BarChart3, label: 'Reports' },
-    { to: '/milestones', icon: Star, label: 'Milestones' },
-    { to: '/leaps', icon: Rainbow, label: 'Leaps' },
-    { to: '/profiles', icon: Users, label: 'Profiles' },
-    { to: '/settings', icon: Settings, label: 'Settings' },
-    ...(isAdmin ? [{ to: '/admin', icon: Crown, label: 'Admin' }] : []),
+    { to: '/', icon: LayoutDashboard, label: 'Today', mobileLabel: 'Today' },
+    { to: '/log', icon: ClipboardList, label: 'Diary', mobileLabel: 'Diary' },
+    { to: '/reports', icon: BarChart3, label: 'Reports', mobileLabel: 'Trends' },
+    { to: '/milestones', icon: Star, label: 'Milestones', mobileLabel: 'Goals' },
+    { to: '/leaps', icon: Rainbow, label: 'Leaps', mobileLabel: 'Leaps' },
+    { to: '/profiles', icon: Users, label: 'Profiles', mobileLabel: 'Family' },
+    { to: '/settings', icon: Settings, label: 'Settings', mobileLabel: 'Settings' },
+    ...(isAdmin ? [{ to: '/admin', icon: Crown, label: 'Admin', mobileLabel: 'Admin' }] : []),
   ];
 
   return (
@@ -27,13 +28,13 @@ export default function AppNav() {
       >
         <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-6">
           <div className="flex flex-col">
-            <span className="text-lg font-bold tracking-tight text-lavender-700">
-              BladderTracker
-            </span>
-            <span className="text-[11px] font-medium text-gray-400">
-              Calm tracking for families and care teams
-            </span>
-          </div>
+              <span className="text-lg font-bold tracking-tight text-lavender-700">
+               {BRAND.name}
+              </span>
+              <span className="text-[11px] font-medium text-gray-400">
+               {BRAND.tagline}
+              </span>
+            </div>
           <div className="flex items-center gap-1">
             {navItems.map(({ to, icon: Icon, label }) => (
               <NavLink
@@ -64,14 +65,14 @@ export default function AppNav() {
         className="fixed bottom-0 left-0 right-0 z-50 border-t border-lavender-100/80 bg-white/95 backdrop-blur safe-area-bottom md:hidden"
       >
         <div className="mx-auto flex h-17 max-w-2xl items-center justify-around px-2">
-          {navItems.map(({ to, icon: Icon, label }) => (
+          {navItems.map(({ to, icon: Icon, label, mobileLabel }) => (
             <NavLink
               end={to === '/'}
               key={to}
               to={to}
               aria-label={label}
               className={({ isActive }) =>
-                `flex min-w-14 flex-col items-center gap-1 rounded-2xl px-2 py-2 text-[11px] transition-all ${
+                `flex min-w-12 flex-col items-center gap-1 rounded-2xl px-1.5 py-2 text-[10px] transition-all ${
                   isActive
                     ? 'bg-lavender-50 text-lavender-700 font-semibold shadow-sm'
                     : 'text-gray-400 hover:text-lavender-500'
@@ -79,7 +80,7 @@ export default function AppNav() {
               }
             >
               <Icon size={20} strokeWidth={2.1} />
-              <span>{label}</span>
+              <span>{mobileLabel}</span>
             </NavLink>
           ))}
         </div>

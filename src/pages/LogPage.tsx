@@ -18,6 +18,7 @@ import { Link } from 'react-router-dom';
 import { useApp } from '../context/useApp';
 import CalendarStrip from '../components/CalendarStrip';
 import EntryCard from '../components/EntryCard';
+import { getModuleLabel, TOILET_OUTCOME_LABELS, URINE_COPY } from '../content/presentation';
 import { DEFAULT_MODULES } from '../types';
 
 type ModuleKey =
@@ -66,17 +67,17 @@ const ALL_MODULE_KEYS = DEFAULT_MODULES
   .map((m) => m.id) as ModuleKey[];
 
 const MODULE_META: { key: ModuleKey; label: string; emoji: string }[] = [
-  { key: 'drinks', label: 'Drinks', emoji: '🥤' },
-  { key: 'urine', label: 'Urine', emoji: '💦' },
-  { key: 'bowel', label: 'Bowel', emoji: '🚽' },
+  { key: 'drinks', label: getModuleLabel('drinks'), emoji: '🥤' },
+  { key: 'urine', label: getModuleLabel('urine'), emoji: '💦' },
+  { key: 'bowel', label: getModuleLabel('bowel'), emoji: '🚽' },
   { key: 'sleep', label: 'Sleep', emoji: '🌙' },
-  { key: 'toilet', label: 'Toilet', emoji: '🎯' },
-  { key: 'food', label: 'Food', emoji: '🍽️' },
+  { key: 'toilet', label: getModuleLabel('toilet', 'short'), emoji: '🎯' },
+  { key: 'food', label: getModuleLabel('food'), emoji: '🍽️' },
   { key: 'mood', label: 'Mood', emoji: '😊' },
   { key: 'sensory', label: 'Sensory', emoji: '🎨' },
   { key: 'medication', label: 'Medication', emoji: '💊' },
   { key: 'therapy', label: 'Therapy', emoji: '🧩' },
-  { key: 'routine', label: 'Routine', emoji: '📋' },
+  { key: 'routine', label: getModuleLabel('routine'), emoji: '📋' },
 ];
 
 export default function LogPage() {
@@ -220,11 +221,11 @@ export default function LogPage() {
     if (activeFilters.has('urine')) {
       for (const e of dayUrine) {
         const parts =
-          [e.wet ? 'Wet' : '', e.pass ? 'Pass' : ''].filter(Boolean).join(' · ') || 'Event';
+          [e.wet ? URINE_COPY.wetLabel : '', e.pass ? URINE_COPY.passLabel : ''].filter(Boolean).join(' · ') || 'Update';
         const details = [
           e.volumeMl ? `${e.volumeMl}ml` : '',
-          e.urgency ? `Urgency ${e.urgency}/5` : '',
-          e.leakageAmount && e.leakageAmount !== 'none' ? `Leak: ${e.leakageAmount}` : '',
+          e.urgency ? `${URINE_COPY.urgencyLabel} ${e.urgency}/5` : '',
+          e.leakageAmount && e.leakageAmount !== 'none' ? `${URINE_COPY.leakageLabel}: ${e.leakageAmount}` : '',
         ]
           .filter(Boolean)
           .join(' · ');
@@ -234,7 +235,7 @@ export default function LogPage() {
           node: (
             <EntryCard
               icon={<CloudRain size={18} className="text-amber-500" />}
-              title={`Urine: ${parts}`}
+              title={`${getModuleLabel('urine')}: ${parts}`}
               subtitle={[details, e.notes].filter(Boolean).join(' — ')}
               time={e.time}
               color="bg-peach"
@@ -253,8 +254,8 @@ export default function LogPage() {
           node: (
             <EntryCard
               icon={<Stethoscope size={18} className="text-emerald-500" />}
-              title={`Bowel: ${e.location} – ${e.amount} (Type ${e.bristolType})`}
-              subtitle={`${e.laxativesGiven ? '💊 Laxatives given. ' : ''}${e.notes}`}
+              title={`${getModuleLabel('bowel')}: ${e.location === 'nappy' ? 'Nappy' : 'Toilet'} · ${e.amount} · Type ${e.bristolType}`}
+              subtitle={`${e.laxativesGiven ? '💊 Laxatives today. ' : ''}${e.notes}`}
               time={e.time}
               color="bg-mint"
               onDelete={() => deleteBowelEntry(e.id)}
@@ -297,7 +298,7 @@ export default function LogPage() {
           node: (
             <EntryCard
               icon={<Target size={18} className="text-purple-500" />}
-              title={`Toilet: ${e.outcome === 'success' ? '✅ Success' : e.outcome === 'failure' ? '❌ No result' : '🚫 Refused'}`}
+              title={`${getModuleLabel('toilet', 'short')}: ${TOILET_OUTCOME_LABELS[e.outcome]}`}
               subtitle={[
                 e.supervised ? '👀 Supervised' : '',
                 e.prompted ? '🔔 Prompted' : '',
@@ -459,9 +460,9 @@ export default function LogPage() {
       <div className="pb-20">
         <div className="px-4 pt-6">
           <div className="rounded-2xl bg-white p-6 text-center shadow-sm ring-1 ring-black/5">
-            <h1 className="text-2xl font-bold text-gray-900">No child profile yet</h1>
+            <h1 className="text-2xl font-bold text-gray-900">No family profile yet</h1>
             <p className="mt-2 text-sm text-gray-500">
-              Add a child in Settings or accept a caregiver invite to start logging.
+              Add a child profile or accept a shared invite to start logging.
             </p>
             <Link
               className="mt-4 inline-block rounded-full bg-lavender-500 px-5 py-3 text-sm font-semibold text-white"
@@ -483,8 +484,8 @@ export default function LogPage() {
     <div className="pb-24">
       {/* Header */}
       <div className="px-4 pt-6 pb-2">
-        <h1 className="text-xl font-bold text-gray-900">Log / History</h1>
-        <p className="mt-0.5 text-sm text-gray-500">View and manage all recorded entries</p>
+        <h1 className="text-xl font-bold text-gray-900">Diary</h1>
+        <p className="mt-0.5 text-sm text-gray-500">Review daily updates and tidy up anything you need to change.</p>
       </div>
 
       {/* Child selector */}
@@ -536,7 +537,7 @@ export default function LogPage() {
       {/* Entry heading */}
       <div className="flex items-center justify-between px-4 pt-5 pb-2">
         <h2 className="text-sm font-bold text-gray-700">
-          {dateLabel} Entries for {selectedChild.name}
+          {dateLabel} updates for {selectedChild.name}
         </h2>
         <span className="text-xs text-gray-400">
           {entries.length} {entries.length === 1 ? 'entry' : 'entries'}
@@ -548,18 +549,18 @@ export default function LogPage() {
         {entries.length === 0 ? (
           <div className="rounded-2xl bg-white p-8 text-center shadow-sm ring-1 ring-black/5">
             <p className="text-3xl">📭</p>
-            <p className="mt-2 text-sm font-semibold text-gray-700">No entries found</p>
+            <p className="mt-2 text-sm font-semibold text-gray-700">No updates found</p>
             <p className="mt-1 text-xs text-gray-400">
               {activeFilters.size === 0
-                ? 'Enable some filters above to see entries.'
-                : 'Nothing recorded for this date and the selected filters.'}
+                ? 'Turn on some filters above to see updates.'
+                : 'Nothing has been recorded for this date and filter combination.'}
             </p>
             <Link
               to="/add"
               className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-lavender-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-lavender-600"
             >
               <Plus size={16} />
-              Add entry
+              Add an update
             </Link>
           </div>
         ) : (
