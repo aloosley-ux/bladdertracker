@@ -1,24 +1,45 @@
-import { useEffect } from 'react';
+import { Suspense, lazy, useEffect } from 'react';
 import { BrowserRouter, Navigate, Route, Routes, useSearchParams } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import { AppProvider } from './context/AppContext';
 import { useApp } from './context/useApp';
 import AppNav from './components/AppNav';
 import LoginPage from './pages/LoginPage';
-import DashboardPage from './pages/DashboardPage';
-import AddEntryPage from './pages/AddEntryPage';
-import ReportsPage from './pages/ReportsPage';
-import CalendarPage from './pages/CalendarPage';
-import SettingsPage from './pages/SettingsPage';
-import ProfilesPage from './pages/ProfilesPage';
-import AdminPage from './pages/AdminPage';
-import LogPage from './pages/LogPage';
 import HelpPage, { WelcomeModal } from './pages/HelpPage';
-import MilestonesPage from './pages/MilestonesPage';
-import LeapsPage from './pages/LeapsPage';
 import { promoteToAdmin, addAuditEvent } from './utils/storage';
 
 const ADMIN_ACCESS_KEY = 'bladdertracker-admin-2024';
+const DashboardPage = lazy(() => import('./pages/DashboardPage'));
+const AddEntryPage = lazy(() => import('./pages/AddEntryPage'));
+const ReportsPage = lazy(() => import('./pages/ReportsPage'));
+const CalendarPage = lazy(() => import('./pages/CalendarPage'));
+const SettingsPage = lazy(() => import('./pages/SettingsPage'));
+const ProfilesPage = lazy(() => import('./pages/ProfilesPage'));
+const AdminPage = lazy(() => import('./pages/AdminPage'));
+const LogPage = lazy(() => import('./pages/LogPage'));
+const MilestonesPage = lazy(() => import('./pages/MilestonesPage'));
+const LeapsPage = lazy(() => import('./pages/LeapsPage'));
+
+function RouteLoadingFallback() {
+  return (
+    <div className="px-4 py-6 md:px-0">
+      <div
+        className="rounded-[1.75rem] bg-white p-6 shadow-sm ring-1 ring-black/5"
+        role="status"
+        aria-live="polite"
+      >
+        <div className="h-3 w-32 rounded-full bg-lavender-100" />
+        <div className="mt-4 h-5 w-48 rounded-full bg-lavender-50" />
+        <div className="mt-6 space-y-3">
+          <div className="h-20 rounded-3xl bg-[#faf7ff]" />
+          <div className="h-20 rounded-3xl bg-[#faf7ff]" />
+          <div className="h-20 rounded-3xl bg-[#faf7ff]" />
+        </div>
+        <p className="mt-4 text-sm font-medium text-gray-500">Loading your tracker…</p>
+      </div>
+    </div>
+  );
+}
 
 function AdminAccessHandler() {
   const { user, login } = useApp();
@@ -57,29 +78,37 @@ function AppRoutes() {
 
   return (
     <div className="min-h-screen bg-[var(--bg-primary)]">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-full focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-lavender-700"
+      >
+        Skip to main content
+      </a>
       <AppNav />
       <WelcomeModal />
       <AdminAccessHandler />
-      <main className="mx-auto max-w-5xl px-0 md:px-6 pb-20 md:pb-6 pt-0 md:pt-4">
-        <Routes>
-          <Route path="/" element={<DashboardPage />} />
-          <Route path="/log" element={<LogPage />} />
-          <Route path="/add" element={<AddEntryPage />} />
-          <Route path="/reports" element={<ReportsPage />} />
-          <Route path="/milestones" element={<MilestonesPage />} />
-          <Route path="/leaps" element={<LeapsPage />} />
-          <Route path="/calendar" element={<CalendarPage />} />
-          <Route path="/profiles" element={<ProfilesPage />} />
-          <Route path="/settings" element={<SettingsPage />} />
-          <Route path="/help" element={<HelpPage />} />
-          <Route path="/admin" element={<AdminPage />} />
-          {/* Legacy redirects */}
-          <Route path="/journal" element={<Navigate to="/log" replace />} />
-          <Route path="/charts" element={<Navigate to="/reports" replace />} />
-          <Route path="/caregiver" element={<Navigate to="/profiles" replace />} />
-          <Route path="/profile" element={<Navigate to="/settings" replace />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+      <main id="main-content" className="mx-auto max-w-5xl px-0 md:px-6 pb-20 md:pb-6 pt-0 md:pt-4">
+        <Suspense fallback={<RouteLoadingFallback />}>
+          <Routes>
+            <Route path="/" element={<DashboardPage />} />
+            <Route path="/log" element={<LogPage />} />
+            <Route path="/add" element={<AddEntryPage />} />
+            <Route path="/reports" element={<ReportsPage />} />
+            <Route path="/milestones" element={<MilestonesPage />} />
+            <Route path="/leaps" element={<LeapsPage />} />
+            <Route path="/calendar" element={<CalendarPage />} />
+            <Route path="/profiles" element={<ProfilesPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/help" element={<HelpPage />} />
+            <Route path="/admin" element={<AdminPage />} />
+            {/* Legacy redirects */}
+            <Route path="/journal" element={<Navigate to="/log" replace />} />
+            <Route path="/charts" element={<Navigate to="/reports" replace />} />
+            <Route path="/caregiver" element={<Navigate to="/profiles" replace />} />
+            <Route path="/profile" element={<Navigate to="/settings" replace />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Suspense>
       </main>
     </div>
   );

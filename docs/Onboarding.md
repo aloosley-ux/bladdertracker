@@ -2,7 +2,7 @@
 
 ## Welcome
 
-Welcome to the **Child Development Tracker**, an app designed for UK families, caregivers, educators, and clinicians. This app helps you track and monitor child development, with a focus on autism and developmental needs. By recording daily activities and behaviours, you can identify patterns, share insights with your care team, and support your child's wellbeing.
+Welcome to **BladderTracker**, an app designed for UK families, caregivers, educators, and clinicians. It helps you track continence, daily routines, and child development in one calm, mobile-first diary so you can identify patterns, share insights with your care team, and support your child&apos;s wellbeing.
 
 ## Creating Your Account
 
@@ -62,7 +62,7 @@ Welcome to the **Child Development Tracker**, an app designed for UK families, c
 1. Go to **Settings** and find the **module management** section.
 2. **Toggle modules on or off** for each child based on what you need to track.
 3. Only **enabled modules** appear on the Dashboard and in the Add Entry screen.
-4. Click **Save** to persist your preferences.
+4. Changes apply instantly, so you can return to the Dashboard and start logging straight away.
 
 ## Inviting Caregivers
 

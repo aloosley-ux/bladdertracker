@@ -59,14 +59,13 @@ export default function ReportsPage() {
     [enabledFilterKeys],
   );
 
-  const [activeFilters, setActiveFilters] = useState<Set<FilterKey>>(
+  const [storedActiveFilters, setStoredActiveFilters] = useState<Set<FilterKey>>(
     () => new Set(ALL_EVENT_FILTERS.map((f) => f.key).filter((k) => enabledFilterKeys.has(k))),
   );
-
-  // When enabled modules change, remove disabled ones from activeFilters
-  useEffect(() => {
-    setActiveFilters((prev) => new Set([...prev].filter((k) => enabledFilterKeys.has(k))));
-  }, [enabledFilterKeys]);
+  const activeFilters = useMemo(
+    () => new Set([...storedActiveFilters].filter((key) => enabledFilterKeys.has(key))),
+    [storedActiveFilters, enabledFilterKeys],
+  );
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'auto' });
@@ -75,7 +74,7 @@ export default function ReportsPage() {
   const days = period === '7d' ? 7 : period === '14d' ? 14 : 30;
 
   const toggleFilter = (key: FilterKey) => {
-    setActiveFilters((prev) => {
+    setStoredActiveFilters((prev) => {
       const next = new Set(prev);
       if (next.has(key)) next.delete(key);
       else next.add(key);

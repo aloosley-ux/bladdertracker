@@ -26,9 +26,14 @@ export default function AppNav() {
         className="sticky top-0 z-50 hidden border-b border-lavender-100 bg-white md:block"
       >
         <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-6">
-          <span className="text-lg font-bold tracking-tight text-lavender-700">
-            Child Development Tracker
-          </span>
+          <div className="flex flex-col">
+            <span className="text-lg font-bold tracking-tight text-lavender-700">
+              BladderTracker
+            </span>
+            <span className="text-[11px] font-medium text-gray-400">
+              Calm tracking for families and care teams
+            </span>
+          </div>
           <div className="flex items-center gap-1">
             {navItems.map(({ to, icon: Icon, label }) => (
               <NavLink

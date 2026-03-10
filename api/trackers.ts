@@ -6,12 +6,6 @@ type TrackerType = 'sleep' | 'toilet_attempt' | 'food';
 
 const VALID_TYPES = new Set<TrackerType>(['sleep', 'toilet_attempt', 'food']);
 
-function tableFor(type: TrackerType): string {
-  if (type === 'sleep') return 'sleep_entries';
-  if (type === 'toilet_attempt') return 'toilet_attempt_entries';
-  return 'food_entries';
-}
-
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   cors(res);
   if (req.method === 'OPTIONS') { res.status(200).end(); return; }
@@ -87,7 +81,6 @@ async function handlePost(req: VercelRequest, res: VercelResponse, userId: strin
 
   const id = generateId();
   const type = trackerType as TrackerType;
-  const table = tableFor(type);
 
   if (type === 'sleep') {
     const { eventType = 'onset', durationMinutes = null, quality = null, nighttimeEvent = false } = body;

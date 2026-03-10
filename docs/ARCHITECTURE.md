@@ -42,7 +42,7 @@ bladdertracker/
 │   └── MODULES.md              # Per-module field documentation
 ├── src/
 │   ├── components/
-│   │   ├── BottomNav.tsx       # Navigation bar
+│   │   ├── AppNav.tsx          # Responsive top/bottom navigation shell
 │   │   ├── BrandBanner.tsx     # App header
 │   │   ├── BrandIcon.tsx       # App logo
 │   │   ├── BristolStoolPicker.tsx # Bristol scale UI component
@@ -60,13 +60,15 @@ bladdertracker/
 │   │   ├── AddEntryPage.tsx    # 11-tab entry forms with HelpPanel guides
 │   │   ├── AdminPage.tsx       # Admin panel (admin role only)
 │   │   ├── CalendarPage.tsx    # Monthly calendar view
-│   │   ├── CaregiverPortalPage.tsx # Invite management
-│   │   ├── ChartsPage.tsx      # Recharts visualisation
-│   │   ├── DashboardPage.tsx   # Journal — historical diary with CalendarStrip
+│   │   ├── DashboardPage.tsx   # Today overview, reminders, and quick add
+│   │   ├── HelpPage.tsx        # Help, onboarding, FAQs, accessibility
+│   │   ├── LeapsPage.tsx       # Developmental leap guidance and symptom logs
 │   │   ├── LoginPage.tsx       # Auth (register / login / reset)
+│   │   ├── LogPage.tsx         # Historical diary with CalendarStrip
 │   │   ├── MilestonesPage.tsx  # Milestone CRUD
-│   │   ├── ProfilePage.tsx     # Settings, GDPR controls, role info
-│   │   └── TodayPage.tsx       # Today's entries at a glance
+│   │   ├── ProfilesPage.tsx    # Children, invites, notifications
+│   │   ├── ReportsPage.tsx     # Recharts visualisation + export review
+│   │   └── SettingsPage.tsx    # Themes, modules, privacy, import/export
 │   ├── types/
 │   │   └── index.ts            # All TypeScript types + DEFAULT_MODULES registry
 │   └── utils/
@@ -97,6 +99,8 @@ AppContext.tsx
 **AppContext** is the single source of truth. All pages consume data via `useApp()` and call CRUD methods on the context. The context delegates to either:
 - `src/utils/api.ts` — HTTP calls to Vercel Serverless Functions → Neon Postgres
 - `src/utils/storage.ts` — localStorage reads/writes (offline/development mode)
+
+Route components are lazy-loaded in `src/App.tsx` so the initial mobile shell can render more quickly while larger diary, reporting, and settings pages load on demand.
 
 ---
 

@@ -1,17 +1,17 @@
 # GDPR & Data Protection Policy
 
-**Child Development Tracker**
+**BladderTracker**
 **Last updated: March 2026**
 
 ---
 
 ## 1. Introduction
 
-Child Development Tracker is a comprehensive developmental tracking platform designed for children with autism and developmental needs. The application enables parents, caregivers, therapists, educators, and specialists to log daily activities, track developmental milestones, and collaborate on a child's progress through a mobile-first progressive web application.
+BladderTracker is a comprehensive developmental tracking platform designed for children with autism and developmental needs. The application enables parents, caregivers, therapists, educators, and specialists to log daily activities, track developmental milestones, and collaborate on a child's progress through a mobile-first progressive web application.
 
 This policy explains how we collect, use, store, and protect personal data in accordance with the **UK General Data Protection Regulation (UK GDPR)**, the **Data Protection Act 2018**, and the **Age Appropriate Design Code** (Children's Code). Because our application processes sensitive health-related data about children, we take our data protection obligations extremely seriously.
 
-This policy applies to all users of the Child Development Tracker, including parents, caregivers, school administrators, therapists, and specialists.
+This policy applies to all users of BladderTracker, including parents, caregivers, school administrators, therapists, and specialists.
 
 ---
 
@@ -19,7 +19,7 @@ This policy applies to all users of the Child Development Tracker, including par
 
 The data controller responsible for your personal data is:
 
-**Child Development Tracker**
+**BladderTracker**
 Email: [privacy@childdevelopmenttracker.co.uk](mailto:privacy@childdevelopmenttracker.co.uk)
 
 If you have any questions about this policy or how we handle your data, please contact us using the details provided in [Section 13](#13-contact-information).
@@ -310,7 +310,7 @@ You have the right to object to the processing of your data where we rely on leg
 
 ### 7.7 Rights Related to Automated Decision-Making (Article 22)
 
-The Child Development Tracker does **not** carry out any automated decision-making or profiling. All data is presented as entered by users, and no automated assessments or decisions are made about your child.
+BladderTracker does **not** carry out any automated decision-making or profiling. All data is presented as entered by users, and no automated assessments or decisions are made about your child.
 
 ---
 
@@ -337,7 +337,7 @@ We do not currently implement automatic data expiry. If you wish to have data re
 
 ### 9.1 Special Protections for Children
 
-The Child Development Tracker is designed specifically to process children's data. We recognise the heightened responsibility this entails and have implemented the following safeguards:
+BladderTracker is designed specifically to process children's data. We recognise the heightened responsibility this entails and have implemented the following safeguards:
 
 - **Parental control:** Only parents and guardians can create child profiles. Children do not create their own accounts or interact with the application directly.
 - **Purpose limitation:** Children's data is used exclusively for developmental tracking, health monitoring, and supporting the child's care team. It is never used for marketing, profiling, or any unrelated purpose.

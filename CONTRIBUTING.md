@@ -1,4 +1,4 @@
-# Contributing to Child Development Tracker
+# Contributing to BladderTracker
 
 Thank you for your interest in contributing! This guide will help you get up and running.
 

@@ -194,12 +194,12 @@ export default function LoginPage() {
             <form onSubmit={submitHandler} className="space-y-3.5">
               {mode === 'register' && (
                 <Field label="Full name">
-                  <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Amina Patel" className="input-card" required />
+                  <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Amina Patel" className="input-card" autoComplete="name" required />
                 </Field>
               )}
 
               <Field label="Email address">
-                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.org" className="input-card" required />
+                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.org" className="input-card" autoComplete="email" required />
               </Field>
 
               {mode === 'register' && (
@@ -236,6 +236,7 @@ export default function LoginPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="At least 8 characters"
+                    autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
                     className="input-card pl-11 pr-11 peer"
                     required
                   />
@@ -256,12 +257,13 @@ export default function LoginPage() {
                 <Field label={mode === 'reset' ? 'Confirm new password' : 'Confirm password'}>
                   <div className="relative">
                     <input
-                      type={showConfirmPassword ? 'text' : 'password'}
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      placeholder="Repeat your password"
-                      className="input-card pr-11"
-                      required
+                        type={showConfirmPassword ? 'text' : 'password'}
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        placeholder="Repeat your password"
+                        autoComplete="new-password"
+                        className="input-card pr-11"
+                        required
                     />
                     <button
                       type="button"

@@ -764,7 +764,9 @@ function ModuleSettings({ childName, initialModules, onSave }: ModuleSettingsPro
   const latestRef = useRef(initialModules);
   // When the parent provides a fresh value (e.g. after cloud load or child switch),
   // update the ref so the next toggle works against the correct base.
-  latestRef.current = initialModules;
+  useEffect(() => {
+    latestRef.current = initialModules;
+  }, [initialModules]);
 
   const enabled = new Set(initialModules);
 
