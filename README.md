@@ -123,8 +123,9 @@ Built for tired, busy, real-world use: one-handed on a phone, during routines, s
 | 8 | **Sensory** | 🎨 | Sensory type, response (seeking/avoiding/neutral), intensity | ⬜ |
 | 9 | **Medication** | 💊 | Medication name, dosage, administered status | ⬜ |
 | 10 | **Therapy** | 🧩 | Session type (speech/OT/PT/behavioral), provider, goals | ⬜ |
-| 11 | **Routine** | 📋 | Daily routine name, completion, duration | ⬜ |
+| 11 | **Routines** | 📋 | Daily routine name, completion, duration | ⬜ |
 | 12 | **Milestones** | ⭐ | Developmental milestones across 8 categories with status workflow | ✅ |
+| 13 | **Leaps** | 🌈 | Baby age calculator, leap predictions, and symptom logging | ⬜ |
 
 ### Platform Capabilities
 
@@ -133,14 +134,14 @@ Built for tired, busy, real-world use: one-handed on a phone, during routines, s
 | 🏥 **NHS-Inspired UI** | Responsive layout with top navigation on desktop and bottom navigation on mobile |
 | 📱 **Mobile-First Layout** | Larger quick actions, shorter nav labels, and calmer one-handed flows on phones |
 | 🏆 **Milestone Engine** | Full CRUD for developmental milestones across 8 categories with status workflow |
-| 🔀 **Module Registry** | Per-child module toggling via `DEFAULT_MODULES` with UI wording and helper copy centralized in `src/content/presentation.ts` |
+| 🔀 **Module Registry** | Per-child module toggling via `DEFAULT_MODULES` (13 modules) with UI wording and helper copy centralised in `src/content/presentation.ts` |
 | 👥 **6 User Roles** | admin, parent, caregiver, schoolAdmin, therapist, specialist |
 | 🌗 **Theme System** | Light, Dark, High Contrast with CSS custom properties |
 | 📊 **Charts & Calendar** | Recharts-powered data visualization + calendar view |
-| 📤 **CSV Export** | Export all 11 tracker types + milestones per child |
+| 📤 **CSV Export** | Export all tracker types + milestones per child |
 | 🤝 **Caregiver Invites** | Secure token-based sharing and collaboration |
 | 📝 **Audit Trail** | Timestamped logging of all create/update/delete operations |
-| ☁️ **Cloud Storage** | All 11 tracker types + milestones + enabled_modules persist to Neon Postgres via `VITE_USE_CLOUD=true`. Local mode uses localStorage as fallback. |
+| ☁️ **Cloud Storage** | All tracker types + milestones + enabled_modules persist to Neon Postgres via `VITE_USE_CLOUD=true`. Local mode uses localStorage as fallback. |
 | 📥 **Data Import** | Bulk import via CSV/Excel for all entry types |
 | 🎉 **Gentle celebrations** | Supportive, non-punitive celebration banners for milestones and daily effort |
 | 🧱 **Brand & asset registry** | Brand copy in `src/content/presentation.ts` and asset references in `src/assets/index.ts` for easier updates |
@@ -199,7 +200,7 @@ Built for tired, busy, real-world use: one-handed on a phone, during routines, s
         ▼
 ┌───────────────┐
 │ Neon Postgres │
-│ 19 tables     │
+│ 20 tables     │
 │ @neondatabase │
 │ /serverless   │
 └───────────────┘
@@ -249,7 +250,7 @@ export DATABASE_URL="postgres://user:pass@ep-xxx.neon.tech/dbname?sslmode=requir
 export JWT_SECRET="your-secure-random-secret"
 export VITE_USE_CLOUD=true
 
-# 2. Initialize the database (creates all 19 tables)
+# 2. Initialize the database (creates all 20 tables)
 curl -X POST https://your-app.vercel.app/api/migrate
 
 # 3. Deploy to Vercel
@@ -276,7 +277,7 @@ vercel dev            # Runs API functions locally with env vars from Vercel
 
 ## 🗄 Database Schema
 
-19 tables auto-created by `POST /api/migrate` (idempotent):
+20 tables auto-created by `POST /api/migrate` (idempotent):
 
 | Table | Purpose | Key Columns |
 |-------|---------|-------------|
@@ -296,6 +297,7 @@ vercel dev            # Runs API functions locally with env vars from Vercel
 | `routine_entries` | Daily routines | `child_id`, `date`, `time`, `routine_name`, `completed`, `duration_minutes` |
 | `milestones` | Developmental goals | `child_id`, `name`, `category`, `status`, `date_achieved`, `notes`, `created_by` |
 | `enabled_modules` | Module toggles | `child_id`, `module_id` (UNIQUE constraint) |
+| `reminder_preferences` | Reminder settings | `child_id`, `module_id`, `frequency`, `created_by` |
 | `invites` | Caregiver invites | `child_id`, `email`, `role`, `status`, `token` (UNIQUE), `invited_by` |
 | `notifications` | User notifications | `user_id`, `title`, `message`, `read` |
 | `audit_events` | Activity log | `user_id`, `action`, `subject`, `detail`, `created_at` |
@@ -321,22 +323,23 @@ All entry tables share: `id` (UUID PK), `created_by` (FK → accounts), `created
 
 ## 🔌 Module System
 
-The module registry (`DEFAULT_MODULES` in `src/types/index.ts`) defines all 12 modules:
+The module registry (`DEFAULT_MODULES` in `src/types/index.ts`) defines all 13 modules:
 
 ```typescript
 export const DEFAULT_MODULES: TrackerModule[] = [
-  { id: 'drinks',     label: 'Drinks',           icon: '🥤', builtIn: true, defaultEnabled: true  },
-  { id: 'urine',      label: 'Urine',            icon: '💦', builtIn: true, defaultEnabled: true  },
-  { id: 'bowel',      label: 'Bowel',             icon: '🚽', builtIn: true, defaultEnabled: true  },
-  { id: 'sleep',      label: 'Sleep',             icon: '🌙', builtIn: true, defaultEnabled: true  },
-  { id: 'toilet',     label: 'Toilet Attempts',   icon: '🎯', builtIn: true, defaultEnabled: true  },
-  { id: 'food',       label: 'Food',              icon: '🍽️', builtIn: true, defaultEnabled: true  },
-  { id: 'mood',       label: 'Mood',              icon: '😊', builtIn: true, defaultEnabled: false },
-  { id: 'sensory',    label: 'Sensory',           icon: '🎨', builtIn: true, defaultEnabled: false },
-  { id: 'medication', label: 'Medication',        icon: '💊', builtIn: true, defaultEnabled: false },
-  { id: 'therapy',    label: 'Therapy',           icon: '🧩', builtIn: true, defaultEnabled: false },
-  { id: 'routine',    label: 'Routine',           icon: '📋', builtIn: true, defaultEnabled: false },
-  { id: 'milestones', label: 'Milestones',        icon: '⭐', builtIn: true, defaultEnabled: true  },
+  { id: 'drinks',     label: 'Drinks',         icon: '🥤', builtIn: true, defaultEnabled: true  },
+  { id: 'urine',      label: 'Wee',            icon: '💦', builtIn: true, defaultEnabled: true  },
+  { id: 'bowel',      label: 'Poo',            icon: '🚽', builtIn: true, defaultEnabled: true  },
+  { id: 'sleep',      label: 'Sleep',          icon: '🌙', builtIn: true, defaultEnabled: true  },
+  { id: 'toilet',     label: 'Toilet visits',  icon: '🎯', builtIn: true, defaultEnabled: true  },
+  { id: 'food',       label: 'Meals',          icon: '🍽️', builtIn: true, defaultEnabled: true  },
+  { id: 'mood',       label: 'Mood',           icon: '😊', builtIn: true, defaultEnabled: false },
+  { id: 'sensory',    label: 'Sensory',        icon: '🎨', builtIn: true, defaultEnabled: false },
+  { id: 'medication', label: 'Medication',     icon: '💊', builtIn: true, defaultEnabled: false },
+  { id: 'therapy',    label: 'Therapy',        icon: '🧩', builtIn: true, defaultEnabled: false },
+  { id: 'routine',    label: 'Routines',       icon: '📋', builtIn: true, defaultEnabled: false },
+  { id: 'milestones', label: 'Milestones',     icon: '⭐', builtIn: true, defaultEnabled: true  },
+  { id: 'leaps',      label: 'Leaps',          icon: '🌈', builtIn: true, defaultEnabled: false },
 ];
 ```
 
@@ -532,7 +535,7 @@ Vercel's Hobby plan limits serverless functions per deployment. This project con
 
 | Strategy | Implementation |
 |----------|---------------|
-| **Consolidated `/api/trackers.ts`** | Single function handles 8 tracker types (sleep, toilet, food, mood, sensory, medication, therapy, routine) via `?type=` query parameter |
+| **Consolidated `/api/trackers.ts`** | Single function handles sleep, toilet, and food entries via `?type=` query parameter |
 | **Consolidated `/api/modules.ts`** | Single function handles 6 newer tracker types (mood, sensory, medication, therapy, routine, milestones) plus `enabled_modules` management |
 | **Separate high-traffic endpoints** | Drinks, urine, and bowel retain dedicated functions for clarity |
 | **Shared `_lib/`** | `auth.ts` and `db.ts` are shared modules (not counted as functions) |
@@ -543,7 +546,7 @@ Vercel's Hobby plan limits serverless functions per deployment. This project con
 | Resource | Limit | Usage |
 |----------|-------|-------|
 | Compute | 0.25 vCPU (191 hrs/month) | Low — serverless cold-start only |
-| Storage | 512 MB | 19 tables, text-heavy — ample headroom |
+| Storage | 512 MB | 20 tables, text-heavy — ample headroom |
 | Branches | 10 | 1 production branch sufficient |
 
 **Connection:** Uses `@neondatabase/serverless` HTTP driver — no persistent connections, ideal for serverless.
@@ -558,11 +561,11 @@ Vercel's Hobby plan limits serverless functions per deployment. This project con
 api/                  → Vercel Serverless Functions (one file = one endpoint)
   _lib/               → Shared auth (JWT/CORS) and DB (Neon/migrations)
 src/
-  pages/              → 9 React page components
+  pages/              → 11 React page components + LoginPage
   components/         → Reusable UI (AppNav, BristolStoolPicker, EntryCard, etc.)
   context/            → AppContext (state + CRUD) and ThemeContext (light/dark)
   types/index.ts      → All TypeScript types, enums, and DEFAULT_MODULES
-  utils/storage.ts    → localStorage CRUD (1000+ lines, all 11 trackers)
+  utils/storage.ts    → localStorage CRUD (all 13 trackers)
   utils/api.ts        → Cloud API fetch client (mirrors storage.ts interface)
   utils/auth.ts       → Client-side auth helpers
   utils/importers.ts  → Excel/CSV import logic
@@ -602,7 +605,8 @@ npm run build         # Full type-check + production build
 | [docs/Onboarding.md](./docs/Onboarding.md) | User step-by-step onboarding guide |
 | [docs/API.md](./docs/API.md) | API endpoint reference |
 | [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) | System architecture |
-| [docs/MODULES.md](./docs/MODULES.md) | Module documentation |
+| [docs/MODULES.md](./docs/MODULES.md) | Module field reference and clinical guidance |
+| [docs/PROJECT_PLAN.md](./docs/PROJECT_PLAN.md) | Detailed project plan and delivery backlog |
 
 ---
 

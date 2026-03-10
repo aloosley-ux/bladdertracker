@@ -95,10 +95,10 @@ Handles sleep, toilet attempts, and food entries via `?type=` query parameter.
 | `DELETE` | `?type=sleep\|toilet\|food&id=<entryId>` | — | Delete |
 
 ### Sleep entry fields
-`{ eventType: 'onset'\|'wake'\|'nap'\|'disturbed', durationMinutes?, quality?: 1-5, nighttimeEvent: boolean, notes? }`
+`{ eventType: 'onset'\|'wake'\|'nap_start'\|'nap_end', durationMinutes?, quality?: 1-5, nighttimeEvent: boolean, notes? }`
 
 ### Toilet attempt fields
-`{ outcome: 'success'\|'failure'\|'refused', supervised: boolean, prompted: boolean, durationMinutes?, notes? }`
+`{ outcome: 'success'\|'failure'\|'no_event', supervised: boolean, prompted: boolean, durationMinutes?, notes? }`
 
 ### Food entry fields
 `{ mealType: 'breakfast'\|'lunch'\|'dinner'\|'snack', description, portions?: number, notes? }`
@@ -232,5 +232,5 @@ All endpoints return JSON error objects on failure:
 ## Authentication Details
 
 - Session tokens are JWTs signed with `JWT_SECRET` environment variable
-- Stored in HttpOnly, Secure, SameSite=Strict cookies named `bt_session`
+- Stored in HttpOnly, SameSite=Lax cookies named `bt_session` (Secure flag set in production)
 - `getAccessibleChildIds(userId)` in `api/_lib/db.ts` returns all child IDs the user can access (own children + invited access)
