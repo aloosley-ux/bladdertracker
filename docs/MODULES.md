@@ -44,8 +44,8 @@ This document describes each tracker module, what it records, who should use it,
 | Field | Type | Description |
 |-------|------|-------------|
 | `bristolType` | number (1–7) | Bristol Stool Scale: 1–2 = constipation, 3–4 = ideal, 5–7 = diarrhoea |
-| `amount` | string | Estimated quantity: `small`, `medium`, `large` |
-| `location` | string | Where it occurred: `toilet`, `pad`, `pants` |
+| `amount` | string | Estimated quantity: `S` (small), `M` (medium), `L` (large) |
+| `location` | string | Where it occurred: `toilet`, `nappy` |
 | `laxativesGiven` | boolean | Whether laxatives were administered |
 | `date` / `time` | string | When it occurred |
 | `notes` | string | Optional observations |
@@ -67,7 +67,7 @@ This document describes each tracker module, what it records, who should use it,
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `eventType` | string | `onset` (falling asleep), `wake` (waking up), `nap`, `disturbed` |
+| `eventType` | string | `onset` (falling asleep), `wake` (waking up), `nap_start`, `nap_end` |
 | `durationMinutes` | number \| null | Duration of sleep or nap in minutes |
 | `quality` | number \| null | Sleep quality 1–5: 1 = very poor, 5 = excellent |
 | `nighttimeEvent` | boolean | Whether this occurred between 10pm–6am |
@@ -83,7 +83,7 @@ This document describes each tracker module, what it records, who should use it,
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `outcome` | string | `success` (produced urine/stool), `failure` (nothing produced), `refused` |
+| `outcome` | string | `success` (produced urine/stool), `failure` (nothing produced), `no_event` |
 | `supervised` | boolean | Whether a carer was present |
 | `prompted` | boolean | Whether the child was asked/reminded to try |
 | `durationMinutes` | number \| null | How long they sat on the toilet |
@@ -209,8 +209,8 @@ This document describes each tracker module, what it records, who should use it,
 
 ## Module Settings
 
-Modules can be toggled on or off per child in **Settings → Modules for [Child Name]**. Click **Save Module Settings** to persist changes to the database.
+Modules can be toggled on or off per child in **Settings → Modules for [Child Name]**. Changes apply **instantly** — no Save button required.
 
-The 6 core modules (Drinks, Urine, Bowel, Sleep, Toilet Attempts, Food) are enabled by default. The 5 newer modules (Mood, Sensory, Medication, Therapy, Routine) are disabled by default and must be enabled per child.
+The 6 core modules (Drinks, Wee, Poo, Sleep, Toilet visits, Meals) are enabled by default. The 6 additional modules (Mood, Sensory, Medication, Therapy, Routines, Leaps) are disabled by default and must be enabled per child.
 
 Milestones are always accessible from the navigation regardless of module settings.

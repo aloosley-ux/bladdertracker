@@ -9,7 +9,7 @@
 | Styling | Tailwind CSS | 4 |
 | Build tool | Vite | 7 |
 | Routing | React Router | v7 |
-| Charts | Recharts | 2 |
+| Charts | Recharts | 3.8 |
 | Hosting | Vercel | Hobby tier |
 | Database | Neon Postgres | Serverless |
 | API | Vercel Serverless Functions | Node.js 22 |
@@ -39,7 +39,9 @@ bladdertracker/
 ├── docs/
 │   ├── API.md                  # Full API endpoint reference
 │   ├── ARCHITECTURE.md         # This file
-│   └── MODULES.md              # Per-module field documentation
+│   ├── MODULES.md              # Per-module field documentation
+│   ├── Onboarding.md           # User onboarding guide
+│   └── PROJECT_PLAN.md         # Project plan and delivery backlog
 ├── src/
 │   ├── assets/
 │   │   ├── brand-icon.svg      # Primary logo asset
@@ -52,6 +54,8 @@ bladdertracker/
 │   │   ├── CalendarStrip.tsx   # Horizontal date scroller
 │   │   ├── EntryCard.tsx       # Diary entry display card
 │   │   └── HelpPanel.tsx       # Collapsible in-app help panel
+│   ├── content/
+│   │   └── presentation.ts    # Centralised UI labels, brand copy, and display overrides
 │   ├── context/
 │   │   ├── AppContext.tsx       # Main app state provider (all CRUD, cloud/local switching)
 │   │   ├── appContextDef.ts    # AppContextType interface definition
@@ -59,6 +63,9 @@ bladdertracker/
 │   │   ├── themeContextDef.ts  # ThemeContextType interface
 │   │   ├── useApp.ts           # useApp() hook
 │   │   └── useTheme.ts         # useTheme() hook
+│   ├── data/
+│   │   ├── leapData.ts          # Developmental leap definitions and tips
+│   │   └── milestoneGuidance.ts # NHS-contextual milestone guidance content
 │   ├── pages/
 │   │   ├── AddEntryPage.tsx    # 11-tab entry forms with HelpPanel guides
 │   │   ├── AdminPage.tsx       # Admin panel (admin role only)
@@ -168,15 +175,14 @@ See the `runMigrations()` function in `api/_lib/db.ts` for the full, up-to-date 
 
 | Table | Primary purpose |
 |-------|----------------|
-| `users` | Account records |
-| `sessions` | Active JWT sessions |
+| `accounts` | User account records |
 | `children` | Child profiles |
 | `child_access` | Invite-based access grants |
-| `drinks` | Fluid intake log |
+| `drink_entries` | Fluid intake log |
 | `urine_entries` | Voiding events |
 | `bowel_entries` | Bowel movements |
 | `sleep_entries` | Sleep events |
-| `toilet_attempts` | Toilet training sessions |
+| `toilet_attempt_entries` | Toilet training sessions |
 | `food_entries` | Dietary intake |
 | `mood_entries` | Emotional wellbeing log |
 | `sensory_entries` | Sensory processing events |
@@ -185,6 +191,7 @@ See the `runMigrations()` function in `api/_lib/db.ts` for the full, up-to-date 
 | `routine_entries` | Daily routine completion |
 | `milestones` | Developmental milestone tracking |
 | `enabled_modules` | Per-child module toggle state |
+| `reminder_preferences` | Per-child reminder settings |
 | `invites` | Pending caregiver invites |
 | `notifications` | User notification queue |
 | `audit_events` | Immutable action log |

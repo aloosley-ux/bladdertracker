@@ -30,16 +30,16 @@ Welcome to **BladderTracker**, an app designed for UK families, caregivers, educ
 1. Use the **quick-add buttons** on the Dashboard, or navigate to **Add Entry** from the menu.
 2. Select from the available modules:
    - **Drinks** – Track fluid intake.
-   - **Urine** – Record urine output.
-   - **Bowel** – Log bowel movements.
+   - **Wee** – Record wees, wet clothes, and urgency.
+   - **Poo** – Log poo consistency and laxative use.
    - **Sleep** – Track sleep duration and quality.
-   - **Toilet Attempts** – Record toilet training attempts.
-   - **Food** – Log meals and snacks.
+   - **Toilet visits** – Record toilet training attempts.
+   - **Meals** – Log meals, snacks, and new foods.
    - **Mood** – Track emotional state throughout the day.
    - **Sensory** – Record sensory experiences and responses.
    - **Medication** – Log administered medications.
    - **Therapy** – Track therapy sessions.
-   - **Routine** – Record daily routine activities.
+   - **Routines** – Record daily routine activities.
 3. Each module has specific fields relevant to that tracker. Fill in the required information.
 4. Add **notes** to provide additional context for any entry.
 

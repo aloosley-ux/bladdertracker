@@ -81,7 +81,7 @@ Follow these steps to add a new tracking module (e.g. sleep, meals, milestones):
 
 ## Database Schema
 
-- The cloud backend uses **Neon PostgreSQL** with **19 tables**.
+- The cloud backend uses **Neon PostgreSQL** with **20 tables**.
 - Migrations are executed by calling `POST /api/migrate`.
 - All entry tables follow a consistent pattern:
 
@@ -129,14 +129,16 @@ npm run dev
 
 ## Routes
 
-| Path        | Page               |
-| ----------- | ------------------ |
-| `/`         | Dashboard          |
-| `/log`      | Log / History      |
-| `/add`      | Add Entry          |
-| `/reports`  | Reports            |
-| `/calendar` | Calendar           |
-| `/profiles` | Profiles           |
-| `/settings` | Account / Settings |
-| `/help`     | Help & Support     |
-| `/admin`    | Admin Panel        |
+| Path          | Page               |
+| ------------- | ------------------ |
+| `/`           | Dashboard          |
+| `/log`        | Diary / History    |
+| `/add`        | Add Entry          |
+| `/reports`    | Reports            |
+| `/milestones` | Milestones         |
+| `/leaps`      | Leaps              |
+| `/calendar`   | Calendar           |
+| `/profiles`   | Profiles           |
+| `/settings`   | Account / Settings |
+| `/help`       | Help & Support     |
+| `/admin`      | Admin Panel        |
