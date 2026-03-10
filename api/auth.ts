@@ -36,8 +36,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     case 'login':    return handleLogin(req, res);
     case 'logout':   return handleLogout(req, res);
     case 'reset':    return handleReset(req, res);
+    case 'promote':  return handlePromote(req, res);
     default:
-      res.status(400).json({ error: 'Unknown action. Use action: register|login|logout|reset' });
+      res.status(400).json({ error: 'Unknown action. Use action: register|login|logout|reset|promote' });
   }
 }
 
@@ -240,4 +241,61 @@ async function handleDeleteAccount(req: VercelRequest, res: VercelResponse) {
     console.error('handleDeleteAccount error:', err);
     res.status(500).json({ error: 'Failed to delete account.' });
   }
+}
+
+async function handlePromote(req: VercelRequest, res: VercelResponse) {
+  const session = await getSessionFromRequest(req);
+  if (!session) {
+    res.status(401).json({ error: 'Not authenticated' });
+    return;
+  }
+
+  const configuredKey = process.env.ADMIN_ACCESS_KEY || process.env.VITE_ADMIN_KEY;
+  if (!configuredKey) {
+    res.status(503).json({ error: 'Admin promotion is not configured.' });
+    return;
+  }
+
+  const providedKey = req.body?.key;
+  if (typeof providedKey !== 'string' || providedKey !== configuredKey) {
+    res.status(403).json({ error: 'Invalid admin access key.' });
+    return;
+  }
+
+  await sql`
+    UPDATE accounts
+    SET role = 'admin'
+    WHERE id = ${session.userId}
+  `;
+
+  const result = await sql`
+    SELECT id, name, email, role, avatar, created_at
+    FROM accounts
+    WHERE id = ${session.userId}
+  `;
+
+  if (result.rows.length === 0) {
+    res.status(404).json({ error: 'Account not found.' });
+    return;
+  }
+
+  const account = result.rows[0];
+  const token = await createSessionToken({ userId: account.id, email: account.email, role: account.role });
+  setSessionCookie(res, token);
+
+  await sql`
+    INSERT INTO audit_events (id, user_id, action, subject, detail)
+    VALUES (${generateId()}, ${account.id}, 'Promoted to admin', ${account.name}, 'Account promoted to admin via server-validated access key.')
+  `;
+
+  res.status(200).json({
+    user: {
+      id: account.id,
+      name: account.name,
+      email: account.email,
+      role: account.role,
+      avatar: account.avatar,
+      createdAt: account.created_at,
+    },
+  });
 }

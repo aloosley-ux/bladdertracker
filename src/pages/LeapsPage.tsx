@@ -1034,7 +1034,7 @@ function LeapProgressChart({ child }: { child: Child }) {
           <span>Overall progress</span>
           <span>{progressPct}%</span>
         </div>
-        <div className="h-3 rounded-full bg-gray-100 overflow-hidden" role="progressbar" aria-valuenow={progressPct} aria-valuemin={0} aria-valuemax={100}>
+        <div className="h-3 rounded-full bg-gray-100 overflow-hidden" role="progressbar" aria-label="Leap progress" aria-valuenow={progressPct} aria-valuemin={0} aria-valuemax={100}>
           <div
             className="h-full rounded-full bg-gradient-to-r from-lavender-400 to-lavender-600 transition-all duration-700"
             style={{ width: `${progressPct}%` }}

@@ -14,7 +14,7 @@ Thank you for your interest in contributing! This guide will help you get up and
 2. **Install dependencies**
 
    ```bash
-   npm install
+   npm ci
    ```
 
 3. **Run locally (localStorage mode)**
@@ -107,14 +107,20 @@ Follow these steps to add a new tracking module (e.g. sleep, meals, milestones):
 
 ## Testing
 
-There is no automated test suite yet. Use the following to validate changes:
+Use the following to validate changes:
 
 ```bash
+# Unit, route smoke, storage, and accessibility checks
+npm test
+
 # Type-check and bundle
 npm run build
 
 # Lint with ESLint
 npm run lint
+
+# API type-check
+./node_modules/.bin/tsc --project tsconfig.api.json --noEmit
 
 # Manual testing
 npm run dev
@@ -123,7 +129,7 @@ npm run dev
 ## Pull Request Guidelines
 
 - Keep changes **focused** — one feature or fix per PR.
-- Ensure `npm run build` and `npm run lint` pass before opening the PR.
+- Ensure `npm test`, `npm run build`, `npm run lint`, and the API type-check pass before opening the PR.
 - Follow **existing patterns** in the codebase for consistency.
 - Describe what you changed and why in the PR description.
 

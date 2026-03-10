@@ -139,6 +139,7 @@ export default function AdminPage() {
                     <select
                       value={account.role}
                       onChange={(e) => handleRoleChange(account.id, e.target.value as UserRole)}
+                      aria-label={`Role for ${account.name}`}
                       className="rounded-xl border border-lavender-100 bg-white px-2 py-1.5 text-xs font-semibold text-lavender-700 outline-none"
                     >
                       {allRoles.map((r) => (

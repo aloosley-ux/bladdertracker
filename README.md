@@ -8,6 +8,7 @@ Built for tired, busy, real-world use: one-handed on a phone, during routines, s
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178c6)](https://www.typescriptlang.org)
 [![Tailwind CSS 4](https://img.shields.io/badge/Tailwind_CSS-4-38bdf8)](https://tailwindcss.com)
 [![Vite 7](https://img.shields.io/badge/Vite-7-646cff)](https://vite.dev)
+[![CI](https://github.com/aloosley-ux/bladdertracker/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aloosley-ux/bladdertracker/actions/workflows/ci.yml)
 [![Vercel](https://img.shields.io/badge/Deploy-Vercel-000)](https://vercel.com)
 [![Neon Postgres](https://img.shields.io/badge/DB-Neon_Postgres-00e599)](https://neon.tech)
 
@@ -20,6 +21,7 @@ Built for tired, busy, real-world use: one-handed on a phone, during routines, s
 - [Navigation](#-navigation)
 - [Architecture](#-architecture)
 - [Getting Started](#-getting-started)
+- [Deployment & Environment](#-deployment--environment)
 - [Database Schema](#-database-schema)
 - [User Roles & Permissions](#-user-roles--permissions)
 - [Module System](#-module-system)
@@ -270,8 +272,35 @@ vercel dev            # Runs API functions locally with env vars from Vercel
 | `npm run dev` | Vite dev server with HMR |
 | `npm run build` | `tsc -b && vite build` — type-check + production bundle |
 | `npm run lint` | ESLint across the entire project |
+| `npm test` | Vitest + React Testing Library smoke, storage, and accessibility checks |
 | `npm run preview` | Preview the production build locally |
 | `vercel dev` | Local dev with serverless functions + cloud DB |
+
+---
+
+## 🚢 Deployment & Environment
+
+Copy `.env.example` and set the variables that match your deployment mode:
+
+```bash
+cp .env.example .env.local
+```
+
+| Variable | Required when | Purpose |
+|----------|----------------|---------|
+| `VITE_USE_CLOUD` | Cloud mode | Switches the frontend from localStorage mode to the Vercel/Neon API |
+| `VITE_ADMIN_KEY` | Local-only admin setup | Allows local/offline admin promotion without hardcoding a key in source |
+| `DATABASE_URL` / `POSTGRES_URL` | Cloud mode | Neon Postgres connection string |
+| `JWT_SECRET` | Cloud mode | Signs server-side session tokens |
+| `ADMIN_ACCESS_KEY` | Cloud mode | Server-side admin promotion key used by `/api/auth` |
+| `NODE_ENV` | All environments | Controls production-only cookie hardening |
+
+Deployment checklist:
+
+1. Set the environment variables in Vercel (or your deployment platform).
+2. Run `POST /api/migrate` once against the target environment.
+3. Verify CI is green for `npm test`, `npm run lint`, `npm run build`, and the API type-check.
+4. In cloud mode, confirm admin promotion only works with the configured server-side key.
 
 ---
 
@@ -584,6 +613,7 @@ src/
 ```bash
 npm install
 npm run dev           # Start dev server
+npm test              # Run unit, route smoke, and accessibility checks
 npm run lint          # Check for lint errors
 npm run build         # Full type-check + production build
 ```
@@ -690,8 +720,9 @@ Changes apply **instantly** (no Save button) and persist to localStorage (local 
 ## 🧪 Testing & QA
 
 ### Automated checks run
+- `npm test` ✅
 - `npm run build` ✅
-- `npx tsc --project tsconfig.api.json --noEmit` ✅
+- `./node_modules/.bin/tsc --project tsconfig.api.json --noEmit` ✅
 - `npm run lint` ✅
 
 ### Manual QA checklist

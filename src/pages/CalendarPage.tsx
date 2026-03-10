@@ -71,6 +71,7 @@ export default function CalendarPage() {
           <div className="flex items-center justify-between mb-4">
             <button
               onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
+              aria-label="Previous month"
               className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-500 hover:bg-lavender-50"
             >
               <ChevronLeft size={16} />
@@ -80,6 +81,7 @@ export default function CalendarPage() {
             </h2>
             <button
               onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
+              aria-label="Next month"
               className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-500 hover:bg-lavender-50"
             >
               <ChevronRight size={16} />

@@ -80,6 +80,7 @@ export default function AddEntryPage() {
           <div className="mb-3 flex items-center gap-3">
             <button
               onClick={() => navigate('/')}
+              aria-label="Back to dashboard"
               className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-gray-500 shadow-sm ring-1 ring-black/5 hover:bg-lavender-50"
             >
               <ArrowLeft size={18} />
@@ -108,6 +109,7 @@ export default function AddEntryPage() {
         <div className="mb-3 flex items-center gap-3">
           <button
             onClick={() => navigate('/')}
+            aria-label="Back to dashboard"
             className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-gray-500 shadow-sm ring-1 ring-black/5 hover:bg-lavender-50"
           >
             <ArrowLeft size={18} />
@@ -207,12 +209,12 @@ function DrinkForm() {
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className="text-xs font-medium text-gray-600">Date</label>
-          <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
+          <input aria-label="Drink date" type="date" value={date} onChange={(e) => setDate(e.target.value)}
             className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
         </div>
         <div>
           <label className="text-xs font-medium text-gray-600">Time</label>
-          <input type="time" value={time} onChange={(e) => setTime(e.target.value)}
+          <input aria-label="Drink time" type="time" value={time} onChange={(e) => setTime(e.target.value)}
             className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
         </div>
       </div>
