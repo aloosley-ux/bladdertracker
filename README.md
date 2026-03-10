@@ -14,11 +14,45 @@ Built for tired, busy, real-world use: one-handed on a phone, during routines, s
 
 ---
 
+> **BladderTracker helps families and care teams capture the full picture, not just isolated symptoms.** It combines continence, sleep, meals, routines, mood, sensory notes, milestones, and caregiver collaboration in a single calm workflow that works both offline and in the cloud.
+
+## 🌟 Why BladderTracker stands out
+
+- **Built for real handovers:** designed for tired evenings, school transitions, clinic conversations, and quick one-handed updates.
+- **Broader than a bladder diary:** combines 13 tracking modules, developmental milestones, and leap guidance in one shared system.
+- **Flexible deployment model:** use it locally with `localStorage` or connect it to Vercel + Neon for shared cloud access.
+- **Collaboration-ready:** invite caregivers, school staff, therapists, and specialists with role-based access.
+- **Privacy-conscious by design:** export and deletion flows are built in, with GDPR documentation and audit history support.
+
+## 🚦 Project status
+
+| Area | Current state |
+|------|---------------|
+| Product maturity | Active, feature-rich MVP with a strong public demo/readme story |
+| Quality checks | CI runs tests, linting, build, and API type-checks on pull requests |
+| Deployment modes | Local/offline mode by default, optional cloud mode via Vercel + Neon |
+| Accessibility | High-contrast theme, dyslexia-friendly font, keyboard support, accessibility tests |
+| Current focus | Documentation polish, issue hygiene, performance follow-up, and deeper test coverage |
+
+## 🔗 Quick links
+
+- **Get started:** [Install & run locally](#-getting-started)
+- **Understand the product:** [Features](#-features), [Architecture](#-architecture), [Module System](#-module-system)
+- **Use the docs:** [Documentation hub](#-documentation)
+- **Contribute:** [CONTRIBUTING.md](./CONTRIBUTING.md) and [pull request template](./.github/PULL_REQUEST_TEMPLATE.md)
+- **Report work clearly:** use the GitHub issue templates for bugs, feature requests, and documentation improvements
+- **Report vulnerabilities privately:** see [SECURITY.md](./SECURITY.md)
+- **Review roadmap context:** [docs/PROJECT_PLAN.md](./docs/PROJECT_PLAN.md)
+
+---
+
 ## 📑 Table of Contents
 
+- [Why BladderTracker stands out](#-why-bladdertracker-stands-out)
+- [Project status](#-project-status)
+- [Quick links](#-quick-links)
 - [Features](#-features)
-- [Feature Roadmap (Baby Leap-Inspired)](#-feature-roadmap-baby-leap-inspired)
-- [Navigation](#-navigation)
+- [What you can do today](#-what-you-can-do-today)
 - [Architecture](#-architecture)
 - [Getting Started](#-getting-started)
 - [Deployment & Environment](#-deployment--environment)
@@ -34,6 +68,7 @@ Built for tired, busy, real-world use: one-handed on a phone, during routines, s
 - [Extension Guide](#-extension-guide)
 - [Clinical & Market Benchmarking](#-clinical--market-benchmarking)
 - [Vercel & Neon Optimization](#-vercel--neon-optimization)
+- [Issues, roadmap & support](#-issues-roadmap--support)
 - [Known Issues](#-known-issues)
 - [Documentation](#-documentation)
 - [Contributing](#-contributing)
@@ -41,7 +76,9 @@ Built for tired, busy, real-world use: one-handed on a phone, during routines, s
 
 ---
 
-## 🗺 Feature Roadmap (Baby Leap-Inspired)
+## 🧭 What you can do today
+
+This section highlights the experience that already exists in the product today. For future work and active backlog themes, see [docs/PROJECT_PLAN.md](./docs/PROJECT_PLAN.md) and the repository's GitHub issues.
 
 ### 1) Milestones timeline & calendar
 - `/milestones` now provides a milestone timeline with **weekly / monthly / annual zoom**, date markers, and milestone cards.
@@ -617,6 +654,16 @@ npm test              # Run unit, route smoke, and accessibility checks
 npm run lint          # Check for lint errors
 npm run build         # Full type-check + production build
 ```
+
+---
+
+## 🧾 Issues, roadmap & support
+
+- **Bug reports:** open a GitHub issue with the **Bug report** template and include reproduction steps, mode (local/cloud), and screenshots when helpful.
+- **Feature requests:** use the **Feature request** template with user value, scope boundaries, and acceptance criteria.
+- **Documentation improvements:** use the **Documentation improvement** template when instructions, wording, or examples drift from the code.
+- **Security concerns:** do **not** post exploit details publicly; follow [SECURITY.md](./SECURITY.md).
+- **Roadmap alignment:** treat [docs/PROJECT_PLAN.md](./docs/PROJECT_PLAN.md) as the backlog narrative, then use GitHub issues for discrete, actionable work items.
 
 ---
 

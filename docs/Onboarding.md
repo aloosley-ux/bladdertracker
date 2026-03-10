@@ -57,6 +57,12 @@ Welcome to **BladderTracker**, an app designed for UK families, caregivers, educ
 3. **Toggle different event types** on or off to focus on the data that matters most.
 4. Use the **charts** to identify patterns and share insights with your care team.
 
+## Milestones & Leaps
+
+1. Navigate to **Milestones** to record developmental goals, track progress, and celebrate achievements.
+2. Use **Leaps** for baby-age guidance, leap predictions, and symptom logging when that view is relevant to your child.
+3. Both pages are designed to complement the diary rather than replace it — use them alongside day-to-day logs for fuller context.
+
 ## Managing Modules
 
 1. Go to **Settings** and find the **module management** section.

@@ -1,0 +1,63 @@
+name: Documentation improvement
+description: Report unclear, outdated, missing, or inconsistent documentation
+title: "[Docs]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template when README, contributor guidance, onboarding, API docs, or roadmap material needs to be corrected or strengthened.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Documentation area
+      options:
+        - README
+        - CONTRIBUTING.md
+        - API docs
+        - Architecture docs
+        - Onboarding / help guidance
+        - GDPR / privacy docs
+        - Project plan / roadmap
+        - GitHub issue or PR templates
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: issue
+    attributes:
+      label: What is wrong or missing?
+      placeholder: The README explains cloud deployment, but it does not clearly tell readers that local mode is the default and fully usable on its own.
+    validations:
+      required: true
+
+  - type: textarea
+    id: why
+    attributes:
+      label: Why it matters
+      placeholder: New contributors may assume a database is always required and stop before trying the app locally.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed
+    attributes:
+      label: Suggested improvement
+      placeholder: Add a short local-mode note near the install steps and cross-link the architecture doc.
+
+  - type: input
+    id: source
+    attributes:
+      label: Relevant file, section, or link
+      placeholder: README.md#-getting-started
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues for a related documentation request.
+          required: true
+        - label: I checked the current code or behaviour before suggesting a correction.
+          required: true
