@@ -4,6 +4,8 @@ import { Apple, BarChart3, BookOpen, CloudRain, ClipboardList, Droplets, Moon, P
 import { Link } from 'react-router-dom';
 import { useApp } from '../context/useApp';
 import EntryCard from '../components/EntryCard';
+import CelebrationBanner from '../components/CelebrationBanner';
+import { getDashboardCelebration, getModuleLabel, TOILET_OUTCOME_LABELS, URINE_COPY } from '../content/presentation';
 import { DEFAULT_MODULES } from '../types';
 
 /** Fallback used during the brief loading window before enabledModules is populated. */
@@ -123,7 +125,12 @@ export default function DashboardPage() {
   const therapyCount = dayTherapy.length;
   const routineCount = dayRoutine.length;
   const milestoneAchieved = childMilestones.filter((m) => m.status === 'achieved').length;
-  const urineSub = totalOutput > 0 ? `${totalOutput}ml output` : `${wetCount} wet · ${passCount} pass`;
+  const urineSub = totalOutput > 0 ? `${totalOutput}ml logged` : `${wetCount} wet clothes · ${passCount} used toilet`;
+  const todayEntryCount = dayDrinks.length + dayUrine.length + dayBowel.length + daySleep.length + dayToilet.length + dayFood.length + dayMood.length + daySensory.length + dayMedication.length + dayTherapy.length + dayRoutine.length;
+  const celebration = useMemo(
+    () => getDashboardCelebration(todayEntryCount, childMilestones.filter((m) => m.dateAchieved === dateStr).length, selectedChild?.name ?? 'your child'),
+    [todayEntryCount, childMilestones, dateStr, selectedChild?.name],
+  );
 
   const hasEntries =
     (on('drinks') && dayDrinks.length > 0) ||
@@ -144,10 +151,10 @@ export default function DashboardPage() {
         <div className="px-4 pt-6">
           <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
           <div className="mt-6 rounded-2xl bg-white p-6 text-center shadow-sm ring-1 ring-black/5">
-            <h2 className="text-xl font-bold text-gray-900">No child profile yet</h2>
-            <p className="mt-2 text-sm text-gray-500">
-              Add a child in Settings or accept a caregiver invite to start tracking.
-            </p>
+              <h2 className="text-xl font-bold text-gray-900">No family profile yet</h2>
+              <p className="mt-2 text-sm text-gray-500">
+                Add a child profile or accept a shared invite to start tracking.
+              </p>
             <div className="mt-5 flex justify-center gap-3">
               <Link className="rounded-full bg-lavender-500 px-4 py-3 text-sm font-semibold text-white" to="/settings">
                 Open settings
@@ -167,10 +174,10 @@ export default function DashboardPage() {
       {/* ── Header ──────────────────────────────────────────────────── */}
       <div className="bg-white pb-4">
         <div className="flex flex-col gap-1 px-4 pt-6">
-          <h1 className="text-xl font-bold leading-snug text-gray-900" aria-label="Dashboard heading">
-            Dashboard
-          </h1>
-          <p className="text-sm text-gray-500">Today&apos;s overview for {selectedChild.name}</p>
+           <h1 className="text-xl font-bold leading-snug text-gray-900" aria-label="Dashboard heading">
+             Today
+           </h1>
+          <p className="text-sm text-gray-500">Everything you need for {selectedChild.name}</p>
           <p className="text-xs text-gray-400">{todayLabel}</p>
         </div>
 
@@ -190,13 +197,13 @@ export default function DashboardPage() {
         )}
 
         {/* Quick nav links */}
-        <nav aria-label="Quick navigation" className="mt-3 flex gap-2 px-4">
+        <nav aria-label="Quick navigation" className="mt-3 flex gap-2 overflow-x-auto px-4 pb-1">
           <Link
             to="/log"
             className="inline-flex items-center gap-1.5 rounded-full bg-gray-100 px-4 py-2 text-xs font-semibold text-gray-700 transition hover:bg-gray-200"
           >
             <BookOpen size={14} />
-            View Log
+            Open diary
           </Link>
           <Link
             to="/reports"
@@ -217,7 +224,7 @@ export default function DashboardPage() {
             className="inline-flex items-center gap-1.5 rounded-full bg-lavender-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-lavender-600"
           >
             <Plus size={14} />
-            Add Entry
+            Quick add
           </Link>
         </nav>
       </div>
@@ -252,41 +259,64 @@ export default function DashboardPage() {
           </section>
         )}
 
+        <CelebrationBanner
+          emoji={celebration.emoji}
+          title={celebration.title}
+          message={celebration.message}
+          tone={celebration.tone}
+          action={(
+            <Link to="/add" className="inline-flex rounded-full bg-white px-4 py-2 text-xs font-semibold text-gray-700 ring-1 ring-black/5">
+              Add a quick update
+            </Link>
+          )}
+        />
+
         {/* ── Summary stat cards (above quick-add, matching mockup) ── */}
-        <section aria-label="Today's summary" className="grid grid-cols-3 gap-3 md:grid-cols-4">
-          {on('drinks') && <SummaryCard icon={<Droplets size={18} className="text-sky-500" />} label="Drinks" value={`${totalMl}ml`} sub={`${dayDrinks.length} entries`} accent="#0ea5e9" />}
-          {on('urine') && <SummaryCard icon={<CloudRain size={18} className="text-amber-500" />} label="Urine" value={`${wetCount + passCount}`} sub={urineSub} accent="#f59e0b" />}
-          {on('bowel') && <SummaryCard icon={<Stethoscope size={18} className="text-emerald-500" />} label="Bowel" value={`${bowelCount}`} sub="events" accent="#22c55e" />}
+        <section aria-label="Today's summary">
+          <div className="mb-2 flex items-center justify-between">
+            <h2 className="text-sm font-bold text-gray-700">Today&apos;s snapshot</h2>
+            <p className="text-xs text-gray-400">At-a-glance totals</p>
+          </div>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+          {on('drinks') && <SummaryCard icon={<Droplets size={18} className="text-sky-500" />} label={getModuleLabel('drinks', 'summary')} value={`${totalMl}ml`} sub={`${dayDrinks.length} entries`} accent="#0ea5e9" />}
+          {on('urine') && <SummaryCard icon={<CloudRain size={18} className="text-amber-500" />} label={getModuleLabel('urine', 'summary')} value={`${wetCount + passCount}`} sub={urineSub} accent="#f59e0b" />}
+          {on('bowel') && <SummaryCard icon={<Stethoscope size={18} className="text-emerald-500" />} label={getModuleLabel('bowel', 'summary')} value={`${bowelCount}`} sub="entries" accent="#22c55e" />}
           {on('sleep') && <SummaryCard icon={<Moon size={18} className="text-indigo-500" />} label="Sleep" value={`${sleepCount}`} sub="events" accent="#6366f1" />}
-          {on('toilet') && <SummaryCard icon={<Target size={18} className="text-purple-500" />} label="Attempts" value={`${toiletCount}`} sub="logged" accent="#a855f7" />}
-          {on('food') && <SummaryCard icon={<Apple size={18} className="text-orange-500" />} label="Food" value={`${foodCount}`} sub="meals" accent="#f97316" />}
+          {on('toilet') && <SummaryCard icon={<Target size={18} className="text-purple-500" />} label={getModuleLabel('toilet', 'summary')} value={`${toiletCount}`} sub="logged" accent="#a855f7" />}
+          {on('food') && <SummaryCard icon={<Apple size={18} className="text-orange-500" />} label={getModuleLabel('food', 'summary')} value={`${foodCount}`} sub="logged" accent="#f97316" />}
           {on('mood') && <SummaryCard icon={<Smile size={18} className="text-pink-500" />} label="Mood" value={`${moodCount}`} sub="entries" accent="#ec4899" />}
           {on('sensory') && <SummaryCard icon={<Palette size={18} className="text-teal-500" />} label="Sensory" value={`${sensoryCount}`} sub="events" accent="#14b8a6" />}
           {on('medication') && <SummaryCard icon={<Pill size={18} className="text-red-500" />} label="Meds" value={`${medicationCount}`} sub="doses" accent="#ef4444" />}
           {on('therapy') && <SummaryCard icon={<Puzzle size={18} className="text-cyan-500" />} label="Therapy" value={`${therapyCount}`} sub="sessions" accent="#06b6d4" />}
           {on('routine') && <SummaryCard icon={<ClipboardList size={18} className="text-lime-600" />} label="Routine" value={`${routineCount}`} sub="entries" accent="#84cc16" />}
           {on('milestones') && <SummaryCard icon={<Star size={18} className="text-yellow-500" />} label="Milestones" value={`${milestoneAchieved}`} sub={`of ${childMilestones.length}`} accent="#eab308" />}
+          </div>
         </section>
 
         {/* ── Quick-add buttons (only enabled modules) [1] large tap targets ── */}
-        <section aria-label="Quick log" className="grid grid-cols-3 gap-3 md:grid-cols-4">
+        <section aria-label="Quick log">
+          <div className="mb-2 flex items-center justify-between">
+            <h2 className="text-sm font-bold text-gray-700">Quick updates</h2>
+            <p className="text-xs text-gray-400">Made for one-handed use</p>
+          </div>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
           {on('drinks') && (
-            <QuickAddBtn to="/add" tab="drink" emoji="🥤" label="Drink" accent="#0ea5e9" />
+            <QuickAddBtn to="/add" tab="drink" emoji="🥤" label={getModuleLabel('drinks', 'quickAction')} accent="#0ea5e9" />
           )}
           {on('urine') && (
-            <QuickAddBtn to="/add" tab="urine" emoji="💦" label="Urine" accent="#f59e0b" />
+            <QuickAddBtn to="/add" tab="urine" emoji="💦" label={getModuleLabel('urine', 'quickAction')} accent="#f59e0b" />
           )}
           {on('bowel') && (
-            <QuickAddBtn to="/add" tab="bowel" emoji="🚽" label="Bowel" accent="#22c55e" />
+            <QuickAddBtn to="/add" tab="bowel" emoji="🚽" label={getModuleLabel('bowel', 'quickAction')} accent="#22c55e" />
           )}
           {on('sleep') && (
             <QuickAddBtn to="/add" tab="sleep" emoji="🌙" label="Sleep" accent="#6366f1" />
           )}
           {on('toilet') && (
-            <QuickAddBtn to="/add" tab="toilet" emoji="🎯" label="Attempt" accent="#a855f7" />
+            <QuickAddBtn to="/add" tab="toilet" emoji="🎯" label={getModuleLabel('toilet', 'quickAction')} accent="#a855f7" />
           )}
           {on('food') && (
-            <QuickAddBtn to="/add" tab="food" emoji="🍽️" label="Food" accent="#f97316" />
+            <QuickAddBtn to="/add" tab="food" emoji="🍽️" label={getModuleLabel('food', 'quickAction')} accent="#f97316" />
           )}
           {on('mood') && (
             <QuickAddBtn to="/add" tab="mood" emoji="😊" label="Mood" accent="#ec4899" />
@@ -304,8 +334,9 @@ export default function DashboardPage() {
             <QuickAddBtn to="/add" tab="routine" emoji="📋" label="Routine" accent="#84cc16" />
           )}
           {on('milestones') && (
-            <QuickAddBtn to="/add" tab={undefined} emoji="⭐" label="Milestones" accent="#eab308" />
+            <QuickAddBtn to="/add" tab={undefined} emoji="⭐" label={getModuleLabel('milestones', 'quickAction')} accent="#eab308" />
           )}
+          </div>
         </section>
 
         {/* ── Today's entries feed ──────────────────────────────────── */}
@@ -313,7 +344,7 @@ export default function DashboardPage() {
           {!hasEntries && (
             <div className="rounded-2xl bg-white py-12 text-center shadow-sm ring-1 ring-black/5">
               <span className="text-4xl">📋</span>
-              <p className="mt-2 text-sm text-gray-400">No entries yet today. Tap a quick-add button to begin.</p>
+              <p className="mt-2 text-sm text-gray-400">Nothing logged yet today. Start with the quickest update above.</p>
             </div>
           )}
 
@@ -330,17 +361,17 @@ export default function DashboardPage() {
           ))}
 
           {on('urine') && dayUrine.map((entry) => {
-            const parts = [entry.wet ? 'Wet' : '', entry.pass ? 'Pass' : ''].filter(Boolean).join(' · ') || 'Event';
+            const parts = [entry.wet ? URINE_COPY.wetLabel : '', entry.pass ? URINE_COPY.passLabel : ''].filter(Boolean).join(' · ') || 'Update';
             const details = [
               entry.volumeMl ? `${entry.volumeMl}ml` : '',
-              entry.urgency ? `Urgency ${entry.urgency}/5` : '',
-              entry.leakageAmount && entry.leakageAmount !== 'none' ? `Leak: ${entry.leakageAmount}` : '',
+              entry.urgency ? `${URINE_COPY.urgencyLabel} ${entry.urgency}/5` : '',
+              entry.leakageAmount && entry.leakageAmount !== 'none' ? `${URINE_COPY.leakageLabel}: ${entry.leakageAmount}` : '',
             ].filter(Boolean).join(' · ');
             return (
               <EntryCard
                 key={entry.id}
                 icon={<CloudRain size={18} className="text-amber-500" />}
-                title={`Urine: ${parts}`}
+                title={`${getModuleLabel('urine')}: ${parts}`}
                 subtitle={[details, entry.notes].filter(Boolean).join(' — ')}
                 time={entry.time}
                 color="bg-peach"
@@ -353,8 +384,8 @@ export default function DashboardPage() {
             <EntryCard
               key={entry.id}
               icon={<Stethoscope size={18} className="text-emerald-500" />}
-              title={`Bowel: ${entry.location} - ${entry.amount} (Type ${entry.bristolType})`}
-              subtitle={`${entry.laxativesGiven ? '💊 Laxatives given. ' : ''}${entry.notes}`}
+               title={`${getModuleLabel('bowel')}: ${entry.location === 'nappy' ? 'Nappy' : 'Toilet'} · ${entry.amount} · Type ${entry.bristolType}`}
+               subtitle={`${entry.laxativesGiven ? '💊 Laxatives today. ' : ''}${entry.notes}`}
               time={entry.time}
               color="bg-mint"
               onDelete={() => deleteBowelEntry(entry.id)}
@@ -381,7 +412,7 @@ export default function DashboardPage() {
             <EntryCard
               key={entry.id}
               icon={<Target size={18} className="text-purple-500" />}
-              title={`Toilet: ${entry.outcome === 'success' ? '✅ Success' : entry.outcome === 'failure' ? '❌ No result' : '🚫 Refused'}`}
+               title={`${getModuleLabel('toilet', 'short')}: ${TOILET_OUTCOME_LABELS[entry.outcome]}`}
               subtitle={[
                 entry.supervised ? '👀 Supervised' : '',
                 entry.prompted ? '🔔 Prompted' : '',
@@ -482,7 +513,7 @@ function QuickAddBtn({ to, tab, emoji, label, accent }: {
     <Link
       to={to}
       state={tab ? { tab } : undefined}
-      className="relative flex flex-col items-center gap-2 rounded-2xl bg-white py-5 shadow-sm ring-1 ring-black/5 transition hover:bg-gray-50 active:scale-95"
+       className="relative flex min-h-28 flex-col items-center justify-center gap-2 rounded-2xl bg-white px-3 py-5 shadow-sm ring-1 ring-black/5 transition hover:bg-gray-50 active:scale-95"
       aria-label={`Add ${label} entry`}
     >
       <span

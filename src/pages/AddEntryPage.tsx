@@ -7,6 +7,7 @@ import { generateId } from '../utils/storage';
 import BristolStoolPicker from '../components/BristolStoolPicker';
 import BrandIcon from '../components/BrandIcon';
 import HelpPanel from '../components/HelpPanel';
+import { BRISTOL_GUIDANCE_TEXT, getModuleLabel, TOILET_OUTCOME_LABELS, URINE_COPY } from '../content/presentation';
 import { DEFAULT_MODULES } from '../types';
 import type { ModuleId, BristolStoolType, BowelAmount, UrineEntry, SleepEventType, ToiletAttemptOutcome, MealType, FoodTexture, FoodAcceptance, MoodLevel, SensoryResponseType, TherapyType } from '../types';
 
@@ -27,12 +28,12 @@ const MODULE_ID_MAP: Record<EntryType, ModuleId> = {
 };
 
 const ALL_TABS: { type: EntryType; icon: typeof Droplets; label: string; color: string }[] = [
-  { type: 'drink',      icon: Droplets,      label: 'Drink',   color: 'text-blue-500'   },
-  { type: 'urine',      icon: CloudRain,     label: 'Urine',   color: 'text-yellow-500' },
-  { type: 'bowel',      icon: Stethoscope,   label: 'Bowel',   color: 'text-green-500'  },
+  { type: 'drink',      icon: Droplets,      label: getModuleLabel('drinks', 'quickAction'), color: 'text-blue-500'   },
+  { type: 'urine',      icon: CloudRain,     label: getModuleLabel('urine', 'quickAction'), color: 'text-yellow-500' },
+  { type: 'bowel',      icon: Stethoscope,   label: getModuleLabel('bowel', 'quickAction'), color: 'text-green-500'  },
   { type: 'sleep',      icon: Moon,          label: 'Sleep',   color: 'text-indigo-500' },
-  { type: 'toilet',     icon: Target,        label: 'Attempt', color: 'text-purple-500' },
-  { type: 'food',       icon: Apple,         label: 'Food',    color: 'text-orange-500' },
+  { type: 'toilet',     icon: Target,        label: getModuleLabel('toilet', 'quickAction'), color: 'text-purple-500' },
+  { type: 'food',       icon: Apple,         label: getModuleLabel('food', 'quickAction'), color: 'text-orange-500' },
   { type: 'mood',       icon: Smile,         label: 'Mood',    color: 'text-pink-500'   },
   { type: 'sensory',    icon: Palette,       label: 'Sensory', color: 'text-teal-500'   },
   { type: 'medication', icon: Pill,          label: 'Meds',    color: 'text-red-500'    },
@@ -89,12 +90,12 @@ export default function AddEntryPage() {
         <div className="px-4 mt-8 text-center">
           <p className="text-3xl mb-3">🔧</p>
           <p className="text-sm font-semibold text-gray-700">No modules enabled</p>
-          <p className="text-xs text-gray-400 mt-1 mb-4">Enable at least one tracker module in Settings to start logging.</p>
+          <p className="text-xs text-gray-400 mt-1 mb-4">Turn on at least one module in Settings to start logging.</p>
           <button
             onClick={() => navigate('/settings')}
             className="rounded-full bg-lavender-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-lavender-600"
           >
-            Open Settings
+            Open settings
           </button>
         </div>
       </div>
@@ -114,12 +115,17 @@ export default function AddEntryPage() {
           <BrandIcon width={110} />
         </div>
 
+        <div className="mb-3 px-1">
+          <h1 className="text-lg font-bold text-gray-900">Add an update</h1>
+          <p className="mt-1 text-sm text-gray-500">Choose the quickest thing you want to log.</p>
+        </div>
+
         <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
           {tabs.map(({ type, icon: Icon, label, color }) => (
             <button
               key={type}
               onClick={() => setActiveTab(type)}
-              className={`flex items-center justify-center gap-1.5 rounded-xl py-2.5 px-3 text-xs font-medium transition-all whitespace-nowrap ${
+              className={`flex min-h-12 items-center justify-center gap-1.5 rounded-xl py-2.5 px-3 text-xs font-medium transition-all whitespace-nowrap ${
                 activeTab === type
                   ? 'bg-lavender-500 text-white shadow-md'
                   : 'bg-white text-gray-500 shadow-sm ring-1 ring-black/5 hover:bg-lavender-50'
@@ -313,15 +319,15 @@ function UrineForm() {
   return (
     <form onSubmit={handleSubmit} className="rounded-3xl bg-peach p-5 shadow-sm space-y-4">
       <h2 className="text-base font-bold text-gray-800 flex items-center gap-2">
-        <CloudRain size={18} className="text-yellow-500" /> Log Urine Event
+        <CloudRain size={18} className="text-yellow-500" /> {URINE_COPY.heading}
       </h2>
 
-      <HelpPanel title="Logging a Urine Event">
-        <p><strong>Wet:</strong> Tick if there was any urine in the pad/pants/toilet.</p>
-        <p><strong>Pass:</strong> Tick if urine was passed into the toilet successfully.</p>
-        <p><strong>Volume (ml):</strong> Measured output if a collection device or scales are used (optional).</p>
-        <p><strong>Urgency 1–5:</strong> How urgently did they need to go? 1 = none, 5 = desperate.</p>
-        <p><strong>Leakage:</strong> Amount of leakage if any — none, small, moderate, or large.</p>
+      <HelpPanel title={URINE_COPY.helpTitle}>
+        <p><strong>{URINE_COPY.wetLabel}:</strong> Tick if there was urine in clothes, a pull-up, or bedding.</p>
+        <p><strong>{URINE_COPY.passLabel}:</strong> Tick if the wee reached the toilet or potty.</p>
+        <p><strong>{URINE_COPY.volumeLabel}:</strong> Add a measured amount if you have one.</p>
+        <p><strong>{URINE_COPY.urgencyLabel}:</strong> 1 = not urgent, 5 = very urgent.</p>
+        <p><strong>{URINE_COPY.leakageLabel}:</strong> Choose how much escaped if there was a leak.</p>
       </HelpPanel>
 
       <div className="grid grid-cols-2 gap-3">
@@ -338,29 +344,29 @@ function UrineForm() {
       </div>
 
       <div>
-        <label className="text-xs font-medium text-gray-600 block mb-2">Event Type</label>
+        <label className="text-xs font-medium text-gray-600 block mb-2">{URINE_COPY.eventLabel}</label>
         <div className="flex gap-3">
           <label className={`flex-1 flex items-center justify-center gap-2 py-4 rounded-xl border-2 cursor-pointer transition-all ${
             wet ? 'border-yellow-400 bg-yellow-50 shadow-md' : 'border-gray-100 bg-white hover:border-yellow-200'
           }`}>
             <input type="checkbox" checked={wet} onChange={(e) => setWet(e.target.checked)} className="sr-only" />
             <span className="text-2xl">💦</span>
-            <div className="text-sm font-medium text-gray-700">Wet</div>
+            <div className="text-sm font-medium text-gray-700">{URINE_COPY.wetLabel}</div>
           </label>
           <label className={`flex-1 flex items-center justify-center gap-2 py-4 rounded-xl border-2 cursor-pointer transition-all ${
             pass ? 'border-green-400 bg-green-50 shadow-md' : 'border-gray-100 bg-white hover:border-green-200'
           }`}>
             <input type="checkbox" checked={pass} onChange={(e) => setPass(e.target.checked)} className="sr-only" />
             <span className="text-2xl">🚽</span>
-            <div className="text-sm font-medium text-gray-700">Pass</div>
+            <div className="text-sm font-medium text-gray-700">{URINE_COPY.passLabel}</div>
           </label>
         </div>
       </div>
 
       <div>
-        <label className="text-xs font-medium text-gray-600">Volume (ml) <span className="text-gray-400 font-normal">— optional</span></label>
+        <label className="text-xs font-medium text-gray-600">{URINE_COPY.volumeLabel} <span className="text-gray-400 font-normal">— optional</span></label>
         <input type="number" value={volumeMl} onChange={(e) => setVolumeMl(e.target.value)}
-          placeholder="Measured output in ml"
+          placeholder={URINE_COPY.volumePlaceholder}
           className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm"
           min="0" />
         <div className="flex gap-2 mt-2 flex-wrap">
@@ -376,7 +382,7 @@ function UrineForm() {
       </div>
 
       <div>
-        <label className="text-xs font-medium text-gray-600 block mb-2">Urgency <span className="text-gray-400 font-normal">— optional</span></label>
+        <label className="text-xs font-medium text-gray-600 block mb-2">{URINE_COPY.urgencyLabel} <span className="text-gray-400 font-normal">— optional</span></label>
         <div className="flex gap-1.5">
           {urgencyLabels.map((u) => (
             <button key={u.value} type="button" onClick={() => setUrgency(urgency === u.value ? null : u.value)}
@@ -393,7 +399,7 @@ function UrineForm() {
       </div>
 
       <div>
-        <label className="text-xs font-medium text-gray-600 block mb-2">Leakage <span className="text-gray-400 font-normal">— optional</span></label>
+        <label className="text-xs font-medium text-gray-600 block mb-2">{URINE_COPY.leakageLabel} <span className="text-gray-400 font-normal">— optional</span></label>
         <div className="flex gap-2">
           {leakageOptions.map((l) => (
             <button key={l.value} type="button" onClick={() => setLeakageAmount(leakageAmount === l.value ? null : l.value)}
@@ -418,7 +424,7 @@ function UrineForm() {
 
       <button type="submit"
         className="w-full py-3 bg-lavender-500 hover:bg-lavender-600 text-white rounded-xl font-semibold text-sm transition-all shadow-lg shadow-lavender-200">
-        Save Urine Entry 🚿
+        {URINE_COPY.submitLabel} 🚿
       </button>
     </form>
   );
@@ -457,14 +463,15 @@ function BowelForm() {
   return (
     <form onSubmit={handleSubmit} className="rounded-3xl bg-mint p-5 shadow-sm space-y-4">
       <h2 className="text-base font-bold text-gray-800 flex items-center gap-2">
-        <Stethoscope size={18} className="text-green-500" /> Log Bowel Event
+        <Stethoscope size={18} className="text-green-500" /> Log a poo
       </h2>
 
-      <HelpPanel title="Logging a Bowel Movement">
-        <p><strong>Bristol Type 1–7:</strong> The Bristol Stool Scale describes stool consistency. Types 1–2 are hard (constipation), Types 3–4 are ideal, Types 5–7 are loose (potential diarrhoea).</p>
-        <p><strong>Amount:</strong> Estimated quantity — small, medium, or large.</p>
-        <p><strong>Location:</strong> Where it happened — toilet, pad, or pants.</p>
-        <p><strong>Laxatives given:</strong> Tick if a laxative was administered today.</p>
+      <HelpPanel title="Logging a poo">
+        <p><strong>Poo consistency:</strong> Use the Bristol chart below if you want to note whether things were firm, comfortable, or loose.</p>
+        <p><strong>Amount:</strong> Choose the best estimate — small, medium, or large.</p>
+        <p><strong>Location:</strong> Note whether it happened in the toilet or nappy.</p>
+        <p><strong>Laxatives today:</strong> Tick this if laxatives were given the same day.</p>
+        <p>{BRISTOL_GUIDANCE_TEXT}</p>
       </HelpPanel>
 
       <div className="grid grid-cols-2 gap-3">
@@ -543,7 +550,7 @@ function BowelForm() {
       <button type="submit"
         className="w-full py-3 bg-lavender-500 hover:bg-lavender-600 text-white rounded-xl font-semibold text-sm transition-all shadow-lg shadow-lavender-200"
         disabled={!bristolType}>
-        Save Bowel Entry 📋
+        Save poo log 📋
       </button>
     </form>
   );
@@ -629,7 +636,7 @@ function SleepForm() {
       </div>
 
       <div>
-        <label className="text-xs font-medium text-gray-600 block mb-2">Event Type</label>
+        <label className="text-xs font-medium text-gray-600 block mb-2">{URINE_COPY.eventLabel}</label>
         <div className="grid grid-cols-2 gap-2">
           {sleepEvents.map((se) => (
             <button key={se.value} type="button" onClick={() => setEventType(se.value)}
@@ -732,9 +739,9 @@ function ToiletAttemptForm() {
   const [notes, setNotes] = useState('');
 
   const outcomes: { value: ToiletAttemptOutcome; label: string; emoji: string }[] = [
-    { value: 'success', label: 'Success', emoji: '✅' },
-    { value: 'failure', label: 'No result', emoji: '❌' },
-    { value: 'no_event', label: 'Refused', emoji: '🚫' },
+    { value: 'success', label: TOILET_OUTCOME_LABELS.success, emoji: '✅' },
+    { value: 'failure', label: TOILET_OUTCOME_LABELS.failure, emoji: '❌' },
+    { value: 'no_event', label: TOILET_OUTCOME_LABELS.no_event, emoji: '🚫' },
   ];
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -759,14 +766,14 @@ function ToiletAttemptForm() {
   return (
     <form onSubmit={handleSubmit} className="rounded-3xl bg-[#f3eeff] p-5 shadow-sm space-y-4">
       <h2 className="text-base font-bold text-gray-800 flex items-center gap-2">
-        <Target size={18} className="text-purple-500" /> Log Toilet Attempt
+        <Target size={18} className="text-purple-500" /> Log a toilet visit
       </h2>
 
-      <HelpPanel title="Logging a Toilet Attempt">
-        <p><strong>Outcome:</strong> Success (produced something), failure (sat but nothing happened), or refused (would not attempt).</p>
-        <p><strong>Prompted:</strong> Tick if you reminded or asked them to try.</p>
-        <p><strong>Supervised:</strong> Tick if a carer was present during the attempt.</p>
-        <p><strong>Duration:</strong> How many minutes they sat on the toilet (optional).</p>
+      <HelpPanel title="Logging a toilet visit">
+        <p><strong>Outcome:</strong> Successful, no result, or not ready.</p>
+        <p><strong>Prompted:</strong> Tick if you reminded or invited them to try.</p>
+        <p><strong>Supervised:</strong> Tick if an adult stayed nearby to help.</p>
+        <p><strong>Duration:</strong> Add how long they sat for if it is useful.</p>
       </HelpPanel>
 
       <div className="grid grid-cols-2 gap-3">
@@ -829,7 +836,7 @@ function ToiletAttemptForm() {
 
       <button type="submit"
         className="w-full py-3 bg-purple-500 hover:bg-purple-600 text-white rounded-xl font-semibold text-sm transition-all shadow-lg shadow-purple-200">
-        Save Toilet Attempt 🎯
+        Save toilet visit 🎯
       </button>
     </form>
   );

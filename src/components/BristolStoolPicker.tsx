@@ -1,4 +1,5 @@
 import type { BristolStoolType } from '../types';
+import { BRISTOL_GUIDANCE_TEXT } from '../content/presentation';
 
 const bristolDescriptions: Record<BristolStoolType, { label: string; desc: string; emoji: string; color: string }> = {
   1: { label: 'Type 1', desc: 'Separate hard lumps', emoji: '🟤', color: 'bg-amber-900' },
@@ -18,7 +19,7 @@ interface BristolStoolPickerProps {
 export default function BristolStoolPicker({ value, onChange }: BristolStoolPickerProps) {
   return (
     <div className="space-y-2">
-      <label className="text-sm font-semibold text-gray-700">Bristol Stool Chart</label>
+      <label className="text-sm font-semibold text-gray-700">Poo consistency (Bristol chart)</label>
       <div className="grid grid-cols-1 gap-2">
         {(Object.entries(bristolDescriptions) as [string, typeof bristolDescriptions[1]][]).map(
           ([type, info]) => {
@@ -49,7 +50,7 @@ export default function BristolStoolPicker({ value, onChange }: BristolStoolPick
         )}
       </div>
       <p className="text-xs text-gray-400 italic mt-1">
-        💡 Types 3-4 are considered normal. Types 1-2 may indicate constipation. Types 5-7 may indicate diarrhoea.
+        💡 {BRISTOL_GUIDANCE_TEXT}
       </p>
     </div>
   );

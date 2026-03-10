@@ -395,17 +395,17 @@ export const EMPTY_IMPORT_SUMMARY: ImportSummary = {
 
 // ── Default Module Registry ──────────────────────────────────────────
 export const DEFAULT_MODULES: TrackerModule[] = [
-  { id: 'drinks', label: 'Drinks', icon: '🥤', description: 'Track fluid intake', builtIn: true, defaultEnabled: true },
-  { id: 'urine', label: 'Urine', icon: '💦', description: 'Track urination events', builtIn: true, defaultEnabled: true },
-  { id: 'bowel', label: 'Bowel', icon: '🚽', description: 'Track bowel movements', builtIn: true, defaultEnabled: true },
+  { id: 'drinks', label: 'Drinks', icon: '🥤', description: 'Track drinks and fluids', builtIn: true, defaultEnabled: true },
+  { id: 'urine', label: 'Wee', icon: '💦', description: 'Log wees, wet clothes and urgency', builtIn: true, defaultEnabled: true },
+  { id: 'bowel', label: 'Poo', icon: '🚽', description: 'Track poos and stool consistency', builtIn: true, defaultEnabled: true },
   { id: 'sleep', label: 'Sleep', icon: '🌙', description: 'Track sleep patterns', builtIn: true, defaultEnabled: true },
-  { id: 'toilet', label: 'Toilet Attempts', icon: '🎯', description: 'Track toilet training attempts', builtIn: true, defaultEnabled: true },
-  { id: 'food', label: 'Food', icon: '🍽️', description: 'Track meals and nutrition', builtIn: true, defaultEnabled: true },
+  { id: 'toilet', label: 'Toilet visits', icon: '🎯', description: 'Track toilet sits, prompts and outcomes', builtIn: true, defaultEnabled: true },
+  { id: 'food', label: 'Meals', icon: '🍽️', description: 'Track meals, snacks and new foods', builtIn: true, defaultEnabled: true },
   { id: 'mood', label: 'Mood', icon: '😊', description: 'Track emotional states and triggers', builtIn: true, defaultEnabled: false },
   { id: 'sensory', label: 'Sensory', icon: '🎨', description: 'Track sensory responses and preferences', builtIn: true, defaultEnabled: false },
   { id: 'medication', label: 'Medication', icon: '💊', description: 'Track medications and dosages', builtIn: true, defaultEnabled: false },
   { id: 'therapy', label: 'Therapy', icon: '🧩', description: 'Track therapy sessions and goals', builtIn: true, defaultEnabled: false },
-  { id: 'routine', label: 'Routine', icon: '📋', description: 'Track daily routines and schedules', builtIn: true, defaultEnabled: false },
+  { id: 'routine', label: 'Routines', icon: '📋', description: 'Track routines and what helped', builtIn: true, defaultEnabled: false },
   { id: 'milestones', label: 'Milestones', icon: '⭐', description: 'Track developmental milestones', builtIn: true, defaultEnabled: true },
   { id: 'leaps', label: 'Leaps', icon: '🌈', description: 'Baby age calculator, leap predictions & symptom logging', builtIn: true, defaultEnabled: false },
 ];

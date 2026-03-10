@@ -2,6 +2,8 @@ import { useMemo, useState } from 'react';
 import { addDays, format, isAfter, isBefore, isSameDay, parseISO, startOfDay, startOfMonth, startOfWeek } from 'date-fns';
 import { Calendar, ChevronRight, CircleHelp, Plus, X } from 'lucide-react';
 import { useApp } from '../context/useApp';
+import CelebrationBanner from '../components/CelebrationBanner';
+import { MILESTONE_ACHIEVED_CELEBRATION, MILESTONE_SAVE_CELEBRATION } from '../content/presentation';
 import type { Milestone, MilestoneCategory, MilestoneStatus, ModuleId } from '../types';
 import { DEFAULT_MODULES } from '../types';
 import { generateId } from '../utils/storage';
@@ -78,6 +80,7 @@ export default function MilestonesPage() {
   const [highlightMilestoneId, setHighlightMilestoneId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [guidanceMilestone, setGuidanceMilestone] = useState<Milestone | null>(null);
+  const [celebration, setCelebration] = useState<typeof MILESTONE_SAVE_CELEBRATION | null>(null);
 
   const [formName, setFormName] = useState('');
   const [formCategory, setFormCategory] = useState<MilestoneCategory>('speech');
@@ -158,6 +161,7 @@ export default function MilestonesPage() {
     setFormNotes('');
     setFormTargetDate(format(new Date(), 'yyyy-MM-dd'));
     setShowForm(false);
+    setCelebration(MILESTONE_SAVE_CELEBRATION);
   };
 
   const jumpToToday = () => {
@@ -181,11 +185,16 @@ export default function MilestonesPage() {
   return (
     <div className="pb-24">
       <header className="bg-white px-4 pt-6 pb-4">
-        <h1 className="text-xl font-bold text-slate-900">Milestones timeline</h1>
-        <p className="text-sm text-slate-500">NHS-style leap tracker for {selectedChild.name}</p>
+        <h1 className="text-xl font-bold text-slate-900">Milestones</h1>
+        <p className="text-sm text-slate-500">A clear progress timeline for {selectedChild.name}</p>
       </header>
 
       <section className="px-4">
+        {celebration ? (
+          <div className="mb-3">
+            <CelebrationBanner {...celebration} />
+          </div>
+        ) : null}
         <div className="rounded-2xl bg-white p-3 shadow-sm ring-1 ring-slate-200">
           <div className="grid grid-cols-2 gap-2 md:grid-cols-6">
             <FilterSelect label="Category" value={categoryFilter} onChange={(value) => setCategoryFilter(value as MilestoneCategory | 'all')}>
@@ -230,7 +239,7 @@ export default function MilestonesPage() {
               onClick={jumpToNextLeap}
               className="inline-flex min-h-11 items-center gap-1 rounded-full bg-violet-600 px-4 text-xs font-semibold text-white"
             >
-              <ChevronRight size={14} /> Jump to next leap
+              <ChevronRight size={14} /> Next upcoming milestone
             </button>
             <button
               type="button"
@@ -317,13 +326,14 @@ export default function MilestonesPage() {
                             <button
                               key={status}
                               type="button"
-                              onClick={() =>
+                              onClick={() => {
                                 updateMilestone({
                                   ...entry,
                                   status,
                                   dateAchieved: status === 'achieved' ? format(new Date(), 'yyyy-MM-dd') : null,
-                                })
-                              }
+                                });
+                                setCelebration(status === 'achieved' ? MILESTONE_ACHIEVED_CELEBRATION : null);
+                              }}
                               className={`min-h-10 rounded-full px-3 text-xs font-semibold ${entry.status === status ? 'bg-violet-600 text-white' : 'bg-white text-slate-700'}`}
                             >
                               {STATUS_LABELS[status]}

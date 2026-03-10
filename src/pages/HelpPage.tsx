@@ -17,6 +17,7 @@ import {
 import { Link, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/useApp';
 import BrandIcon from '../components/BrandIcon';
+import { BRAND, HELP_COPY, getModuleLabel } from '../content/presentation';
 
 const ONBOARDING_KEY = 'bt_onboarding_seen';
 
@@ -27,11 +28,11 @@ const ONBOARDING_STEPS = [
   },
   {
     title: 'Add a child profile',
-    description: 'Go to the Profiles page and create a profile for each child you want to track.',
+    description: 'Go to the Profiles page and create a profile for each child or family member you want to track.',
   },
   {
     title: 'Start logging entries',
-    description: 'Use the Dashboard or Add Entry page to record drinks, toilet visits, meals, and more.',
+    description: 'Use Today or Add an update to record drinks, wees, poos, toilet visits, meals, and more.',
   },
   {
     title: 'Review reports',
@@ -39,7 +40,7 @@ const ONBOARDING_STEPS = [
   },
   {
     title: 'Invite caregivers',
-    description: 'Share access with teachers, nurses, or family members via the Profiles page.',
+    description: 'Share access with trusted school staff, therapists, or family members via the Profiles page.',
   },
 ];
 
@@ -47,7 +48,7 @@ const FAQ_ITEMS: { question: string; answer: string }[] = [
   {
     question: 'What modules are available?',
     answer:
-      'BladderTracker includes 12 tracker modules: Drinks, Urine, Bowel, Toilet Attempts, Sleep, Food & Diet, Medication, Mood, Sensory, Therapy, Routine, and Milestones. Enable only the ones relevant to your child in Settings.',
+      `${BRAND.name} includes flexible modules such as ${getModuleLabel('drinks')}, ${getModuleLabel('urine')}, ${getModuleLabel('bowel')}, ${getModuleLabel('toilet')}, sleep, meals, mood, sensory notes, therapy, routines, milestones, and leaps. Turn on only the ones that are helpful for your family.`,
   },
   {
     question: 'How do I export my data?',
@@ -70,9 +71,9 @@ const FAQ_ITEMS: { question: string; answer: string }[] = [
       'Navigate to Settings → Data & Privacy → Delete Account. This will permanently remove your account and all associated data.',
   },
   {
-    question: 'What is the Bristol Stool Scale?',
+    question: 'What is the Bristol stool chart?',
     answer:
-      'The Bristol Stool Scale is a medical classification that categorises human faeces into seven types based on shape and consistency. It is widely used by healthcare professionals to monitor bowel health.',
+      HELP_COPY.bristolAnswer,
   },
 ];
 
@@ -95,7 +96,7 @@ const QUICK_LINKS = [
   {
     to: '/add',
     title: 'Add an entry',
-    description: 'Log drinks, sleep, toileting, food, mood, sensory notes, therapy, and routines.',
+    description: 'Log drinks, sleep, toilet visits, meals, mood, sensory notes, therapy, and routines.',
     icon: Sparkles,
   },
   {
@@ -147,9 +148,9 @@ export default function HelpPage() {
       <div className="bg-[linear-gradient(180deg,#fbf7f2_0%,#ffffff_100%)] px-4 pb-4 pt-6">
         <div className="flex flex-col items-center text-center px-4">
           <HelpCircle size={28} className="text-lavender-500 mb-1" />
-          <h1 className="mt-1 text-base font-bold text-gray-900">Help &amp; Support</h1>
+          <h1 className="mt-1 text-base font-bold text-gray-900">Help &amp; support</h1>
           <p className="mt-0.5 text-xs text-gray-500">
-            Guidance, tips, and accessibility information
+            Calm guidance, privacy notes, and accessibility support
           </p>
         </div>
       </div>
@@ -282,7 +283,7 @@ export default function HelpPage() {
             ))}
           </div>
           <div className="mt-4 rounded-2xl border border-lavender-100 bg-lavender-50 p-4 text-xs leading-relaxed text-lavender-800">
-            BladderTracker is designed to support observation and care coordination. It does not replace medical advice or emergency support. If you are worried about a child&apos;s immediate health or safety, contact your local urgent care service, NHS 111, or emergency services.
+            {BRAND.name} is designed to support observation and care coordination. It does not replace medical advice or emergency support. If you are worried about a child&apos;s immediate health or safety, contact your local urgent care service, NHS 111, or emergency services.
           </div>
         </section>
 
