@@ -1,0 +1,18 @@
+{
+  "name": "BladderTracker",
+  "short_name": "BladderTracker",
+  "description": "Calm tracking for families, caregivers, and care teams.",
+  "theme_color": "#f8f5ff",
+  "background_color": "#f8f5ff",
+  "display": "standalone",
+  "start_url": "/",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
