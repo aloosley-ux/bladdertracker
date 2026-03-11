@@ -3,6 +3,8 @@ import { Bell, BellOff, Check, X } from 'lucide-react';
 import { useApp } from '../context/useApp';
 import { format, parseISO } from 'date-fns';
 
+const MAX_DISPLAYED_NOTIFICATIONS = 15;
+
 /**
  * NotificationBell — shows unread notification count and a dropdown panel.
  * Handles marking individual notifications as read and clearing all.
@@ -13,7 +15,7 @@ export default function NotificationBell() {
   const ref = useRef<HTMLDivElement>(null);
 
   const unread = notifications.filter((n) => !n.read);
-  const recent = notifications.slice(0, 15);
+  const recent = notifications.slice(0, MAX_DISPLAYED_NOTIFICATIONS);
 
   // Close when clicking outside
   useEffect(() => {
@@ -134,7 +136,7 @@ export default function NotificationBell() {
             )}
           </ul>
 
-          {notifications.length > 15 && (
+          {notifications.length > MAX_DISPLAYED_NOTIFICATIONS && (
             <div className="border-t border-gray-50 px-4 py-2 text-center text-xs text-gray-400">
               Showing 15 most recent
             </div>
