@@ -40,6 +40,15 @@ export interface LeapDefinition {
   resourceLinks?: Array<{ label: string; url: string }>;
 }
 
+function cdcMilestoneResource(ageLabel: string, slug: string): Array<{ label: string; url: string }> {
+  return [
+    {
+      label: `CDC milestones (${ageLabel})`,
+      url: `https://www.cdc.gov/ncbddd/actearly/milestones/milestones-${slug}.html`,
+    },
+  ];
+}
+
 /**
  * 10 developmental leap periods.
  * Weeks are counted from the due date (gestational-age corrected).
@@ -60,6 +69,7 @@ export const LEAP_CHART: LeapDefinition[] = [
       'Talk softly and make eye contact to stimulate new awareness.',
       'Respond quickly to cries — baby is adjusting to a whole new sensory world.',
     ],
+    resourceLinks: cdcMilestoneResource('1 month', '1mo'),
   },
   {
     number: 2,
@@ -75,6 +85,7 @@ export const LEAP_CHART: LeapDefinition[] = [
       'Hang a mobile above the cot and let baby track the movement.',
       'Try gentle rhythmic movements like rocking or swaying.',
     ],
+    resourceLinks: cdcMilestoneResource('2 months', '2mo'),
   },
   {
     number: 3,
@@ -90,6 +101,7 @@ export const LEAP_CHART: LeapDefinition[] = [
       'Respond to babbles with conversation — it encourages communication.',
       'Use a baby gym with different textures and sounds to explore.',
     ],
+    resourceLinks: cdcMilestoneResource('4 months', '4mo'),
   },
   {
     number: 4,
@@ -105,6 +117,7 @@ export const LEAP_CHART: LeapDefinition[] = [
       'Play "peek-a-boo" to build object permanence and event expectation.',
       'Narrate daily activities: "Now we are going to bath time!"',
     ],
+    resourceLinks: cdcMilestoneResource('6 months', '6mo'),
   },
   {
     number: 5,
@@ -120,6 +133,7 @@ export const LEAP_CHART: LeapDefinition[] = [
       'Offer comfort objects (a soft toy or blanket) to ease anxiety.',
       'Hide toys under blankets and encourage baby to find them.',
     ],
+    resourceLinks: cdcMilestoneResource('9 months', '9mo'),
   },
   {
     number: 6,
@@ -135,6 +149,7 @@ export const LEAP_CHART: LeapDefinition[] = [
       'Encourage imitation games — copy their actions and let them copy yours.',
       'Read picture books together and name animals, objects, and colours.',
     ],
+    resourceLinks: cdcMilestoneResource('9 months', '9mo'),
   },
   {
     number: 7,
@@ -150,6 +165,7 @@ export const LEAP_CHART: LeapDefinition[] = [
       'Give simple two-step instructions and celebrate when followed.',
       'Demonstrate activities step-by-step and let baby copy each stage.',
     ],
+    resourceLinks: cdcMilestoneResource('12 months', '12mo'),
   },
   {
     number: 8,
@@ -165,6 +181,7 @@ export const LEAP_CHART: LeapDefinition[] = [
       'Allow safe independent exploration — watch from a little distance.',
       'Celebrate attempts and effort, not just outcomes.',
     ],
+    resourceLinks: cdcMilestoneResource('15 months', '15mo'),
   },
   {
     number: 9,
@@ -180,6 +197,7 @@ export const LEAP_CHART: LeapDefinition[] = [
       'Offer limited choices to support autonomy: "red cup or blue cup?"',
       'Use visual schedules to help toddlers understand what comes next.',
     ],
+    resourceLinks: cdcMilestoneResource('18 months', '18mo'),
   },
   {
     number: 10,
@@ -195,6 +213,7 @@ export const LEAP_CHART: LeapDefinition[] = [
       'Introduce simple role responsibilities ("your job is to put toys away").',
       'Read stories with moral themes to nurture emerging conscience.',
     ],
+    resourceLinks: cdcMilestoneResource('2 years', '2yr'),
   },
 ];
 

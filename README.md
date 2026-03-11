@@ -164,7 +164,7 @@ This section highlights the experience that already exists in the product today.
 | 10 | **Therapy** | 🧩 | Session type (speech/OT/PT/behavioral), provider, goals | ⬜ |
 | 11 | **Routines** | 📋 | Daily routine name, completion, duration | ⬜ |
 | 12 | **Milestones** | ⭐ | Developmental milestones across 8 categories with status workflow | ✅ |
-| 13 | **Leaps** | 🌈 | Baby age calculator, leap predictions, and symptom logging | ⬜ |
+| 13 | **Leaps** | 🌈 | Baby age calculator, leap predictions, symptom logging, and trusted guidance links | ⬜ |
 
 ### Platform Capabilities
 
@@ -194,7 +194,7 @@ This section highlights the experience that already exists in the product today.
 | Add an update | `/add` | — | Fast tabbed entry forms with calmer wording and one-handed quick logging |
 | Reports | `/reports` | 📈 Reports | Charts, trends, milestone summaries, and guided export |
 | Milestones | `/milestones` | ⭐ Milestones | Developmental milestone dashboard |
-| Leaps | `/leaps` | 🌈 Leaps | Developmental leap guidance, predictions, and symptom logging |
+| Leaps | `/leaps` | 🌈 Leaps | Developmental leap guidance, predictions, symptom logging, and trusted resource links |
 | Calendar | `/calendar` | — | Monthly calendar view of all entries |
 | Profiles | `/profiles` | 👥 Profiles | Child profiles, caregiver invites, access review, and notifications |
 | Settings | `/settings` | ⚙️ Settings | Themes, module toggles, reminders, import/export, GDPR, and support |
