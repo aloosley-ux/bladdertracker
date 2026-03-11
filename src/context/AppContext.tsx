@@ -1,4 +1,6 @@
 import { useState, useEffect, useCallback, useRef, type ReactNode } from 'react';
+import { getLeapReferenceDate, getCurrentLeap, getNextLeap } from '../data/leapData';
+import { differenceInDays } from 'date-fns';
 import type {
   User,
   Child,
@@ -221,6 +223,74 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
     window.addEventListener('storage', handle);
     return () => window.removeEventListener('storage', handle);
   }, [cloud, refreshLocalData, selectedChildId]);
+
+  // Check leap reminders — runs in local mode when user and children are loaded
+  useEffect(() => {
+    if (cloud || !user || childrenList.length === 0) return;
+    const now = new Date();
+
+    let prefs: ReturnType<typeof localStorage.getReminderPreferences> = [];
+    try {
+      prefs = localStorage.getReminderPreferences(user.id).filter(
+        (p) => p.moduleId === 'leaps' && p.enabled,
+      );
+    } catch {
+      return;
+    }
+    if (prefs.length === 0) return;
+
+    let didAddNotification = false;
+    for (const pref of prefs) {
+      try {
+        // Only fire if nextReminderAt has never been set or is in the past
+        if (pref.nextReminderAt && new Date(pref.nextReminderAt) > now) continue;
+        // Respect snoozedUntil
+        if (pref.snoozedUntil && new Date(pref.snoozedUntil) > now) continue;
+
+        const child = childrenList.find((c) => c.id === pref.childId);
+        if (!child) continue;
+
+        const refDate = getLeapReferenceDate(child.dateOfBirth, child.dueDate);
+        const currentLeap = getCurrentLeap(refDate, now);
+        const nextLeap = getNextLeap(refDate, now);
+
+        let title = '';
+        let message = '';
+
+        if (currentLeap) {
+          const leapPhase = currentLeap.status === 'stormy' ? 'stormy phase' : 'sunny phase';
+          title = `🌟 Leap ${currentLeap.leap.number} – ${currentLeap.leap.title}`;
+          message = `${child.name} is in the ${leapPhase} of Leap ${currentLeap.leap.number}. Check the Leaps page for tips and symptom logging.`;
+        } else if (nextLeap) {
+          const daysAway = differenceInDays(nextLeap.stormyStart, now);
+          if (daysAway <= 14) {
+            title = `🔜 Leap ${nextLeap.leap.number} approaching`;
+            message = `${child.name}'s next developmental leap (${nextLeap.leap.title}) begins in about ${daysAway} day${daysAway === 1 ? '' : 's'}. Visit the Leaps page to prepare.`;
+          }
+        }
+
+        if (title && message) {
+          localStorage.addNotification({ userId: user.id, title, message });
+          didAddNotification = true;
+        }
+
+        // Always advance nextReminderAt so we don't spam
+        const nextAt = pref.frequency === 'daily'
+          ? new Date(now.getTime() + DAY_IN_MS).toISOString()
+          : new Date(now.getTime() + WEEK_IN_MS).toISOString();
+        localStorage.upsertReminderPreference({ ...pref, nextReminderAt: nextAt, updatedAt: now.toISOString() });
+      } catch {
+        // Continue processing other preferences even if one fails
+      }
+    }
+
+    // Refresh state so the bell updates with new notifications
+    if (didAddNotification) {
+      refreshLocalData(user, selectedChildId);
+    }
+  // Run once when user + children are available; not on every render cycle
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id, childrenList.length, cloud]);
 
   const login = (u: User) => {
     setUserState(u);
