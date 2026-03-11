@@ -194,3 +194,36 @@ button.btn-compact {
   white-space: nowrap;
   border-width: 0;
 }
+
+/* ── Reduced motion preference (#35) ────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── Dark theme text and card improvements (#31) ────────────────── */
+[data-theme="dark"] .input-card {
+  background: var(--bg-card);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .input-card:focus {
+  border-color: #a87dff;
+  box-shadow: 0 0 0 4px rgba(168, 125, 255, 0.3);
+}
+
+/* ── High-contrast toggle styling (#31) ─────────────────────────── */
+[data-theme="high-contrast"] .nhs-toggle {
+  border: 2px solid #ffffff;
+}
+
+[data-theme="high-contrast"] .nhs-toggle[data-on="true"] {
+  background-color: #00cc00;
+}
