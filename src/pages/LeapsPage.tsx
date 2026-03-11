@@ -257,7 +257,7 @@ function LeapTimelineCard({
                     <a
                       href={link.url}
                       target="_blank"
-                      rel="noreferrer"
+                      rel="noopener noreferrer"
                       className="text-xs font-medium underline underline-offset-2"
                     >
                       {link.label}
