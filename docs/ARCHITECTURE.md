@@ -47,11 +47,42 @@ bladdertracker/
 │   │   ├── brand-icon.svg      # Primary logo asset
 │   │   └── index.ts            # Central asset registry
 │   ├── components/
+│   │   ├── forms/              # Extracted entry form components (one per tracker)
+│   │   │   ├── DrinkForm.tsx
+│   │   │   ├── UrineForm.tsx
+│   │   │   ├── BowelForm.tsx
+│   │   │   ├── SleepForm.tsx
+│   │   │   ├── ToiletAttemptForm.tsx
+│   │   │   ├── FoodForm.tsx
+│   │   │   ├── MoodForm.tsx
+│   │   │   ├── SensoryForm.tsx
+│   │   │   ├── MedicationForm.tsx
+│   │   │   ├── TherapyForm.tsx
+│   │   │   ├── RoutineForm.tsx
+│   │   │   ├── FormStep.tsx    # Shared step-by-step form wrapper
+│   │   │   └── index.ts
+│   │   ├── leaps/              # Extracted leap sub-components
+│   │   │   ├── DueDateEditor.tsx
+│   │   │   ├── AgeCalculator.tsx
+│   │   │   ├── LeapTimeline.tsx
+│   │   │   ├── LeapTimelineCard.tsx
+│   │   │   ├── SymptomLogger.tsx
+│   │   │   ├── LeapDiary.tsx
+│   │   │   ├── LeapNotifications.tsx
+│   │   │   ├── LeapCalendarWidget.tsx
+│   │   │   ├── LeapProgressChart.tsx
+│   │   │   ├── generateICS.ts
+│   │   │   ├── leapConstants.ts
+│   │   │   └── index.ts
+│   │   ├── settings/           # Extracted settings sub-components
+│   │   │   ├── ModuleSettings.tsx
+│   │   │   └── index.ts
 │   │   ├── AppNav.tsx          # Responsive top/bottom navigation shell
 │   │   ├── BrandBanner.tsx     # App header
 │   │   ├── BrandIcon.tsx       # App logo
 │   │   ├── BristolStoolPicker.tsx # Bristol scale UI component
 │   │   ├── CalendarStrip.tsx   # Horizontal date scroller
+│   │   ├── EmptyState.tsx      # Reusable empty state placeholder
 │   │   ├── EntryCard.tsx       # Diary entry display card
 │   │   └── HelpPanel.tsx       # Collapsible in-app help panel
 │   ├── content/
@@ -90,6 +121,57 @@ bladdertracker/
 ├── index.css                   # Tailwind + CSS variables (themes)
 └── main.tsx                    # React entry point
 ```
+
+---
+
+## Component Architecture
+
+Large page components have been decomposed into focused sub-components to improve maintainability and testability.
+
+### `src/components/forms/`
+
+Eleven entry form components extracted from `AddEntryPage`, plus the shared `FormStep` wrapper. Each form owns its own field layout, validation hints, and help text. `AddEntryPage` now acts as a thin tab-switching shell (~170 lines).
+
+| Component | Tracker |
+|-----------|---------|
+| `DrinkForm` | Fluid intake |
+| `UrineForm` | Voiding events |
+| `BowelForm` | Bowel movements (includes BristolStoolPicker) |
+| `SleepForm` | Sleep events with latency and night-activity toggle |
+| `ToiletAttemptForm` | Toilet training sessions |
+| `FoodForm` | Dietary intake with texture/acceptance tracking |
+| `MoodForm` | Emotional wellbeing |
+| `SensoryForm` | Sensory processing events |
+| `MedicationForm` | Medication administration |
+| `TherapyForm` | Therapy sessions |
+| `RoutineForm` | Daily routines |
+| `FormStep` | Shared step-by-step form section wrapper |
+
+### `src/components/leaps/`
+
+All leap-related sub-components extracted from `LeapsPage`, reducing it from ~1160 lines to ~70 lines.
+
+| Component | Purpose |
+|-----------|---------|
+| `DueDateEditor` | Edit child's due date for leap calculations |
+| `AgeCalculator` | Display adjusted age from due date |
+| `LeapTimeline` | Full leap timeline overview |
+| `LeapTimelineCard` | Individual leap card within the timeline |
+| `SymptomLogger` | Log symptoms and signs during a leap |
+| `LeapDiary` | Free-text diary entries for leaps |
+| `LeapNotifications` | Leap reminder notification settings |
+| `LeapCalendarWidget` | Calendar view of leap windows |
+| `LeapProgressChart` | Recharts progress visualisation |
+
+### `src/components/settings/`
+
+| Component | Purpose |
+|-----------|---------|
+| `ModuleSettings` | Per-child module enable/disable UI, extracted from SettingsPage |
+
+### `src/components/EmptyState.tsx`
+
+A reusable empty-state placeholder used across `LogPage`, `CalendarPage`, `ReportsPage`, and `MilestonesPage` for a consistent "no data yet" experience.
 
 ---
 
