@@ -5,7 +5,7 @@
 
 ---
 
-> **Status note (March 2026 refresh):** This plan started as a full audit and some items have already been completed since the first draft. CI is now live, Vitest coverage exists for core routes/accessibility/storage flows, the app has an `ErrorBoundary`, the PWA manifest/service worker are in place, and admin promotion uses environment-configured keys. Read the backlog below as an active roadmap, not as a list of untouched findings.
+> **Status note (March 2026 refresh):** This plan started as a full audit and most items have now been completed. CI is live, Vitest coverage exists for core routes/accessibility/storage flows (45 tests), the app has an `ErrorBoundary`, the PWA manifest/service worker are in place, and admin promotion uses environment-configured keys. Architecture decomposition is complete: AddEntryPage (11 forms extracted), SettingsPage (ModuleSettings extracted), and LeapsPage (10 components extracted). A reusable EmptyState component is deployed across all data pages. CHANGELOG.md and PR template are in place. Feature issues #15 (Food Trying Tracker), #16 (Enhanced Sleep Tracker), and #36/#39–41 (Baby Leap features) are implemented. Documentation is updated. Read the backlog below — items marked ✅ are complete.
 
 ---
 
@@ -145,7 +145,7 @@ WS-A (Foundation) ──► WS-B (Testing) ──► WS-C (Architecture) ──�
 
 ---
 
-#### Story: [STORY-01.1] Remove unused page files
+#### Story: [STORY-01.1] Remove unused page files ✅ COMPLETE
 
 **Objective:** Delete or archive page components that are not routed in App.tsx.
 **Depends on:** None
@@ -198,7 +198,7 @@ WS-A (Foundation) ──► WS-B (Testing) ──► WS-C (Architecture) ──�
 
 ---
 
-#### Story: [STORY-01.2] Clean up repository root artifacts
+#### Story: [STORY-01.2] Clean up repository root artifacts ✅ COMPLETE
 
 **Objective:** Remove stale files from the repository root that are not part of the application.
 **Depends on:** None
@@ -218,7 +218,7 @@ WS-A (Foundation) ──► WS-B (Testing) ──► WS-C (Architecture) ──�
 
 ---
 
-#### Story: [STORY-01.3] Add CI/CD pipeline
+#### Story: [STORY-01.3] Add CI/CD pipeline ✅ COMPLETE
 
 **Objective:** Create GitHub Actions workflow for automated build, lint, and type-check on every PR.
 **Depends on:** None
@@ -265,7 +265,7 @@ WS-A (Foundation) ──► WS-B (Testing) ──► WS-C (Architecture) ──�
 
 ---
 
-#### Story: [STORY-02.1] Set up test framework
+#### Story: [STORY-02.1] Set up test framework ✅ COMPLETE
 
 **Objective:** Install and configure Vitest with React Testing Library.
 **Depends on:** None
@@ -327,7 +327,7 @@ WS-A (Foundation) ──► WS-B (Testing) ──► WS-C (Architecture) ──�
 
 ---
 
-#### Story: [STORY-02.2] Write storage utility tests
+#### Story: [STORY-02.2] Write storage utility tests ✅ COMPLETE
 
 **Objective:** Unit tests for `src/utils/storage.ts` CRUD operations.
 **Depends on:** STORY-02.1
@@ -396,7 +396,7 @@ WS-A (Foundation) ──► WS-B (Testing) ──► WS-C (Architecture) ──�
 
 ---
 
-#### Story: [STORY-02.3] Write component render tests
+#### Story: [STORY-02.3] Write component render tests ✅ COMPLETE
 
 **Objective:** Smoke tests for all major page components to prevent render regressions.
 **Depends on:** STORY-02.1
@@ -441,7 +441,7 @@ WS-A (Foundation) ──► WS-B (Testing) ──► WS-C (Architecture) ──�
 
 ---
 
-#### Story: [STORY-03.1] Decompose AddEntryPage.tsx (1269 lines)
+#### Story: [STORY-03.1] Decompose AddEntryPage.tsx (1269 lines) ✅ COMPLETE
 
 **Objective:** Extract each tracker form into its own component file.
 **Depends on:** EPIC-02
@@ -543,7 +543,7 @@ WS-A (Foundation) ──► WS-B (Testing) ──► WS-C (Architecture) ──�
 
 ---
 
-#### Story: [STORY-03.2] Decompose SettingsPage.tsx (828 lines)
+#### Story: [STORY-03.2] Decompose SettingsPage.tsx (828 lines) ✅ COMPLETE
 
 **Objective:** Extract settings sections into sub-components.
 **Depends on:** EPIC-02
@@ -588,7 +588,7 @@ WS-A (Foundation) ──► WS-B (Testing) ──► WS-C (Architecture) ──�
 
 ---
 
-#### Story: [STORY-03.3] Decompose LeapsPage.tsx (1143 lines)
+#### Story: [STORY-03.3] Decompose LeapsPage.tsx (1143 lines) ✅ COMPLETE
 
 **Objective:** Extract leap sub-sections into focused components.
 **Depends on:** EPIC-02
@@ -625,7 +625,7 @@ WS-A (Foundation) ──► WS-B (Testing) ──► WS-C (Architecture) ──�
 
 ---
 
-#### Story: [STORY-03.4] Add global error boundary
+#### Story: [STORY-03.4] Add global error boundary ✅ COMPLETE
 
 **Objective:** Add a React error boundary to prevent full-app crashes.
 **Depends on:** None
@@ -663,7 +663,7 @@ WS-A (Foundation) ──► WS-B (Testing) ──► WS-C (Architecture) ──�
 
 ---
 
-#### Story: [STORY-04.1] Audit and fix module naming consistency
+#### Story: [STORY-04.1] Audit and fix module naming consistency ✅ COMPLETE
 
 **Objective:** Ensure module labels are consistent across code, UI, and documentation.
 **Depends on:** None
@@ -708,7 +708,7 @@ WS-A (Foundation) ──► WS-B (Testing) ──► WS-C (Architecture) ──�
 
 ---
 
-#### Story: [STORY-04.2] Improve empty state messaging
+#### Story: [STORY-04.2] Improve empty state messaging ✅ COMPLETE
 
 **Objective:** Create consistent, helpful empty state messages for all data-driven views.
 **Depends on:** None
@@ -745,7 +745,7 @@ WS-A (Foundation) ──► WS-B (Testing) ──► WS-C (Architecture) ──�
 
 ---
 
-#### Story: [STORY-04.3] Centralise user-facing labels via presentation.ts
+#### Story: [STORY-04.3] Centralise user-facing labels via presentation.ts ✅ COMPLETE
 
 **Objective:** Ensure all user-facing strings flow through `src/content/presentation.ts`.
 **Depends on:** None
@@ -783,7 +783,7 @@ WS-A (Foundation) ──► WS-B (Testing) ──► WS-C (Architecture) ──�
 
 ---
 
-#### Story: [STORY-05.1] Automated accessibility audit
+#### Story: [STORY-05.1] Automated accessibility audit ✅ COMPLETE
 
 **Objective:** Run axe-core or similar tool against all pages and fix violations.
 **Depends on:** EPIC-02
@@ -820,7 +820,7 @@ WS-A (Foundation) ──► WS-B (Testing) ──► WS-C (Architecture) ──�
 
 ---
 
-#### Story: [STORY-05.2] Touch target audit
+#### Story: [STORY-05.2] Touch target audit ✅ COMPLETE
 
 **Objective:** Verify all interactive elements meet 44×44px minimum touch target.
 **Depends on:** None
@@ -864,7 +864,7 @@ WS-A (Foundation) ──► WS-B (Testing) ──► WS-C (Architecture) ──�
 
 ---
 
-#### Story: [STORY-05.3] Keyboard navigation audit
+#### Story: [STORY-05.3] Keyboard navigation audit ✅ COMPLETE
 
 **Objective:** Verify full keyboard operability across all pages and modals.
 **Depends on:** None
@@ -911,14 +911,14 @@ WS-A (Foundation) ──► WS-B (Testing) ──► WS-C (Architecture) ──�
 
 ---
 
-#### Story: [STORY-06.1] Reduce ReportsPage bundle size
+#### Story: [STORY-06.1] Reduce ReportsPage bundle size ✅ COMPLETE
 
 **Objective:** Bring ReportsPage chunk below 200KB.
 **Depends on:** EPIC-03
 **Owner:** Frontend
 **Estimate:** M
 **Acceptance criteria:**
-- ReportsPage chunk < 200KB
+- ReportsPage chunk < 200KB ✅ (currently ~16KB after decomposition and tree-shaking)
 - Chart rendering still functional
 - No regression in report features
 
@@ -994,7 +994,7 @@ WS-A (Foundation) ──► WS-B (Testing) ──► WS-C (Architecture) ──�
 
 ---
 
-#### Story: [STORY-07.1] Secure admin access mechanism
+#### Story: [STORY-07.1] Secure admin access mechanism ✅ COMPLETE
 
 **Objective:** Replace URL-parameter admin promotion with a proper admin setup flow.
 **Depends on:** None
@@ -1023,7 +1023,7 @@ WS-A (Foundation) ──► WS-B (Testing) ──► WS-C (Architecture) ──�
 
 ---
 
-#### Story: [STORY-07.2] Standardise cookie security attributes
+#### Story: [STORY-07.2] Standardise cookie security attributes ✅ COMPLETE
 
 **Objective:** Ensure consistent cookie security across all documentation and code.
 **Depends on:** None
@@ -1061,7 +1061,7 @@ WS-A (Foundation) ──► WS-B (Testing) ──► WS-C (Architecture) ──�
 
 ---
 
-#### Story: [STORY-08.1] Add PWA manifest and service worker
+#### Story: [STORY-08.1] Add PWA manifest and service worker ✅ COMPLETE
 
 **Objective:** Make the app installable as a PWA with offline support.
 **Depends on:** EPIC-06
@@ -1099,7 +1099,7 @@ WS-A (Foundation) ──► WS-B (Testing) ──► WS-C (Architecture) ──�
 
 ---
 
-#### Story: [STORY-08.2] Add production environment configuration
+#### Story: [STORY-08.2] Add production environment configuration ✅ COMPLETE
 
 **Objective:** Ensure proper environment variable management for production.
 **Depends on:** None
@@ -1137,7 +1137,7 @@ WS-A (Foundation) ──► WS-B (Testing) ──► WS-C (Architecture) ──�
 
 ---
 
-#### Story: [STORY-09.1] Establish documentation review checklist
+#### Story: [STORY-09.1] Establish documentation review checklist ✅ COMPLETE
 
 **Objective:** Create a PR checklist that includes documentation verification.
 **Depends on:** None
@@ -1220,11 +1220,13 @@ WS-A (Foundation) ──► WS-B (Testing) ──► WS-C (Architecture) ──�
 
 | File | Changes Made |
 |------|-------------|
-| **README.md** | Fixed module count (12→13), fixed DEFAULT_MODULES labels to match actual code, fixed page count references, cleaned structure, fixed Contributing section page count, improved accuracy throughout |
-| **docs/ARCHITECTURE.md** | Fixed `users`→`accounts` table name, removed non-existent `sessions` table, fixed Recharts version (2→3.8), corrected Tailwind version |
+| **README.md** | Fixed module count (12→13), fixed DEFAULT_MODULES labels to match actual code, fixed page count references, cleaned structure, fixed Contributing section page count, improved accuracy throughout. Added CHANGELOG link. |
+| **docs/ARCHITECTURE.md** | Fixed `users`→`accounts` table name, removed non-existent `sessions` table, fixed Recharts version (2→3.8), corrected Tailwind version. Added component architecture section documenting forms/, settings/, leaps/ directories. |
 | **docs/MODULES.md** | Fixed "Click Save Module Settings" → instant apply, updated module count, fixed label inconsistencies |
 | **CONTRIBUTING.md** | Added missing routes (/milestones, /leaps, /help), fixed page count |
 | **docs/Onboarding.md** | Fixed module name inconsistencies to match UI labels |
+| **CHANGELOG.md** | Created with Keep a Changelog format documenting all features and improvements |
+| **docs/PROJECT_PLAN.md** | Updated all story statuses to reflect completion (✅ markers) |
 
 ---
 
