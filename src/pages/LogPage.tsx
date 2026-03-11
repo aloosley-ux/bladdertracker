@@ -14,8 +14,9 @@ import {
   Stethoscope,
   Target,
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/useApp';
+import EmptyState from '../components/EmptyState';
 import CalendarStrip from '../components/CalendarStrip';
 import EntryCard from '../components/EntryCard';
 import { getModuleLabel, TOILET_OUTCOME_LABELS, URINE_COPY } from '../content/presentation';
@@ -110,8 +111,7 @@ export default function LogPage() {
     deleteTherapyEntry,
     deleteRoutineEntry,
   } = useApp();
-
-  // Derive which module keys are enabled (exclude milestones — no log entries)
+  const navigate = useNavigate();
   const enabledKeys = useMemo<Set<ModuleKey>>(() => {
     const src = enabledModules.length > 0
       ? enabledModules
@@ -459,17 +459,14 @@ export default function LogPage() {
     return (
       <div className="pb-20">
         <div className="px-4 pt-6">
-          <div className="rounded-2xl bg-white p-6 text-center shadow-sm ring-1 ring-black/5">
-            <h1 className="text-2xl font-bold text-gray-900">No family profile yet</h1>
-            <p className="mt-2 text-sm text-gray-500">
-              Add a child profile or accept a shared invite to start logging.
-            </p>
-            <Link
-              className="mt-4 inline-block rounded-full bg-lavender-500 px-5 py-3 text-sm font-semibold text-white"
-              to="/settings"
-            >
-              Open settings
-            </Link>
+          <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-black/5">
+            <EmptyState
+              icon="👶"
+              title="No family profile yet"
+              description="Add a child profile or accept a shared invite to start logging."
+              actionLabel="Open settings"
+              onAction={() => navigate('/settings')}
+            />
           </div>
         </div>
       </div>
@@ -547,21 +544,16 @@ export default function LogPage() {
       {/* Entry list */}
       <div className="space-y-3 px-4">
         {entries.length === 0 ? (
-          <div className="rounded-2xl bg-white p-8 text-center shadow-sm ring-1 ring-black/5">
-            <p className="text-3xl">📭</p>
-            <p className="mt-2 text-sm font-semibold text-gray-700">No updates found</p>
-            <p className="mt-1 text-xs text-gray-400">
-              {activeFilters.size === 0
+          <div className="rounded-2xl bg-white p-8 shadow-sm ring-1 ring-black/5">
+            <EmptyState
+              icon="📭"
+              title="No updates found"
+              description={activeFilters.size === 0
                 ? 'Turn on some filters above to see updates.'
                 : 'Nothing has been recorded for this date and filter combination.'}
-            </p>
-            <Link
-              to="/add"
-              className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-lavender-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-lavender-600"
-            >
-              <Plus size={16} />
-              Add an update
-            </Link>
+              actionLabel="Add an update"
+              onAction={() => navigate('/add')}
+            />
           </div>
         ) : (
           entries.map((e) => (

@@ -12,10 +12,13 @@ import {
   endOfWeek,
 } from 'date-fns';
 import { Apple, ChevronLeft, ChevronRight, CloudRain, Droplets, Moon, Stethoscope, Target } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/useApp';
+import EmptyState from '../components/EmptyState';
 
 export default function CalendarPage() {
   const { drinks, urineEntries, bowelEntries, sleepEntries, toiletAttemptEntries, foodEntries, selectedChildId, selectedChild } = useApp();
+  const navigate = useNavigate();
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
@@ -157,10 +160,13 @@ export default function CalendarPage() {
           </h3>
 
           {selectedDrinks.length === 0 && selectedUrine.length === 0 && selectedBowel.length === 0 && selectedSleep.length === 0 && selectedToilet.length === 0 && selectedFood.length === 0 ? (
-            <div className="text-center py-8">
-              <span className="text-3xl">📋</span>
-              <p className="text-gray-400 text-sm mt-2">No entries for this date</p>
-            </div>
+            <EmptyState
+              icon="📋"
+              title="No entries for this date"
+              description="Start tracking to see entries appear here."
+              actionLabel="Add an entry"
+              onAction={() => navigate('/add')}
+            />
           ) : (
             <div className="space-y-2">
               {selectedDrinks.map((d) => (

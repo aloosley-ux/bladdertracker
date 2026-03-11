@@ -43,6 +43,7 @@ Built for tired, busy, real-world use: one-handed on a phone, during routines, s
 - **Report work clearly:** use the GitHub issue templates for bugs, feature requests, and documentation improvements
 - **Report vulnerabilities privately:** see [SECURITY.md](./SECURITY.md)
 - **Review roadmap context:** [docs/PROJECT_PLAN.md](./docs/PROJECT_PLAN.md)
+- **What changed:** [CHANGELOG.md](./CHANGELOG.md)
 
 ---
 
@@ -664,6 +665,7 @@ npm run build         # Full type-check + production build
 - **Documentation improvements:** use the **Documentation improvement** template when instructions, wording, or examples drift from the code.
 - **Security concerns:** do **not** post exploit details publicly; follow [SECURITY.md](./SECURITY.md).
 - **Roadmap alignment:** treat [docs/PROJECT_PLAN.md](./docs/PROJECT_PLAN.md) as the backlog narrative, then use GitHub issues for discrete, actionable work items.
+- **Architecture decomposition (completed):** large page components (AddEntryPage, LeapsPage, SettingsPage) have been decomposed into focused sub-components under `src/components/forms/`, `src/components/leaps/`, and `src/components/settings/`. See [CHANGELOG.md](./CHANGELOG.md) for details.
 
 ---
 
@@ -684,6 +686,7 @@ npm run build         # Full type-check + production build
 | [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) | System architecture |
 | [docs/MODULES.md](./docs/MODULES.md) | Module field reference and clinical guidance |
 | [docs/PROJECT_PLAN.md](./docs/PROJECT_PLAN.md) | Detailed project plan and delivery backlog |
+| [CHANGELOG.md](./CHANGELOG.md) | Release notes and version history |
 
 ---
 

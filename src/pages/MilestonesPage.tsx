@@ -1,7 +1,9 @@
 import { useMemo, useState } from 'react';
 import { addDays, format, isAfter, isBefore, isSameDay, parseISO, startOfDay, startOfMonth, startOfWeek } from 'date-fns';
 import { Calendar, ChevronRight, CircleHelp, Plus, X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/useApp';
+import EmptyState from '../components/EmptyState';
 import CelebrationBanner from '../components/CelebrationBanner';
 import { MILESTONE_ACHIEVED_CELEBRATION, MILESTONE_SAVE_CELEBRATION } from '../content/presentation';
 import type { Milestone, MilestoneCategory, MilestoneStatus, ModuleId } from '../types';
@@ -70,6 +72,7 @@ export default function MilestonesPage() {
     deleteMilestone,
     enabledModules,
   } = useApp();
+  const navigate = useNavigate();
 
   const [zoom, setZoom] = useState<ZoomMode>('monthly');
   const [categoryFilter, setCategoryFilter] = useState<MilestoneCategory | 'all'>('all');
@@ -175,9 +178,14 @@ export default function MilestonesPage() {
 
   if (!selectedChild || !selectedChildId) {
     return (
-      <div className="px-4 pt-10 text-center">
-        <h1 className="text-xl font-semibold text-slate-900">Milestones</h1>
-        <p className="mt-2 text-sm text-slate-500">Select or add a child profile to start the milestone timeline.</p>
+      <div className="px-4 pt-10">
+        <EmptyState
+          icon="🏆"
+          title="Milestones"
+          description="Select or add a child profile to start the milestone timeline."
+          actionLabel="Open settings"
+          onAction={() => navigate('/settings')}
+        />
       </div>
     );
   }
@@ -297,7 +305,11 @@ export default function MilestonesPage() {
         <div className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
           <h2 className="mb-3 text-sm font-bold text-slate-800">Timeline</h2>
           {timelineBuckets.length === 0 && (
-            <p className="rounded-xl bg-slate-50 p-4 text-sm text-slate-500">No milestones match your current filters.</p>
+            <EmptyState
+              icon="🎯"
+              title="No milestones match your current filters"
+              description="Try adjusting the filters above or add a new milestone."
+            />
           )}
           <div className="space-y-4">
             {timelineBuckets.map((bucket) => (
