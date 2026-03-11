@@ -13,8 +13,9 @@ import {
   YAxis,
 } from 'recharts';
 import { CalendarDays, ChevronRight, Filter } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/useApp';
+import EmptyState from '../components/EmptyState';
 import { getModuleLabel, TOILET_OUTCOME_LABELS } from '../content/presentation';
 import { DEFAULT_MODULES } from '../types';
 
@@ -42,6 +43,7 @@ export default function ReportsPage() {
     moodEntries, sensoryEntries, medicationEntries, therapyEntries, routineEntries,
     milestones, selectedChildId, selectedChild, enabledModules, exportData,
   } = useApp();
+  const navigate = useNavigate();
   const [period, setPeriod] = useState<Period>('7d');
   const [confirmExport, setConfirmExport] = useState(false);
 
@@ -295,6 +297,17 @@ export default function ReportsPage() {
         </NhsCard>
 
         {/* Charts in responsive grid */}
+        {activeFilters.size === 0 ? (
+          <NhsCard>
+            <EmptyState
+              icon="📊"
+              title="No report data to show"
+              description="Enable some event filters above, or add entries to see charts and trends."
+              actionLabel="Add an entry"
+              onAction={() => navigate('/add')}
+            />
+          </NhsCard>
+        ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {enabledFilterKeys.has('drinks') && activeFilters.has('drinks') && (
             <ChartCard title="💧 Fluid intake">
@@ -409,6 +422,7 @@ export default function ReportsPage() {
             </ResponsiveContainer>
           </ChartCard>
         </div>
+        )}
       </div>
 
       {confirmExport && (
