@@ -574,6 +574,7 @@ function BowelForm() {
       <FormStep step={3} title="Notes (optional)">
         <textarea value={notes} onChange={(e) => setNotes(e.target.value)}
           placeholder="Optional notes..."
+          aria-label="Bowel notes"
           className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm resize-none"
           rows={2} />
       </FormStep>
@@ -749,6 +750,7 @@ function SleepForm() {
       <FormStep step={3} title="Notes (optional)">
         <textarea value={notes} onChange={(e) => setNotes(e.target.value)}
           placeholder="Optional notes..."
+          aria-label="Sleep notes"
           className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm resize-none"
           rows={2} />
       </FormStep>
@@ -867,6 +869,7 @@ function ToiletAttemptForm() {
       <FormStep step={3} title="Notes (optional)">
         <textarea value={notes} onChange={(e) => setNotes(e.target.value)}
           placeholder="Optional notes..."
+          aria-label="Toilet attempt notes"
           className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm resize-none"
           rows={2} />
       </FormStep>
@@ -1052,6 +1055,7 @@ function FoodForm() {
       <FormStep step={3} title="Notes (optional)">
         <textarea value={notes} onChange={(e) => setNotes(e.target.value)}
           placeholder="Dietary notes, allergies, reactions..."
+          aria-label="Food notes"
           className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm resize-none"
           rows={2} />
       </FormStep>
@@ -1109,7 +1113,7 @@ function MoodForm() {
         <div><label className="text-xs font-medium text-gray-600">Triggers</label><input value={triggers} onChange={(e) => setTriggers(e.target.value)} placeholder="What triggered this mood..." className={inputCls} /></div>
       </FormStep>
       <FormStep step={3} title="Notes (optional)">
-        <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Additional observations..." className={inputCls + " resize-none"} rows={2} />
+        <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Additional observations..." aria-label="Mood notes" className={inputCls + " resize-none"} rows={2} />
       </FormStep>
       <button type="submit" className="w-full py-3 bg-pink-500 hover:bg-pink-600 text-white rounded-xl font-semibold text-sm transition-all shadow-lg shadow-pink-200">Save Mood Entry 😊</button>
     </form>
@@ -1176,7 +1180,7 @@ function SensoryForm() {
         </div>
       </FormStep>
       <FormStep step={3} title="Notes (optional)">
-        <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Describe the sensory event..." className={inputCls + " resize-none"} rows={2} />
+        <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Describe the sensory event..." aria-label="Sensory notes" className={inputCls + " resize-none"} rows={2} />
       </FormStep>
       <button type="submit" className="w-full py-3 bg-teal-500 hover:bg-teal-600 text-white rounded-xl font-semibold text-sm transition-all shadow-lg shadow-teal-200">Save Sensory Entry 🎨</button>
     </form>
@@ -1225,7 +1229,7 @@ function MedicationForm() {
         </label>
       </FormStep>
       <FormStep step={3} title="Notes (optional)">
-        <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Side effects, observations..." className={inputCls + " resize-none"} rows={2} />
+        <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Side effects, observations..." aria-label="Medication notes" className={inputCls + " resize-none"} rows={2} />
       </FormStep>
       <button type="submit" className="w-full py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl font-semibold text-sm transition-all shadow-lg shadow-red-200">Save Medication Entry 💊</button>
     </form>
@@ -1281,7 +1285,7 @@ function TherapyForm() {
         <div><label className="text-xs font-medium text-gray-600">Goals</label><textarea value={goals} onChange={(e) => setGoals(e.target.value)} placeholder="Session goals..." className={inputCls + " resize-none"} rows={2} /></div>
       </FormStep>
       <FormStep step={3} title="Notes (optional)">
-        <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Progress, observations..." className={inputCls + " resize-none"} rows={2} />
+        <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Progress, observations..." aria-label="Therapy notes" className={inputCls + " resize-none"} rows={2} />
       </FormStep>
       <button type="submit" className="w-full py-3 bg-cyan-500 hover:bg-cyan-600 text-white rounded-xl font-semibold text-sm transition-all shadow-lg shadow-cyan-200">Save Therapy Entry 🧩</button>
     </form>
@@ -1331,7 +1335,7 @@ function RoutineForm() {
         <div><label className="text-xs font-medium text-gray-600">Duration (minutes, optional)</label><input type="number" value={durationMinutes} onChange={(e) => setDurationMinutes(e.target.value ? Number(e.target.value) : '')} min={1} className={inputCls} /></div>
       </FormStep>
       <FormStep step={3} title="Notes (optional)">
-        <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Observations about the routine..." className={inputCls + " resize-none"} rows={2} />
+        <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Observations about the routine..." aria-label="Routine notes" className={inputCls + " resize-none"} rows={2} />
       </FormStep>
       <button type="submit" className="w-full py-3 bg-lime-500 hover:bg-lime-600 text-white rounded-xl font-semibold text-sm transition-all shadow-lg shadow-lime-200">Save Routine Entry 📋</button>
     </form>
