@@ -248,6 +248,25 @@ function LeapTimelineCard({
               </ul>
             </div>
           )}
+          {leap.resourceLinks && leap.resourceLinks.length > 0 && (
+            <div className="mt-2 rounded-lg bg-white/40 p-3">
+              <p className="text-xs font-bold mb-1.5">🔗 Trusted resources</p>
+              <ul className="space-y-1">
+                {leap.resourceLinks.map((link) => (
+                  <li key={link.url}>
+                    <a
+                      href={link.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-xs font-medium underline underline-offset-2"
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       )}
     </div>
