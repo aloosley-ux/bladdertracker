@@ -2,6 +2,7 @@ import { NavLink } from 'react-router-dom';
 import { LayoutDashboard, ClipboardList, BarChart3, Users, Settings, Crown, Star, Rainbow } from 'lucide-react';
 import { useApp } from '../context/useApp';
 import { BRAND } from '../content/presentation';
+import NotificationBell from './NotificationBell';
 
 export default function AppNav() {
   const { user } = useApp();
@@ -54,9 +55,19 @@ export default function AppNav() {
                 <span>{label}</span>
               </NavLink>
             ))}
+            <NotificationBell />
           </div>
         </div>
       </nav>
+
+      {/* Mobile: sticky top bar with brand + notification bell */}
+      <header
+        aria-label="App header"
+        className="sticky top-0 z-50 flex items-center justify-between border-b border-lavender-100 bg-white px-4 py-2 md:hidden"
+      >
+        <span className="text-base font-bold tracking-tight text-lavender-700">{BRAND.name}</span>
+        <NotificationBell />
+      </header>
 
       {/* Mobile: fixed bottom navigation bar */}
       <nav

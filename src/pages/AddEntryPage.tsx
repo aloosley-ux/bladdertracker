@@ -157,6 +157,24 @@ export default function AddEntryPage() {
   );
 }
 
+// ── Shared form step indicator ────────────────────────────────────────
+function FormStep({ step, title, children }: { step: number; title: string; children: React.ReactNode }) {
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center gap-2">
+        <span
+          aria-hidden="true"
+          className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-lavender-500 text-[10px] font-bold text-white"
+        >
+          {step}
+        </span>
+        <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{title}</span>
+      </div>
+      <div className="pl-7 space-y-2">{children}</div>
+    </div>
+  );
+}
+
 function DrinkForm() {
   const { addDrink, selectedChildId, user } = useApp();
   const navigate = useNavigate();
@@ -194,7 +212,7 @@ function DrinkForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-3xl bg-[#eef8ff] p-5 shadow-sm space-y-4">
+    <form onSubmit={handleSubmit} className="rounded-3xl bg-[#eef8ff] p-5 shadow-sm space-y-5">
       <h2 className="text-base font-bold text-gray-800 flex items-center gap-2">
         <Droplets size={18} className="text-blue-500" /> Log a Drink
       </h2>
@@ -206,60 +224,64 @@ function DrinkForm() {
         <p><strong>Notes:</strong> Optional — e.g., "refused half", "added squash".</p>
       </HelpPanel>
 
-      <div className="grid grid-cols-2 gap-3">
+      <FormStep step={1} title="When">
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="text-xs font-medium text-gray-600">Date</label>
+            <input aria-label="Drink date" type="date" value={date} onChange={(e) => setDate(e.target.value)}
+              className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
+          </div>
+          <div>
+            <label className="text-xs font-medium text-gray-600">Time</label>
+            <input aria-label="Drink time" type="time" value={time} onChange={(e) => setTime(e.target.value)}
+              className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
+          </div>
+        </div>
+      </FormStep>
+
+      <FormStep step={2} title="What">
         <div>
-          <label className="text-xs font-medium text-gray-600">Date</label>
-          <input aria-label="Drink date" type="date" value={date} onChange={(e) => setDate(e.target.value)}
-            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
+          <label className="text-xs font-medium text-gray-600">Drink Type</label>
+          <div className="flex gap-2 mt-1 flex-wrap">
+            {drinkTypes.map((dt) => (
+              <button key={dt.value} type="button" onClick={() => setType(dt.value)}
+                className={`px-3 py-2 rounded-xl text-sm transition-all ${
+                  type === dt.value
+                    ? 'bg-lavender-500 text-white shadow-md'
+                    : 'bg-white text-gray-600 hover:bg-lavender-50'
+                }`}>
+                {dt.label}
+              </button>
+            ))}
+          </div>
         </div>
+
         <div>
-          <label className="text-xs font-medium text-gray-600">Time</label>
-          <input aria-label="Drink time" type="time" value={time} onChange={(e) => setTime(e.target.value)}
-            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
+          <label className="text-xs font-medium text-gray-600">Amount (ml)</label>
+          <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)}
+            placeholder="Enter amount in ml"
+            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm"
+            min="0" required />
+          <div className="flex gap-2 mt-2 flex-wrap">
+            {quickAmounts.map((qa) => (
+              <button key={qa} type="button" onClick={() => setAmount(String(qa))}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                  amount === String(qa) ? 'bg-sky-200 text-sky-800' : 'bg-white text-gray-500 hover:bg-sky-50'
+                }`}>
+                {qa}ml
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      </FormStep>
 
-      <div>
-        <label className="text-xs font-medium text-gray-600">Drink Type</label>
-        <div className="flex gap-2 mt-1 flex-wrap">
-          {drinkTypes.map((dt) => (
-            <button key={dt.value} type="button" onClick={() => setType(dt.value)}
-              className={`px-3 py-2 rounded-xl text-sm transition-all ${
-                type === dt.value
-                  ? 'bg-lavender-500 text-white shadow-md'
-                  : 'bg-white text-gray-600 hover:bg-lavender-50'
-              }`}>
-              {dt.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <label className="text-xs font-medium text-gray-600">Amount (ml)</label>
-        <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)}
-          placeholder="Enter amount in ml"
-          className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm"
-          min="0" required />
-        <div className="flex gap-2 mt-2 flex-wrap">
-          {quickAmounts.map((qa) => (
-            <button key={qa} type="button" onClick={() => setAmount(String(qa))}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                amount === String(qa) ? 'bg-sky-200 text-sky-800' : 'bg-white text-gray-500 hover:bg-sky-50'
-              }`}>
-              {qa}ml
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <label className="text-xs font-medium text-gray-600">Notes</label>
+      <FormStep step={3} title="Notes (optional)">
         <textarea value={notes} onChange={(e) => setNotes(e.target.value)}
           placeholder="Optional notes..."
-          className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm resize-none"
+          aria-label="Drink notes"
+          className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm resize-none"
           rows={2} />
-      </div>
+      </FormStep>
 
       <button type="submit"
         className="w-full py-3 bg-lavender-500 hover:bg-lavender-600 text-white rounded-xl font-semibold text-sm transition-all shadow-lg shadow-lavender-200">
@@ -319,7 +341,7 @@ function UrineForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-3xl bg-peach p-5 shadow-sm space-y-4">
+    <form onSubmit={handleSubmit} className="rounded-3xl bg-peach p-5 shadow-sm space-y-5">
       <h2 className="text-base font-bold text-gray-800 flex items-center gap-2">
         <CloudRain size={18} className="text-yellow-500" /> {URINE_COPY.heading}
       </h2>
@@ -332,97 +354,101 @@ function UrineForm() {
         <p><strong>{URINE_COPY.leakageLabel}:</strong> Choose how much escaped if there was a leak.</p>
       </HelpPanel>
 
-      <div className="grid grid-cols-2 gap-3">
+      <FormStep step={1} title="When">
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="text-xs font-medium text-gray-600">Date</label>
+            <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
+              className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
+          </div>
+          <div>
+            <label className="text-xs font-medium text-gray-600">Time</label>
+            <input type="time" value={time} onChange={(e) => setTime(e.target.value)}
+              className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
+          </div>
+        </div>
+      </FormStep>
+
+      <FormStep step={2} title="What happened">
         <div>
-          <label className="text-xs font-medium text-gray-600">Date</label>
-          <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
-            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
+          <label className="text-xs font-medium text-gray-600 block mb-2">{URINE_COPY.eventLabel}</label>
+          <div className="flex gap-3">
+            <label className={`flex-1 flex items-center justify-center gap-2 py-4 rounded-xl border-2 cursor-pointer transition-all ${
+              wet ? 'border-yellow-400 bg-yellow-50 shadow-md' : 'border-gray-100 bg-white hover:border-yellow-200'
+            }`}>
+              <input type="checkbox" checked={wet} onChange={(e) => setWet(e.target.checked)} className="sr-only" />
+              <span className="text-2xl">💦</span>
+              <div className="text-sm font-medium text-gray-700">{URINE_COPY.wetLabel}</div>
+            </label>
+            <label className={`flex-1 flex items-center justify-center gap-2 py-4 rounded-xl border-2 cursor-pointer transition-all ${
+              pass ? 'border-green-400 bg-green-50 shadow-md' : 'border-gray-100 bg-white hover:border-green-200'
+            }`}>
+              <input type="checkbox" checked={pass} onChange={(e) => setPass(e.target.checked)} className="sr-only" />
+              <span className="text-2xl">🚽</span>
+              <div className="text-sm font-medium text-gray-700">{URINE_COPY.passLabel}</div>
+            </label>
+          </div>
         </div>
+
         <div>
-          <label className="text-xs font-medium text-gray-600">Time</label>
-          <input type="time" value={time} onChange={(e) => setTime(e.target.value)}
-            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
+          <label className="text-xs font-medium text-gray-600">{URINE_COPY.volumeLabel} <span className="text-gray-400 font-normal">— optional</span></label>
+          <input type="number" value={volumeMl} onChange={(e) => setVolumeMl(e.target.value)}
+            placeholder={URINE_COPY.volumePlaceholder}
+            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm"
+            min="0" />
+          <div className="flex gap-2 mt-2 flex-wrap">
+            {quickVolumes.map((v) => (
+              <button key={v} type="button" onClick={() => setVolumeMl(String(v))}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                  volumeMl === String(v) ? 'bg-amber-100 text-amber-700' : 'bg-white text-gray-500 hover:bg-amber-50'
+                }`}>
+                {v}ml
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
 
-      <div>
-        <label className="text-xs font-medium text-gray-600 block mb-2">{URINE_COPY.eventLabel}</label>
-        <div className="flex gap-3">
-          <label className={`flex-1 flex items-center justify-center gap-2 py-4 rounded-xl border-2 cursor-pointer transition-all ${
-            wet ? 'border-yellow-400 bg-yellow-50 shadow-md' : 'border-gray-100 bg-white hover:border-yellow-200'
-          }`}>
-            <input type="checkbox" checked={wet} onChange={(e) => setWet(e.target.checked)} className="sr-only" />
-            <span className="text-2xl">💦</span>
-            <div className="text-sm font-medium text-gray-700">{URINE_COPY.wetLabel}</div>
-          </label>
-          <label className={`flex-1 flex items-center justify-center gap-2 py-4 rounded-xl border-2 cursor-pointer transition-all ${
-            pass ? 'border-green-400 bg-green-50 shadow-md' : 'border-gray-100 bg-white hover:border-green-200'
-          }`}>
-            <input type="checkbox" checked={pass} onChange={(e) => setPass(e.target.checked)} className="sr-only" />
-            <span className="text-2xl">🚽</span>
-            <div className="text-sm font-medium text-gray-700">{URINE_COPY.passLabel}</div>
-          </label>
+        <div>
+          <label className="text-xs font-medium text-gray-600 block mb-2">{URINE_COPY.urgencyLabel} <span className="text-gray-400 font-normal">— optional</span></label>
+          <div className="flex gap-1.5">
+            {urgencyLabels.map((u) => (
+              <button key={u.value} type="button" onClick={() => setUrgency(urgency === u.value ? null : u.value)}
+                className={`flex-1 flex flex-col items-center gap-0.5 py-2 rounded-xl text-xs font-medium transition-all ${
+                  urgency === u.value
+                    ? 'bg-amber-100 text-amber-800 ring-2 ring-amber-300'
+                    : 'bg-white text-gray-500 hover:bg-amber-50'
+                }`}>
+                <span className="text-lg">{u.emoji}</span>
+                <span>{u.label}</span>
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
 
-      <div>
-        <label className="text-xs font-medium text-gray-600">{URINE_COPY.volumeLabel} <span className="text-gray-400 font-normal">— optional</span></label>
-        <input type="number" value={volumeMl} onChange={(e) => setVolumeMl(e.target.value)}
-          placeholder={URINE_COPY.volumePlaceholder}
-          className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm"
-          min="0" />
-        <div className="flex gap-2 mt-2 flex-wrap">
-          {quickVolumes.map((v) => (
-            <button key={v} type="button" onClick={() => setVolumeMl(String(v))}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                volumeMl === String(v) ? 'bg-amber-100 text-amber-700' : 'bg-white text-gray-500 hover:bg-amber-50'
-              }`}>
-              {v}ml
-            </button>
-          ))}
+        <div>
+          <label className="text-xs font-medium text-gray-600 block mb-2">{URINE_COPY.leakageLabel} <span className="text-gray-400 font-normal">— optional</span></label>
+          <div className="flex gap-2">
+            {leakageOptions.map((l) => (
+              <button key={l.value} type="button" onClick={() => setLeakageAmount(leakageAmount === l.value ? null : l.value)}
+                className={`flex-1 py-2.5 rounded-xl text-xs font-medium transition-all ${
+                  leakageAmount === l.value
+                    ? 'bg-blue-100 text-blue-700 ring-2 ring-blue-300'
+                    : 'bg-white text-gray-500 hover:bg-blue-50'
+                }`}>
+                {l.emoji} {l.label}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      </FormStep>
 
-      <div>
-        <label className="text-xs font-medium text-gray-600 block mb-2">{URINE_COPY.urgencyLabel} <span className="text-gray-400 font-normal">— optional</span></label>
-        <div className="flex gap-1.5">
-          {urgencyLabels.map((u) => (
-            <button key={u.value} type="button" onClick={() => setUrgency(urgency === u.value ? null : u.value)}
-              className={`flex-1 flex flex-col items-center gap-0.5 py-2 rounded-xl text-xs font-medium transition-all ${
-                urgency === u.value
-                  ? 'bg-amber-100 text-amber-800 ring-2 ring-amber-300'
-                  : 'bg-white text-gray-500 hover:bg-amber-50'
-              }`}>
-              <span className="text-lg">{u.emoji}</span>
-              <span>{u.label}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <label className="text-xs font-medium text-gray-600 block mb-2">{URINE_COPY.leakageLabel} <span className="text-gray-400 font-normal">— optional</span></label>
-        <div className="flex gap-2">
-          {leakageOptions.map((l) => (
-            <button key={l.value} type="button" onClick={() => setLeakageAmount(leakageAmount === l.value ? null : l.value)}
-              className={`flex-1 py-2.5 rounded-xl text-xs font-medium transition-all ${
-                leakageAmount === l.value
-                  ? 'bg-blue-100 text-blue-700 ring-2 ring-blue-300'
-                  : 'bg-white text-gray-500 hover:bg-blue-50'
-              }`}>
-              {l.emoji} {l.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <label className="text-xs font-medium text-gray-600">Notes</label>
+      <FormStep step={3} title="Notes (optional)">
         <textarea value={notes} onChange={(e) => setNotes(e.target.value)}
           placeholder="Optional notes..."
-          className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm resize-none"
+          aria-label="Urine notes"
+          className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm resize-none"
           rows={2} />
-      </div>
+      </FormStep>
 
       <button type="submit"
         className="w-full py-3 bg-lavender-500 hover:bg-lavender-600 text-white rounded-xl font-semibold text-sm transition-all shadow-lg shadow-lavender-200">
@@ -463,7 +489,7 @@ function BowelForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-3xl bg-mint p-5 shadow-sm space-y-4">
+    <form onSubmit={handleSubmit} className="rounded-3xl bg-mint p-5 shadow-sm space-y-5">
       <h2 className="text-base font-bold text-gray-800 flex items-center gap-2">
         <Stethoscope size={18} className="text-green-500" /> Log a poo
       </h2>
@@ -476,78 +502,81 @@ function BowelForm() {
         <p>{BRISTOL_GUIDANCE_TEXT}</p>
       </HelpPanel>
 
-      <div className="grid grid-cols-2 gap-3">
-        <div>
-          <label className="text-xs font-medium text-gray-600">Date</label>
-          <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
-            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
+      <FormStep step={1} title="When">
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="text-xs font-medium text-gray-600">Date</label>
+            <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
+              className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
+          </div>
+          <div>
+            <label className="text-xs font-medium text-gray-600">Time</label>
+            <input type="time" value={time} onChange={(e) => setTime(e.target.value)}
+              className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
+          </div>
         </div>
-        <div>
-          <label className="text-xs font-medium text-gray-600">Time</label>
-          <input type="time" value={time} onChange={(e) => setTime(e.target.value)}
-            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
-        </div>
-      </div>
+      </FormStep>
 
-      <div>
-        <label className="text-xs font-medium text-gray-600 block mb-2">Location</label>
-        <div className="flex gap-3">
-          {(['toilet', 'nappy'] as const).map((loc) => (
-            <button key={loc} type="button" onClick={() => setLocation(loc)}
+      <FormStep step={2} title="Details">
+        <div>
+          <label className="text-xs font-medium text-gray-600 block mb-2">Location</label>
+          <div className="flex gap-3">
+            {(['toilet', 'nappy'] as const).map((loc) => (
+              <button key={loc} type="button" onClick={() => setLocation(loc)}
+                className={`flex-1 py-3 rounded-xl text-sm font-medium transition-all ${
+                  location === loc
+                    ? 'bg-lavender-500 text-white shadow-md'
+                    : 'bg-white text-gray-600 hover:bg-lavender-50'
+                }`}>
+                {loc === 'toilet' ? '🚽 Toilet' : '👶 Nappy'}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <label className="text-xs font-medium text-gray-600 block mb-2">Amount</label>
+          <div className="flex gap-3">
+            {(['S', 'M', 'L'] as const).map((size) => (
+              <button key={size} type="button" onClick={() => setAmount(size)}
+                className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all ${
+                  amount === size
+                    ? 'bg-lavender-500 text-white shadow-md'
+                    : 'bg-white text-gray-600 hover:bg-lavender-50'
+                }`}>
+                {size === 'S' ? '🔹 Small' : size === 'M' ? '🔸 Medium' : '🔶 Large'}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <BristolStoolPicker value={bristolType} onChange={setBristolType} />
+
+        <div>
+          <label className="text-xs font-medium text-gray-600 block mb-2">Laxatives Given?</label>
+          <div className="flex gap-3">
+            <button type="button" onClick={() => setLaxatives(true)}
               className={`flex-1 py-3 rounded-xl text-sm font-medium transition-all ${
-                location === loc
-                  ? 'bg-lavender-500 text-white shadow-md'
-                  : 'bg-white text-gray-600 hover:bg-lavender-50'
+                laxatives ? 'bg-lavender-500 text-white shadow-md' : 'bg-white text-gray-600 hover:bg-lavender-50'
               }`}>
-              {loc === 'toilet' ? '🚽 Toilet' : '👶 Nappy'}
+              💊 Yes
             </button>
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <label className="text-xs font-medium text-gray-600 block mb-2">Amount</label>
-        <div className="flex gap-3">
-          {(['S', 'M', 'L'] as const).map((size) => (
-            <button key={size} type="button" onClick={() => setAmount(size)}
-              className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all ${
-                amount === size
-                  ? 'bg-lavender-500 text-white shadow-md'
-                  : 'bg-white text-gray-600 hover:bg-lavender-50'
+            <button type="button" onClick={() => setLaxatives(false)}
+              className={`flex-1 py-3 rounded-xl text-sm font-medium transition-all ${
+                !laxatives ? 'bg-lavender-500 text-white shadow-md' : 'bg-white text-gray-600 hover:bg-lavender-50'
               }`}>
-              {size === 'S' ? '🔹 Small' : size === 'M' ? '🔸 Medium' : '🔶 Large'}
+              ❌ No
             </button>
-          ))}
+          </div>
         </div>
-      </div>
+      </FormStep>
 
-      <BristolStoolPicker value={bristolType} onChange={setBristolType} />
-
-      <div>
-        <label className="text-xs font-medium text-gray-600 block mb-2">Laxatives Given?</label>
-        <div className="flex gap-3">
-          <button type="button" onClick={() => setLaxatives(true)}
-            className={`flex-1 py-3 rounded-xl text-sm font-medium transition-all ${
-              laxatives ? 'bg-lavender-500 text-white shadow-md' : 'bg-white text-gray-600 hover:bg-lavender-50'
-            }`}>
-            💊 Yes
-          </button>
-          <button type="button" onClick={() => setLaxatives(false)}
-            className={`flex-1 py-3 rounded-xl text-sm font-medium transition-all ${
-              !laxatives ? 'bg-lavender-500 text-white shadow-md' : 'bg-white text-gray-600 hover:bg-lavender-50'
-            }`}>
-            ❌ No
-          </button>
-        </div>
-      </div>
-
-      <div>
-        <label className="text-xs font-medium text-gray-600">Notes</label>
+      <FormStep step={3} title="Notes (optional)">
         <textarea value={notes} onChange={(e) => setNotes(e.target.value)}
           placeholder="Optional notes..."
-          className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm resize-none"
+          className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm resize-none"
           rows={2} />
-      </div>
+      </FormStep>
 
       <button type="submit"
         className="w-full py-3 bg-lavender-500 hover:bg-lavender-600 text-white rounded-xl font-semibold text-sm transition-all shadow-lg shadow-lavender-200"
@@ -610,7 +639,7 @@ function SleepForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-3xl bg-[#eee8ff] p-5 shadow-sm space-y-4">
+    <form onSubmit={handleSubmit} className="rounded-3xl bg-[#eee8ff] p-5 shadow-sm space-y-5">
       <h2 className="text-base font-bold text-gray-800 flex items-center gap-2">
         <Moon size={18} className="text-indigo-500" /> Log Sleep Event
       </h2>
@@ -624,102 +653,105 @@ function SleepForm() {
         <p><strong>Night bladder/bowel activity disrupted sleep:</strong> Tick if a nighttime bladder/bowel event interrupted sleep.</p>
       </HelpPanel>
 
-      <div className="grid grid-cols-2 gap-3">
-        <div>
-          <label className="text-xs font-medium text-gray-600">Date</label>
-          <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
-            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
-        </div>
-        <div>
-          <label className="text-xs font-medium text-gray-600">Time</label>
-          <input type="time" value={time} onChange={(e) => setTime(e.target.value)}
-            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
-        </div>
-      </div>
-
-      <div>
-        <label className="text-xs font-medium text-gray-600 block mb-2">{URINE_COPY.eventLabel}</label>
-        <div className="grid grid-cols-2 gap-2">
-          {sleepEvents.map((se) => (
-            <button key={se.value} type="button" onClick={() => setEventType(se.value)}
-              className={`py-3 rounded-xl text-sm font-medium transition-all ${
-                eventType === se.value
-                  ? 'bg-indigo-500 text-white shadow-md'
-                  : 'bg-white text-gray-600 hover:bg-indigo-50'
-              }`}>
-              {se.emoji} {se.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Sleep start fields shown only for 'onset' events (#16) */}
-      {eventType === 'onset' && (
+      <FormStep step={1} title="When">
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="text-xs font-medium text-gray-600">
-              Bedtime <span className="text-gray-400 font-normal">— optional</span>
-            </label>
-            <input type="time" value={bedtime} onChange={(e) => setBedtime(e.target.value)}
+            <label className="text-xs font-medium text-gray-600">Date</label>
+            <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
               className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
           </div>
           <div>
-            <label className="text-xs font-medium text-gray-600">
-              Onset delay (mins) <span className="text-gray-400 font-normal">— optional</span>
-            </label>
-            <input type="number" value={sleepOnsetMinutes} onChange={(e) => setSleepOnsetMinutes(e.target.value)}
-              placeholder="e.g. 20"
-              className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm"
-              min="0" max="360" />
+            <label className="text-xs font-medium text-gray-600">Time</label>
+            <input type="time" value={time} onChange={(e) => setTime(e.target.value)}
+              className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
           </div>
         </div>
-      )}
+      </FormStep>
 
-      <div>
-        <label className="text-xs font-medium text-gray-600">Duration (minutes) <span className="text-gray-400 font-normal">— optional</span></label>
-        <input type="number" value={duration} onChange={(e) => setDuration(e.target.value)}
-          placeholder="e.g. 480 for 8 hours"
-          className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm"
-          min="0" />
-      </div>
-
-      <div>
-        <label className="text-xs font-medium text-gray-600 block mb-2">Quality <span className="text-gray-400 font-normal">— optional</span></label>
-        <div className="flex gap-1.5">
-          {qualityLabels.map((q) => (
-            <button key={q.value} type="button" onClick={() => setQuality(quality === q.value ? null : q.value)}
-              className={`flex-1 flex flex-col items-center gap-0.5 py-2 rounded-xl text-xs font-medium transition-all ${
-                quality === q.value
-                  ? 'bg-indigo-100 text-indigo-800 ring-2 ring-indigo-300'
-                  : 'bg-white text-gray-500 hover:bg-indigo-50'
-              }`}>
-              <span className="text-lg">{q.emoji}</span>
-              <span>{q.label}</span>
-            </button>
-          ))}
+      <FormStep step={2} title="Details">
+        <div>
+          <label className="text-xs font-medium text-gray-600 block mb-2">{URINE_COPY.eventLabel}</label>
+          <div className="grid grid-cols-2 gap-2">
+            {sleepEvents.map((se) => (
+              <button key={se.value} type="button" onClick={() => setEventType(se.value)}
+                className={`py-3 rounded-xl text-sm font-medium transition-all ${
+                  eventType === se.value
+                    ? 'bg-indigo-500 text-white shadow-md'
+                    : 'bg-white text-gray-600 hover:bg-indigo-50'
+                }`}>
+                {se.emoji} {se.label}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
 
-      <div className="space-y-2">
-        <label className="flex items-center gap-3 cursor-pointer">
-          <input type="checkbox" checked={nighttimeEvent} onChange={(e) => setNighttimeEvent(e.target.checked)}
-            className="h-5 w-5 rounded border-gray-300 text-indigo-500 focus:ring-indigo-200" />
-          <span className="text-sm font-medium text-gray-700">🌙 Nighttime event (10pm–6am)</span>
-        </label>
-        <label className="flex items-center gap-3 cursor-pointer">
-          <input type="checkbox" checked={nightActivity} onChange={(e) => setNightActivity(e.target.checked)}
-            className="h-5 w-5 rounded border-gray-300 text-indigo-500 focus:ring-indigo-200" />
-          <span className="text-sm font-medium text-gray-700">🚽 Night bladder/bowel activity disrupted sleep</span>
-        </label>
-      </div>
+        {/* Sleep start fields shown only for 'onset' events (#16) */}
+        {eventType === 'onset' && (
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-xs font-medium text-gray-600">
+                Bedtime <span className="text-gray-400 font-normal">— optional</span>
+              </label>
+              <input type="time" value={bedtime} onChange={(e) => setBedtime(e.target.value)}
+                className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-gray-600">
+                Onset delay (mins) <span className="text-gray-400 font-normal">— optional</span>
+              </label>
+              <input type="number" value={sleepOnsetMinutes} onChange={(e) => setSleepOnsetMinutes(e.target.value)}
+                placeholder="e.g. 20"
+                className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm"
+                min="0" max="360" />
+            </div>
+          </div>
+        )}
 
-      <div>
-        <label className="text-xs font-medium text-gray-600">Notes</label>
+        <div>
+          <label className="text-xs font-medium text-gray-600">Duration (minutes) <span className="text-gray-400 font-normal">— optional</span></label>
+          <input type="number" value={duration} onChange={(e) => setDuration(e.target.value)}
+            placeholder="e.g. 480 for 8 hours"
+            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm"
+            min="0" />
+        </div>
+
+        <div>
+          <label className="text-xs font-medium text-gray-600 block mb-2">Quality <span className="text-gray-400 font-normal">— optional</span></label>
+          <div className="flex gap-1.5">
+            {qualityLabels.map((q) => (
+              <button key={q.value} type="button" onClick={() => setQuality(quality === q.value ? null : q.value)}
+                className={`flex-1 flex flex-col items-center gap-0.5 py-2 rounded-xl text-xs font-medium transition-all ${
+                  quality === q.value
+                    ? 'bg-indigo-100 text-indigo-800 ring-2 ring-indigo-300'
+                    : 'bg-white text-gray-500 hover:bg-indigo-50'
+                }`}>
+                <span className="text-lg">{q.emoji}</span>
+                <span>{q.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <label className="flex items-center gap-3 cursor-pointer">
+            <input type="checkbox" checked={nighttimeEvent} onChange={(e) => setNighttimeEvent(e.target.checked)}
+              className="h-5 w-5 rounded border-gray-300 text-indigo-500 focus:ring-indigo-200" />
+            <span className="text-sm font-medium text-gray-700">🌙 Nighttime event (10pm–6am)</span>
+          </label>
+          <label className="flex items-center gap-3 cursor-pointer">
+            <input type="checkbox" checked={nightActivity} onChange={(e) => setNightActivity(e.target.checked)}
+              className="h-5 w-5 rounded border-gray-300 text-indigo-500 focus:ring-indigo-200" />
+            <span className="text-sm font-medium text-gray-700">🚽 Night bladder/bowel activity disrupted sleep</span>
+          </label>
+        </div>
+      </FormStep>
+
+      <FormStep step={3} title="Notes (optional)">
         <textarea value={notes} onChange={(e) => setNotes(e.target.value)}
           placeholder="Optional notes..."
-          className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm resize-none"
+          className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm resize-none"
           rows={2} />
-      </div>
+      </FormStep>
 
       <button type="submit"
         className="w-full py-3 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl font-semibold text-sm transition-all shadow-lg shadow-indigo-200">
@@ -766,7 +798,7 @@ function ToiletAttemptForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-3xl bg-[#f3eeff] p-5 shadow-sm space-y-4">
+    <form onSubmit={handleSubmit} className="rounded-3xl bg-[#f3eeff] p-5 shadow-sm space-y-5">
       <h2 className="text-base font-bold text-gray-800 flex items-center gap-2">
         <Target size={18} className="text-purple-500" /> Log a toilet visit
       </h2>
@@ -778,63 +810,66 @@ function ToiletAttemptForm() {
         <p><strong>Duration:</strong> Add how long they sat for if it is useful.</p>
       </HelpPanel>
 
-      <div className="grid grid-cols-2 gap-3">
+      <FormStep step={1} title="When">
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="text-xs font-medium text-gray-600">Date</label>
+            <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
+              className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
+          </div>
+          <div>
+            <label className="text-xs font-medium text-gray-600">Time</label>
+            <input type="time" value={time} onChange={(e) => setTime(e.target.value)}
+              className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
+          </div>
+        </div>
+      </FormStep>
+
+      <FormStep step={2} title="Details">
         <div>
-          <label className="text-xs font-medium text-gray-600">Date</label>
-          <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
-            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
+          <label className="text-xs font-medium text-gray-600 block mb-2">Outcome</label>
+          <div className="flex gap-3">
+            {outcomes.map((o) => (
+              <button key={o.value} type="button" onClick={() => setOutcome(o.value)}
+                className={`flex-1 py-3 rounded-xl text-sm font-medium transition-all ${
+                  outcome === o.value
+                    ? 'bg-purple-500 text-white shadow-md'
+                    : 'bg-white text-gray-600 hover:bg-purple-50'
+                }`}>
+                {o.emoji} {o.label}
+              </button>
+            ))}
+          </div>
         </div>
+
+        <div className="flex gap-4">
+          <label className="flex items-center gap-3 cursor-pointer flex-1">
+            <input type="checkbox" checked={supervised} onChange={(e) => setSupervised(e.target.checked)}
+              className="h-5 w-5 rounded border-gray-300 text-purple-500 focus:ring-purple-200" />
+            <span className="text-sm font-medium text-gray-700">👀 Supervised</span>
+          </label>
+          <label className="flex items-center gap-3 cursor-pointer flex-1">
+            <input type="checkbox" checked={prompted} onChange={(e) => setPrompted(e.target.checked)}
+              className="h-5 w-5 rounded border-gray-300 text-purple-500 focus:ring-purple-200" />
+            <span className="text-sm font-medium text-gray-700">🔔 Prompted</span>
+          </label>
+        </div>
+
         <div>
-          <label className="text-xs font-medium text-gray-600">Time</label>
-          <input type="time" value={time} onChange={(e) => setTime(e.target.value)}
-            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
+          <label className="text-xs font-medium text-gray-600">Duration (minutes) <span className="text-gray-400 font-normal">— optional</span></label>
+          <input type="number" value={duration} onChange={(e) => setDuration(e.target.value)}
+            placeholder="Time on toilet in minutes"
+            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm"
+            min="0" />
         </div>
-      </div>
+      </FormStep>
 
-      <div>
-        <label className="text-xs font-medium text-gray-600 block mb-2">Outcome</label>
-        <div className="flex gap-3">
-          {outcomes.map((o) => (
-            <button key={o.value} type="button" onClick={() => setOutcome(o.value)}
-              className={`flex-1 py-3 rounded-xl text-sm font-medium transition-all ${
-                outcome === o.value
-                  ? 'bg-purple-500 text-white shadow-md'
-                  : 'bg-white text-gray-600 hover:bg-purple-50'
-              }`}>
-              {o.emoji} {o.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="flex gap-4">
-        <label className="flex items-center gap-3 cursor-pointer flex-1">
-          <input type="checkbox" checked={supervised} onChange={(e) => setSupervised(e.target.checked)}
-            className="h-5 w-5 rounded border-gray-300 text-purple-500 focus:ring-purple-200" />
-          <span className="text-sm font-medium text-gray-700">👀 Supervised</span>
-        </label>
-        <label className="flex items-center gap-3 cursor-pointer flex-1">
-          <input type="checkbox" checked={prompted} onChange={(e) => setPrompted(e.target.checked)}
-            className="h-5 w-5 rounded border-gray-300 text-purple-500 focus:ring-purple-200" />
-          <span className="text-sm font-medium text-gray-700">🔔 Prompted</span>
-        </label>
-      </div>
-
-      <div>
-        <label className="text-xs font-medium text-gray-600">Duration (minutes) <span className="text-gray-400 font-normal">— optional</span></label>
-        <input type="number" value={duration} onChange={(e) => setDuration(e.target.value)}
-          placeholder="Time on toilet in minutes"
-          className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm"
-          min="0" />
-      </div>
-
-      <div>
-        <label className="text-xs font-medium text-gray-600">Notes</label>
+      <FormStep step={3} title="Notes (optional)">
         <textarea value={notes} onChange={(e) => setNotes(e.target.value)}
           placeholder="Optional notes..."
-          className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm resize-none"
+          className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm resize-none"
           rows={2} />
-      </div>
+      </FormStep>
 
       <button type="submit"
         className="w-full py-3 bg-purple-500 hover:bg-purple-600 text-white rounded-xl font-semibold text-sm transition-all shadow-lg shadow-purple-200">
@@ -902,7 +937,7 @@ function FoodForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-3xl bg-[#fff5eb] p-5 shadow-sm space-y-4">
+    <form onSubmit={handleSubmit} className="rounded-3xl bg-[#fff5eb] p-5 shadow-sm space-y-5">
       <h2 className="text-base font-bold text-gray-800 flex items-center gap-2">
         <Apple size={18} className="text-orange-500" /> Log Food
       </h2>
@@ -916,107 +951,110 @@ function FoodForm() {
         <p><strong>Notes:</strong> Any observations — e.g., "refused vegetables", "ate well".</p>
       </HelpPanel>
 
-      <div className="grid grid-cols-2 gap-3">
-        <div>
-          <label className="text-xs font-medium text-gray-600">Date</label>
-          <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
-            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
-        </div>
-        <div>
-          <label className="text-xs font-medium text-gray-600">Time</label>
-          <input type="time" value={time} onChange={(e) => setTime(e.target.value)}
-            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
-        </div>
-      </div>
-
-      <div>
-        <label className="text-xs font-medium text-gray-600 block mb-2">Meal Type</label>
-        <div className="grid grid-cols-4 gap-2">
-          {mealTypes.map((m) => (
-            <button key={m.value} type="button" onClick={() => setMealType(m.value)}
-              className={`py-2.5 rounded-xl text-xs font-medium transition-all ${
-                mealType === m.value
-                  ? 'bg-orange-500 text-white shadow-md'
-                  : 'bg-white text-gray-600 hover:bg-orange-50'
-              }`}>
-              {m.emoji} {m.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <label className="text-xs font-medium text-gray-600">Food description</label>
-        <input type="text" value={description} onChange={(e) => setDescription(e.target.value)}
-          placeholder="e.g. Pasta with vegetables, yoghurt"
-          className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm"
-          required />
-      </div>
-
-      {/* Food Trying Tracker fields (#15) */}
-      <div>
-        <label className="flex items-center gap-3 cursor-pointer">
-          <input type="checkbox" checked={isTrying} onChange={(e) => setIsTrying(e.target.checked)}
-            className="h-5 w-5 rounded border-gray-300 text-orange-500 focus:ring-orange-200" />
-          <span className="text-sm font-medium text-gray-700">⭐ New food — trying for the first time</span>
-        </label>
-      </div>
-
-      {isTrying && (
-        <>
+      <FormStep step={1} title="When">
+        <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="text-xs font-medium text-gray-600 block mb-2">
-              Texture <span className="text-gray-400 font-normal">— optional</span>
-            </label>
-            <div className="grid grid-cols-3 gap-2">
-              {textures.map((t) => (
-                <button key={t.value} type="button" onClick={() => setTexture(texture === t.value ? '' : t.value)}
-                  className={`py-2 rounded-xl text-xs font-medium transition-all ${
-                    texture === t.value
-                      ? 'bg-orange-400 text-white shadow-md'
-                      : 'bg-white text-gray-600 hover:bg-orange-50'
-                  }`}>
-                  {t.label}
-                </button>
-              ))}
-            </div>
+            <label className="text-xs font-medium text-gray-600">Date</label>
+            <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
+              className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
           </div>
-
           <div>
-            <label className="text-xs font-medium text-gray-600 block mb-2">
-              Acceptance <span className="text-gray-400 font-normal">— optional</span>
-            </label>
-            <div className="grid grid-cols-2 gap-2">
-              {acceptanceOptions.map((a) => (
-                <button key={a.value} type="button" onClick={() => setAccepted(accepted === a.value ? '' : a.value)}
-                  className={`py-2.5 rounded-xl text-xs font-medium transition-all ${
-                    accepted === a.value
-                      ? 'bg-orange-500 text-white shadow-md'
-                      : 'bg-white text-gray-600 hover:bg-orange-50'
-                  }`}>
-                  {a.emoji} {a.label}
-                </button>
-              ))}
-            </div>
+            <label className="text-xs font-medium text-gray-600">Time</label>
+            <input type="time" value={time} onChange={(e) => setTime(e.target.value)}
+              className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
           </div>
-        </>
-      )}
+        </div>
+      </FormStep>
 
-      <div>
-        <label className="text-xs font-medium text-gray-600">Portions <span className="text-gray-400 font-normal">— optional</span></label>
-        <input type="number" value={portions} onChange={(e) => setPortions(e.target.value)}
-          placeholder="Number of portions"
-          className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm"
-          min="0" step="0.5" />
-      </div>
+      <FormStep step={2} title="What">
+        <div>
+          <label className="text-xs font-medium text-gray-600 block mb-2">Meal Type</label>
+          <div className="grid grid-cols-4 gap-2">
+            {mealTypes.map((m) => (
+              <button key={m.value} type="button" onClick={() => setMealType(m.value)}
+                className={`py-2.5 rounded-xl text-xs font-medium transition-all ${
+                  mealType === m.value
+                    ? 'bg-orange-500 text-white shadow-md'
+                    : 'bg-white text-gray-600 hover:bg-orange-50'
+                }`}>
+                {m.emoji} {m.label}
+              </button>
+            ))}
+          </div>
+        </div>
 
-      <div>
-        <label className="text-xs font-medium text-gray-600">Notes</label>
+        <div>
+          <label className="text-xs font-medium text-gray-600">Food description</label>
+          <input type="text" value={description} onChange={(e) => setDescription(e.target.value)}
+            placeholder="e.g. Pasta with vegetables, yoghurt"
+            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm"
+            required />
+        </div>
+
+        {/* Food Trying Tracker fields (#15) */}
+        <div>
+          <label className="flex items-center gap-3 cursor-pointer">
+            <input type="checkbox" checked={isTrying} onChange={(e) => setIsTrying(e.target.checked)}
+              className="h-5 w-5 rounded border-gray-300 text-orange-500 focus:ring-orange-200" />
+            <span className="text-sm font-medium text-gray-700">⭐ New food — trying for the first time</span>
+          </label>
+        </div>
+
+        {isTrying && (
+          <>
+            <div>
+              <label className="text-xs font-medium text-gray-600 block mb-2">
+                Texture <span className="text-gray-400 font-normal">— optional</span>
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                {textures.map((t) => (
+                  <button key={t.value} type="button" onClick={() => setTexture(texture === t.value ? '' : t.value)}
+                    className={`py-2 rounded-xl text-xs font-medium transition-all ${
+                      texture === t.value
+                        ? 'bg-orange-400 text-white shadow-md'
+                        : 'bg-white text-gray-600 hover:bg-orange-50'
+                    }`}>
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label className="text-xs font-medium text-gray-600 block mb-2">
+                Acceptance <span className="text-gray-400 font-normal">— optional</span>
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                {acceptanceOptions.map((a) => (
+                  <button key={a.value} type="button" onClick={() => setAccepted(accepted === a.value ? '' : a.value)}
+                    className={`py-2.5 rounded-xl text-xs font-medium transition-all ${
+                      accepted === a.value
+                        ? 'bg-orange-500 text-white shadow-md'
+                        : 'bg-white text-gray-600 hover:bg-orange-50'
+                    }`}>
+                    {a.emoji} {a.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+
+        <div>
+          <label className="text-xs font-medium text-gray-600">Portions <span className="text-gray-400 font-normal">— optional</span></label>
+          <input type="number" value={portions} onChange={(e) => setPortions(e.target.value)}
+            placeholder="Number of portions"
+            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm"
+            min="0" step="0.5" />
+        </div>
+      </FormStep>
+
+      <FormStep step={3} title="Notes (optional)">
         <textarea value={notes} onChange={(e) => setNotes(e.target.value)}
           placeholder="Dietary notes, allergies, reactions..."
-          className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm resize-none"
+          className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm resize-none"
           rows={2} />
-      </div>
+      </FormStep>
 
       <button type="submit"
         className="w-full py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-semibold text-sm transition-all shadow-lg shadow-orange-200">
@@ -1045,28 +1083,34 @@ function MoodForm() {
   const inputCls = "w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm";
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 rounded-[2rem] bg-white p-5 shadow-[0_24px_70px_rgba(139,77,255,0.08)]">
+    <form onSubmit={handleSubmit} className="space-y-5 rounded-[2rem] bg-white p-5 shadow-[0_24px_70px_rgba(139,77,255,0.08)]">
       <h2 className="text-lg font-bold text-gray-900">😊 Log Mood</h2>
       <HelpPanel title="Logging Mood">
         <p><strong>Level 1–5:</strong> Overall emotional state. 1 = very distressed, 2 = upset, 3 = neutral/calm, 4 = happy, 5 = very happy/excited.</p>
         <p><strong>Triggers:</strong> What may have caused this mood — e.g., "transition to school", "new sensory input", "slept well".</p>
         <p><strong>Notes:</strong> Any additional context about behaviour or environment.</p>
       </HelpPanel>
-      <div className="grid grid-cols-2 gap-3">
-        <div><label className="text-xs font-medium text-gray-600">Date</label><input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={inputCls} /></div>
-        <div><label className="text-xs font-medium text-gray-600">Time</label><input type="time" value={time} onChange={(e) => setTime(e.target.value)} className={inputCls} /></div>
-      </div>
-      <div>
-        <label className="text-xs font-medium text-gray-600">Mood Level (1–5)</label>
-        <div className="flex gap-2 mt-1">{([1,2,3,4,5] as MoodLevel[]).map((l) => (
-          <button key={l} type="button" onClick={() => setLevel(l)}
-            className={`flex-1 py-2 rounded-xl text-sm font-semibold transition-all ${level === l ? 'bg-pink-500 text-white shadow-md' : 'bg-gray-100 text-gray-600'}`}>
-            {l === 1 ? '😢' : l === 2 ? '😟' : l === 3 ? '😐' : l === 4 ? '🙂' : '😁'} {l}
-          </button>
-        ))}</div>
-      </div>
-      <div><label className="text-xs font-medium text-gray-600">Triggers</label><input value={triggers} onChange={(e) => setTriggers(e.target.value)} placeholder="What triggered this mood..." className={inputCls} /></div>
-      <div><label className="text-xs font-medium text-gray-600">Notes</label><textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Additional observations..." className={inputCls + " resize-none"} rows={2} /></div>
+      <FormStep step={1} title="When">
+        <div className="grid grid-cols-2 gap-3">
+          <div><label className="text-xs font-medium text-gray-600">Date</label><input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={inputCls} /></div>
+          <div><label className="text-xs font-medium text-gray-600">Time</label><input type="time" value={time} onChange={(e) => setTime(e.target.value)} className={inputCls} /></div>
+        </div>
+      </FormStep>
+      <FormStep step={2} title="Mood">
+        <div>
+          <label className="text-xs font-medium text-gray-600">Mood Level (1–5)</label>
+          <div className="flex gap-2 mt-1">{([1,2,3,4,5] as MoodLevel[]).map((l) => (
+            <button key={l} type="button" onClick={() => setLevel(l)}
+              className={`flex-1 py-2 rounded-xl text-sm font-semibold transition-all ${level === l ? 'bg-pink-500 text-white shadow-md' : 'bg-gray-100 text-gray-600'}`}>
+              {l === 1 ? '😢' : l === 2 ? '😟' : l === 3 ? '😐' : l === 4 ? '🙂' : '😁'} {l}
+            </button>
+          ))}</div>
+        </div>
+        <div><label className="text-xs font-medium text-gray-600">Triggers</label><input value={triggers} onChange={(e) => setTriggers(e.target.value)} placeholder="What triggered this mood..." className={inputCls} /></div>
+      </FormStep>
+      <FormStep step={3} title="Notes (optional)">
+        <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Additional observations..." className={inputCls + " resize-none"} rows={2} />
+      </FormStep>
       <button type="submit" className="w-full py-3 bg-pink-500 hover:bg-pink-600 text-white rounded-xl font-semibold text-sm transition-all shadow-lg shadow-pink-200">Save Mood Entry 😊</button>
     </form>
   );
@@ -1092,42 +1136,48 @@ function SensoryForm() {
   const inputCls = "w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm";
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 rounded-[2rem] bg-white p-5 shadow-[0_24px_70px_rgba(139,77,255,0.08)]">
+    <form onSubmit={handleSubmit} className="space-y-5 rounded-[2rem] bg-white p-5 shadow-[0_24px_70px_rgba(139,77,255,0.08)]">
       <h2 className="text-lg font-bold text-gray-900">🎨 Log Sensory Event</h2>
       <HelpPanel title="Logging a Sensory Event">
         <p><strong>Sensory type:</strong> Which sense was involved — touch (tactile), sound (auditory), sight (visual), taste (gustatory), smell (olfactory), movement (vestibular), body position (proprioceptive), or other.</p>
         <p><strong>Response:</strong> How they responded — seeking (wanted more), avoiding (moved away/covered ears etc.), or neutral.</p>
         <p><strong>Intensity 1–5:</strong> How strong was the sensory event? 1 = barely noticeable, 5 = overwhelming.</p>
       </HelpPanel>
-      <div className="grid grid-cols-2 gap-3">
-        <div><label className="text-xs font-medium text-gray-600">Date</label><input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={inputCls} /></div>
-        <div><label className="text-xs font-medium text-gray-600">Time</label><input type="time" value={time} onChange={(e) => setTime(e.target.value)} className={inputCls} /></div>
-      </div>
-      <div>
-        <label className="text-xs font-medium text-gray-600">Sensory Type</label>
-        <select value={sensoryType} onChange={(e) => setSensoryType(e.target.value)} className={inputCls}>
-          {['auditory','tactile','visual','vestibular','proprioceptive','olfactory','gustatory'].map((t) => (
-            <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>
-          ))}
-        </select>
-      </div>
-      <div>
-        <label className="text-xs font-medium text-gray-600">Response</label>
-        <div className="flex gap-2 mt-1">{(['seeking','neutral','avoiding'] as SensoryResponseType[]).map((r) => (
-          <button key={r} type="button" onClick={() => setResponse(r)}
-            className={`flex-1 py-2 rounded-xl text-xs font-semibold transition-all ${response === r ? 'bg-teal-500 text-white shadow-md' : 'bg-gray-100 text-gray-600'}`}>
-            {r === 'seeking' ? '🔍' : r === 'avoiding' ? '🚫' : '😐'} {r.charAt(0).toUpperCase() + r.slice(1)}
-          </button>
-        ))}</div>
-      </div>
-      <div>
-        <label className="text-xs font-medium text-gray-600">Intensity (1–5)</label>
-        <div className="flex gap-2 mt-1">{([1,2,3,4,5] as (1|2|3|4|5)[]).map((i) => (
-          <button key={i} type="button" onClick={() => setIntensity(i)}
-            className={`flex-1 py-2 rounded-xl text-sm font-semibold transition-all ${intensity === i ? 'bg-teal-500 text-white shadow-md' : 'bg-gray-100 text-gray-600'}`}>{i}</button>
-        ))}</div>
-      </div>
-      <div><label className="text-xs font-medium text-gray-600">Notes</label><textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Describe the sensory event..." className={inputCls + " resize-none"} rows={2} /></div>
+      <FormStep step={1} title="When">
+        <div className="grid grid-cols-2 gap-3">
+          <div><label className="text-xs font-medium text-gray-600">Date</label><input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={inputCls} /></div>
+          <div><label className="text-xs font-medium text-gray-600">Time</label><input type="time" value={time} onChange={(e) => setTime(e.target.value)} className={inputCls} /></div>
+        </div>
+      </FormStep>
+      <FormStep step={2} title="Details">
+        <div>
+          <label className="text-xs font-medium text-gray-600">Sensory Type</label>
+          <select value={sensoryType} onChange={(e) => setSensoryType(e.target.value)} className={inputCls}>
+            {['auditory','tactile','visual','vestibular','proprioceptive','olfactory','gustatory'].map((t) => (
+              <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="text-xs font-medium text-gray-600">Response</label>
+          <div className="flex gap-2 mt-1">{(['seeking','neutral','avoiding'] as SensoryResponseType[]).map((r) => (
+            <button key={r} type="button" onClick={() => setResponse(r)}
+              className={`flex-1 py-2 rounded-xl text-xs font-semibold transition-all ${response === r ? 'bg-teal-500 text-white shadow-md' : 'bg-gray-100 text-gray-600'}`}>
+              {r === 'seeking' ? '🔍' : r === 'avoiding' ? '🚫' : '😐'} {r.charAt(0).toUpperCase() + r.slice(1)}
+            </button>
+          ))}</div>
+        </div>
+        <div>
+          <label className="text-xs font-medium text-gray-600">Intensity (1–5)</label>
+          <div className="flex gap-2 mt-1">{([1,2,3,4,5] as (1|2|3|4|5)[]).map((i) => (
+            <button key={i} type="button" onClick={() => setIntensity(i)}
+              className={`flex-1 py-2 rounded-xl text-sm font-semibold transition-all ${intensity === i ? 'bg-teal-500 text-white shadow-md' : 'bg-gray-100 text-gray-600'}`}>{i}</button>
+          ))}</div>
+        </div>
+      </FormStep>
+      <FormStep step={3} title="Notes (optional)">
+        <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Describe the sensory event..." className={inputCls + " resize-none"} rows={2} />
+      </FormStep>
       <button type="submit" className="w-full py-3 bg-teal-500 hover:bg-teal-600 text-white rounded-xl font-semibold text-sm transition-all shadow-lg shadow-teal-200">Save Sensory Entry 🎨</button>
     </form>
   );
@@ -1153,24 +1203,30 @@ function MedicationForm() {
   const inputCls = "w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm";
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 rounded-[2rem] bg-white p-5 shadow-[0_24px_70px_rgba(139,77,255,0.08)]">
+    <form onSubmit={handleSubmit} className="space-y-5 rounded-[2rem] bg-white p-5 shadow-[0_24px_70px_rgba(139,77,255,0.08)]">
       <h2 className="text-lg font-bold text-gray-900">💊 Log Medication</h2>
       <HelpPanel title="Logging a Medication">
         <p><strong>Medication name:</strong> The name of the medication as prescribed.</p>
         <p><strong>Dosage:</strong> The dose given — e.g., "5mg", "1 tablet", "10ml".</p>
         <p><strong>Administered:</strong> Tick if the medication was successfully given. Untick if the dose was missed or refused.</p>
       </HelpPanel>
-      <div className="grid grid-cols-2 gap-3">
-        <div><label className="text-xs font-medium text-gray-600">Date</label><input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={inputCls} /></div>
-        <div><label className="text-xs font-medium text-gray-600">Time</label><input type="time" value={time} onChange={(e) => setTime(e.target.value)} className={inputCls} /></div>
-      </div>
-      <div><label className="text-xs font-medium text-gray-600">Medication Name</label><input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Melatonin" className={inputCls} required /></div>
-      <div><label className="text-xs font-medium text-gray-600">Dosage</label><input value={dosage} onChange={(e) => setDosage(e.target.value)} placeholder="e.g. 1mg" className={inputCls} /></div>
-      <label className="flex items-center gap-2 text-sm text-gray-700">
-        <input type="checkbox" checked={administered} onChange={(e) => setAdministered(e.target.checked)} className="h-4 w-4 rounded border-gray-300 text-red-500 focus:ring-red-400" />
-        Administered
-      </label>
-      <div><label className="text-xs font-medium text-gray-600">Notes</label><textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Side effects, observations..." className={inputCls + " resize-none"} rows={2} /></div>
+      <FormStep step={1} title="When">
+        <div className="grid grid-cols-2 gap-3">
+          <div><label className="text-xs font-medium text-gray-600">Date</label><input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={inputCls} /></div>
+          <div><label className="text-xs font-medium text-gray-600">Time</label><input type="time" value={time} onChange={(e) => setTime(e.target.value)} className={inputCls} /></div>
+        </div>
+      </FormStep>
+      <FormStep step={2} title="What">
+        <div><label className="text-xs font-medium text-gray-600">Medication Name</label><input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Melatonin" className={inputCls} required /></div>
+        <div><label className="text-xs font-medium text-gray-600">Dosage</label><input value={dosage} onChange={(e) => setDosage(e.target.value)} placeholder="e.g. 1mg" className={inputCls} /></div>
+        <label className="flex items-center gap-2 text-sm text-gray-700">
+          <input type="checkbox" checked={administered} onChange={(e) => setAdministered(e.target.checked)} className="h-4 w-4 rounded border-gray-300 text-red-500 focus:ring-red-400" />
+          Administered
+        </label>
+      </FormStep>
+      <FormStep step={3} title="Notes (optional)">
+        <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Side effects, observations..." className={inputCls + " resize-none"} rows={2} />
+      </FormStep>
       <button type="submit" className="w-full py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl font-semibold text-sm transition-all shadow-lg shadow-red-200">Save Medication Entry 💊</button>
     </form>
   );
@@ -1197,7 +1253,7 @@ function TherapyForm() {
   const inputCls = "w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm";
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 rounded-[2rem] bg-white p-5 shadow-[0_24px_70px_rgba(139,77,255,0.08)]">
+    <form onSubmit={handleSubmit} className="space-y-5 rounded-[2rem] bg-white p-5 shadow-[0_24px_70px_rgba(139,77,255,0.08)]">
       <h2 className="text-lg font-bold text-gray-900">🧩 Log Therapy Session</h2>
       <HelpPanel title="Logging a Therapy Session">
         <p><strong>Therapy type:</strong> Speech & Language (SALT), Occupational Therapy (OT), Physiotherapy (PT), Applied Behaviour Analysis (ABA), Behavioural, Music, Art, or Other.</p>
@@ -1205,22 +1261,28 @@ function TherapyForm() {
         <p><strong>Duration:</strong> Length of the session in minutes.</p>
         <p><strong>Goals worked on:</strong> Brief notes on what was targeted, e.g., "requesting using PECS", "hand washing routine".</p>
       </HelpPanel>
-      <div className="grid grid-cols-2 gap-3">
-        <div><label className="text-xs font-medium text-gray-600">Date</label><input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={inputCls} /></div>
-        <div><label className="text-xs font-medium text-gray-600">Time</label><input type="time" value={time} onChange={(e) => setTime(e.target.value)} className={inputCls} /></div>
-      </div>
-      <div>
-        <label className="text-xs font-medium text-gray-600">Therapy Type</label>
-        <select value={therapyType} onChange={(e) => setTherapyType(e.target.value as TherapyType)} className={inputCls}>
-          {(['speech','occupational','physical','behavioral','other'] as TherapyType[]).map((t) => (
-            <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>
-          ))}
-        </select>
-      </div>
-      <div><label className="text-xs font-medium text-gray-600">Provider</label><input value={provider} onChange={(e) => setProvider(e.target.value)} placeholder="Therapist name..." className={inputCls} /></div>
-      <div><label className="text-xs font-medium text-gray-600">Duration (minutes)</label><input type="number" value={durationMinutes} onChange={(e) => setDurationMinutes(Number(e.target.value))} min={1} className={inputCls} /></div>
-      <div><label className="text-xs font-medium text-gray-600">Goals</label><textarea value={goals} onChange={(e) => setGoals(e.target.value)} placeholder="Session goals..." className={inputCls + " resize-none"} rows={2} /></div>
-      <div><label className="text-xs font-medium text-gray-600">Notes</label><textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Progress, observations..." className={inputCls + " resize-none"} rows={2} /></div>
+      <FormStep step={1} title="When">
+        <div className="grid grid-cols-2 gap-3">
+          <div><label className="text-xs font-medium text-gray-600">Date</label><input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={inputCls} /></div>
+          <div><label className="text-xs font-medium text-gray-600">Time</label><input type="time" value={time} onChange={(e) => setTime(e.target.value)} className={inputCls} /></div>
+        </div>
+      </FormStep>
+      <FormStep step={2} title="Session">
+        <div>
+          <label className="text-xs font-medium text-gray-600">Therapy Type</label>
+          <select value={therapyType} onChange={(e) => setTherapyType(e.target.value as TherapyType)} className={inputCls}>
+            {(['speech','occupational','physical','behavioral','other'] as TherapyType[]).map((t) => (
+              <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>
+            ))}
+          </select>
+        </div>
+        <div><label className="text-xs font-medium text-gray-600">Provider</label><input value={provider} onChange={(e) => setProvider(e.target.value)} placeholder="Therapist name..." className={inputCls} /></div>
+        <div><label className="text-xs font-medium text-gray-600">Duration (minutes)</label><input type="number" value={durationMinutes} onChange={(e) => setDurationMinutes(Number(e.target.value))} min={1} className={inputCls} /></div>
+        <div><label className="text-xs font-medium text-gray-600">Goals</label><textarea value={goals} onChange={(e) => setGoals(e.target.value)} placeholder="Session goals..." className={inputCls + " resize-none"} rows={2} /></div>
+      </FormStep>
+      <FormStep step={3} title="Notes (optional)">
+        <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Progress, observations..." className={inputCls + " resize-none"} rows={2} />
+      </FormStep>
       <button type="submit" className="w-full py-3 bg-cyan-500 hover:bg-cyan-600 text-white rounded-xl font-semibold text-sm transition-all shadow-lg shadow-cyan-200">Save Therapy Entry 🧩</button>
     </form>
   );
@@ -1246,7 +1308,7 @@ function RoutineForm() {
   const inputCls = "w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm";
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 rounded-[2rem] bg-white p-5 shadow-[0_24px_70px_rgba(139,77,255,0.08)]">
+    <form onSubmit={handleSubmit} className="space-y-5 rounded-[2rem] bg-white p-5 shadow-[0_24px_70px_rgba(139,77,255,0.08)]">
       <h2 className="text-lg font-bold text-gray-900">📋 Log Routine</h2>
       <HelpPanel title="Logging a Routine">
         <p><strong>Routine name:</strong> A short label for this routine step — e.g., "Morning teeth brushing", "Getting dressed", "School pickup".</p>
@@ -1254,17 +1316,23 @@ function RoutineForm() {
         <p><strong>Duration:</strong> How long the routine took in minutes (optional).</p>
         <p><strong>Notes:</strong> Any challenges, adaptations needed, or successes worth noting.</p>
       </HelpPanel>
-      <div className="grid grid-cols-2 gap-3">
-        <div><label className="text-xs font-medium text-gray-600">Date</label><input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={inputCls} /></div>
-        <div><label className="text-xs font-medium text-gray-600">Time</label><input type="time" value={time} onChange={(e) => setTime(e.target.value)} className={inputCls} /></div>
-      </div>
-      <div><label className="text-xs font-medium text-gray-600">Routine Name</label><input value={routineName} onChange={(e) => setRoutineName(e.target.value)} placeholder="e.g. Morning brushing teeth" className={inputCls} required /></div>
-      <label className="flex items-center gap-2 text-sm text-gray-700">
-        <input type="checkbox" checked={completed} onChange={(e) => setCompleted(e.target.checked)} className="h-4 w-4 rounded border-gray-300 text-lime-500 focus:ring-lime-400" />
-        Completed
-      </label>
-      <div><label className="text-xs font-medium text-gray-600">Duration (minutes, optional)</label><input type="number" value={durationMinutes} onChange={(e) => setDurationMinutes(e.target.value ? Number(e.target.value) : '')} min={1} className={inputCls} /></div>
-      <div><label className="text-xs font-medium text-gray-600">Notes</label><textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Observations about the routine..." className={inputCls + " resize-none"} rows={2} /></div>
+      <FormStep step={1} title="When">
+        <div className="grid grid-cols-2 gap-3">
+          <div><label className="text-xs font-medium text-gray-600">Date</label><input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={inputCls} /></div>
+          <div><label className="text-xs font-medium text-gray-600">Time</label><input type="time" value={time} onChange={(e) => setTime(e.target.value)} className={inputCls} /></div>
+        </div>
+      </FormStep>
+      <FormStep step={2} title="Details">
+        <div><label className="text-xs font-medium text-gray-600">Routine Name</label><input value={routineName} onChange={(e) => setRoutineName(e.target.value)} placeholder="e.g. Morning brushing teeth" className={inputCls} required /></div>
+        <label className="flex items-center gap-2 text-sm text-gray-700">
+          <input type="checkbox" checked={completed} onChange={(e) => setCompleted(e.target.checked)} className="h-4 w-4 rounded border-gray-300 text-lime-500 focus:ring-lime-400" />
+          Completed
+        </label>
+        <div><label className="text-xs font-medium text-gray-600">Duration (minutes, optional)</label><input type="number" value={durationMinutes} onChange={(e) => setDurationMinutes(e.target.value ? Number(e.target.value) : '')} min={1} className={inputCls} /></div>
+      </FormStep>
+      <FormStep step={3} title="Notes (optional)">
+        <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Observations about the routine..." className={inputCls + " resize-none"} rows={2} />
+      </FormStep>
       <button type="submit" className="w-full py-3 bg-lime-500 hover:bg-lime-600 text-white rounded-xl font-semibold text-sm transition-all shadow-lg shadow-lime-200">Save Routine Entry 📋</button>
     </form>
   );
