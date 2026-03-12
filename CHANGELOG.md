@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - PR template with documentation verification checklist
 
 ### Changed
+- Documentation correction pass: refreshed API/module/onboarding docs, replaced sprawling project backlog with maintained status index, and added `docs/REPO_STATUS.md` + issue-ready drafts
 - AddEntryPage reduced from ~1350 lines to ~170 lines (forms extracted to individual components)
 - SettingsPage reduced from ~830 lines to ~740 lines (ModuleSettings extracted)
 - LeapsPage reduced from ~1160 lines to ~70 lines (all sub-components extracted)

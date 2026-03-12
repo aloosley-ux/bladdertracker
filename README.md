@@ -21,7 +21,7 @@ Built for tired, busy, real-world use: one-handed on a phone, during routines, s
 - **Built for real handovers:** designed for tired evenings, school transitions, clinic conversations, and quick one-handed updates.
 - **Broader than a bladder diary:** combines 13 tracking modules, developmental milestones, and leap guidance in one shared system.
 - **Flexible deployment model:** use it locally with `localStorage` or connect it to Vercel + Neon for shared cloud access.
-- **Collaboration-ready:** invite caregivers, school staff, therapists, and specialists with role-based access.
+- **Collaboration-ready:** invite caregivers and school staff from the current UI; additional role pathways exist in the data model but need validation before broad claims.
 - **Privacy-conscious by design:** export and deletion flows are built in, with GDPR documentation and audit history support.
 
 ## 🚦 Project status
@@ -32,7 +32,7 @@ Built for tired, busy, real-world use: one-handed on a phone, during routines, s
 | Quality checks | CI runs tests, linting, build, and API type-checks on pull requests |
 | Deployment modes | Local/offline mode by default, optional cloud mode via Vercel + Neon |
 | Accessibility | High-contrast theme, dyslexia-friendly font, keyboard support, accessibility tests |
-| Current focus | Documentation polish, issue hygiene, performance follow-up, and deeper test coverage |
+| Current focus | Role/access consistency, API test depth, and docs/backlog trustworthiness (see `docs/REPO_STATUS.md`) |
 
 ## 🔗 Quick links
 
@@ -42,7 +42,7 @@ Built for tired, busy, real-world use: one-handed on a phone, during routines, s
 - **Contribute:** [CONTRIBUTING.md](./CONTRIBUTING.md) and [pull request template](./.github/PULL_REQUEST_TEMPLATE.md)
 - **Report work clearly:** use the GitHub issue templates for bugs, feature requests, and documentation improvements
 - **Report vulnerabilities privately:** see [SECURITY.md](./SECURITY.md)
-- **Review roadmap context:** [docs/PROJECT_PLAN.md](./docs/PROJECT_PLAN.md)
+- **Review repo status & remaining work:** [docs/REPO_STATUS.md](./docs/REPO_STATUS.md)
 - **What changed:** [CHANGELOG.md](./CHANGELOG.md)
 
 ---
@@ -79,7 +79,7 @@ Built for tired, busy, real-world use: one-handed on a phone, during routines, s
 
 ## 🧭 What you can do today
 
-This section highlights the experience that already exists in the product today. For future work and active backlog themes, see [docs/PROJECT_PLAN.md](./docs/PROJECT_PLAN.md) and the repository's GitHub issues.
+This section highlights the experience that already exists in the product today. For confirmed remaining work, see [docs/REPO_STATUS.md](./docs/REPO_STATUS.md) and linked GitHub issues.
 
 ### 1) Milestones timeline & calendar
 - `/milestones` now provides a milestone timeline with **weekly / monthly / annual zoom**, date markers, and milestone cards.
@@ -664,7 +664,7 @@ npm run build         # Full type-check + production build
 - **Feature requests:** use the **Feature request** template with user value, scope boundaries, and acceptance criteria.
 - **Documentation improvements:** use the **Documentation improvement** template when instructions, wording, or examples drift from the code.
 - **Security concerns:** do **not** post exploit details publicly; follow [SECURITY.md](./SECURITY.md).
-- **Roadmap alignment:** treat [docs/PROJECT_PLAN.md](./docs/PROJECT_PLAN.md) as the backlog narrative, then use GitHub issues for discrete, actionable work items.
+- **Backlog alignment:** treat [docs/REPO_STATUS.md](./docs/REPO_STATUS.md) as the source of open work, then use GitHub issues for discrete, actionable tasks.
 - **Architecture decomposition (completed):** large page components (AddEntryPage, LeapsPage, SettingsPage) have been decomposed into focused sub-components under `src/components/forms/`, `src/components/leaps/`, and `src/components/settings/`. See [CHANGELOG.md](./CHANGELOG.md) for details.
 
 ---
@@ -685,7 +685,8 @@ npm run build         # Full type-check + production build
 | [docs/API.md](./docs/API.md) | API endpoint reference |
 | [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) | System architecture |
 | [docs/MODULES.md](./docs/MODULES.md) | Module field reference and clinical guidance |
-| [docs/PROJECT_PLAN.md](./docs/PROJECT_PLAN.md) | Detailed project plan and delivery backlog |
+| [docs/REPO_STATUS.md](./docs/REPO_STATUS.md) | Durable list of genuine remaining work |
+| [docs/PROJECT_PLAN.md](./docs/PROJECT_PLAN.md) | Lightweight planning index and historical context |
 | [CHANGELOG.md](./CHANGELOG.md) | Release notes and version history |
 
 ---

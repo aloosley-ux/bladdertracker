@@ -18,7 +18,7 @@ body:
         - Architecture docs
         - Onboarding / help guidance
         - GDPR / privacy docs
-        - Project plan / roadmap
+        - Repo status / backlog
         - GitHub issue or PR templates
         - Other
     validations:

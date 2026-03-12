@@ -1,236 +1,136 @@
 # API Reference
 
-All endpoints are Vercel Serverless Functions at `/api/`. Authentication is via JWT stored in an HttpOnly cookie (`bt_session`).
+All server endpoints are Vercel functions under `/api/*`. Cloud mode is enabled when `VITE_USE_CLOUD=true`; local mode bypasses these APIs and uses `localStorage` via `src/utils/storage.ts`.
 
----
+Authentication uses JWT session cookies (`bt_session`) in HttpOnly cookies.
 
 ## Authentication — `/api/auth`
 
 ### `GET /api/auth`
-Returns the current session user.
-
-**Response:**
-```json
-{ "user": { "id": "...", "name": "...", "email": "...", "role": "parent" } }
-```
-Returns `{ "user": null }` when not authenticated.
-
----
+Returns current session:
+- `{ "user": User }` when signed in
+- `{ "user": null }` when not signed in
 
 ### `POST /api/auth`
+Use `action` in body.
 
-| `action` | Body fields | Description |
-|----------|-------------|-------------|
-| `register` | `name, email, password, role` | Create a new account. Sets session cookie. |
-| `login` | `email, password` | Sign in to an existing account. Sets session cookie. |
-| `logout` | _(none)_ | Clears the session cookie. |
-| `reset` | `email, password` | Reset password (must be the account owner). |
-
-**Roles:** `parent`, `caregiver`, `schoolAdmin`, `therapist`, `specialist`
-
----
+| Action | Required fields | Notes |
+|---|---|---|
+| `register` | `name`, `email`, `password`, `role?` | Creates account + signs in. |
+| `login` | `email`, `password` | Signs in existing account. |
+| `logout` | none | Clears session cookie. |
+| `reset` | `email`, `password` | Resets password for matching account. |
+| `promote` | `key` | Promotes signed-in user to `admin` when key is valid. |
 
 ### `DELETE /api/auth`
-Permanently deletes the authenticated user's account and **all associated data** (children, diary entries, milestones, sessions, audit events). GDPR right-to-erasure implementation.
-
-**Response:** `{ "ok": true }`
+Deletes the signed-in account and related data. Returns `{ "ok": true }`.
 
 ---
 
 ## Children — `/api/children`
 
-| Method | Body / Query | Description |
-|--------|-------------|-------------|
-| `GET` | — | List all children accessible to the current user |
-| `POST` | `{ name, dateOfBirth? }` | Create a child profile |
-| `PUT` | `{ id, name, dateOfBirth? }` | Update a child profile |
-| `DELETE` | `?id=<childId>` | Delete a child and all their data |
-
-**Response for GET:** `{ "children": Child[] }`
+| Method | Payload | Result |
+|---|---|---|
+| `GET` | — | `{ children: Child[] }` |
+| `POST` | `{ name, dateOfBirth? }` | `{ child: Child }` |
+| `PUT` | `{ id, ...partialChild }` | `{ ok: true }` |
+| `DELETE` | `?id=<childId>` | `{ ok: true }` |
 
 ---
 
-## Drinks — `/api/drinks`
+## Core tracker endpoints
 
-| Method | Body / Query | Description |
-|--------|-------------|-------------|
-| `GET` | — | List drink entries for all accessible children |
-| `POST` | `{ childId, date, time, amountMl, type, notes? }` | Create a drink entry |
-| `PUT` | `{ id, date, time, amountMl, type, notes? }` | Update a drink entry |
-| `DELETE` | `?id=<entryId>` | Delete a drink entry |
+### Drinks — `/api/drinks`
+CRUD for drink entries.
 
----
+### Urine — `/api/urine`
+CRUD for urine entries.
+- `leakageAmount` values: `none | small | medium | large`
 
-## Urine — `/api/urine`
-
-| Method | Body / Query | Description |
-|--------|-------------|-------------|
-| `GET` | — | List urine entries |
-| `POST` | `{ childId, date, time, wet, pass, volumeMl?, urgency?, leakageAmount?, notes? }` | Create |
-| `PUT` | `{ id, ...fields }` | Update |
-| `DELETE` | `?id=<entryId>` | Delete |
+### Bowel — `/api/bowel`
+CRUD for bowel entries.
 
 ---
 
-## Bowel — `/api/bowel`
+## Consolidated tracker endpoint — `/api/trackers`
+Handles sleep, toilet attempts, and food entries.
 
-| Method | Body / Query | Description |
-|--------|-------------|-------------|
-| `GET` | — | List bowel entries |
-| `POST` | `{ childId, date, time, bristolType, amount, location, laxativesGiven, notes? }` | Create |
-| `PUT` | `{ id, ...fields }` | Update |
-| `DELETE` | `?id=<entryId>` | Delete |
+| Method | Query/body requirement |
+|---|---|
+| `GET` | `?type=sleep|toilet_attempt|food` |
+| `POST` | body includes `trackerType: 'sleep'|'toilet_attempt'|'food'` |
+| `PUT` | body includes `trackerType` and `id` |
+| `DELETE` | `?type=sleep|toilet_attempt|food&id=<entryId>` |
 
----
-
-## Trackers — `/api/trackers`
-
-Handles sleep, toilet attempts, and food entries via `?type=` query parameter.
-
-| Method | Query | Body | Description |
-|--------|-------|------|-------------|
-| `GET` | `?type=sleep\|toilet\|food` | — | List entries |
-| `POST` | — | `{ trackerType: 'sleep'\|'toilet'\|'food', childId, date, time, ...typeFields }` | Create |
-| `PUT` | — | `{ trackerType, id, ...fields }` | Update |
-| `DELETE` | `?type=sleep\|toilet\|food&id=<entryId>` | — | Delete |
-
-### Sleep entry fields
-`{ eventType: 'onset'\|'wake'\|'nap_start'\|'nap_end', durationMinutes?, quality?: 1-5, nighttimeEvent: boolean, notes? }`
+### Sleep fields
+`eventType`, `durationMinutes?`, `quality?`, `nighttimeEvent?`, `bedtime?`, `sleepOnsetMinutes?`, `nightActivity?`, `notes?`
 
 ### Toilet attempt fields
-`{ outcome: 'success'\|'failure'\|'no_event', supervised: boolean, prompted: boolean, durationMinutes?, notes? }`
+`outcome`, `supervised`, `prompted`, `durationMinutes?`, `notes?`
 
-### Food entry fields
-`{ mealType: 'breakfast'\|'lunch'\|'dinner'\|'snack', description, portions?: number, notes? }`
+### Food fields
+`mealType`, `description`, `portions?`, `isTrying?`, `texture?`, `accepted?`, `notes?`
 
 ---
 
-## Modules — `/api/modules`
+## New modules + preferences — `/api/modules`
 
-Consolidated endpoint for 6 newer tracker types and enabled-modules management.
+### Entry types
+`mood | sensory | medication | therapy | routine | milestones`
 
-### GET — list entries
-`GET /api/modules?type=<trackerType>`
+### Module toggles
+- `GET /api/modules?type=enabled_modules&childId=<id>` → `{ modules: ModuleId[] }`
+- `POST /api/modules` with `{ action: 'set_enabled_modules', childId, modules }` → `{ ok: true }`
 
-Valid types: `mood`, `sensory`, `medication`, `therapy`, `routine`, `milestones`
+### Reminder preferences
+- `GET /api/modules?type=reminder_preferences[&childId=<id>]` → `{ reminders: ReminderPreference[] }`
+- `POST /api/modules` with `{ action: 'set_reminder_preferences', childId, reminders }` → `{ ok: true }`
 
-**Response:** `{ "entries": Entry[] }`
+### Entry CRUD
+- `GET /api/modules?type=<entryType>`
+- `POST /api/modules` with `{ trackerType: <entryType>, ...fields }`
+- `PUT /api/modules` with `{ trackerType: <entryType>, id, ...fields }`
+- `DELETE /api/modules?type=<entryType>&id=<entryId>`
 
-### GET — enabled modules
-`GET /api/modules?type=enabled_modules&childId=<id>`
-
-**Response:** `{ "modules": ["mood", "therapy", ...] }`
-
-### POST — create entry
-```json
-{
-  "trackerType": "mood",
-  "childId": "...",
-  "date": "2026-03-07",
-  "time": "14:30",
-  "level": 4,
-  "triggers": "transition",
-  "notes": ""
-}
-```
-
-### POST — set enabled modules
-```json
-{
-  "action": "set_enabled_modules",
-  "childId": "...",
-  "modules": ["mood", "sensory", "medication"]
-}
-```
-
-### PUT — update entry
-```json
-{
-  "trackerType": "mood",
-  "id": "...",
-  "date": "2026-03-07",
-  "time": "14:30",
-  "level": 3,
-  "triggers": "",
-  "notes": "updated"
-}
-```
-
-### DELETE — delete entry
-`DELETE /api/modules?type=mood&id=<entryId>`
-
-#### Module-specific fields
-
-| Module | Extra fields |
-|--------|-------------|
-| `mood` | `level: 1-5`, `triggers: string` |
-| `sensory` | `sensoryType: string`, `response: 'seeking'\|'avoiding'\|'neutral'`, `intensity: 1-5` |
-| `medication` | `name: string`, `dosage: string`, `administered: boolean` |
-| `therapy` | `therapyType: string`, `provider: string`, `durationMinutes: number`, `goals: string` |
-| `routine` | `routineName: string`, `completed: boolean`, `durationMinutes: number\|null` |
-| `milestones` | `name: string`, `description: string`, `category: string`, `status: 'not_started'\|'in_progress'\|'achieved'`, `dateAchieved: string\|null` |
+Milestones include `moduleId?`, `milestoneType?`, `targetDate?`, `dateAchieved?`, `sourceRole?`.
 
 ---
 
 ## Invites — `/api/invites`
 
-| Method | Body | Description |
-|--------|------|-------------|
-| `GET` | — | List pending invites for the current user |
-| `POST` | `{ childId, email, role }` | Create a new invite (parent/admin only) |
-| `POST` | `{ action: 'accept', token }` | Accept an invite using the token |
+| Method | Payload | Result |
+|---|---|---|
+| `GET` | — | `{ invites: CaregiverInvite[] }` |
+| `POST` | `{ childId, email, role }` | Creates invite |
+| `POST` | `{ action: 'accept', token }` | Accepts invite |
+
+Notes:
+- Invite acceptance currently maps access to `parent` or `caregiver` at database access level.
+- UI currently offers invite roles based on current user role (see `src/pages/ProfilesPage.tsx`).
 
 ---
 
 ## Notifications — `/api/notifications`
-
-| Method | Body | Description |
-|--------|------|-------------|
-| `GET` | — | List notifications for current user |
-| `PUT` | `{ id }` | Mark a notification as read |
-
----
+- `GET` list notifications.
+- `PUT` `{ id }` marks one notification as read.
 
 ## Audit — `/api/audit`
+- `GET` latest audit events for signed-in user.
 
-| Method | Description |
-|--------|-------------|
-| `GET` | Returns audit event log for the current user |
+## Data import/export — `/api/data`
+- `GET ?childId=<id>` returns CSV export.
+- `POST` accepts bulk import payload for core trackers.
 
----
-
-## Data Export / Import — `/api/data`
-
-| Method | Query / Body | Description |
-|--------|-------------|-------------|
-| `GET` | `?childId=<id>` | Export all data for a child as CSV download |
-| `POST` | `{ childId, drinks?, urineEntries?, bowelEntries?, ... }` | Bulk import data |
+## Schema migration — `/api/migrate`
+- `POST` runs idempotent schema/table setup.
 
 ---
 
-## Migration — `/api/migrate`
-
-| Method | Description |
-|--------|-------------|
-| `POST` | Run idempotent database schema migration (creates all tables if not exist) |
-
----
-
-## Error Responses
-
-All endpoints return JSON error objects on failure:
+## Common error responses
 
 ```json
-{ "error": "Not authenticated" }       // 401
-{ "error": "Access denied" }           // 403
-{ "error": "Entry id is required" }    // 400
-{ "error": "Internal server error" }   // 500
+{ "error": "Not authenticated" }
+{ "error": "Access denied" }
+{ "error": "Method not allowed" }
+{ "error": "Internal server error" }
 ```
-
----
-
-## Authentication Details
-
-- Session tokens are JWTs signed with `JWT_SECRET` environment variable
-- Stored in HttpOnly, SameSite=Lax cookies named `bt_session` (Secure flag set in production)
-- `getAccessibleChildIds(userId)` in `api/_lib/db.ts` returns all child IDs the user can access (own children + invited access)
