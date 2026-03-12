@@ -160,12 +160,19 @@ export async function migrate(): Promise<string[]> {
       duration_minutes INTEGER,
       quality SMALLINT CHECK (quality IS NULL OR (quality >= 1 AND quality <= 5)),
       nighttime_event BOOLEAN DEFAULT FALSE,
+      bedtime VARCHAR(5),
+      sleep_onset_minutes INTEGER,
+      night_activity BOOLEAN DEFAULT FALSE,
       notes TEXT DEFAULT '',
       created_by TEXT REFERENCES accounts(id),
       created_at TIMESTAMPTZ DEFAULT NOW()
     )
   `;
   log.push('sleep_entries table ready');
+  await sql`ALTER TABLE sleep_entries ADD COLUMN IF NOT EXISTS bedtime VARCHAR(5)`;
+  await sql`ALTER TABLE sleep_entries ADD COLUMN IF NOT EXISTS sleep_onset_minutes INTEGER`;
+  await sql`ALTER TABLE sleep_entries ADD COLUMN IF NOT EXISTS night_activity BOOLEAN DEFAULT FALSE`;
+  log.push('sleep_entries extended columns up to date');
 
   await sql`
     CREATE TABLE IF NOT EXISTS toilet_attempt_entries (
@@ -193,12 +200,19 @@ export async function migrate(): Promise<string[]> {
       meal_type VARCHAR(20) NOT NULL CHECK (meal_type IN ('breakfast', 'lunch', 'dinner', 'snack')),
       description TEXT NOT NULL DEFAULT '',
       portions NUMERIC(5,2),
+      is_trying BOOLEAN DEFAULT FALSE,
+      texture VARCHAR(20) CHECK (texture IS NULL OR texture IN ('pureed', 'mashed', 'soft', 'chopped', 'whole', 'mixed')),
+      accepted VARCHAR(20) CHECK (accepted IS NULL OR accepted IN ('accepted', 'refused', 'partial', 'first_try')),
       notes TEXT DEFAULT '',
       created_by TEXT REFERENCES accounts(id),
       created_at TIMESTAMPTZ DEFAULT NOW()
     )
   `;
   log.push('food_entries table ready');
+  await sql`ALTER TABLE food_entries ADD COLUMN IF NOT EXISTS is_trying BOOLEAN DEFAULT FALSE`;
+  await sql`ALTER TABLE food_entries ADD COLUMN IF NOT EXISTS texture VARCHAR(20) CHECK (texture IS NULL OR texture IN ('pureed', 'mashed', 'soft', 'chopped', 'whole', 'mixed'))`;
+  await sql`ALTER TABLE food_entries ADD COLUMN IF NOT EXISTS accepted VARCHAR(20) CHECK (accepted IS NULL OR accepted IN ('accepted', 'refused', 'partial', 'first_try'))`;
+  log.push('food_entries extended columns up to date');
 
   // Mood entries
   await sql`

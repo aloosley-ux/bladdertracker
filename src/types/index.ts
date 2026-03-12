@@ -3,9 +3,9 @@
  * - admin: Full access to all features, user management, system config
  * - parent: Manage children, all trackers, invite caregivers
  * - caregiver: View/edit entries for shared children
- * - schoolAdmin: View entries, read-only management
- * - therapist: View/edit entries and milestones for assigned children
- * - specialist: View-only access for clinical review
+ * - schoolAdmin: View/edit entries for shared children (caregiver-level diary access, school context label)
+ * - therapist: Reserved for future implementation — not yet available in registration or invite flows
+ * - specialist: Reserved for future implementation — not yet available in registration or invite flows
  */
 export type UserRole = 'admin' | 'parent' | 'caregiver' | 'schoolAdmin' | 'therapist' | 'specialist';
 

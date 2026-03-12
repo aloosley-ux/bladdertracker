@@ -37,6 +37,7 @@ async function handleGet(req: VercelRequest, res: VercelResponse, userId: string
     result = await sql`
       SELECT id, child_id AS "childId", date, time, event_type AS "eventType",
              duration_minutes AS "durationMinutes", quality, nighttime_event AS "nighttimeEvent",
+             bedtime, sleep_onset_minutes AS "sleepOnsetMinutes", night_activity AS "nightActivity",
              notes, created_by AS "createdBy", created_at AS "createdAt"
       FROM sleep_entries
       WHERE child_id = ANY(${childIds})
@@ -53,7 +54,8 @@ async function handleGet(req: VercelRequest, res: VercelResponse, userId: string
   } else {
     result = await sql`
       SELECT id, child_id AS "childId", date, time, meal_type AS "mealType",
-             description, portions, notes, created_by AS "createdBy", created_at AS "createdAt"
+             description, portions, is_trying AS "isTrying", texture, accepted,
+             notes, created_by AS "createdBy", created_at AS "createdAt"
       FROM food_entries
       WHERE child_id = ANY(${childIds})
       ORDER BY date DESC, time DESC
@@ -83,10 +85,11 @@ async function handlePost(req: VercelRequest, res: VercelResponse, userId: strin
   const type = trackerType as TrackerType;
 
   if (type === 'sleep') {
-    const { eventType = 'onset', durationMinutes = null, quality = null, nighttimeEvent = false } = body;
+    const { eventType = 'onset', durationMinutes = null, quality = null, nighttimeEvent = false,
+            bedtime = null, sleepOnsetMinutes = null, nightActivity = false } = body;
     await sql`
-      INSERT INTO sleep_entries (id, child_id, date, time, event_type, duration_minutes, quality, nighttime_event, notes, created_by)
-      VALUES (${id}, ${childId}, ${date}, ${time}, ${eventType}, ${durationMinutes}, ${quality}, ${nighttimeEvent}, ${notes}, ${userId})
+      INSERT INTO sleep_entries (id, child_id, date, time, event_type, duration_minutes, quality, nighttime_event, bedtime, sleep_onset_minutes, night_activity, notes, created_by)
+      VALUES (${id}, ${childId}, ${date}, ${time}, ${eventType}, ${durationMinutes}, ${quality}, ${nighttimeEvent}, ${bedtime}, ${sleepOnsetMinutes}, ${nightActivity}, ${notes}, ${userId})
     `;
     await sql`
       INSERT INTO audit_events (id, user_id, action, subject, detail)
@@ -103,10 +106,11 @@ async function handlePost(req: VercelRequest, res: VercelResponse, userId: strin
       VALUES (${generateId()}, ${userId}, 'Added toilet attempt', ${childId}, ${`Toilet attempt (${outcome}) at ${time} on ${date}`})
     `;
   } else {
-    const { mealType = 'snack', description = '', portions = null } = body;
+    const { mealType = 'snack', description = '', portions = null,
+            isTrying = false, texture = null, accepted = null } = body;
     await sql`
-      INSERT INTO food_entries (id, child_id, date, time, meal_type, description, portions, notes, created_by)
-      VALUES (${id}, ${childId}, ${date}, ${time}, ${mealType}, ${description}, ${portions}, ${notes}, ${userId})
+      INSERT INTO food_entries (id, child_id, date, time, meal_type, description, portions, is_trying, texture, accepted, notes, created_by)
+      VALUES (${id}, ${childId}, ${date}, ${time}, ${mealType}, ${description}, ${portions}, ${isTrying}, ${texture}, ${accepted}, ${notes}, ${userId})
     `;
     await sql`
       INSERT INTO audit_events (id, user_id, action, subject, detail)
@@ -137,11 +141,14 @@ async function handlePut(req: VercelRequest, res: VercelResponse, userId: string
     if (!existing.rows.length || !childIds.includes(existing.rows[0].child_id)) {
       res.status(403).json({ error: 'Access denied' }); return;
     }
-    const { eventType, durationMinutes = null, quality = null, nighttimeEvent = false } = body;
+    const { eventType, durationMinutes = null, quality = null, nighttimeEvent = false,
+            bedtime = null, sleepOnsetMinutes = null, nightActivity = false } = body;
     await sql`
       UPDATE sleep_entries
       SET date = ${date}, time = ${time}, event_type = ${eventType}, duration_minutes = ${durationMinutes},
-          quality = ${quality}, nighttime_event = ${nighttimeEvent}, notes = ${notes}
+          quality = ${quality}, nighttime_event = ${nighttimeEvent},
+          bedtime = ${bedtime}, sleep_onset_minutes = ${sleepOnsetMinutes}, night_activity = ${nightActivity},
+          notes = ${notes}
       WHERE id = ${id}
     `;
   } else if (type === 'toilet_attempt') {
@@ -161,11 +168,13 @@ async function handlePut(req: VercelRequest, res: VercelResponse, userId: string
     if (!existing.rows.length || !childIds.includes(existing.rows[0].child_id)) {
       res.status(403).json({ error: 'Access denied' }); return;
     }
-    const { mealType, description = '', portions = null } = body;
+    const { mealType, description = '', portions = null,
+            isTrying = false, texture = null, accepted = null } = body;
     await sql`
       UPDATE food_entries
       SET date = ${date}, time = ${time}, meal_type = ${mealType}, description = ${description},
-          portions = ${portions}, notes = ${notes}
+          portions = ${portions}, is_trying = ${isTrying}, texture = ${texture}, accepted = ${accepted},
+          notes = ${notes}
       WHERE id = ${id}
     `;
   }
