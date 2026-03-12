@@ -143,7 +143,7 @@ Before opening a new issue:
 1. Search existing issues to avoid duplicates or stale reopenings.
 2. Use the matching issue template for **bug reports**, **feature requests**, or **documentation improvements**.
 3. Include the user problem, why it matters, scope boundaries, and clear acceptance criteria where possible.
-4. Link the issue to any relevant backlog context in `docs/PROJECT_PLAN.md` if the work is part of a larger initiative.
+4. Link the issue to `docs/REPO_STATUS.md` when it maps to an existing open item, or add a new item there if the gap is newly confirmed.
 
 For security concerns, please follow [`SECURITY.md`](./SECURITY.md) instead of filing a public issue with sensitive details.
 

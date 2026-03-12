@@ -6,6 +6,6 @@ contact_links:
   - name: Contributor guide
     url: https://github.com/aloosley-ux/bladdertracker/blob/main/CONTRIBUTING.md
     about: Read setup, testing, documentation, and pull request expectations before contributing.
-  - name: Product roadmap and backlog
-    url: https://github.com/aloosley-ux/bladdertracker/blob/main/docs/PROJECT_PLAN.md
-    about: Check the roadmap narrative before opening large feature or maintenance issues.
+  - name: Repository status and backlog
+    url: https://github.com/aloosley-ux/bladdertracker/blob/main/docs/REPO_STATUS.md
+    about: Check the current remaining-work status before opening large feature or maintenance issues.
