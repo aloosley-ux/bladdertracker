@@ -43,6 +43,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const invite = inviteResult.rows[0];
       if (invite.email !== session.email) { res.status(403).json({ error: 'This invite is not for your account' }); return; }
 
+      // Map invite role to the enforced DB access type.
+      // Only 'parent' grants parent-level access; all other roles (caregiver, schoolAdmin)
+      // grant caregiver-level access. Admin invites are not supported and are rejected below.
+      const SUPPORTED_INVITE_ROLES = new Set(['parent', 'caregiver', 'schoolAdmin']);
+      if (!SUPPORTED_INVITE_ROLES.has(invite.role)) {
+        res.status(400).json({ error: 'Invite role is not supported for acceptance.' }); return;
+      }
       const accessType = invite.role === 'parent' ? 'parent' : 'caregiver';
       await sql`
         INSERT INTO child_access (id, child_id, user_id, access_type)
@@ -57,11 +64,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       await sql`
         INSERT INTO notifications (id, user_id, title, message)
-        VALUES (${generateId()}, ${invite.invited_by}, 'Invite accepted', ${`${userName} can now access ${invite.child_name}'s diary as a ${invite.role}.`})
+        VALUES (${generateId()}, ${invite.invited_by}, 'Invite accepted', ${`${userName} can now access ${invite.child_name}'s diary (${accessType} access).`})
       `;
       await sql`
         INSERT INTO notifications (id, user_id, title, message)
-        VALUES (${generateId()}, ${session.userId}, 'Diary shared', ${`You can now access ${invite.child_name}'s diary.`})
+        VALUES (${generateId()}, ${session.userId}, 'Diary shared', ${`You can now access ${invite.child_name}'s diary with ${accessType} access.`})
       `;
 
       await sql`
@@ -76,6 +83,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // Create invite
     const { childId, email, role } = req.body ?? {};
     if (!childId || !email || !role) { res.status(400).json({ error: 'childId, email, and role are required' }); return; }
+
+    const CREATABLE_INVITE_ROLES = new Set(['parent', 'caregiver', 'schoolAdmin']);
+    if (!CREATABLE_INVITE_ROLES.has(role)) {
+      res.status(400).json({ error: `Invalid invite role. Supported roles: ${[...CREATABLE_INVITE_ROLES].join(', ')}` }); return;
+    }
 
     const childResult = await sql`SELECT name FROM children WHERE id = ${childId}`;
     if (childResult.rows.length === 0) { res.status(404).json({ error: 'Child not found' }); return; }

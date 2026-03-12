@@ -16,11 +16,11 @@ Use `action` in body.
 
 | Action | Required fields | Notes |
 |---|---|---|
-| `register` | `name`, `email`, `password`, `role?` | Creates account + signs in. |
+| `register` | `name`, `email`, `password`, `role?` | Creates account + signs in. Valid roles for self-registration: `parent`, `caregiver`, `schoolAdmin`. |
 | `login` | `email`, `password` | Signs in existing account. |
 | `logout` | none | Clears session cookie. |
 | `reset` | `email`, `password` | Resets password for matching account. |
-| `promote` | `key` | Promotes signed-in user to `admin` when key is valid. |
+| `promote` | `key` | Promotes signed-in user to `admin` when key matches `ADMIN_ACCESS_KEY` env var. |
 
 ### `DELETE /api/auth`
 Deletes the signed-in account and related data. Returns `{ "ok": true }`.
@@ -65,11 +65,15 @@ Handles sleep, toilet attempts, and food entries.
 ### Sleep fields
 `eventType`, `durationMinutes?`, `quality?`, `nighttimeEvent?`, `bedtime?`, `sleepOnsetMinutes?`, `nightActivity?`, `notes?`
 
+All extended sleep fields (`bedtime`, `sleepOnsetMinutes`, `nightActivity`) are persisted in both cloud (DB) and local (localStorage) modes. The CSV export includes these fields.
+
 ### Toilet attempt fields
 `outcome`, `supervised`, `prompted`, `durationMinutes?`, `notes?`
 
 ### Food fields
 `mealType`, `description`, `portions?`, `isTrying?`, `texture?`, `accepted?`, `notes?`
+
+All extended food fields (`isTrying`, `texture`, `accepted`) are persisted in both cloud (DB) and local (localStorage) modes. The CSV export includes these fields.
 
 ---
 
@@ -83,8 +87,21 @@ Handles sleep, toilet attempts, and food entries.
 - `POST /api/modules` with `{ action: 'set_enabled_modules', childId, modules }` → `{ ok: true }`
 
 ### Reminder preferences
+Reminders are **module-wide** (not milestone-only). Any enabled module can have a reminder preference. Supported reminder modules: `milestones`, `therapy`, `routine`, `mood`.
+
 - `GET /api/modules?type=reminder_preferences[&childId=<id>]` → `{ reminders: ReminderPreference[] }`
 - `POST /api/modules` with `{ action: 'set_reminder_preferences', childId, reminders }` → `{ ok: true }`
+
+Each `ReminderPreference` object:
+```json
+{
+  "moduleId": "therapy",
+  "frequency": "daily | weekly",
+  "enabled": true,
+  "snoozedUntil": "ISO timestamp or null",
+  "nextReminderAt": "ISO timestamp or null"
+}
+```
 
 ### Entry CRUD
 - `GET /api/modules?type=<entryType>`
@@ -101,12 +118,22 @@ Milestones include `moduleId?`, `milestoneType?`, `targetDate?`, `dateAchieved?`
 | Method | Payload | Result |
 |---|---|---|
 | `GET` | — | `{ invites: CaregiverInvite[] }` |
-| `POST` | `{ childId, email, role }` | Creates invite |
-| `POST` | `{ action: 'accept', token }` | Accepts invite |
+| `POST` | `{ childId, email, role }` | Creates invite. Valid roles: `parent`, `caregiver`, `schoolAdmin`. |
+| `POST` | `{ action: 'accept', token }` | Accepts invite, grants diary access. |
+
+### Invite permission matrix
+
+| Invite role | DB `access_type` granted | Effective diary access |
+|---|---|---|
+| `parent` | `parent` | Read + write all entries; can manage child profile and send invites |
+| `caregiver` | `caregiver` | Read + write diary entries for the shared child |
+| `schoolAdmin` | `caregiver` | Read + write diary entries (same as caregiver; label is contextual only) |
 
 Notes:
-- Invite acceptance currently maps access to `parent` or `caregiver` at database access level.
-- UI currently offers invite roles based on current user role (see `src/pages/ProfilesPage.tsx`).
+- `admin` is not a valid invite role. Admin access is granted via the `promote` auth action, not via invites.
+- `therapist` and `specialist` roles are reserved for future implementation and are not valid invite roles.
+- Acceptance is rejected if the invite token is invalid, already used, or the acceptor's email does not match.
+- Notification messages accurately reflect the `access_type` granted, not just the invite role label.
 
 ---
 

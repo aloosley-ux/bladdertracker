@@ -308,7 +308,7 @@ export default function SettingsPage() {
               <Bell size={16} className="text-lavender-500" /> Reminder preferences
             </h3>
             <p className="mb-3 text-xs text-gray-500">
-              Opt in to daily or weekly milestone reminders. Reminders stay scoped to this child profile.
+              Opt in to daily or weekly module reminders. Reminders stay scoped to this child profile.
             </p>
             <div className="space-y-2">
               {reminderModules.map((moduleId) => {

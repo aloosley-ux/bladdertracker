@@ -120,10 +120,42 @@ Leaps is configured as a module and has a dedicated page (`/leaps`) with timelin
 ---
 
 ## Reminder preferences
-Reminder settings are scoped by user + child + module and currently support:
+Reminder preferences are **module-wide** — not milestone-only. Any enabled module can have a reminder configured. The reminder scope decision is: **module-wide**.
+
+Supported reminder modules (those that appear in reminder settings):
+- `milestones`
+- `therapy`
+- `routine`
+- `mood`
+
+Each preference is scoped per user + child + module and supports:
 - `frequency`: `daily | weekly`
 - `enabled`: boolean
-- `snoozedUntil?`: ISO timestamp
+- `snoozedUntil?`: ISO timestamp (reminder is suppressed until this time)
 - `nextReminderAt?`: ISO timestamp
 
-UI currently focuses on milestone reminders in Settings/Dashboard copy.
+The dashboard reminder banner covers all active module reminders, not just milestones. The Settings page calls these "module reminders".
+
+---
+
+## Cloud / Local parity matrix for extended tracker fields
+
+This table documents which fields exist in all persistence paths. ✅ = supported, ❌ = not supported.
+
+| Field | Type definition | localStorage | Cloud DB | API GET | API POST/PUT | CSV export | CSV import |
+|---|---|---|---|---|---|---|---|
+| **Sleep** | | | | | | | |
+| `eventType` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| `durationMinutes` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| `quality` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| `nighttimeEvent` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| `bedtime` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| `sleepOnsetMinutes` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| `nightActivity` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **Food** | | | | | | | |
+| `mealType` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| `description` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| `portions` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| `isTrying` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| `texture` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| `accepted` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |

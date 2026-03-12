@@ -6,7 +6,7 @@ import { generateId } from '../utils/storage';
 import type { Child, UserRole } from '../types';
 
 function getInviteRoles(userRole: UserRole | undefined): UserRole[] {
-  if (userRole === 'admin') return ['admin', 'parent', 'caregiver', 'schoolAdmin'];
+  if (userRole === 'admin') return ['parent', 'caregiver', 'schoolAdmin'];
   if (userRole === 'parent') return ['parent', 'caregiver', 'schoolAdmin'];
   if (userRole === 'schoolAdmin') return ['caregiver'];
   return [];

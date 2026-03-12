@@ -110,7 +110,7 @@ Follow these steps to add a new tracking module (e.g. sleep, meals, milestones):
 Use the following to validate changes:
 
 ```bash
-# Unit, route smoke, storage, and accessibility checks
+# Unit, route smoke, storage, invite role, reminder scope, and accessibility checks
 npm test
 
 # Type-check and bundle
@@ -125,6 +125,19 @@ npm run lint
 # Manual testing
 npm run dev
 ```
+
+### Test file map
+
+| File | What it covers |
+|---|---|
+| `src/App.test.tsx` | App shell smoke test |
+| `src/components/ErrorBoundary.test.tsx` | Error boundary rendering |
+| `src/pages/DashboardPage.test.tsx` | Dashboard render + axe accessibility |
+| `src/pages/LeapsPage.test.tsx` | Leap data and resource links |
+| `src/test/routes.test.tsx` | Route smoke tests + per-route axe checks |
+| `src/test/storage.test.ts` | localStorage CRUD for all data types |
+| `src/test/invites.test.ts` | Invite role mapping and access control logic |
+| `src/test/reminderScope.test.ts` | Reminder scope (module-wide, not milestone-only) |
 
 ## Documentation Expectations
 

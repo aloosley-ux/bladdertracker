@@ -237,8 +237,8 @@ export default function DashboardPage() {
               {dueReminders.length} reminder{dueReminders.length > 1 ? 's are' : ' is'} active for {selectedChild.name}.
             </p>
             <div className="mt-3 flex flex-wrap gap-2">
-              <Link to="/milestones" className="rounded-full bg-violet-700 px-4 py-2 text-xs font-semibold text-white">
-                Review milestones
+              <Link to="/settings" className="rounded-full bg-violet-700 px-4 py-2 text-xs font-semibold text-white">
+                Review reminders
               </Link>
               <button
                 type="button"
