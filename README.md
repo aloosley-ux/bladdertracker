@@ -210,6 +210,7 @@ This section highlights the experience that already exists in the product today.
 - **Gentle encouragement:** celebration banners recognise effort and progress without streak pressure or guilt-based nudges.
 - **Maintainable content:** shared product wording, celebration copy, role labels, and brand strings live in `src/content/presentation.ts`.
 - **Updateable assets:** app-wide asset references now flow through `src/assets/index.ts`, making future brand refreshes easier.
+- **Production-ready asset pack:** includes mark, wordmark, horizontal/stacked lockups, monochrome variant, and social preview metadata-friendly artwork.
 
 ## 🏗 Architecture
 
