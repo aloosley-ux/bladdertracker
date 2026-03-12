@@ -5,7 +5,7 @@ interface BrandIconProps {
   /**
    * Width in pixels. Height is derived from the SVG viewBox. Defaults to 140.
    *
-   * Replace /src/assets/brand-icon.svg to swap the brand image app-wide.
+   * Replace /src/assets/brand-mark.svg to swap the brand mark app-wide.
    */
   width?: number;
   className?: string;

@@ -1,0 +1,20 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="80" y1="40" x2="1080" y2="590" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F7F1FF"/>
+      <stop offset="1" stop-color="#E9F5FF"/>
+    </linearGradient>
+    <linearGradient id="drop" x1="240" y1="197" x2="240" y2="405" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#A16BFF"/>
+      <stop offset="1" stop-color="#5F19DA"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" rx="32" fill="url(#bg)"/>
+  <rect x="92" y="111" width="296" height="296" rx="74" fill="#FFFFFF" fill-opacity="0.5"/>
+  <rect x="94" y="113" width="292" height="292" rx="72" stroke="#DCC8FF" stroke-width="4"/>
+  <path d="M240 194C240 194 178 266.62 178 316.299C178 356.36 205.758 388.831 240 388.831C274.242 388.831 302 356.36 302 316.299C302 266.62 240 194 240 194Z" fill="url(#drop)"/>
+  <path d="M211.36 320.799C211.36 335.56 222.822 348.919 239.602 354.934" stroke="#F9F6FF" stroke-width="16" stroke-linecap="round"/>
+  <text x="450" y="272" fill="#1A1531" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="96" font-weight="800" letter-spacing="-0.03em">BladderTracker</text>
+  <text x="450" y="338" fill="#5A5F73" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="40" font-weight="500">Calm tracking for families and care teams</text>
+  <text x="450" y="396" fill="#6F7390" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="30" font-weight="500">Secure logs · Gentle reminders · Shared care insights</text>
+</svg>
