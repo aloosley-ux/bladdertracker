@@ -29,6 +29,7 @@ import type {
 } from '../types';
 import { EMPTY_IMPORT_SUMMARY } from '../types';
 import * as api from '../utils/api';
+import { logger } from '../utils/logger';
 import * as localStorage from '../utils/storage';
 import { AppContext } from './appContextDef';
 
@@ -152,7 +153,7 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
       if (resolvedChildId) {
         api.apiGetEnabledModules(resolvedChildId)
           .then(setEnabledModulesState)
-          .catch((err) => { console.error('Failed to load enabled modules:', err); setEnabledModulesState([]); });
+          .catch((err) => { logger.error('Failed to load enabled modules:', err); setEnabledModulesState([]); });
       } else {
         setEnabledModulesState([]);
       }
@@ -286,11 +287,11 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
 
     // Refresh state so the bell updates with new notifications
     if (didAddNotification) {
-      refreshLocalData(user, selectedChildId);
+      // Avoid calling setState synchronously inside effect - schedule for next tick to prevent cascading renders
+      Promise.resolve().then(() => refreshLocalData(user, selectedChildId));
     }
   // Run once when user + children are available; not on every render cycle
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.id, childrenList.length, cloud]);
+  }, [user, childrenList, cloud, refreshLocalData, selectedChildId]);
 
   const login = (u: User) => {
     setUserState(u);
@@ -355,7 +356,7 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
     if (cloud) {
       api.apiGetEnabledModules(childId)
         .then(setEnabledModulesState)
-        .catch((err) => { console.error('Failed to load enabled modules:', err); setEnabledModulesState([]); });
+        .catch((err) => { logger.error('Failed to load enabled modules:', err); setEnabledModulesState([]); });
     } else {
       setEnabledModulesState(localStorage.getEnabledModules(childId));
     }
@@ -914,7 +915,7 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
         await api.apiSetReminderPreferences(childId, reminders);
         await refreshCloudData(user);
       } catch (error) {
-        console.error('Failed to persist reminder preferences', error);
+        logger.error('Failed to persist reminder preferences', error);
       }
       return;
     }
