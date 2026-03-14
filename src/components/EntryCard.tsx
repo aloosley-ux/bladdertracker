@@ -10,7 +10,7 @@ interface EntryCardProps {
   onDelete?: () => void;
   children?: ReactNode;
   entryType?: string;
-  entryData?: Record<string, unknown>;
+  entryData?: unknown;
 }
 
 export default function EntryCard({ icon, title, subtitle, time, color = 'bg-lavender-50', onDelete, children, entryType, entryData }: EntryCardProps) {
@@ -52,7 +52,7 @@ export default function EntryCard({ icon, title, subtitle, time, color = 'bg-lav
         </button>
       )}
       {/* If entryData is provided but no children, show a small JSON summary when expanded */}
-      {expanded && !children && entryData && (
+      {expanded && !children && entryData !== undefined && entryData !== null && (
         <pre className="text-xs text-gray-600 mt-2 whitespace-pre-wrap">{JSON.stringify(entryData, null, 2)}</pre>
       )}
     </div>

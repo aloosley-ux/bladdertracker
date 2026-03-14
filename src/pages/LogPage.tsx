@@ -214,7 +214,7 @@ export default function LogPage() {
               color="bg-sky-light"
               onDelete={() => deleteDrink(d.id)}
               entryType="drinks"
-              entryData={d}
+              entryData={d as unknown}
             >
               <EntryDetail type="drinks" entry={d} />
             </EntryCard>
@@ -246,7 +246,7 @@ export default function LogPage() {
               color="bg-peach"
               onDelete={() => deleteUrineEntry(e.id)}
               entryType="urine"
-              entryData={e}
+              entryData={e as unknown}
             >
               <EntryDetail type="urine" entry={e} />
             </EntryCard>
@@ -269,7 +269,7 @@ export default function LogPage() {
               color="bg-mint"
               onDelete={() => deleteBowelEntry(e.id)}
               entryType="bowel"
-              entryData={e}
+              entryData={e as unknown}
             >
               <EntryDetail type="bowel" entry={e} />
             </EntryCard>
@@ -298,7 +298,7 @@ export default function LogPage() {
               color="bg-[#eee8ff]"
               onDelete={() => deleteSleepEntry(e.id)}
               entryType="sleep"
-              entryData={e}
+              entryData={e as unknown}
             >
               <EntryDetail type="sleep" entry={e} />
             </EntryCard>
@@ -328,7 +328,7 @@ export default function LogPage() {
               color="bg-[#f3eeff]"
               onDelete={() => deleteToiletAttemptEntry(e.id)}
               entryType="toilet"
-              entryData={e}
+              entryData={e as unknown}
             >
               <EntryDetail type="toilet" entry={e} />
             </EntryCard>
@@ -353,7 +353,7 @@ export default function LogPage() {
               color="bg-[#fff5eb]"
               onDelete={() => deleteFoodEntry(e.id)}
               entryType="food"
-              entryData={e}
+              entryData={e as unknown}
             >
               <EntryDetail type="food" entry={e} />
             </EntryCard>
@@ -378,7 +378,7 @@ export default function LogPage() {
               color="bg-[#fce4ec]"
               onDelete={() => deleteMoodEntry(e.id)}
               entryType="mood"
-              entryData={e}
+              entryData={e as unknown}
             >
               <EntryDetail type="mood" entry={e} />
             </EntryCard>
@@ -401,7 +401,7 @@ export default function LogPage() {
               color="bg-[#e0f2f1]"
               onDelete={() => deleteSensoryEntry(e.id)}
               entryType="sensory"
-              entryData={e}
+              entryData={e as unknown}
             >
               <EntryDetail type="sensory" entry={e} />
             </EntryCard>
@@ -424,7 +424,7 @@ export default function LogPage() {
               color="bg-[#ffebee]"
               onDelete={() => deleteMedicationEntry(e.id)}
               entryType="medication"
-              entryData={e}
+              entryData={e as unknown}
             >
               <EntryDetail type="medication" entry={e} />
             </EntryCard>
@@ -453,7 +453,7 @@ export default function LogPage() {
               color="bg-[#e0f7fa]"
               onDelete={() => deleteTherapyEntry(e.id)}
               entryType="therapy"
-              entryData={e}
+              entryData={e as unknown}
             >
               <EntryDetail type="therapy" entry={e} />
             </EntryCard>
@@ -478,7 +478,7 @@ export default function LogPage() {
               color="bg-[#f0f4c3]"
               onDelete={() => deleteRoutineEntry(e.id)}
               entryType="routine"
-              entryData={e}
+              entryData={e as unknown}
             >
               <EntryDetail type="routine" entry={e} />
             </EntryCard>

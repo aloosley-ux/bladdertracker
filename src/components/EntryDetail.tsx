@@ -3,7 +3,7 @@ import { useApp } from '../context/useApp';
 import * as api from '../utils/api';
 import type { AuditEvent } from '../types';
 
-export default function EntryDetail({ type, entry }: { type: string; entry: { id?: string; [k: string]: unknown } }) {
+export default function EntryDetail({ type, entry }: { type: string; entry: unknown }) {
   const app = useApp();
   const [editMode, setEditMode] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -16,14 +16,17 @@ export default function EntryDetail({ type, entry }: { type: string; entry: { id
     let mounted = true;
     (async () => {
       try {
-        const events = await api.apiGetAuditEvents(entry.id);
-        if (mounted) setAudit(events);
+        const e = entry as { id?: unknown };
+        if (e?.id && typeof e.id === 'string') {
+          const events = await api.apiGetAuditEvents(e.id);
+          if (mounted) setAudit(events);
+        }
       } catch {
         // ignore
       }
     })();
     return () => { mounted = false; };
-  }, [entry.id]);
+  }, [entry]);
 
   const handleSave = async () => {
     setLoading(true);
@@ -46,8 +49,11 @@ export default function EntryDetail({ type, entry }: { type: string; entry: { id
       }
       setEditMode(false);
       // refresh audits
-      const events = await api.apiGetAuditEvents(entry.id);
-      setAudit(events);
+      const e = entry as { id?: unknown };
+      if (e?.id && typeof e.id === 'string') {
+        const events = await api.apiGetAuditEvents(e.id);
+        setAudit(events);
+      }
     } catch (err) {
       console.error('Save failed', err);
       alert('Failed to save changes — check console');

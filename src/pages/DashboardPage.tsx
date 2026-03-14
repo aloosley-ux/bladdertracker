@@ -359,7 +359,7 @@ export default function DashboardPage() {
               color="bg-sky-light"
               onDelete={() => deleteDrink(drink.id)}
               entryType="drinks"
-              entryData={drink}
+              entryData={drink as unknown}
             >
               <EntryDetail type="drinks" entry={drink} />
             </EntryCard>
@@ -382,7 +382,7 @@ export default function DashboardPage() {
                 color="bg-peach"
                 onDelete={() => deleteUrineEntry(entry.id)}
                 entryType="urine"
-                entryData={entry}
+                entryData={entry as unknown}
               >
                 <EntryDetail type="urine" entry={entry} />
               </EntryCard>
@@ -399,7 +399,7 @@ export default function DashboardPage() {
               color="bg-mint"
               onDelete={() => deleteBowelEntry(entry.id)}
               entryType="bowel"
-              entryData={entry}
+              entryData={entry as unknown}
             >
               <EntryDetail type="bowel" entry={entry} />
             </EntryCard>
@@ -419,7 +419,7 @@ export default function DashboardPage() {
               color="bg-[#eee8ff]"
               onDelete={() => deleteSleepEntry(entry.id)}
               entryType="sleep"
-              entryData={entry}
+              entryData={entry as unknown}
             >
               <EntryDetail type="sleep" entry={entry} />
             </EntryCard>
@@ -440,7 +440,7 @@ export default function DashboardPage() {
               color="bg-[#f3eeff]"
               onDelete={() => deleteToiletAttemptEntry(entry.id)}
               entryType="toilet"
-              entryData={entry}
+              entryData={entry as unknown}
             >
               <EntryDetail type="toilet" entry={entry} />
             </EntryCard>
@@ -459,7 +459,7 @@ export default function DashboardPage() {
               color="bg-[#fff5eb]"
               onDelete={() => deleteFoodEntry(entry.id)}
               entryType="food"
-              entryData={entry}
+              entryData={entry as unknown}
             >
               <EntryDetail type="food" entry={entry} />
             </EntryCard>
@@ -475,7 +475,7 @@ export default function DashboardPage() {
               color="bg-[#fce4ec]"
               onDelete={() => deleteMoodEntry(entry.id)}
               entryType="mood"
-              entryData={entry}
+              entryData={entry as unknown}
             >
               <EntryDetail type="mood" entry={entry} />
             </EntryCard>
@@ -491,7 +491,7 @@ export default function DashboardPage() {
               color="bg-[#e0f2f1]"
               onDelete={() => deleteSensoryEntry(entry.id)}
               entryType="sensory"
-              entryData={entry}
+              entryData={entry as unknown}
             >
               <EntryDetail type="sensory" entry={entry} />
             </EntryCard>
@@ -507,7 +507,7 @@ export default function DashboardPage() {
               color="bg-[#ffebee]"
               onDelete={() => deleteMedicationEntry(entry.id)}
               entryType="medication"
-              entryData={entry}
+              entryData={entry as unknown}
             >
               <EntryDetail type="medication" entry={entry} />
             </EntryCard>
@@ -523,7 +523,7 @@ export default function DashboardPage() {
               color="bg-[#e0f7fa]"
               onDelete={() => deleteTherapyEntry(entry.id)}
               entryType="therapy"
-              entryData={entry}
+              entryData={entry as unknown}
             >
               <EntryDetail type="therapy" entry={entry} />
             </EntryCard>
@@ -539,7 +539,7 @@ export default function DashboardPage() {
               color="bg-[#f0f4c3]"
               onDelete={() => deleteRoutineEntry(entry.id)}
               entryType="routine"
-              entryData={entry}
+              entryData={entry as unknown}
             >
               <EntryDetail type="routine" entry={entry} />
             </EntryCard>
