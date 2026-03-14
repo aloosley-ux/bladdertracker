@@ -1,6 +1,6 @@
 # BladderTracker — Automated Review Issue Drafts
 
-These are draft issues created from an automated scan (console logs, ESLint suppressions, missing CI checks, and documentation). Convert these into GitHub Issues, adjust labels, and assign as needed.
+These are draft issues created from an automated scan (console logs, ESLint suppressions, missing CI checks, and documentation). Individual draft files are available in `docs/github-issues/` — convert those files into GitHub Issues using `gh issue create --body-file` or the repository's documented process, adjust labels, and assign as needed.
 
 ---
 
