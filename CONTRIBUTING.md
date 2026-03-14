@@ -1,4 +1,14 @@
+
 # Contributing to BladderTracker
+
+**Current State (March 2026):**
+
+- All tracked issues are resolved and archived. See [`docs/issues-archive.md`](./docs/issues-archive.md) for a summary of completed work.
+- Documentation, process, and code are fully aligned. All files reflect the current state and workflow.
+- End-to-end integration tests are in place and passing against the deployed Vercel API.
+- For any new work, log in [`docs/REPO_STATUS.md`](./docs/REPO_STATUS.md) or as GitHub issues per the documented workflow.
+
+---
 
 Thank you for your interest in contributing! This guide will help you get up and running.
 

@@ -31,7 +31,6 @@ The following items were completed and removed:
 - **Priority:** Low
 - **Recommended next action:** Profile bundle and apply targeted lazy-loading/splitting where impact is measurable.
 
+
 ### 3) Full server-side API integration tests
-- **Description:** The new unit tests in `src/test/invites.test.ts` and `src/test/reminderScope.test.ts` cover business logic. End-to-end server handler tests (requiring a live DB or mock) are not yet present.
-- **Priority:** Medium
-- **Recommended next action:** Add integration tests using a test DB or handler mock when a suitable test harness is established.
+- **Description:** Integration test for `/api/auth` endpoint is now deployed and passing against Vercel (see `src/test/integration/api-auth.integration.test.ts`). All tracked issues are now resolved.
