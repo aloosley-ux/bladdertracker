@@ -45,7 +45,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     await sql`
       INSERT INTO audit_events (id, user_id, action, subject, detail)
-      VALUES (${generateId()}, ${session.userId}, 'Added bowel entry', ${childId}, ${`Bowel event logged at ${time}.`})
+      VALUES (${generateId()}, ${session.userId}, 'Added bowel entry', ${id}, ${`Bowel event logged at ${time}.`})
     `;
 
     res.status(201).json({ id });
@@ -56,11 +56,32 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const { id, date, time, location, amount, bristolType, laxativesGiven, notes } = req.body ?? {};
     if (!id) { res.status(400).json({ error: 'id required' }); return; }
 
+    const existing = await sql`SELECT date, time, location, amount, bristol_type, laxatives_given, notes FROM bowel_entries WHERE id = ${id}`;
+    if (!existing.rows.length) { res.status(404).json({ error: 'Not found' }); return; }
+    const prev = existing.rows[0];
+
     await sql`
       UPDATE bowel_entries SET date=${date}, time=${time}, location=${location}, amount=${amount},
         bristol_type=${bristolType}, laxatives_given=${Boolean(laxativesGiven)}, notes=${notes || ''}
       WHERE id = ${id}
     `;
+
+    const changes: string[] = [];
+    if (prev.date !== date) changes.push(`date: ${prev.date} -> ${date}`);
+    if (prev.time !== time) changes.push(`time: ${prev.time} -> ${time}`);
+    if (prev.location !== location) changes.push(`location: ${prev.location} -> ${location}`);
+    if (prev.amount !== amount) changes.push(`amount: ${prev.amount} -> ${amount}`);
+    if (prev.bristol_type !== bristolType) changes.push(`bristolType: ${prev.bristol_type} -> ${bristolType}`);
+    if (prev.laxatives_given !== Boolean(laxativesGiven)) changes.push(`laxativesGiven: ${prev.laxatives_given} -> ${Boolean(laxativesGiven)}`);
+    if ((prev.notes || '') !== (notes || '')) changes.push(`notes: ${prev.notes || ''} -> ${notes || ''}`);
+
+    if (changes.length > 0) {
+      await sql`
+        INSERT INTO audit_events (id, user_id, action, subject, detail)
+        VALUES (${generateId()}, ${session.userId}, 'Updated bowel entry', ${id}, ${changes.join('; ')})
+      `;
+    }
+
     res.status(200).json({ ok: true });
     return;
   }

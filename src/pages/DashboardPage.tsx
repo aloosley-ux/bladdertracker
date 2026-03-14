@@ -4,6 +4,7 @@ import { Apple, BarChart3, BookOpen, CloudRain, ClipboardList, Droplets, Moon, P
 import { Link } from 'react-router-dom';
 import { useApp } from '../context/useApp';
 import EntryCard from '../components/EntryCard';
+import EntryDetail from '../components/EntryDetail';
 import CelebrationBanner from '../components/CelebrationBanner';
 import { getDashboardCelebration, getModuleLabel, TOILET_OUTCOME_LABELS, URINE_COPY } from '../content/presentation';
 import { DEFAULT_MODULES } from '../types';
@@ -357,7 +358,11 @@ export default function DashboardPage() {
               time={drink.time}
               color="bg-sky-light"
               onDelete={() => deleteDrink(drink.id)}
-            />
+              entryType="drinks"
+              entryData={drink}
+            >
+              <EntryDetail type="drinks" entry={drink} />
+            </EntryCard>
           ))}
 
           {on('urine') && dayUrine.map((entry) => {
@@ -376,7 +381,11 @@ export default function DashboardPage() {
                 time={entry.time}
                 color="bg-peach"
                 onDelete={() => deleteUrineEntry(entry.id)}
-              />
+                entryType="urine"
+                entryData={entry}
+              >
+                <EntryDetail type="urine" entry={entry} />
+              </EntryCard>
             );
           })}
 
@@ -389,7 +398,11 @@ export default function DashboardPage() {
               time={entry.time}
               color="bg-mint"
               onDelete={() => deleteBowelEntry(entry.id)}
-            />
+              entryType="bowel"
+              entryData={entry}
+            >
+              <EntryDetail type="bowel" entry={entry} />
+            </EntryCard>
           ))}
 
           {on('sleep') && daySleep.map((entry) => (
@@ -405,7 +418,11 @@ export default function DashboardPage() {
               time={entry.time}
               color="bg-[#eee8ff]"
               onDelete={() => deleteSleepEntry(entry.id)}
-            />
+              entryType="sleep"
+              entryData={entry}
+            >
+              <EntryDetail type="sleep" entry={entry} />
+            </EntryCard>
           ))}
 
           {on('toilet') && dayToilet.map((entry) => (
@@ -422,7 +439,11 @@ export default function DashboardPage() {
               time={entry.time}
               color="bg-[#f3eeff]"
               onDelete={() => deleteToiletAttemptEntry(entry.id)}
-            />
+              entryType="toilet"
+              entryData={entry}
+            >
+              <EntryDetail type="toilet" entry={entry} />
+            </EntryCard>
           ))}
 
           {on('food') && dayFood.map((entry) => (
@@ -437,7 +458,11 @@ export default function DashboardPage() {
               time={entry.time}
               color="bg-[#fff5eb]"
               onDelete={() => deleteFoodEntry(entry.id)}
-            />
+              entryType="food"
+              entryData={entry}
+            >
+              <EntryDetail type="food" entry={entry} />
+            </EntryCard>
           ))}
 
           {on('mood') && dayMood.map((entry) => (
@@ -449,7 +474,11 @@ export default function DashboardPage() {
               time={entry.time}
               color="bg-[#fce4ec]"
               onDelete={() => deleteMoodEntry(entry.id)}
-            />
+              entryType="mood"
+              entryData={entry}
+            >
+              <EntryDetail type="mood" entry={entry} />
+            </EntryCard>
           ))}
 
           {on('sensory') && daySensory.map((entry) => (
@@ -461,7 +490,11 @@ export default function DashboardPage() {
               time={entry.time}
               color="bg-[#e0f2f1]"
               onDelete={() => deleteSensoryEntry(entry.id)}
-            />
+              entryType="sensory"
+              entryData={entry}
+            >
+              <EntryDetail type="sensory" entry={entry} />
+            </EntryCard>
           ))}
 
           {on('medication') && dayMedication.map((entry) => (
@@ -473,7 +506,11 @@ export default function DashboardPage() {
               time={entry.time}
               color="bg-[#ffebee]"
               onDelete={() => deleteMedicationEntry(entry.id)}
-            />
+              entryType="medication"
+              entryData={entry}
+            >
+              <EntryDetail type="medication" entry={entry} />
+            </EntryCard>
           ))}
 
           {on('therapy') && dayTherapy.map((entry) => (
@@ -485,7 +522,11 @@ export default function DashboardPage() {
               time={entry.time}
               color="bg-[#e0f7fa]"
               onDelete={() => deleteTherapyEntry(entry.id)}
-            />
+              entryType="therapy"
+              entryData={entry}
+            >
+              <EntryDetail type="therapy" entry={entry} />
+            </EntryCard>
           ))}
 
           {on('routine') && dayRoutine.map((entry) => (
@@ -497,7 +538,11 @@ export default function DashboardPage() {
               time={entry.time}
               color="bg-[#f0f4c3]"
               onDelete={() => deleteRoutineEntry(entry.id)}
-            />
+              entryType="routine"
+              entryData={entry}
+            >
+              <EntryDetail type="routine" entry={entry} />
+            </EntryCard>
           ))}
         </div>
       </div>

@@ -19,6 +19,7 @@ import { useApp } from '../context/useApp';
 import EmptyState from '../components/EmptyState';
 import CalendarStrip from '../components/CalendarStrip';
 import EntryCard from '../components/EntryCard';
+import EntryDetail from '../components/EntryDetail';
 import { getModuleLabel, TOILET_OUTCOME_LABELS, URINE_COPY } from '../content/presentation';
 import { DEFAULT_MODULES } from '../types';
 
@@ -212,7 +213,11 @@ export default function LogPage() {
               time={d.time}
               color="bg-sky-light"
               onDelete={() => deleteDrink(d.id)}
-            />
+              entryType="drinks"
+              entryData={d}
+            >
+              <EntryDetail type="drinks" entry={d} />
+            </EntryCard>
           ),
         });
       }
@@ -240,7 +245,11 @@ export default function LogPage() {
               time={e.time}
               color="bg-peach"
               onDelete={() => deleteUrineEntry(e.id)}
-            />
+              entryType="urine"
+              entryData={e}
+            >
+              <EntryDetail type="urine" entry={e} />
+            </EntryCard>
           ),
         });
       }
@@ -259,7 +268,11 @@ export default function LogPage() {
               time={e.time}
               color="bg-mint"
               onDelete={() => deleteBowelEntry(e.id)}
-            />
+              entryType="bowel"
+              entryData={e}
+            >
+              <EntryDetail type="bowel" entry={e} />
+            </EntryCard>
           ),
         });
       }
@@ -284,7 +297,11 @@ export default function LogPage() {
               time={e.time}
               color="bg-[#eee8ff]"
               onDelete={() => deleteSleepEntry(e.id)}
-            />
+              entryType="sleep"
+              entryData={e}
+            >
+              <EntryDetail type="sleep" entry={e} />
+            </EntryCard>
           ),
         });
       }
@@ -310,7 +327,11 @@ export default function LogPage() {
               time={e.time}
               color="bg-[#f3eeff]"
               onDelete={() => deleteToiletAttemptEntry(e.id)}
-            />
+              entryType="toilet"
+              entryData={e}
+            >
+              <EntryDetail type="toilet" entry={e} />
+            </EntryCard>
           ),
         });
       }
@@ -331,7 +352,11 @@ export default function LogPage() {
               time={e.time}
               color="bg-[#fff5eb]"
               onDelete={() => deleteFoodEntry(e.id)}
-            />
+              entryType="food"
+              entryData={e}
+            >
+              <EntryDetail type="food" entry={e} />
+            </EntryCard>
           ),
         });
       }
@@ -352,7 +377,11 @@ export default function LogPage() {
               time={e.time}
               color="bg-[#fce4ec]"
               onDelete={() => deleteMoodEntry(e.id)}
-            />
+              entryType="mood"
+              entryData={e}
+            >
+              <EntryDetail type="mood" entry={e} />
+            </EntryCard>
           ),
         });
       }
@@ -371,7 +400,11 @@ export default function LogPage() {
               time={e.time}
               color="bg-[#e0f2f1]"
               onDelete={() => deleteSensoryEntry(e.id)}
-            />
+              entryType="sensory"
+              entryData={e}
+            >
+              <EntryDetail type="sensory" entry={e} />
+            </EntryCard>
           ),
         });
       }
@@ -390,7 +423,11 @@ export default function LogPage() {
               time={e.time}
               color="bg-[#ffebee]"
               onDelete={() => deleteMedicationEntry(e.id)}
-            />
+              entryType="medication"
+              entryData={e}
+            >
+              <EntryDetail type="medication" entry={e} />
+            </EntryCard>
           ),
         });
       }
@@ -415,7 +452,11 @@ export default function LogPage() {
               time={e.time}
               color="bg-[#e0f7fa]"
               onDelete={() => deleteTherapyEntry(e.id)}
-            />
+              entryType="therapy"
+              entryData={e}
+            >
+              <EntryDetail type="therapy" entry={e} />
+            </EntryCard>
           ),
         });
       }
@@ -436,7 +477,11 @@ export default function LogPage() {
               time={e.time}
               color="bg-[#f0f4c3]"
               onDelete={() => deleteRoutineEntry(e.id)}
-            />
+              entryType="routine"
+              entryData={e}
+            >
+              <EntryDetail type="routine" entry={e} />
+            </EntryCard>
           ),
         });
       }

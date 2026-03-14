@@ -186,6 +186,13 @@ This section highlights the experience that already exists in the product today.
 
 ### Pages
 
+## 🔍 Expand Entries — View & Edit
+
+- **What it does:** Entry cards in the Diary and Today views are now expandable to show the full entry data and an audit history. Entries are read-only by default; an explicit Edit control enables inline editing of the entry data and a Save action persists changes to the backend.
+- **Audit trail:** All create and update operations now write structured audit events to the server. Audit events can be queried per-entry via the API: [api/audit.ts](api/audit.ts#L1) (`GET /api/audit?subject=<entryId>`).
+- **Where it appears:** Diary (`/log`) and Today (`/`) pages include the expanded entry detail UI. Calendar integration is planned as a follow-up.
+
+
 | Page | Route | Nav Icon | Description |
 |------|-------|----------|-------------|
 | Today | `/` | 📊 Today | Today's overview, reminders, supportive celebrations, and thumb-friendly quick actions |

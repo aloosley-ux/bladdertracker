@@ -47,7 +47,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const detail = volumeMl ? `Urine event logged at ${time} — ${volumeMl}ml.` : `Urine event logged at ${time}.`;
     await sql`
       INSERT INTO audit_events (id, user_id, action, subject, detail)
-      VALUES (${generateId()}, ${session.userId}, 'Added urine entry', ${childId}, ${detail})
+      VALUES (${generateId()}, ${session.userId}, 'Added urine entry', ${id}, ${detail})
     `;
 
     res.status(201).json({ id });
@@ -58,12 +58,34 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const { id, date, time, wet, pass, volumeMl, urgency, leakageAmount, notes } = req.body ?? {};
     if (!id) { res.status(400).json({ error: 'id required' }); return; }
 
+    const existing = await sql`SELECT date, time, wet, pass, volume_ml, urgency, leakage_amount, notes FROM urine_entries WHERE id = ${id}`;
+    if (!existing.rows.length) { res.status(404).json({ error: 'Not found' }); return; }
+    const prev = existing.rows[0];
+
     await sql`
       UPDATE urine_entries SET date=${date}, time=${time}, wet=${Boolean(wet)}, pass=${Boolean(pass)},
         volume_ml=${volumeMl ?? null}, urgency=${urgency ?? null}, leakage_amount=${leakageAmount ?? null},
         notes=${notes || ''}
       WHERE id = ${id}
     `;
+
+    const changes: string[] = [];
+    if (prev.date !== date) changes.push(`date: ${prev.date} -> ${date}`);
+    if (prev.time !== time) changes.push(`time: ${prev.time} -> ${time}`);
+    if (prev.wet !== Boolean(wet)) changes.push(`wet: ${prev.wet} -> ${Boolean(wet)}`);
+    if (prev.pass !== Boolean(pass)) changes.push(`pass: ${prev.pass} -> ${Boolean(pass)}`);
+    if ((prev.volume_ml ?? null) !== (volumeMl ?? null)) changes.push(`volumeMl: ${prev.volume_ml} -> ${volumeMl}`);
+    if ((prev.urgency ?? null) !== (urgency ?? null)) changes.push(`urgency: ${prev.urgency} -> ${urgency}`);
+    if ((prev.leakage_amount ?? null) !== (leakageAmount ?? null)) changes.push(`leakageAmount: ${prev.leakage_amount} -> ${leakageAmount}`);
+    if ((prev.notes || '') !== (notes || '')) changes.push(`notes: ${prev.notes || ''} -> ${notes || ''}`);
+
+    if (changes.length > 0) {
+      await sql`
+        INSERT INTO audit_events (id, user_id, action, subject, detail)
+        VALUES (${generateId()}, ${session.userId}, 'Updated urine entry', ${id}, ${changes.join('; ')})
+      `;
+    }
+
     res.status(200).json({ ok: true });
     return;
   }

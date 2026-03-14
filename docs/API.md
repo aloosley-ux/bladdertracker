@@ -143,7 +143,7 @@ Notes:
 - `PUT` `{ id }` marks one notification as read.
 
 ## Audit — `/api/audit`
-- `GET` latest audit events for signed-in user.
+- `GET` latest audit events for signed-in user. Optional query param `subject=<entryId>` returns events scoped to a specific entry (useful for per-entry audit history in the UI).
 
 ## Data import/export — `/api/data`
 - `GET ?childId=<id>` returns CSV export.
