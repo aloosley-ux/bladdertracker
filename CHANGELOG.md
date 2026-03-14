@@ -18,6 +18,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - PR template with documentation verification checklist
 
 ### Changed
+- Combined "Today's snapshot" and "Quick updates" into a single `TodayCombined` card on the Dashboard to streamline the Today view (see `src/components/TodayCombined.tsx` and `src/pages/DashboardPage.tsx`).
+
+### Changed
 - Documentation correction pass: refreshed API/module/onboarding docs, replaced sprawling project backlog with maintained status index, and added `docs/REPO_STATUS.md` + issue-ready drafts
 - AddEntryPage reduced from ~1350 lines to ~170 lines (forms extracted to individual components)
 - SettingsPage reduced from ~830 lines to ~740 lines (ModuleSettings extracted)
