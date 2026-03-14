@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased]
 
 ### Added
+ - End-to-end integration test for `/api/auth` endpoint against deployed Vercel API (see `src/test/integration/api-auth.integration.test.ts`).
+ - All tracked issues resolved and archived (see `docs/issues-archive.md`).
+ - Documentation and process alignment: README, REPO_STATUS.md, PROJECT_PLAN.md, and all issue/process files updated for accuracy and single-source-of-truth workflow.
 - Architecture decomposition: extracted 11 form components from AddEntryPage into `src/components/forms/`
 - Architecture decomposition: extracted ModuleSettings from SettingsPage into `src/components/settings/`
 - Architecture decomposition: extracted 10 leap components from LeapsPage into `src/components/leaps/`

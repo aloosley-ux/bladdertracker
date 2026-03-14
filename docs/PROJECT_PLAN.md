@@ -9,18 +9,7 @@ The previous long-form epic/task log had become mostly historical and was hard t
 
 ## Current status snapshot (March 2026)
 
-### Confirmed complete foundations
-- CI pipeline exists and runs lint/test/build/API type-check.
-- Core route/accessibility/storage tests are present.
-- AddEntry, Leaps, and Settings have been decomposed into component folders.
-- PWA manifest/service worker integration is present.
-- Admin promotion key handling has been moved to env-driven flows.
-- Core documentation set exists (`README`, `API`, `MODULES`, `ARCHITECTURE`, onboarding, privacy/security docs).
-
-### Active priorities
-1. Keep role and invite documentation aligned with actual enforced permissions.
-2. Expand automated coverage for server handlers and role-sensitive behaviours.
-3. Resolve known cloud/local parity gaps and other validated product gaps listed in `docs/REPO_STATUS.md`.
+All tracked issues and priorities are now resolved. Integration tests run against the deployed Vercel API. For any new work, see `docs/REPO_STATUS.md` as the single source of truth.
 
 ## Planning policy going forward
 

@@ -32,7 +32,7 @@ Built for tired, busy, real-world use: one-handed on a phone, during routines, s
 | Quality checks | CI runs tests, linting, build, and API type-checks on pull requests |
 | Deployment modes | Local/offline mode by default, optional cloud mode via Vercel + Neon |
 | Accessibility | High-contrast theme, dyslexia-friendly font, keyboard support, accessibility tests |
-| Current focus | Role/access consistency, API test depth, and docs/backlog trustworthiness (see `docs/REPO_STATUS.md`) |
+| Current focus | All tracked issues resolved (March 2026). Integration tests run against deployed Vercel API. See `docs/REPO_STATUS.md` for any new or future work. |
 
 ## 🔗 Quick links
 
@@ -42,7 +42,7 @@ Built for tired, busy, real-world use: one-handed on a phone, during routines, s
 - **Contribute:** [CONTRIBUTING.md](./CONTRIBUTING.md) and [pull request template](./.github/PULL_REQUEST_TEMPLATE.md)
 - **Report work clearly:** use the GitHub issue templates for bugs, feature requests, and documentation improvements
 - **Report vulnerabilities privately:** see [SECURITY.md](./SECURITY.md)
-- **Review repo status & remaining work:** [docs/REPO_STATUS.md](./docs/REPO_STATUS.md)
+- **Review repo status & remaining work:** [docs/REPO_STATUS.md](./docs/REPO_STATUS.md) — all tracked issues resolved as of March 2026
 - **What changed:** [CHANGELOG.md](./CHANGELOG.md)
 
 ---
