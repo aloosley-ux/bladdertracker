@@ -44,9 +44,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       if (invite.email !== session.email) { res.status(403).json({ error: 'This invite is not for your account' }); return; }
 
       // Map invite role to the enforced DB access type.
-      // Only 'parent' grants parent-level access; all other roles (caregiver, schoolAdmin)
-      // grant caregiver-level access. Admin invites are not supported and are rejected below.
-      const SUPPORTED_INVITE_ROLES = new Set(['parent', 'caregiver', 'schoolAdmin']);
+      // Only 'parent' grants parent-level access; all other roles (caregiver, schoolAdmin,
+      // therapist, specialist) grant caregiver-level access.
+      // Admin invites are not supported and are rejected below.
+      const SUPPORTED_INVITE_ROLES = new Set(['parent', 'caregiver', 'schoolAdmin', 'therapist', 'specialist']);
       if (!SUPPORTED_INVITE_ROLES.has(invite.role)) {
         res.status(400).json({ error: 'Invite role is not supported for acceptance.' }); return;
       }
@@ -84,7 +85,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const { childId, email, role } = req.body ?? {};
     if (!childId || !email || !role) { res.status(400).json({ error: 'childId, email, and role are required' }); return; }
 
-    const CREATABLE_INVITE_ROLES = new Set(['parent', 'caregiver', 'schoolAdmin']);
+    const CREATABLE_INVITE_ROLES = new Set(['parent', 'caregiver', 'schoolAdmin', 'therapist', 'specialist']);
     if (!CREATABLE_INVITE_ROLES.has(role)) {
       res.status(400).json({ error: `Invalid invite role. Supported roles: ${[...CREATABLE_INVITE_ROLES].join(', ')}` }); return;
     }

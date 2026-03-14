@@ -118,7 +118,7 @@ Milestones include `moduleId?`, `milestoneType?`, `targetDate?`, `dateAchieved?`
 | Method | Payload | Result |
 |---|---|---|
 | `GET` | — | `{ invites: CaregiverInvite[] }` |
-| `POST` | `{ childId, email, role }` | Creates invite. Valid roles: `parent`, `caregiver`, `schoolAdmin`. |
+| `POST` | `{ childId, email, role }` | Creates invite. Valid roles: `parent`, `caregiver`, `schoolAdmin`, `therapist`, `specialist`. |
 | `POST` | `{ action: 'accept', token }` | Accepts invite, grants diary access. |
 
 ### Invite permission matrix
@@ -128,10 +128,11 @@ Milestones include `moduleId?`, `milestoneType?`, `targetDate?`, `dateAchieved?`
 | `parent` | `parent` | Read + write all entries; can manage child profile and send invites |
 | `caregiver` | `caregiver` | Read + write diary entries for the shared child |
 | `schoolAdmin` | `caregiver` | Read + write diary entries (same as caregiver; label is contextual only) |
+| `therapist` | `caregiver` | View diary entries + log therapy and milestone entries (label is contextual only) |
+| `specialist` | `caregiver` | View diary entries + log therapy and milestone entries (label is contextual only) |
 
 Notes:
 - `admin` is not a valid invite role. Admin access is granted via the `promote` auth action, not via invites.
-- `therapist` and `specialist` roles are reserved for future implementation and are not valid invite roles.
 - Acceptance is rejected if the invite token is invalid, already used, or the acceptor's email does not match.
 - Notification messages accurately reflect the `access_type` granted, not just the invite role label.
 

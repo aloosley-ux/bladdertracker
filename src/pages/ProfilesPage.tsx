@@ -6,8 +6,8 @@ import { generateId } from '../utils/storage';
 import type { Child, UserRole } from '../types';
 
 function getInviteRoles(userRole: UserRole | undefined): UserRole[] {
-  if (userRole === 'admin') return ['parent', 'caregiver', 'schoolAdmin'];
-  if (userRole === 'parent') return ['parent', 'caregiver', 'schoolAdmin'];
+  if (userRole === 'admin') return ['parent', 'caregiver', 'schoolAdmin', 'therapist', 'specialist'];
+  if (userRole === 'parent') return ['parent', 'caregiver', 'schoolAdmin', 'therapist', 'specialist'];
   if (userRole === 'schoolAdmin') return ['caregiver'];
   return [];
 }
@@ -265,8 +265,8 @@ export default function ProfilesPage() {
                 <MailPlus size={18} />
               </div>
               <div>
-                <h2 className="text-sm font-bold text-gray-700">Caregiver invites</h2>
-                <p className="mt-1 text-xs text-gray-400">Generate role-specific access links for parents, caregivers, or school admins.</p>
+                <h2 className="text-sm font-bold text-gray-700">Team invites</h2>
+                <p className="mt-1 text-xs text-gray-400">Generate role-specific access links for parents, caregivers, school admins, therapists, or specialists.</p>
               </div>
             </div>
 
@@ -279,7 +279,7 @@ export default function ProfilesPage() {
                 className="input-card"
                 required
               />
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                 {inviteRoles.map((role) => (
                   <button
                     key={role}
