@@ -4,7 +4,7 @@
  * These tests verify that:
  * 1. The invite role → child access mapping is consistent in local (storage) mode.
  * 2. Accepted invites grant the correct access level (parent or caregiver).
- * 3. Unsupported roles (admin, therapist, specialist) are not offered in the UI invite options.
+ * 3. The admin role is not offered in the UI invite options.
  * 4. Email mismatch prevents invite acceptance.
  * 5. Already-accepted or non-existent tokens are rejected.
  */
@@ -14,8 +14,8 @@ import { CHILD_ID, USER_ID, baseChild, baseUser } from './fixtures';
 
 // Mirrors the ProfilesPage.tsx getInviteRoles logic — kept in sync with implementation.
 function getInviteRoles(userRole: UserRole | undefined): UserRole[] {
-  if (userRole === 'admin') return ['parent', 'caregiver', 'schoolAdmin'];
-  if (userRole === 'parent') return ['parent', 'caregiver', 'schoolAdmin'];
+  if (userRole === 'admin') return ['parent', 'caregiver', 'schoolAdmin', 'therapist', 'specialist'];
+  if (userRole === 'parent') return ['parent', 'caregiver', 'schoolAdmin', 'therapist', 'specialist'];
   if (userRole === 'schoolAdmin') return ['caregiver'];
   return [];
 }
@@ -25,7 +25,7 @@ function roleToAccessType(role: string): 'parent' | 'caregiver' {
   return role === 'parent' ? 'parent' : 'caregiver';
 }
 
-const SUPPORTED_INVITE_ROLES = new Set(['parent', 'caregiver', 'schoolAdmin']);
+const SUPPORTED_INVITE_ROLES = new Set(['parent', 'caregiver', 'schoolAdmin', 'therapist', 'specialist']);
 
 // A child not yet associated with the accepting user — used for caregiver/schoolAdmin tests.
 const otherUser = { ...baseUser, id: 'other-user-99', email: 'other99@example.com' };
@@ -62,8 +62,16 @@ describe('invite role mapping', () => {
     expect(parentInviteRoles).not.toContain('admin');
   });
 
-  it('therapist and specialist are not offered as invite options', () => {
-    for (const role of ['admin', 'parent', 'schoolAdmin', 'caregiver'] as UserRole[]) {
+  it('therapist and specialist are offered as invite options for admin and parent', () => {
+    for (const role of ['admin', 'parent'] as UserRole[]) {
+      const roles = getInviteRoles(role);
+      expect(roles).toContain('therapist');
+      expect(roles).toContain('specialist');
+    }
+  });
+
+  it('therapist and specialist are not offered as invite options for schoolAdmin or caregiver', () => {
+    for (const role of ['schoolAdmin', 'caregiver'] as UserRole[]) {
       const roles = getInviteRoles(role);
       expect(roles).not.toContain('therapist');
       expect(roles).not.toContain('specialist');
@@ -74,9 +82,9 @@ describe('invite role mapping', () => {
     expect(SUPPORTED_INVITE_ROLES.has('parent')).toBe(true);
     expect(SUPPORTED_INVITE_ROLES.has('caregiver')).toBe(true);
     expect(SUPPORTED_INVITE_ROLES.has('schoolAdmin')).toBe(true);
+    expect(SUPPORTED_INVITE_ROLES.has('therapist')).toBe(true);
+    expect(SUPPORTED_INVITE_ROLES.has('specialist')).toBe(true);
     expect(SUPPORTED_INVITE_ROLES.has('admin')).toBe(false);
-    expect(SUPPORTED_INVITE_ROLES.has('therapist')).toBe(false);
-    expect(SUPPORTED_INVITE_ROLES.has('specialist')).toBe(false);
   });
 
   it('accepting a parent invite adds the user to child parentIds', () => {
