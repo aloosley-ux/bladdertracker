@@ -94,5 +94,39 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return;
   }
 
+  if (req.method === 'DELETE') {
+    const childId = req.query.id as string;
+    if (!childId) { res.status(400).json({ error: 'Child id is required' }); return; }
+
+    const childResult = await sql`SELECT name FROM children WHERE id = ${childId} AND created_by = ${session.userId}`;
+    if (!childResult.rows.length) { res.status(403).json({ error: 'Not found or access denied' }); return; }
+    const childName = childResult.rows[0].name;
+
+    await sql`DELETE FROM drink_entries WHERE child_id = ${childId}`;
+    await sql`DELETE FROM urine_entries WHERE child_id = ${childId}`;
+    await sql`DELETE FROM bowel_entries WHERE child_id = ${childId}`;
+    await sql`DELETE FROM sleep_entries WHERE child_id = ${childId}`;
+    await sql`DELETE FROM toilet_attempt_entries WHERE child_id = ${childId}`;
+    await sql`DELETE FROM food_entries WHERE child_id = ${childId}`;
+    await sql`DELETE FROM mood_entries WHERE child_id = ${childId}`;
+    await sql`DELETE FROM sensory_entries WHERE child_id = ${childId}`;
+    await sql`DELETE FROM medication_entries WHERE child_id = ${childId}`;
+    await sql`DELETE FROM therapy_entries WHERE child_id = ${childId}`;
+    await sql`DELETE FROM routine_entries WHERE child_id = ${childId}`;
+    await sql`DELETE FROM milestones WHERE child_id = ${childId}`;
+    await sql`DELETE FROM enabled_modules WHERE child_id = ${childId}`;
+    await sql`DELETE FROM reminder_preferences WHERE child_id = ${childId}`;
+    await sql`DELETE FROM child_access WHERE child_id = ${childId}`;
+    await sql`DELETE FROM children WHERE id = ${childId}`;
+
+    await sql`
+      INSERT INTO audit_events (id, user_id, action, subject, detail)
+      VALUES (${generateId()}, ${session.userId}, 'Removed child profile', ${childName}, 'Permanently removed child profile and all associated diary entries.')
+    `;
+
+    res.status(200).json({ ok: true });
+    return;
+  }
+
   res.status(405).json({ error: 'Method not allowed' });
 }
