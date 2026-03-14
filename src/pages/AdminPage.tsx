@@ -19,6 +19,8 @@ const allRoles: { value: UserRole; label: string }[] = [
   { value: 'parent', label: 'Parent' },
   { value: 'schoolAdmin', label: 'School Admin' },
   { value: 'caregiver', label: 'Caregiver' },
+  { value: 'therapist', label: 'Therapist' },
+  { value: 'specialist', label: 'Specialist' },
 ];
 
 export default function AdminPage() {

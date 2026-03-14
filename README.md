@@ -108,7 +108,7 @@ This section highlights the experience that already exists in the product today.
 ### 5) Multi-child, multi-role behaviour
 - Child switching refreshes milestone, reminder, and report context for the selected child.
 - Role-aware UI remains in Settings and admin/profiles pages.
-- Supported account roles: `admin`, `parent`, `caregiver`, `schoolAdmin`. Registration and invite flows support these four roles. `therapist` and `specialist` are reserved in the data model for future implementation.
+- Supported account roles: `admin`, `parent`, `caregiver`, `schoolAdmin`, `therapist`, `specialist`. Registration flows support `parent`, `caregiver`, and `schoolAdmin`; invite flows support all roles except `admin`.
 
 ### 6) Reports & export
 - Reports now include milestone trend charting.
@@ -173,7 +173,7 @@ This section highlights the experience that already exists in the product today.
 | 📱 **Mobile-First Layout** | Larger quick actions, shorter nav labels, and calmer one-handed flows on phones |
 | 🏆 **Milestone Engine** | Full CRUD for developmental milestones across 8 categories with status workflow |
 | 🔀 **Module Registry** | Per-child module toggling via `DEFAULT_MODULES` (13 modules) with UI wording and helper copy centralised in `src/content/presentation.ts` |
-| 👥 **User Roles** | admin, parent, caregiver, schoolAdmin (therapist/specialist reserved for future) |
+| 👥 **User Roles** | admin, parent, caregiver, schoolAdmin, therapist, specialist (all 6 roles fully functional) |
 | 🌗 **Theme System** | Light, Dark, High Contrast with CSS custom properties |
 | 📊 **Charts & Calendar** | Recharts-powered data visualization + calendar view |
 | 📤 **CSV Export** | Export all tracker types + milestones per child |
@@ -382,10 +382,10 @@ The following roles are supported in registration and invite flows. The `child_a
 | `parent` | Primary caregiver | ✅ Own children | ✅ | ✅ | ✅ | ❌ | ✅ |
 | `caregiver` | Invited collaborator | ✅ Shared children | ✅ | ❌ | ❌ | ❌ | ✅ |
 | `schoolAdmin` | School/educational staff | ✅ Shared children | ✅ | ❌ | ❌ | ❌ | ✅ (grants caregiver DB access) |
-| `therapist` | Clinical therapist | — | — | — | — | — | Reserved — not yet available |
-| `specialist` | Medical specialist | — | — | — | — | — | Reserved — not yet available |
+| `therapist` | Clinical therapist | ✅ Shared children | ✅ therapy & milestones | ❌ | ❌ | ❌ | ✅ (grants caregiver DB access) |
+| `specialist` | Medical specialist | ✅ Shared children | ✅ therapy & milestones | ❌ | ❌ | ❌ | ✅ (grants caregiver DB access) |
 
-**Note:** `schoolAdmin` invites grant `caregiver`-level DB access (same data permissions as caregiver). The label is retained for contextual clarity in school-handover workflows. See `docs/API.md` for the canonical invite permission matrix.
+**Note:** `schoolAdmin`, `therapist`, and `specialist` invites all grant `caregiver`-level DB access (same data permissions as caregiver). The labels are retained for contextual clarity in their respective workflows. See `docs/API.md` for the canonical invite permission matrix.
 
 **Data isolation:** Users only see children they created or were explicitly granted access to via invite acceptance.
 
