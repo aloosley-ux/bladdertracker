@@ -120,73 +120,66 @@ bladdertracker/
 ├── App.tsx                     # Root routing
 ├── index.css                   # Tailwind + CSS variables (themes)
 └── main.tsx                    # React entry point
-```
+
+## Modules
+
+The following modules are defined in `src/types/index.ts` and supported throughout the app:
+
+| ModuleId     | Description                                              | Default Enabled |
+|--------------|----------------------------------------------------------|-----------------|
+| drinks       | Track drinks and fluids                                  | Yes             |
+| urine        | Log wees, wet clothes and urgency                        | Yes             |
+| bowel        | Track poos and stool consistency                         | Yes             |
+| sleep        | Track sleep patterns                                     | Yes             |
+| toilet       | Track toilet sits, prompts and outcomes                  | Yes             |
+| food         | Track meals, snacks and new foods                        | Yes             |
+| mood         | Track emotional states and triggers                      | No              |
+| sensory      | Track sensory responses and preferences                  | No              |
+| medication   | Track medications and dosages                            | No              |
+| therapy      | Track therapy sessions and goals                         | No              |
+| routine      | Track routines and what helped                           | No              |
+| milestones   | Track developmental milestones                           | Yes             |
+| leaps        | Baby age calculator, leap predictions & symptom logging  | No              |
 
 ---
 
-## Component Architecture
+## User Roles
 
-Large page components have been decomposed into focused sub-components to improve maintainability and testability.
+User roles are defined as:
 
-### `src/components/forms/`
-
-Eleven entry form components extracted from `AddEntryPage`, plus the shared `FormStep` wrapper. Each form owns its own field layout, validation hints, and help text. `AddEntryPage` now acts as a thin tab-switching shell (~170 lines).
-
-| Component | Tracker |
-|-----------|---------|
-| `DrinkForm` | Fluid intake |
-| `UrineForm` | Voiding events |
-| `BowelForm` | Bowel movements (includes BristolStoolPicker) |
-| `SleepForm` | Sleep events with latency and night-activity toggle |
-| `ToiletAttemptForm` | Toilet training sessions |
-| `FoodForm` | Dietary intake with texture/acceptance tracking |
-| `MoodForm` | Emotional wellbeing |
-| `SensoryForm` | Sensory processing events |
-| `MedicationForm` | Medication administration |
-| `TherapyForm` | Therapy sessions |
-| `RoutineForm` | Daily routines |
-| `FormStep` | Shared step-by-step form section wrapper |
-
-### `src/components/leaps/`
-
-All leap-related sub-components extracted from `LeapsPage`, reducing it from ~1160 lines to ~70 lines.
-
-| Component | Purpose |
-|-----------|---------|
-| `DueDateEditor` | Edit child's due date for leap calculations |
-| `AgeCalculator` | Display adjusted age from due date |
-| `LeapTimeline` | Full leap timeline overview |
-| `LeapTimelineCard` | Individual leap card within the timeline |
-| `SymptomLogger` | Log symptoms and signs during a leap |
-| `LeapDiary` | Free-text diary entries for leaps |
-| `LeapNotifications` | Leap reminder notification settings |
-| `LeapCalendarWidget` | Calendar view of leap windows |
-| `LeapProgressChart` | Recharts progress visualisation |
-
-### `src/components/settings/`
-
-| Component | Purpose |
-|-----------|---------|
-| `ModuleSettings` | Per-child module enable/disable UI, extracted from SettingsPage |
-
-### `src/components/EmptyState.tsx`
-
-A reusable empty-state placeholder used across `LogPage`, `CalendarPage`, `ReportsPage`, and `MilestonesPage` for a consistent "no data yet" experience.
+- admin: Full access to all features, user management, system config
+- parent: Manage children, all trackers, invite caregivers
+- caregiver: View/edit entries for shared children
+- schoolAdmin: View/edit entries for shared children (school context label)
+- therapist: Reserved for future implementation — not available for registration/invite
+- specialist: Reserved for future implementation — not available for registration/invite
 
 ---
 
-## Data Flow
+## Database Schema (Summary)
 
-```
-User Action
-    │
-    ▼
-AppContext.tsx
-    │
-    ├─── VITE_USE_CLOUD=true ──► api.ts ──► /api/* ──► Neon DB
-    │
-    └─── local mode ───────────► storage.ts ──► localStorage
-```
+The following tables are created and managed by the migration logic in `api/_lib/db.ts`:
+
+- accounts (id, name, email, password_hash, role, avatar, created_at)
+- children (id, name, date_of_birth, avatar, created_by, last_updated_at)
+- child_access (id, child_id, user_id, access_type)
+- drink_entries (id, child_id, date, time, type, amount_ml, notes, created_by, created_at)
+- urine_entries (id, child_id, date, time, wet, pass, volume_ml, urgency, leakage_amount, notes, created_by, created_at)
+- bowel_entries (id, child_id, date, time, location, amount, bristol_type, laxatives_given, notes, image_url, created_by, created_at)
+- invites (id, child_id, child_name, email, role, status, invited_by, token, link, accepted_by, created_at)
+- notifications (id, user_id, title, message, read, created_at)
+- audit_events (id, user_id, action, subject, detail, created_at)
+- sleep_entries (id, child_id, date, time, event_type, duration_minutes, quality, nighttime_event, bedtime, sleep_onset_minutes, night_activity, notes, created_by, created_at)
+- toilet_attempt_entries (id, child_id, date, time, outcome, supervised, prompted, duration_minutes, notes, created_by, created_at)
+- food_entries (id, child_id, date, time, meal_type, description, portions, is_trying, texture, accepted, notes, created_by, created_at)
+- mood_entries (id, child_id, date, time, level, triggers, notes, created_by, created_at)
+- sensory_entries (id, child_id, date, time, sensory_type, response, intensity, notes, created_by, created_at)
+- medication_entries (id, child_id, date, time, name, dosage, administered, notes, created_by, created_at)
+- therapy_entries (id, child_id, date, time, therapy_type, provider, duration_minutes, goals, notes, created_by, created_at)
+- routine_entries (id, child_id, date, time, routine_name, completed, duration_minutes, notes, created_by, created_at)
+- milestones (id, child_id, name, description, category, module_id, milestone_type, status, target_date, date_achieved, notes, source_role, created_by, created_at)
+- enabled_modules (id, child_id, module_id)
+- reminder_preferences (id, user_id, child_id, module_id, frequency, enabled, snoozed_until, next_reminder_at, created_at, updated_at)
 
 **AppContext** is the single source of truth. All pages consume data via `useApp()` and call CRUD methods on the context. The context delegates to either:
 - `src/utils/api.ts` — HTTP calls to Vercel Serverless Functions → Neon Postgres
