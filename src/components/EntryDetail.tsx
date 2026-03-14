@@ -10,7 +10,7 @@ import { useState, useEffect } from 'react';
 import { Pencil } from 'lucide-react';
 import * as api from '../utils/api';
 import EntryEditModal from './EntryEditModal';
-import type { AuditEvent } from '../types';
+import type { AuditEvent, ToiletAttemptOutcome } from '../types';
 import { TOILET_OUTCOME_LABELS } from '../content/presentation';
 
 type FieldRow = {
@@ -35,12 +35,14 @@ function buildViewRows(type: string, r: Record<string, any>): FieldRow[] {
         { label: 'Amount', value: r.amountMl != null ? `${r.amountMl} ml` : null },
         notes,
       ];
-    case 'urine':
+    case 'urine': {
+      const outcomeKey = r.outcome as ToiletAttemptOutcome | undefined;
       return [
         ...when,
-        { label: 'Outcome', value: TOILET_OUTCOME_LABELS[String(r.outcome)] ?? r.outcome },
+        { label: 'Outcome', value: outcomeKey ? (TOILET_OUTCOME_LABELS[outcomeKey] ?? outcomeKey) : null },
         notes,
       ];
+    }
     case 'bowel':
       return [
         ...when,
