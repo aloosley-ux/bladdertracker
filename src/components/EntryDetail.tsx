@@ -19,24 +19,24 @@ type FieldRow = {
   wide?: boolean;
 };
 
-function buildViewRows(type: string, r: Record<string, any>): FieldRow[] {
+function buildViewRows(type: string, r: Record<string, unknown>): FieldRow[] {
   const when: FieldRow[] = [
-    { label: 'Date', value: r.date },
-    { label: 'Time', value: r.time },
+    { label: 'Date', value: (r.date as string) ?? null },
+    { label: 'Time', value: (r.time as string) ?? null },
   ];
 
-  const notes: FieldRow = { label: 'Notes', value: r.notes, wide: true };
+  const notes: FieldRow = { label: 'Notes', value: (r.notes as string) ?? null, wide: true };
 
   switch (type) {
     case 'drinks':
       return [
         ...when,
-        { label: 'Type', value: r.type },
-        { label: 'Amount', value: r.amountMl != null ? `${r.amountMl} ml` : null },
+        { label: 'Type', value: (r.type as string) ?? null },
+        { label: 'Amount', value: r.amountMl != null ? `${r.amountMl as number} ml` : null },
         notes,
       ];
     case 'urine': {
-      const outcomeKey = r.outcome as ToiletAttemptOutcome | undefined;
+      const outcomeKey = (r.outcome as ToiletAttemptOutcome) || undefined;
       return [
         ...when,
         { label: 'Outcome', value: outcomeKey ? (TOILET_OUTCOME_LABELS[outcomeKey] ?? outcomeKey) : null },
@@ -46,13 +46,13 @@ function buildViewRows(type: string, r: Record<string, any>): FieldRow[] {
     case 'bowel':
       return [
         ...when,
-        { label: 'Type', value: r.type },
+        { label: 'Type', value: (r.type as string) ?? null },
         notes,
       ];
     case 'sleep':
       return [
         ...when,
-        { label: 'Duration', value: r.durationMin ? `${r.durationMin} min` : null },
+        { label: 'Duration', value: (r.durationMin as number) ? `${r.durationMin as number} min` : null },
         notes,
       ];
     default:
@@ -63,7 +63,7 @@ function buildViewRows(type: string, r: Record<string, any>): FieldRow[] {
   }
 }
 
-function ViewFields({ type, entry }: { type: string; entry: Record<string, any> }) {
+function ViewFields({ type, entry }: { type: string; entry: Record<string, unknown> }) {
   const rows = buildViewRows(type, entry || {});
   return (
     <div className="grid grid-cols-2 gap-x-4 gap-y-2">
@@ -114,7 +114,7 @@ export default function EntryDetail({ type, entry }: { type: string; entry: unkn
       {editMode ? (
         <EntryEditModal type={type} entry={entry} onSaved={handleSaved} onCancel={() => setEditMode(false)} />
       ) : (
-        <ViewFields type={type} entry={(entry as unknown) as Record<string, any>} />
+        <ViewFields type={type} entry={(entry as unknown) as Record<string, unknown>} />
       )}
 
       {audit.length > 0 && (
