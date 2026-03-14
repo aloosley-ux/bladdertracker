@@ -1,5 +1,6 @@
 import { Component, type ReactNode } from 'react';
 import { AlertTriangle } from 'lucide-react';
+import { logger } from '../utils/logger';
 
 type ErrorBoundaryProps = {
   children: ReactNode;
@@ -19,7 +20,7 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
   }
 
   componentDidCatch(error: Error, errorInfo: unknown) {
-    console.error('BladderTracker error boundary caught an error', error, errorInfo);
+    logger.error('BladderTracker error boundary caught an error', error, errorInfo);
   }
 
   private handleReload = () => {

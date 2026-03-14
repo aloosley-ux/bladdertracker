@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { Droplets, CloudRain, Stethoscope, Moon, Target, Apple, ArrowLeft, Smile, Palette, Pill, Puzzle, ClipboardList } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useApp } from '../context/useApp';
@@ -57,25 +57,27 @@ export default function AddEntryPage() {
   const { enabledModules } = useApp();
 
   // Derive enabled tabs; fall back to default-enabled set during startup
-  const enabledSet = enabledModules.length > 0
-    ? new Set(enabledModules)
-    : new Set(DEFAULT_MODULES.filter((m) => m.defaultEnabled).map((m) => m.id));
+  const enabledSet = useMemo(() => (
+    enabledModules.length > 0
+      ? new Set(enabledModules)
+      : new Set(DEFAULT_MODULES.filter((m) => m.defaultEnabled).map((m) => m.id))
+  ), [enabledModules]);
 
   const tabs = ALL_TABS.filter((t) => enabledSet.has(MODULE_ID_MAP[t.type]));
 
   // Select the first enabled tab that matches the request; fall back to first available
-  const resolveTab = (req: EntryType): EntryType => {
+  const resolveTab = useCallback((req: EntryType): EntryType => {
     if (enabledSet.has(MODULE_ID_MAP[req])) return req;
     return tabs[0]?.type ?? req;
-  };
+  }, [enabledSet, tabs]);
 
   const [activeTab, setActiveTab] = useState<EntryType>(() => resolveTab(requestedTab));
 
   // When enabledModules changes, correct activeTab if it is now disabled
   useEffect(() => {
-    setActiveTab((prev) => resolveTab(prev));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [enabledModules]);
+    // Schedule state update to next tick to avoid setState directly in effect
+    Promise.resolve().then(() => setActiveTab((prev) => resolveTab(prev)));
+  }, [resolveTab]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });

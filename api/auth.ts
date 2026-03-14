@@ -9,6 +9,7 @@ import {
   generateId,
   cors,
 } from './_lib/auth.js';
+import { logger } from './_lib/logger.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   cors(res);
@@ -238,7 +239,7 @@ async function handleDeleteAccount(req: VercelRequest, res: VercelResponse) {
     clearSessionCookie(res);
     res.status(200).json({ ok: true });
   } catch (err) {
-    console.error('handleDeleteAccount error:', err);
+    logger.error('handleDeleteAccount error:', err);
     res.status(500).json({ error: 'Failed to delete account.' });
   }
 }
