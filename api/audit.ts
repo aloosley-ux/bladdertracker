@@ -11,11 +11,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (req.method !== 'GET') { res.status(405).json({ error: 'Method not allowed' }); return; }
 
-  const result = await sql`
-    SELECT id, user_id, action, subject, detail, created_at
-    FROM audit_events WHERE user_id = ${session.userId}
-    ORDER BY created_at DESC LIMIT 50
-  `;
+  const subject = req.query.subject as string | undefined;
+  let result;
+  if (subject) {
+    result = await sql`
+      SELECT id, user_id, action, subject, detail, created_at
+      FROM audit_events WHERE subject = ${subject}
+      ORDER BY created_at DESC LIMIT 100
+    `;
+  } else {
+    // Default: return recent events by this user
+    result = await sql`
+      SELECT id, user_id, action, subject, detail, created_at
+      FROM audit_events WHERE user_id = ${session.userId}
+      ORDER BY created_at DESC LIMIT 50
+    `;
+  }
 
   const events = result.rows.map((r) => ({
     id: r.id, userId: r.user_id, action: r.action, subject: r.subject,

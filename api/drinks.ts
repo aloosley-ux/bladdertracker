@@ -44,7 +44,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     await sql`
       INSERT INTO audit_events (id, user_id, action, subject, detail)
-      VALUES (${generateId()}, ${session.userId}, 'Added drink entry', ${childId}, ${`${amountMl || 0}ml recorded at ${time}.`})
+      VALUES (${generateId()}, ${session.userId}, 'Added drink entry', ${id}, ${`${amountMl || 0}ml recorded at ${time}.`})
     `;
 
     res.status(201).json({ id });
@@ -55,10 +55,31 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const { id, date, time, type, amountMl, notes } = req.body ?? {};
     if (!id) { res.status(400).json({ error: 'id required' }); return; }
 
+    // Fetch existing for audit
+    const existing = await sql`SELECT date, time, type, amount_ml, notes FROM drink_entries WHERE id = ${id}`;
+    if (!existing.rows.length) { res.status(404).json({ error: 'Not found' }); return; }
+    const prev = existing.rows[0];
+
     await sql`
       UPDATE drink_entries SET date=${date}, time=${time}, type=${type}, amount_ml=${amountMl}, notes=${notes || ''}
       WHERE id = ${id}
     `;
+
+    // Build change detail
+    const changes: string[] = [];
+    if (prev.date !== date) changes.push(`date: ${prev.date} -> ${date}`);
+    if (prev.time !== time) changes.push(`time: ${prev.time} -> ${time}`);
+    if (prev.type !== type) changes.push(`type: ${prev.type} -> ${type}`);
+    if ((prev.amount_ml ?? null) !== (amountMl ?? null)) changes.push(`amountMl: ${prev.amount_ml} -> ${amountMl}`);
+    if ((prev.notes || '') !== (notes || '')) changes.push(`notes: ${prev.notes || ''} -> ${notes || ''}`);
+
+    if (changes.length > 0) {
+      await sql`
+        INSERT INTO audit_events (id, user_id, action, subject, detail)
+        VALUES (${generateId()}, ${session.userId}, 'Updated drink entry', ${id}, ${changes.join('; ')})
+      `;
+    }
+
     res.status(200).json({ ok: true });
     return;
   }

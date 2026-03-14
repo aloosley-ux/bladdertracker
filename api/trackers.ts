@@ -93,7 +93,7 @@ async function handlePost(req: VercelRequest, res: VercelResponse, userId: strin
     `;
     await sql`
       INSERT INTO audit_events (id, user_id, action, subject, detail)
-      VALUES (${generateId()}, ${userId}, 'Added sleep entry', ${childId}, ${`Sleep ${eventType} at ${time} on ${date}`})
+      VALUES (${generateId()}, ${userId}, 'Added sleep entry', ${id}, ${`Sleep ${eventType} at ${time} on ${date}`})
     `;
   } else if (type === 'toilet_attempt') {
     const { outcome = 'no_event', supervised = false, prompted = false, durationMinutes = null } = body;
@@ -103,7 +103,7 @@ async function handlePost(req: VercelRequest, res: VercelResponse, userId: strin
     `;
     await sql`
       INSERT INTO audit_events (id, user_id, action, subject, detail)
-      VALUES (${generateId()}, ${userId}, 'Added toilet attempt', ${childId}, ${`Toilet attempt (${outcome}) at ${time} on ${date}`})
+      VALUES (${generateId()}, ${userId}, 'Added toilet attempt', ${id}, ${`Toilet attempt (${outcome}) at ${time} on ${date}`})
     `;
   } else {
     const { mealType = 'snack', description = '', portions = null,
@@ -114,7 +114,7 @@ async function handlePost(req: VercelRequest, res: VercelResponse, userId: strin
     `;
     await sql`
       INSERT INTO audit_events (id, user_id, action, subject, detail)
-      VALUES (${generateId()}, ${userId}, 'Added food entry', ${childId}, ${`${mealType}: ${description} at ${time} on ${date}`})
+      VALUES (${generateId()}, ${userId}, 'Added food entry', ${id}, ${`${mealType}: ${description} at ${time} on ${date}`})
     `;
   }
 
@@ -136,11 +136,12 @@ async function handlePut(req: VercelRequest, res: VercelResponse, userId: string
   const childIds = await getAccessibleChildIds(userId);
   const type = trackerType as TrackerType;
 
-  if (type === 'sleep') {
-    const existing = await sql`SELECT child_id FROM sleep_entries WHERE id = ${id}`;
+    if (type === 'sleep') {
+    const existing = await sql`SELECT date, time, event_type, duration_minutes, quality, nighttime_event, bedtime, sleep_onset_minutes, night_activity, notes FROM sleep_entries WHERE id = ${id}`;
     if (!existing.rows.length || !childIds.includes(existing.rows[0].child_id)) {
       res.status(403).json({ error: 'Access denied' }); return;
     }
+    const prev = existing.rows[0];
     const { eventType, durationMinutes = null, quality = null, nighttimeEvent = false,
             bedtime = null, sleepOnsetMinutes = null, nightActivity = false } = body;
     await sql`
@@ -151,11 +152,26 @@ async function handlePut(req: VercelRequest, res: VercelResponse, userId: string
           notes = ${notes}
       WHERE id = ${id}
     `;
+    const changes: string[] = [];
+    if (prev.date !== date) changes.push(`date: ${prev.date} -> ${date}`);
+    if (prev.time !== time) changes.push(`time: ${prev.time} -> ${time}`);
+    if (prev.event_type !== eventType) changes.push(`eventType: ${prev.event_type} -> ${eventType}`);
+    if ((prev.duration_minutes ?? null) !== (durationMinutes ?? null)) changes.push(`durationMinutes: ${prev.duration_minutes} -> ${durationMinutes}`);
+    if ((prev.quality ?? null) !== (quality ?? null)) changes.push(`quality: ${prev.quality} -> ${quality}`);
+    if (prev.nighttime_event !== nighttimeEvent) changes.push(`nighttimeEvent: ${prev.nighttime_event} -> ${nighttimeEvent}`);
+    if ((prev.notes || '') !== (notes || '')) changes.push(`notes: ${prev.notes || ''} -> ${notes || ''}`);
+    if (changes.length > 0) {
+      await sql`
+        INSERT INTO audit_events (id, user_id, action, subject, detail)
+        VALUES (${generateId()}, ${userId}, 'Updated sleep entry', ${id}, ${changes.join('; ')})
+      `;
+    }
   } else if (type === 'toilet_attempt') {
-    const existing = await sql`SELECT child_id FROM toilet_attempt_entries WHERE id = ${id}`;
+    const existing = await sql`SELECT date, time, outcome, supervised, prompted, duration_minutes, notes, child_id FROM toilet_attempt_entries WHERE id = ${id}`;
     if (!existing.rows.length || !childIds.includes(existing.rows[0].child_id)) {
       res.status(403).json({ error: 'Access denied' }); return;
     }
+    const prev = existing.rows[0];
     const { outcome, supervised = false, prompted = false, durationMinutes = null } = body;
     await sql`
       UPDATE toilet_attempt_entries
@@ -163,11 +179,26 @@ async function handlePut(req: VercelRequest, res: VercelResponse, userId: string
           prompted = ${prompted}, duration_minutes = ${durationMinutes}, notes = ${notes}
       WHERE id = ${id}
     `;
+    const changes: string[] = [];
+    if (prev.date !== date) changes.push(`date: ${prev.date} -> ${date}`);
+    if (prev.time !== time) changes.push(`time: ${prev.time} -> ${time}`);
+    if (prev.outcome !== outcome) changes.push(`outcome: ${prev.outcome} -> ${outcome}`);
+    if (prev.supervised !== supervised) changes.push(`supervised: ${prev.supervised} -> ${supervised}`);
+    if (prev.prompted !== prompted) changes.push(`prompted: ${prev.prompted} -> ${prompted}`);
+    if ((prev.duration_minutes ?? null) !== (durationMinutes ?? null)) changes.push(`durationMinutes: ${prev.duration_minutes} -> ${durationMinutes}`);
+    if ((prev.notes || '') !== (notes || '')) changes.push(`notes: ${prev.notes || ''} -> ${notes || ''}`);
+    if (changes.length > 0) {
+      await sql`
+        INSERT INTO audit_events (id, user_id, action, subject, detail)
+        VALUES (${generateId()}, ${userId}, 'Updated toilet attempt', ${id}, ${changes.join('; ')})
+      `;
+    }
   } else {
-    const existing = await sql`SELECT child_id FROM food_entries WHERE id = ${id}`;
+    const existing = await sql`SELECT date, time, meal_type, description, portions, is_trying, texture, accepted, notes, child_id FROM food_entries WHERE id = ${id}`;
     if (!existing.rows.length || !childIds.includes(existing.rows[0].child_id)) {
       res.status(403).json({ error: 'Access denied' }); return;
     }
+    const prev = existing.rows[0];
     const { mealType, description = '', portions = null,
             isTrying = false, texture = null, accepted = null } = body;
     await sql`
@@ -177,6 +208,22 @@ async function handlePut(req: VercelRequest, res: VercelResponse, userId: string
           notes = ${notes}
       WHERE id = ${id}
     `;
+    const changes: string[] = [];
+    if (prev.date !== date) changes.push(`date: ${prev.date} -> ${date}`);
+    if (prev.time !== time) changes.push(`time: ${prev.time} -> ${time}`);
+    if (prev.meal_type !== mealType) changes.push(`mealType: ${prev.meal_type} -> ${mealType}`);
+    if (prev.description !== description) changes.push(`description: ${prev.description} -> ${description}`);
+    if ((prev.portions ?? null) !== (portions ?? null)) changes.push(`portions: ${prev.portions} -> ${portions}`);
+    if (prev.is_trying !== isTrying) changes.push(`isTrying: ${prev.is_trying} -> ${isTrying}`);
+    if (prev.texture !== texture) changes.push(`texture: ${prev.texture} -> ${texture}`);
+    if (prev.accepted !== accepted) changes.push(`accepted: ${prev.accepted} -> ${accepted}`);
+    if ((prev.notes || '') !== (notes || '')) changes.push(`notes: ${prev.notes || ''} -> ${notes || ''}`);
+    if (changes.length > 0) {
+      await sql`
+        INSERT INTO audit_events (id, user_id, action, subject, detail)
+        VALUES (${generateId()}, ${userId}, 'Updated food entry', ${id}, ${changes.join('; ')})
+      `;
+    }
   }
 
   res.status(200).json({ ok: true });

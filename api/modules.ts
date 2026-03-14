@@ -206,7 +206,7 @@ async function handlePost(req: VercelRequest, res: VercelResponse, userId: strin
     `;
     await sql`
       INSERT INTO audit_events (id, user_id, action, subject, detail)
-      VALUES (${generateId()}, ${userId}, 'Added mood entry', ${childId}, ${`Mood ${level}/5 at ${time} on ${date}`})
+      VALUES (${generateId()}, ${userId}, 'Added mood entry', ${id}, ${`Mood ${level}/5 at ${time} on ${date}`})
     `;
   } else if (type === 'sensory') {
     const { sensoryType = 'other', response = 'neutral', intensity = 3 } = body;
@@ -216,7 +216,7 @@ async function handlePost(req: VercelRequest, res: VercelResponse, userId: strin
     `;
     await sql`
       INSERT INTO audit_events (id, user_id, action, subject, detail)
-      VALUES (${generateId()}, ${userId}, 'Added sensory entry', ${childId}, ${`${sensoryType} (${response}) at ${time} on ${date}`})
+      VALUES (${generateId()}, ${userId}, 'Added sensory entry', ${id}, ${`${sensoryType} (${response}) at ${time} on ${date}`})
     `;
   } else if (type === 'medication') {
     const { name = '', dosage = '', administered = true } = body;
@@ -227,7 +227,7 @@ async function handlePost(req: VercelRequest, res: VercelResponse, userId: strin
     `;
     await sql`
       INSERT INTO audit_events (id, user_id, action, subject, detail)
-      VALUES (${generateId()}, ${userId}, 'Added medication entry', ${childId}, ${`${name} ${dosage} at ${time} on ${date}`})
+      VALUES (${generateId()}, ${userId}, 'Added medication entry', ${id}, ${`${name} ${dosage} at ${time} on ${date}`})
     `;
   } else if (type === 'therapy') {
     const { therapyType = 'other', provider = '', durationMinutes = 0, goals = '' } = body;
@@ -237,7 +237,7 @@ async function handlePost(req: VercelRequest, res: VercelResponse, userId: strin
     `;
     await sql`
       INSERT INTO audit_events (id, user_id, action, subject, detail)
-      VALUES (${generateId()}, ${userId}, 'Added therapy entry', ${childId}, ${`${therapyType} (${durationMinutes}min) at ${time} on ${date}`})
+      VALUES (${generateId()}, ${userId}, 'Added therapy entry', ${id}, ${`${therapyType} (${durationMinutes}min) at ${time} on ${date}`})
     `;
   } else if (type === 'routine') {
     const { routineName = '', completed = true, durationMinutes = null } = body;
@@ -248,7 +248,7 @@ async function handlePost(req: VercelRequest, res: VercelResponse, userId: strin
     `;
     await sql`
       INSERT INTO audit_events (id, user_id, action, subject, detail)
-      VALUES (${generateId()}, ${userId}, 'Added routine entry', ${childId}, ${`${routineName} ${completed ? 'completed' : 'incomplete'} at ${time} on ${date}`})
+      VALUES (${generateId()}, ${userId}, 'Added routine entry', ${id}, ${`${routineName} ${completed ? 'completed' : 'incomplete'} at ${time} on ${date}`})
     `;
   } else {
     // milestones
@@ -297,58 +297,118 @@ async function handlePut(req: VercelRequest, res: VercelResponse, userId: string
   const childIds = await getAccessibleChildIds(userId);
 
   if (type === 'mood') {
-    const existing = await sql`SELECT child_id FROM mood_entries WHERE id = ${id}`;
+    const existing = await sql`SELECT date, time, level, triggers, notes, child_id FROM mood_entries WHERE id = ${id}`;
     if (!existing.rows.length || !childIds.includes(existing.rows[0].child_id)) {
       res.status(403).json({ error: 'Access denied' }); return;
     }
+    const prev = existing.rows[0];
     const { level = 3, triggers = '' } = body;
     await sql`
       UPDATE mood_entries SET date=${date}, time=${time}, level=${level}, triggers=${triggers}, notes=${notes}
       WHERE id = ${id}
     `;
+    const changes: string[] = [];
+    if (prev.date !== date) changes.push(`date: ${prev.date} -> ${date}`);
+    if (prev.time !== time) changes.push(`time: ${prev.time} -> ${time}`);
+    if (prev.level !== level) changes.push(`level: ${prev.level} -> ${level}`);
+    if (prev.triggers !== triggers) changes.push(`triggers: ${prev.triggers} -> ${triggers}`);
+    if ((prev.notes || '') !== (notes || '')) changes.push(`notes: ${prev.notes || ''} -> ${notes || ''}`);
+    if (changes.length > 0) await sql`
+      INSERT INTO audit_events (id, user_id, action, subject, detail)
+      VALUES (${generateId()}, ${userId}, 'Updated mood entry', ${id}, ${changes.join('; ')})
+    `;
   } else if (type === 'sensory') {
-    const existing = await sql`SELECT child_id FROM sensory_entries WHERE id = ${id}`;
+    const existing = await sql`SELECT date, time, sensory_type, response, intensity, notes, child_id FROM sensory_entries WHERE id = ${id}`;
     if (!existing.rows.length || !childIds.includes(existing.rows[0].child_id)) {
       res.status(403).json({ error: 'Access denied' }); return;
     }
+    const prev = existing.rows[0];
     const { sensoryType = 'other', response = 'neutral', intensity = 3 } = body;
     await sql`
       UPDATE sensory_entries SET date=${date}, time=${time}, sensory_type=${sensoryType},
         response=${response}, intensity=${intensity}, notes=${notes}
       WHERE id = ${id}
     `;
+    const changes: string[] = [];
+    if (prev.date !== date) changes.push(`date: ${prev.date} -> ${date}`);
+    if (prev.time !== time) changes.push(`time: ${prev.time} -> ${time}`);
+    if (prev.sensory_type !== sensoryType) changes.push(`sensoryType: ${prev.sensory_type} -> ${sensoryType}`);
+    if (prev.response !== response) changes.push(`response: ${prev.response} -> ${response}`);
+    if (prev.intensity !== intensity) changes.push(`intensity: ${prev.intensity} -> ${intensity}`);
+    if ((prev.notes || '') !== (notes || '')) changes.push(`notes: ${prev.notes || ''} -> ${notes || ''}`);
+    if (changes.length > 0) await sql`
+      INSERT INTO audit_events (id, user_id, action, subject, detail)
+      VALUES (${generateId()}, ${userId}, 'Updated sensory entry', ${id}, ${changes.join('; ')})
+    `;
   } else if (type === 'medication') {
-    const existing = await sql`SELECT child_id FROM medication_entries WHERE id = ${id}`;
+    const existing = await sql`SELECT date, time, name, dosage, administered, notes, child_id FROM medication_entries WHERE id = ${id}`;
     if (!existing.rows.length || !childIds.includes(existing.rows[0].child_id)) {
       res.status(403).json({ error: 'Access denied' }); return;
     }
+    const prev = existing.rows[0];
     const { name = '', dosage = '', administered = true } = body;
     await sql`
       UPDATE medication_entries SET date=${date}, time=${time}, name=${name},
         dosage=${dosage}, administered=${administered}, notes=${notes}
       WHERE id = ${id}
     `;
+    const changes: string[] = [];
+    if (prev.date !== date) changes.push(`date: ${prev.date} -> ${date}`);
+    if (prev.time !== time) changes.push(`time: ${prev.time} -> ${time}`);
+    if (prev.name !== name) changes.push(`name: ${prev.name} -> ${name}`);
+    if (prev.dosage !== dosage) changes.push(`dosage: ${prev.dosage} -> ${dosage}`);
+    if (prev.administered !== administered) changes.push(`administered: ${prev.administered} -> ${administered}`);
+    if ((prev.notes || '') !== (notes || '')) changes.push(`notes: ${prev.notes || ''} -> ${notes || ''}`);
+    if (changes.length > 0) await sql`
+      INSERT INTO audit_events (id, user_id, action, subject, detail)
+      VALUES (${generateId()}, ${userId}, 'Updated medication entry', ${id}, ${changes.join('; ')})
+    `;
   } else if (type === 'therapy') {
-    const existing = await sql`SELECT child_id FROM therapy_entries WHERE id = ${id}`;
+    const existing = await sql`SELECT date, time, therapy_type, provider, duration_minutes, goals, notes, child_id FROM therapy_entries WHERE id = ${id}`;
     if (!existing.rows.length || !childIds.includes(existing.rows[0].child_id)) {
       res.status(403).json({ error: 'Access denied' }); return;
     }
+    const prev = existing.rows[0];
     const { therapyType = 'other', provider = '', durationMinutes = 0, goals = '' } = body;
     await sql`
       UPDATE therapy_entries SET date=${date}, time=${time}, therapy_type=${therapyType},
         provider=${provider}, duration_minutes=${durationMinutes}, goals=${goals}, notes=${notes}
       WHERE id = ${id}
     `;
+    const changes: string[] = [];
+    if (prev.date !== date) changes.push(`date: ${prev.date} -> ${date}`);
+    if (prev.time !== time) changes.push(`time: ${prev.time} -> ${time}`);
+    if (prev.therapy_type !== therapyType) changes.push(`therapyType: ${prev.therapy_type} -> ${therapyType}`);
+    if (prev.provider !== provider) changes.push(`provider: ${prev.provider} -> ${provider}`);
+    if ((prev.duration_minutes ?? null) !== (durationMinutes ?? null)) changes.push(`durationMinutes: ${prev.duration_minutes} -> ${durationMinutes}`);
+    if (prev.goals !== goals) changes.push(`goals: ${prev.goals} -> ${goals}`);
+    if ((prev.notes || '') !== (notes || '')) changes.push(`notes: ${prev.notes || ''} -> ${notes || ''}`);
+    if (changes.length > 0) await sql`
+      INSERT INTO audit_events (id, user_id, action, subject, detail)
+      VALUES (${generateId()}, ${userId}, 'Updated therapy entry', ${id}, ${changes.join('; ')})
+    `;
   } else if (type === 'routine') {
-    const existing = await sql`SELECT child_id FROM routine_entries WHERE id = ${id}`;
+    const existing = await sql`SELECT date, time, routine_name, completed, duration_minutes, notes, child_id FROM routine_entries WHERE id = ${id}`;
     if (!existing.rows.length || !childIds.includes(existing.rows[0].child_id)) {
       res.status(403).json({ error: 'Access denied' }); return;
     }
+    const prev = existing.rows[0];
     const { routineName = '', completed = true, durationMinutes = null } = body;
     await sql`
       UPDATE routine_entries SET date=${date}, time=${time}, routine_name=${routineName},
         completed=${completed}, duration_minutes=${durationMinutes}, notes=${notes}
       WHERE id = ${id}
+    `;
+    const changes: string[] = [];
+    if (prev.date !== date) changes.push(`date: ${prev.date} -> ${date}`);
+    if (prev.time !== time) changes.push(`time: ${prev.time} -> ${time}`);
+    if (prev.routine_name !== routineName) changes.push(`routineName: ${prev.routine_name} -> ${routineName}`);
+    if (prev.completed !== completed) changes.push(`completed: ${prev.completed} -> ${completed}`);
+    if ((prev.duration_minutes ?? null) !== (durationMinutes ?? null)) changes.push(`durationMinutes: ${prev.duration_minutes} -> ${durationMinutes}`);
+    if ((prev.notes || '') !== (notes || '')) changes.push(`notes: ${prev.notes || ''} -> ${notes || ''}`);
+    if (changes.length > 0) await sql`
+      INSERT INTO audit_events (id, user_id, action, subject, detail)
+      VALUES (${generateId()}, ${userId}, 'Updated routine entry', ${id}, ${changes.join('; ')})
     `;
   } else {
     // milestones

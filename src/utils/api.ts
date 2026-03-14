@@ -281,8 +281,9 @@ export async function apiMarkNotificationRead(id: string): Promise<void> {
 }
 
 // Audit
-export async function apiGetAuditEvents(): Promise<AuditEvent[]> {
-  const { events } = await request<{ events: AuditEvent[] }>('/audit');
+export async function apiGetAuditEvents(subject?: string): Promise<AuditEvent[]> {
+  const path = subject ? `/audit?subject=${encodeURIComponent(subject)}` : '/audit';
+  const { events } = await request<{ events: AuditEvent[] }>(path);
   return events;
 }
 
