@@ -167,13 +167,13 @@ export default function ProfilesPage() {
                 <button
                   onClick={() => selectChild(child.id)}
                   className={`w-full rounded-2xl p-4 text-left ring-1 transition-all ${
-                    selectedChild?.id === child.id ? 'bg-lavender-50 ring-lavender-200' : 'bg-[#faf7ff] ring-lavender-100'
+                    selectedChild?.id === child.id ? 'bg-lavender-50 ring-lavender-200' : 'bg-[var(--bg-accent)] ring-[var(--border-color)]'
                   }`}
                 >
-                  <div className="text-sm font-semibold text-gray-900">{child.name}</div>
-                  <div className="mt-1 text-xs text-gray-500">{child.dateOfBirth || 'DOB not recorded'}</div>
+                  <div className="text-sm font-semibold text-[var(--text-primary)]">{child.name}</div>
+                  <div className="mt-1 text-xs text-[var(--text-secondary)]">{child.dateOfBirth || 'DOB not recorded'}</div>
                   {selectedChild?.id === child.id && (
-                    <span className="mt-1 inline-block rounded-full bg-lavender-100 px-2 py-0.5 text-[11px] font-semibold text-lavender-700">
+                    <span className="mt-1 inline-block rounded-full bg-lavender-500 px-2 py-0.5 text-[11px] font-semibold text-white">
                       Selected
                     </span>
                   )}
@@ -230,7 +230,7 @@ export default function ProfilesPage() {
               </div>
             ))}
             {children.length === 0 && (
-              <div className="rounded-2xl bg-[#faf7ff] px-4 py-6 text-center text-sm text-gray-500 ring-1 ring-lavender-100">
+              <div className="rounded-2xl bg-[var(--bg-accent)] px-4 py-6 text-center text-sm text-gray-500 ring-1 ring-lavender-100">
                 No children added yet. Use the button above to add a child profile.
               </div>
             )}
@@ -303,13 +303,13 @@ export default function ProfilesPage() {
 
             {sentInvites.length > 0 && (
               <div className="mt-4 space-y-3">
-                <h4 className="text-xs font-semibold text-gray-500">Sent invites</h4>
+                <h4 className="text-xs font-semibold text-[var(--text-secondary)]">Sent invites</h4>
                 {sentInvites.map((invite) => (
-                  <div key={invite.id} className="rounded-2xl bg-[#faf7ff] px-4 py-3 ring-1 ring-lavender-100">
+                  <div key={invite.id} className="rounded-2xl bg-[var(--bg-card)] px-4 py-3 ring-1 ring-[var(--border-color)]">
                     <div className="flex items-start justify-between gap-3">
                       <div>
-                        <div className="text-sm font-semibold text-gray-900">{invite.email}</div>
-                        <div className="mt-1 text-xs text-gray-500">
+                        <div className="text-sm font-semibold text-[var(--text-primary)]">{invite.email}</div>
+                        <div className="mt-1 text-xs text-[var(--text-secondary)]">
                           {invite.childName} · {formatRole(invite.role)} ·{' '}
                           <span className={invite.status === 'accepted' ? 'text-green-600' : 'text-amber-600'}>
                             {invite.status}
@@ -319,7 +319,7 @@ export default function ProfilesPage() {
                       <button
                         type="button"
                         onClick={() => navigator.clipboard.writeText(invite.link)}
-                        className="flex items-center gap-1 rounded-full bg-white px-3 py-1 text-[11px] font-semibold text-lavender-700 ring-1 ring-lavender-100"
+                        className="flex items-center gap-1 rounded-full bg-[var(--bg-secondary)] px-3 py-1 text-[11px] font-semibold text-lavender-600 ring-1 ring-[var(--border-color)]"
                       >
                         <Copy size={12} /> Copy link
                       </button>
@@ -423,16 +423,16 @@ export default function ProfilesPage() {
             <div className="mt-4 space-y-2">
               {selectedChild.parentIds.length > 0 && (
                 <div className="rounded-2xl bg-[#faf7ff] px-4 py-3 ring-1 ring-lavender-100">
-                  <div className="text-xs font-semibold text-gray-500">Parents</div>
-                  <div className="mt-1 text-sm text-gray-900">
+                  <div className="text-xs font-semibold text-[var(--text-secondary)]">Parents</div>
+                  <div className="mt-1 text-sm text-[var(--text-primary)]">
                     {selectedChild.parentIds.length} parent{selectedChild.parentIds.length === 1 ? '' : 's'} linked
                   </div>
                 </div>
               )}
               {selectedChild.caregivers.length > 0 && (
                 <div className="rounded-2xl bg-[#faf7ff] px-4 py-3 ring-1 ring-lavender-100">
-                  <div className="text-xs font-semibold text-gray-500">Caregivers</div>
-                  <div className="mt-1 text-sm text-gray-900">
+                  <div className="text-xs font-semibold text-[var(--text-secondary)]">Caregivers</div>
+                  <div className="mt-1 text-sm text-[var(--text-primary)]">
                     {selectedChild.caregivers.length} caregiver{selectedChild.caregivers.length === 1 ? '' : 's'} linked
                   </div>
                 </div>

@@ -25,6 +25,30 @@ describe('LeapsPage', () => {
     ]);
   });
 
+  it('defaults to the Milestones sub-page on first render', async () => {
+    renderWithProviders(<LeapsPage />);
+
+    // The active (selected) tab should be Milestones
+    const milestonesBtn = await screen.findByRole('button', { name: /milestones/i });
+    // It should be the active tab (bg-lavender-500 class indicates active)
+    expect(milestonesBtn.className).toContain('bg-lavender-500');
+  }, 15000);
+
+  it('does not show a Tools tab', async () => {
+    renderWithProviders(<LeapsPage />);
+
+    await screen.findByRole('button', { name: /milestones/i });
+
+    expect(screen.queryByRole('button', { name: /tools/i })).not.toBeInTheDocument();
+  }, 15000);
+
+  it('shows quick logging section on the Milestones sub-page', async () => {
+    renderWithProviders(<LeapsPage />);
+
+    // Milestones is the default tab so quick logging should be visible
+    expect(await screen.findByText(/quick logging/i)).toBeInTheDocument();
+  }, 15000);
+
   it('renders trusted resource links for expanded leap details', async () => {
     const user = userEvent.setup();
 
