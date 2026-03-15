@@ -228,7 +228,7 @@ button.btn-compact {
   }
 }
 
-/* ── Dark theme text and card improvements (#31) ────────────────── */
+/* ── Dark theme text and card improvements (#31, #96) ───────────── */
 [data-theme="dark"] .input-card {
   background: var(--bg-input);
   border-color: var(--border-color);
@@ -478,159 +478,229 @@ button.btn-compact {
   background-color: #00cc00;
 }
 
-/* ── Theme-aware semantic surfaces (#118) ───────────────────────── */
-/* Entry cards: readable backgrounds in all themes */
-.theme-surface-card {
-  background: var(--bg-card);
-  color: var(--text-primary);
+/* ── Extended dark/high-contrast overrides for Tailwind slate/gray utilities (#96) ── */
+/*
+ * Tailwind's slate-* and gray-* colour utilities are used widely across the
+ * UI for surfaces (bg-slate-100, bg-gray-200, bg-gray-300), text
+ * (text-slate-700, text-slate-600, text-slate-500, text-slate-400), rings
+ * (ring-slate-200, ring-gray-200, ring-gray-100), and borders
+ * (border-gray-200, border-slate-200). These override them so dark/high-
+ * contrast themes apply consistently to every surface.
+ */
+
+/* Slate/gray backgrounds */
+[data-theme="dark"] .bg-slate-50,
+[data-theme="dark"] .bg-slate-100 {
+  background-color: var(--bg-accent) !important;
 }
 
-.theme-surface-card h4,
-.theme-surface-card .font-semibold {
-  color: var(--text-primary);
+[data-theme="dark"] .bg-slate-200,
+[data-theme="dark"] .bg-gray-200,
+[data-theme="dark"] .bg-gray-300 {
+  background-color: var(--bg-hover) !important;
 }
 
-.theme-surface-card .text-xs,
-.theme-surface-card .text-sm {
-  color: var(--text-secondary);
-}
-
-/* Stat tiles in Reports / summary cards */
-.theme-stat-tile {
-  background: var(--bg-card);
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
-}
-
-/* Banner / header surfaces */
-.theme-surface-banner {
-  background: var(--bg-secondary);
-  color: var(--text-primary);
-}
-
-/* Profile/invite/audit cards */
-.theme-surface-muted {
-  background: var(--bg-accent);
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
-}
-
-.theme-surface-muted .text-gray-900,
-.theme-surface-muted .text-sm.font-semibold {
+/* Slate text */
+[data-theme="dark"] .text-slate-900,
+[data-theme="dark"] .text-slate-800,
+[data-theme="dark"] .text-slate-700 {
   color: var(--text-primary) !important;
 }
 
-.theme-surface-muted .text-gray-500,
-.theme-surface-muted .text-xs {
+[data-theme="dark"] .text-slate-600,
+[data-theme="dark"] .text-slate-500,
+[data-theme="dark"] .text-slate-400 {
   color: var(--text-secondary) !important;
 }
 
-/* FAQ hover state fix for dark/high-contrast */
-[data-theme="dark"] .faq-item:hover,
-[data-theme="dark"] .faq-item button:hover {
-  background: var(--bg-hover) !important;
-  color: var(--text-primary) !important;
+/* Slate/gray border & ring */
+[data-theme="dark"] [class*="ring-slate-"],
+[data-theme="dark"] [class*="ring-gray-"] {
+  --tw-ring-color: var(--ring-color);
 }
 
-[data-theme="high-contrast"] .faq-item:hover,
-[data-theme="high-contrast"] .faq-item button:hover {
-  background: var(--bg-hover) !important;
-  color: var(--text-primary) !important;
+[data-theme="dark"] [class*="border-slate-"],
+[data-theme="dark"] [class*="border-gray-"] {
+  border-color: var(--border-color) !important;
 }
 
-/* NHS guidance button: white bg, blue text for all themes */
-.nhs-guidance-btn {
-  background-color: #ffffff !important;
-  color: #005eb8 !important;
-  border: 1px solid #005eb8;
+/* Progress bars — track colour */
+[data-theme="dark"] .bg-gray-200 {
+  background-color: var(--bg-hover) !important;
 }
 
-[data-theme="dark"] .nhs-guidance-btn {
-  background-color: #1a1a2e !important;
-  color: #66b5ff !important;
-  border-color: #66b5ff;
+/* Status badge: not_started uses bg-slate-100 text-slate-700 */
+/* (already handled by slate overrides above) */
+
+/* ── Extended high-contrast overrides for slate/gray (#96) ─────── */
+
+[data-theme="high-contrast"] .bg-slate-50,
+[data-theme="high-contrast"] .bg-slate-100 {
+  background-color: var(--bg-accent) !important;
 }
 
-[data-theme="high-contrast"] .nhs-guidance-btn {
-  background-color: #000000 !important;
-  color: #66b5ff !important;
-  border: 2px solid #ffffff;
+[data-theme="high-contrast"] .bg-slate-200,
+[data-theme="high-contrast"] .bg-gray-200,
+[data-theme="high-contrast"] .bg-gray-300 {
+  background-color: var(--bg-hover) !important;
 }
 
-/* Delete button enhanced contrast in dark/high-contrast */
-[data-theme="dark"] .btn-delete {
-  background-color: #7f1d1d !important;
-  color: #fecaca !important;
-  border: 1px solid rgba(255,255,255,0.15);
-}
-
-[data-theme="high-contrast"] .btn-delete {
-  background-color: #991b1b !important;
-  color: #ffffff !important;
-  border: 2px solid #ffffff;
-}
-
-/* Selected tag: visible in dark/high-contrast */
-[data-theme="dark"] .tag-selected {
-  background-color: #6d1ce3 !important;
+[data-theme="high-contrast"] .text-slate-900,
+[data-theme="high-contrast"] .text-slate-800,
+[data-theme="high-contrast"] .text-slate-700 {
   color: #ffffff !important;
 }
 
-[data-theme="high-contrast"] .tag-selected {
-  background-color: #ffff00 !important;
-  color: #000000 !important;
-  border: 2px solid #ffffff;
+[data-theme="high-contrast"] .text-slate-600,
+[data-theme="high-contrast"] .text-slate-500,
+[data-theme="high-contrast"] .text-slate-400 {
+  color: #cccccc !important;
 }
 
-/* ── Landing page theme fixes (#118) ────────────────────────────── */
-[data-theme="dark"] .landing-top {
-  background: var(--bg-secondary) !important;
-  color: var(--text-primary) !important;
+[data-theme="high-contrast"] [class*="ring-slate-"],
+[data-theme="high-contrast"] [class*="ring-gray-"] {
+  --tw-ring-color: var(--ring-color);
 }
 
-[data-theme="dark"] .landing-top h1,
-[data-theme="dark"] .landing-top span,
-[data-theme="dark"] .landing-top div {
-  color: var(--text-primary) !important;
+[data-theme="high-contrast"] [class*="border-slate-"],
+[data-theme="high-contrast"] [class*="border-gray-"] {
+  border-color: var(--border-color) !important;
 }
 
-[data-theme="high-contrast"] .landing-top {
-  background: #000000 !important;
-  color: #ffffff !important;
+/* High-contrast input focus ring — make it prominent yellow */
+[data-theme="high-contrast"] input:focus-visible,
+[data-theme="high-contrast"] select:focus-visible,
+[data-theme="high-contrast"] textarea:focus-visible {
+  outline: 4px solid #ffff00;
+  outline-offset: 3px;
 }
 
-[data-theme="high-contrast"] .landing-top h1,
-[data-theme="high-contrast"] .landing-top span,
-[data-theme="high-contrast"] .landing-top div {
-  color: #ffffff !important;
+/* High-contrast — ensure ring-black/5 and ring-black/10 show clearly */
+[data-theme="high-contrast"] [class*="ring-black/5"],
+[data-theme="high-contrast"] [class*="ring-black/10"] {
+  --tw-ring-color: var(--ring-color);
 }
 
-[data-theme="high-contrast"] .landing-top .text-lavender-400,
-[data-theme="high-contrast"] .landing-top svg {
-  color: #000000 !important;
+/* ── Status/semantic colour adjustments for dark (#96) ────────────
+ * Rose/amber/emerald surfaces (overdue alerts, guidance panels) need
+ * enough opacity to remain readable on dark backgrounds. We keep hue
+ * but darken the background and lighten text.
+ */
+[data-theme="dark"] .bg-rose-50 {
+  background-color: rgba(220, 38, 38, 0.12) !important;
+}
+[data-theme="dark"] .bg-amber-50 {
+  background-color: rgba(217, 119, 6, 0.12) !important;
+}
+[data-theme="dark"] .bg-emerald-50 {
+  background-color: rgba(5, 150, 105, 0.12) !important;
+}
+[data-theme="dark"] .bg-blue-50 {
+  background-color: rgba(37, 99, 235, 0.12) !important;
 }
 
-/* ── Gradient background theme overrides (#118) ─────────────────── */
-[data-theme="dark"] .bg-\[linear-gradient\(180deg\,\#fbf7f2_0\%\,\#ffffff_100\%\)\] {
-  background: var(--bg-secondary) !important;
+[data-theme="dark"] .text-rose-800,
+[data-theme="dark"] .text-rose-900 {
+  color: #fca5a5 !important;
+}
+[data-theme="dark"] .text-rose-700,
+[data-theme="dark"] .text-rose-600 {
+  color: #fca5a5 !important;
+}
+[data-theme="dark"] .text-amber-800,
+[data-theme="dark"] .text-amber-700 {
+  color: #fcd34d !important;
+}
+[data-theme="dark"] .text-emerald-700,
+[data-theme="dark"] .text-emerald-600,
+[data-theme="dark"] .text-emerald-800 {
+  color: #6ee7b7 !important;
 }
 
-[data-theme="high-contrast"] .bg-\[linear-gradient\(180deg\,\#fbf7f2_0\%\,\#ffffff_100\%\)\] {
-  background: var(--bg-primary) !important;
+[data-theme="dark"] .border-rose-200 {
+  border-color: rgba(220, 38, 38, 0.35) !important;
+}
+[data-theme="dark"] .border-amber-200 {
+  border-color: rgba(217, 119, 6, 0.35) !important;
+}
+[data-theme="dark"] [class*="ring-rose-"] {
+  --tw-ring-color: rgba(220, 38, 38, 0.35);
 }
 
-[data-theme="dark"] .bg-gradient-to-b {
-  background: var(--bg-primary) !important;
+/* ── Status/semantic colour adjustments for high-contrast (#96) ── */
+[data-theme="high-contrast"] .bg-rose-50 {
+  background-color: #1a0000 !important;
+}
+[data-theme="high-contrast"] .bg-amber-50 {
+  background-color: #1a1000 !important;
+}
+[data-theme="high-contrast"] .bg-emerald-50 {
+  background-color: #001a0a !important;
+}
+[data-theme="high-contrast"] .bg-blue-50 {
+  background-color: #00001a !important;
 }
 
-[data-theme="high-contrast"] .bg-gradient-to-b {
-  background: #000000 !important;
+[data-theme="high-contrast"] .text-rose-800,
+[data-theme="high-contrast"] .text-rose-900,
+[data-theme="high-contrast"] .text-rose-700,
+[data-theme="high-contrast"] .text-rose-600 {
+  color: #ff8080 !important;
+}
+[data-theme="high-contrast"] .text-amber-800,
+[data-theme="high-contrast"] .text-amber-700 {
+  color: #ffff00 !important;
+}
+[data-theme="high-contrast"] .text-emerald-700,
+[data-theme="high-contrast"] .text-emerald-600,
+[data-theme="high-contrast"] .text-emerald-800 {
+  color: #80ff80 !important;
 }
 
-[data-theme="dark"] .bg-\[radial-gradient\(ellipse_at_top\,\#f2e7ff_0\%\,\#eef8ff_50\%\,\#ffffff_100\%\)\] {
-  background: var(--bg-secondary) !important;
+[data-theme="high-contrast"] .border-rose-200 {
+  border-color: #ff4444 !important;
+}
+[data-theme="high-contrast"] .border-amber-200 {
+  border-color: #ffff00 !important;
+}
+[data-theme="high-contrast"] [class*="ring-rose-"] {
+  --tw-ring-color: #ff4444;
 }
 
-[data-theme="high-contrast"] .bg-\[radial-gradient\(ellipse_at_top\,\#f2e7ff_0\%\,\#eef8ff_50\%\,\#ffffff_100\%\)\] {
-  background: #000000 !important;
+/* High-contrast: lavender accent colours → yellow for maximum visibility */
+[data-theme="high-contrast"] .text-lavender-500,
+[data-theme="high-contrast"] .text-lavender-400,
+[data-theme="high-contrast"] .text-lavender-300 {
+  color: var(--text-accent) !important;
+}
+
+[data-theme="high-contrast"] .bg-lavender-50 {
+  background-color: var(--bg-accent) !important;
+}
+
+/* Dark: lavender-50 chips/badges should use the dark accent bg */
+[data-theme="dark"] .bg-lavender-50 {
+  background-color: var(--bg-accent) !important;
+}
+
+[data-theme="dark"] .text-lavender-700,
+[data-theme="dark"] .text-lavender-600 {
+  color: var(--text-accent) !important;
+}
+
+/* ── Ensure section/region backgrounds don't use hard white in dark (#96) ── */
+[data-theme="dark"] [class*="bg-white/50"],
+[data-theme="dark"] [class*="bg-white/60"],
+[data-theme="dark"] [class*="bg-white/70"],
+[data-theme="dark"] [class*="bg-white/80"],
+[data-theme="dark"] [class*="bg-white/90"] {
+  background-color: var(--bg-card) !important;
+}
+
+[data-theme="high-contrast"] [class*="bg-white/50"],
+[data-theme="high-contrast"] [class*="bg-white/60"],
+[data-theme="high-contrast"] [class*="bg-white/70"],
+[data-theme="high-contrast"] [class*="bg-white/80"],
+[data-theme="high-contrast"] [class*="bg-white/90"] {
+  background-color: var(--bg-card) !important;
 }

@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useApp } from '../context/useApp';
 import type { Child } from '../types';
 import {
@@ -7,6 +7,8 @@ import {
   LEAP_CHART,
 } from '../data/leapData';
 import { MILESTONE_GUIDANCE } from '../data/milestoneGuidance';
+import { ensureLeapsMilestones, stripSlugSentinel } from '../utils/ensureLeapsMilestones';
+import { UK_SUPPORT_RESOURCES } from '../data/ukSupportResources';
 import {
   AgeCalculator,
   LeapTimeline,
@@ -18,17 +20,52 @@ import { Link } from 'react-router-dom';
 
 type LeapsSection = 'milestones' | 'overview' | 'timeline';
 
+// Number of weeks past the target date before a milestone enters "seek advice" state
+const SEEK_ADVICE_WEEKS = 8;
+
 // ── Page Component ───────────────────────────────────────────────────
 
 export default function LeapsPage() {
-  const { selectedChild, children, milestones, enabledModules } = useApp();
-  const [activeSection, setActiveSection] = useState<LeapsSection>('milestones');
+  const { selectedChild, children, milestones, user, addMilestone, enabledModules } = useApp();
+  const [dueDateChild, setDueDateChild] = useState<Child | null>(null);
+  const [activeSection, setActiveSection] = useState<LeapsSection>('overview');
+  const [milestonesInitialised, setMilestonesInitialised] = useState(false);
 
   // Use the selected child, or the first child available
   const child = selectedChild ?? children[0] ?? null;
 
   // Use child directly (dueDate editing is now in Settings)
   const effectiveChild = child;
+
+  const milestonesEnabled = enabledModules.includes('milestones');
+
+  // Auto-generate LEAPS milestones idempotently when the page loads
+  // (only when milestones module is enabled and a child is available)
+  const initLeapsMilestones = useCallback(async () => {
+    if (!effectiveChild || !user || !milestonesEnabled || milestonesInitialised) return;
+    setMilestonesInitialised(true);
+
+    const newMilestones = ensureLeapsMilestones({
+      child: effectiveChild,
+      existingMilestones: milestones,
+      userId: user.id,
+    });
+
+    // Add all new milestones concurrently — in local mode storage writes are
+    // synchronous so all milestones are in localStorage before refreshLocalData runs.
+    await Promise.all(newMilestones.map((m) => addMilestone(m)));
+  }, [effectiveChild, user, milestonesEnabled, milestonesInitialised, milestones, addMilestone]);
+
+  useEffect(() => {
+    void initLeapsMilestones();
+  // Reset the flag when child changes so we re-check for the new child
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [effectiveChild?.id, milestonesEnabled]);
+
+  // Reset initialised flag when child changes
+  useEffect(() => {
+    setMilestonesInitialised(false);
+  }, [effectiveChild?.id]);
 
   // Compute leap data for milestone integration
   const leapPredictions = useMemo(() => {
@@ -58,6 +95,16 @@ export default function LeapsPage() {
     [childMilestones],
   );
 
+  // "Seek advice" milestones: overdue by more than SEEK_ADVICE_WEEKS
+  const seekAdviceMilestones = useMemo(
+    () => missedMilestones.filter((m) => {
+      if (!m.targetDate) return false;
+      const msOverdue = Date.now() - new Date(m.targetDate).getTime();
+      return msOverdue > SEEK_ADVICE_WEEKS * 7 * 24 * 60 * 60 * 1000;
+    }),
+    [missedMilestones],
+  );
+
   // Expected milestone prompts based on past leaps
   const expectedMilestoneCategories = useMemo(() => {
     const categories: string[] = [];
@@ -72,8 +119,6 @@ export default function LeapsPage() {
     }
     return [...new Set(categories)];
   }, [pastLeaps]);
-
-  const milestonesEnabled = enabledModules.includes('milestones');
 
   const sections: { id: LeapsSection; label: string; emoji: string }[] = [
     { id: 'milestones', label: 'Milestones', emoji: '⭐' },
@@ -126,7 +171,142 @@ export default function LeapsPage() {
         ))}
       </nav>
 
-      {/* ── Milestones Section (default) ──────────────────────────────── */}
+      {/* ── Overview Section ──────────────────────────────────────────── */}
+      {activeSection === 'overview' && (
+        <div className="space-y-4">
+          <AgeCalculator child={activeChild} />
+          <LeapProgressChart child={activeChild} />
+
+          {/* Current leap guidance */}
+          {currentLeap && (
+            <section className="rounded-2xl bg-[var(--bg-card)] border border-lavender-100 shadow-sm p-5">
+              <h2 className="flex items-center gap-2 text-sm font-bold text-[var(--text-primary)] mb-3">
+                🌊 Currently in Leap {currentLeap.leap.number}: {currentLeap.leap.title}
+              </h2>
+              <p className="text-sm text-[var(--text-secondary)] mb-3">{currentLeap.leap.description}</p>
+
+              <div className="space-y-3">
+                <div>
+                  <h3 className="text-xs font-semibold text-[var(--text-primary)] mb-1">🌟 Skills emerging</h3>
+                  <div className="flex flex-wrap gap-1.5">
+                    {currentLeap.leap.skills.map((skill) => (
+                      <span key={skill} className="rounded-full bg-lavender-50 px-2.5 py-1 text-xs text-lavender-700">
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-xs font-semibold text-[var(--text-primary)] mb-1">💡 Tips for parents</h3>
+                  <ul className="space-y-1">
+                    {currentLeap.leap.parentalTips.slice(0, 3).map((tip) => (
+                      <li key={tip} className="text-xs text-[var(--text-secondary)] flex gap-1.5">
+                        <span className="text-lavender-400 shrink-0">•</span>
+                        {tip}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </section>
+          )}
+
+          {/* Missed milestones alert */}
+          {missedMilestones.length > 0 && (
+            <section className="rounded-2xl bg-rose-50 border border-rose-200 p-4" aria-label="Milestones needing attention">
+              <h2 className="flex items-center gap-2 text-sm font-bold text-rose-800 mb-2">
+                ⚠️ {missedMilestones.length} milestone{missedMilestones.length !== 1 ? 's' : ''} past their target date
+              </h2>
+              <p className="text-xs text-rose-700 mb-3">
+                These milestones have not yet been marked as achieved. Every child develops at their own pace —
+                these dates are advisory guides, not diagnostic deadlines. Only you can mark a milestone as achieved
+                when you have observed the skill.
+              </p>
+              <ul className="space-y-2 mb-3">
+                {missedMilestones.slice(0, 3).map((m) => (
+                  <li key={m.id} className="rounded-xl bg-[var(--bg-card)] px-3 py-2 text-xs ring-1 ring-rose-100">
+                    <span className="font-semibold text-[var(--text-primary)]">{m.name}</span>
+                    <span className="text-rose-700 ml-2">Target: {m.targetDate}</span>
+                    <p className="text-[10px] text-[var(--text-secondary)] mt-0.5">
+                      Continue observing and practising — mark this achieved when you see the skill.
+                    </p>
+                  </li>
+                ))}
+                {missedMilestones.length > 3 && (
+                  <li className="text-xs text-rose-700">
+                    +{missedMilestones.length - 3} more — view in the Milestones tab
+                  </li>
+                )}
+              </ul>
+
+              {/* Seek advice banner for significantly overdue milestones */}
+              {seekAdviceMilestones.length > 0 && (
+                <div className="rounded-xl bg-[var(--bg-card)] border border-rose-200 px-3 py-3 mb-3">
+                  <p className="text-xs font-semibold text-rose-800 mb-1">
+                    🩺 Some milestones are significantly overdue — consider seeking advice
+                  </p>
+                  <p className="text-[10px] text-[var(--text-secondary)] mb-2">
+                    When milestones are significantly past their expected window it can be worth a chat with
+                    your health visitor or GP. They can reassure you or point you to appropriate support.
+                  </p>
+                  <ul className="space-y-1 text-[10px] text-rose-700">
+                    {UK_SUPPORT_RESOURCES.map((r) => (
+                      <li key={r.url} className="flex gap-1.5">
+                        <span>{r.emoji}</span>
+                        <a href={r.url} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">
+                          {r.label}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <h3 className="text-xs font-semibold text-rose-800">Reassuring next steps:</h3>
+                <ul className="space-y-1 text-xs text-rose-700">
+                  <li className="flex gap-1.5"><span>✅</span> Keep supporting play and daily activities — skills often emerge gradually</li>
+                  <li className="flex gap-1.5"><span>📝</span> Note any new skills you observe, however small, and update the milestone</li>
+                  <li className="flex gap-1.5"><span>🩺</span> Speak to your GP or health visitor if you have concerns — they are there to help</li>
+                  <li className="flex gap-1.5"><span>📋</span> Share your observations with therapy or SEND teams if involved</li>
+                </ul>
+              </div>
+              {milestonesEnabled && (
+                <Link
+                  to="/milestones"
+                  className="mt-3 inline-flex rounded-full bg-rose-600 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-rose-700"
+                >
+                  Review &amp; update milestones →
+                </Link>
+              )}
+            </section>
+          )}
+
+          {/* Quick stats */}
+          {milestonesEnabled && (
+            <section className="rounded-2xl bg-[var(--bg-card)] border border-lavender-100 shadow-sm p-5">
+              <h2 className="text-sm font-bold text-[var(--text-primary)] mb-3">📈 Progress at a glance</h2>
+              <div className="grid grid-cols-3 gap-3">
+                <div className="rounded-xl bg-[var(--bg-primary)] p-3 text-center">
+                  <div className="text-lg font-bold text-lavender-700">{pastLeaps.length}</div>
+                  <div className="text-[10px] text-[var(--text-secondary)]">Leaps completed</div>
+                </div>
+                <div className="rounded-xl bg-[var(--bg-primary)] p-3 text-center">
+                  <div className="text-lg font-bold text-emerald-600">{achievedCount}</div>
+                  <div className="text-[10px] text-[var(--text-secondary)]">Milestones achieved</div>
+                </div>
+                <div className="rounded-xl bg-[var(--bg-primary)] p-3 text-center">
+                  <div className="text-lg font-bold text-amber-600">{inProgressCount}</div>
+                  <div className="text-[10px] text-[var(--text-secondary)]">In progress</div>
+                </div>
+              </div>
+            </section>
+          )}
+        </div>
+      )}
+
+      {/* ── Milestones Section ────────────────────────────────────────── */}
       {activeSection === 'milestones' && (
         <div className="space-y-4">
           {!milestonesEnabled ? (
@@ -153,7 +333,11 @@ export default function LeapsPage() {
 
               {/* Milestone summary by category */}
               <section className="rounded-2xl bg-[var(--bg-card)] border border-lavender-100 shadow-sm p-5">
-                <h2 className="text-sm font-bold text-[var(--text-primary)] mb-3">Milestone progress by category</h2>
+                <h2 className="text-sm font-bold text-[var(--text-primary)] mb-1">Milestone progress by category</h2>
+                <p className="text-xs text-[var(--text-secondary)] mb-3">
+                  Milestones are marked achieved only when <strong>you</strong> confirm the skill — they are never
+                  auto-completed. Target dates are advisory guides, not diagnostic deadlines.
+                </p>
                 <div className="space-y-2">
                   {(Object.keys(MILESTONE_GUIDANCE) as Array<keyof typeof MILESTONE_GUIDANCE>).map((cat) => {
                     const catMilestones = childMilestones.filter((m) => m.category === cat);
@@ -179,7 +363,7 @@ export default function LeapsPage() {
                           </div>
                         </div>
                         {catMilestones.length > 0 && (
-                          <div className="h-2 w-16 overflow-hidden rounded-full bg-gray-200">
+                          <div className="h-2 w-16 overflow-hidden rounded-full bg-[var(--bg-hover)]">
                             <div
                               className="h-full rounded-full bg-emerald-500 transition-all"
                               style={{ width: `${(catAchieved / catMilestones.length) * 100}%` }}
@@ -198,26 +382,37 @@ export default function LeapsPage() {
                 </Link>
               </section>
 
-              {/* Missed milestones */}
+              {/* Missed milestones in milestones tab */}
               {missedMilestones.length > 0 && (
-                <section className="rounded-2xl bg-rose-50 border border-rose-200 p-4">
+                <section className="rounded-2xl bg-rose-50 border border-rose-200 p-4" aria-label="Milestones past target date">
                   <h2 className="flex items-center gap-2 text-sm font-bold text-rose-800 mb-2">
                     ⚠️ Milestones past target date
                   </h2>
-                  <p className="text-xs text-rose-600 mb-2">
-                    These milestones have not yet been achieved. Every child is different — use these as conversation starters with professionals, not as cause for alarm.
+                  <p className="text-xs text-rose-700 mb-2">
+                    Every child develops at their own pace — these dates are guides, not deadlines.
+                    Only you can mark a milestone as achieved when you observe the skill.
                   </p>
                   <div className="space-y-2">
                     {missedMilestones.map((m) => {
                       const guidance = MILESTONE_GUIDANCE[m.category];
+                      const isSeekAdvice = seekAdviceMilestones.some((s) => s.id === m.id);
                       return (
-                        <div key={m.id} className="rounded-xl bg-white p-3 ring-1 ring-rose-100">
-                          <div className="text-xs font-semibold text-rose-900">{m.name}</div>
-                          <div className="text-[10px] text-rose-600 mt-0.5">
-                            Category: {guidance?.title ?? m.category} · Target: {m.targetDate}
+                        <div key={m.id} className="rounded-xl bg-[var(--bg-card)] p-3 ring-1 ring-rose-100">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-xs font-semibold text-[var(--text-primary)]">
+                              {stripSlugSentinel(m.name)}
+                            </span>
+                            {isSeekAdvice && (
+                              <span className="shrink-0 rounded-full bg-rose-100 px-1.5 py-0.5 text-[9px] font-bold text-rose-700">
+                                Seek advice
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-[10px] text-[var(--text-secondary)] mt-0.5">
+                            {guidance?.title ?? m.category} · Target: {m.targetDate}
                           </div>
                           {guidance && (
-                            <div className="mt-2 text-[10px] text-rose-700">
+                            <div className="mt-1.5 text-[10px] text-rose-700">
                               <strong>Next steps:</strong> {guidance.nextSteps[0]}
                             </div>
                           )}
@@ -225,6 +420,19 @@ export default function LeapsPage() {
                       );
                     })}
                   </div>
+
+                  {/* Seek advice resources shown when any milestone is significantly overdue */}
+                  {seekAdviceMilestones.length > 0 && (
+                    <div className="mt-3 space-y-1">
+                      <p className="text-xs font-semibold text-rose-800">UK support resources:</p>
+                      {UK_SUPPORT_RESOURCES.map((r) => (
+                        <a key={r.url} href={r.url} target="_blank" rel="noopener noreferrer"
+                          className="flex items-center gap-1.5 text-xs text-rose-700 underline underline-offset-2">
+                          <span>{r.emoji}</span>{r.label}
+                        </a>
+                      ))}
+                    </div>
+                  )}
                 </section>
               )}
 
@@ -232,37 +440,19 @@ export default function LeapsPage() {
               <section className="rounded-2xl bg-[var(--bg-card)] border border-lavender-100 shadow-sm p-5">
                 <h2 className="text-sm font-bold text-[var(--text-primary)] mb-2">🧭 Guidance &amp; support</h2>
                 <p className="text-xs text-[var(--text-secondary)] mb-3">
-                  Helpful resources for each stage of your child&apos;s development.
+                  Helpful UK resources for each stage of your child&apos;s development.
                 </p>
                 <div className="space-y-2">
-                  <a
-                    href="https://www.nhs.uk/start-for-life/baby/development/"
-                    target="_blank" rel="noopener noreferrer"
-                    className="flex items-center gap-2 rounded-xl bg-[var(--bg-primary)] px-3 py-2.5 text-xs text-[var(--text-primary)] ring-1 ring-[var(--border-color)] hover:ring-lavender-200 transition"
-                  >
-                    🏥 <span className="underline underline-offset-2">NHS Start for Life: Baby development</span>
-                  </a>
-                  <a
-                    href="https://www.nhs.uk/conditions/baby/babys-development/is-my-child-developing-normally/"
-                    target="_blank" rel="noopener noreferrer"
-                    className="flex items-center gap-2 rounded-xl bg-[var(--bg-primary)] px-3 py-2.5 text-xs text-[var(--text-primary)] ring-1 ring-[var(--border-color)] hover:ring-lavender-200 transition"
-                  >
-                    👶 <span className="underline underline-offset-2">NHS: Is my child developing normally?</span>
-                  </a>
-                  <a
-                    href="https://www.nhs.uk/conditions/autism/"
-                    target="_blank" rel="noopener noreferrer"
-                    className="flex items-center gap-2 rounded-xl bg-[var(--bg-primary)] px-3 py-2.5 text-xs text-[var(--text-primary)] ring-1 ring-[var(--border-color)] hover:ring-lavender-200 transition"
-                  >
-                    🧩 <span className="underline underline-offset-2">NHS: Autism overview and support</span>
-                  </a>
-                  <a
-                    href="https://www.nhs.uk/nhs-services/find-your-local-nhs-website/"
-                    target="_blank" rel="noopener noreferrer"
-                    className="flex items-center gap-2 rounded-xl bg-[var(--bg-primary)] px-3 py-2.5 text-xs text-[var(--text-primary)] ring-1 ring-[var(--border-color)] hover:ring-lavender-200 transition"
-                  >
-                    📍 <span className="underline underline-offset-2">Find your local NHS services</span>
-                  </a>
+                  {UK_SUPPORT_RESOURCES.map((r) => (
+                    <a
+                      key={r.url}
+                      href={r.url}
+                      target="_blank" rel="noopener noreferrer"
+                      className="flex items-center gap-2 rounded-xl bg-[var(--bg-primary)] px-3 py-2.5 text-xs text-[var(--text-primary)] ring-1 ring-[var(--border-color)] hover:ring-lavender-200 transition"
+                    >
+                      {r.emoji} <span className="underline underline-offset-2">{r.label}</span>
+                    </a>
+                  ))}
                 </div>
               </section>
             </>

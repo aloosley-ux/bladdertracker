@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { sql } from './_lib/db.js';
+import { sql, getAccessibleChildIds } from './_lib/db.js';
 import { getSessionFromRequest, generateId, cors } from './_lib/auth.js';
 
 interface EntryPayload {
@@ -49,7 +49,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   // GET → export CSV
   if (req.method === 'GET') {
-    return handleExport(req, res);
+    return handleExport(req, res, session.userId);
   }
 
   // POST → import data
@@ -60,9 +60,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.status(405).json({ error: 'Method not allowed' });
 }
 
-async function handleExport(req: VercelRequest, res: VercelResponse) {
+async function handleExport(req: VercelRequest, res: VercelResponse, userId: string) {
   const childId = req.query.childId as string;
   if (!childId) { res.status(400).json({ error: 'childId is required' }); return; }
+  const childIds = await getAccessibleChildIds(userId);
+  if (!childIds.includes(childId)) { res.status(403).json({ error: 'Access denied' }); return; }
 
   const childResult = await sql`SELECT name FROM children WHERE id = ${childId}`;
   const childName = childResult.rows[0]?.name || 'Child';
@@ -116,6 +118,8 @@ async function handleExport(req: VercelRequest, res: VercelResponse) {
 async function handleImport(req: VercelRequest, res: VercelResponse, userId: string) {
   const { childId, drinks, urineEntries, bowelEntries, sleepEntries, toiletAttemptEntries, foodEntries } = req.body ?? {};
   if (!childId) { res.status(400).json({ error: 'childId is required' }); return; }
+  const childIds = await getAccessibleChildIds(userId);
+  if (!childIds.includes(childId)) { res.status(403).json({ error: 'Access denied' }); return; }
 
   const summary = { drinks: 0, urineEntries: 0, bowelEntries: 0, sleepEntries: 0, toiletAttemptEntries: 0, foodEntries: 0, errors: [] as string[] };
 

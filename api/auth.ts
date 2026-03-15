@@ -11,6 +11,8 @@ import {
 } from './_lib/auth.js';
 import { logger } from './_lib/logger.js';
 
+const SELF_REGISTRATION_ROLES = new Set(['parent', 'caregiver', 'schoolAdmin']);
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   cors(res);
   if (req.method === 'OPTIONS') { res.status(200).end(); return; }
@@ -143,7 +145,11 @@ async function handleRegister(req: VercelRequest, res: VercelResponse) {
 
   const passwordHash = await bcrypt.hash(password, 12);
   const id = generateId();
-  const userRole = role || 'parent';
+  const userRole = typeof role === 'string' && role ? role : 'parent';
+  if (!SELF_REGISTRATION_ROLES.has(userRole)) {
+    res.status(400).json({ error: 'Invalid role for self-registration.' });
+    return;
+  }
 
   await sql`
     INSERT INTO accounts (id, name, email, password_hash, role)

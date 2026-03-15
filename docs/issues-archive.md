@@ -32,7 +32,7 @@ This file summarizes all issues previously tracked in markdown files or docs/git
 
 ### 7. Validate therapist/specialist role completeness or de-scope docs
 - Status: ✅ Resolved
-- Roles are marked as reserved for future use; not available in registration or invite flows.
+- Roles are documented as invite-only contextual labels with caregiver-level access, and are not exposed in self-registration.
 
 ### 8. Verify cloud/local parity for extended tracker fields and import/export paths
 - Status: ✅ Resolved
@@ -52,8 +52,8 @@ This file summarizes all issues previously tracked in markdown files or docs/git
 
 ---
 
-For any new issues, follow the process in docs/PUSH_AND_ISSUES_INSTRUCTIONS.md:
-- Draft in markdown if needed
-- Publish to GitHub Issues using the documented CLI/scripts
-- Archive completed issues here
-- Keep only active issues in markdown or GitHub Issues
+For any new issues:
+- Log open work in `docs/REPO_STATUS.md`
+- Create a GitHub issue when the work is actionable
+- Archive completed items here
+- Remove obsolete markdown drafts once they are no longer needed

@@ -32,7 +32,7 @@ Built for tired, busy, real-world use: one-handed on a phone, during routines, s
 | Quality checks | CI runs tests, linting, build, and API type-checks on pull requests |
 | Deployment modes | Local/offline mode by default, optional cloud mode via Vercel + Neon |
 | Accessibility | High-contrast theme, dyslexia-friendly font, keyboard support, accessibility tests |
-| Current focus | All tracked issues resolved (March 2026). Integration tests run against deployed Vercel API. See `docs/REPO_STATUS.md` for any new or future work. |
+| Current focus | Documentation has been audited against the codebase. One live `/api/auth` integration test still depends on a reachable deployed hostname; see `docs/REPO_STATUS.md` and `docs/DOCUMENTATION_AUDIT.md`. |
 
 ## 🔗 Quick links
 
@@ -173,14 +173,14 @@ This section highlights the experience that already exists in the product today.
 | 📱 **Mobile-First Layout** | Larger quick actions, shorter nav labels, and calmer one-handed flows on phones |
 | 🏆 **Milestone Engine** | Full CRUD for developmental milestones across 8 categories with status workflow |
 | 🔀 **Module Registry** | Per-child module toggling via `DEFAULT_MODULES` (13 modules) with UI wording and helper copy centralised in `src/content/presentation.ts` |
-| 👥 **User Roles** | admin, parent, caregiver, schoolAdmin, therapist, specialist (all 6 roles fully functional) |
+| 👥 **User Roles** | 6 role labels in the data model; self-registration is limited to `parent`, `caregiver`, and `schoolAdmin`, while `therapist` and `specialist` are invite-only contextual labels |
 | 🌗 **Theme System** | Light, Dark, High Contrast with CSS custom properties |
 | 📊 **Charts & Calendar** | Recharts-powered data visualization + calendar view |
 | 📤 **CSV Export** | Export all tracker types + milestones per child |
 | 🤝 **Caregiver Invites** | Secure token-based sharing and collaboration |
 | 📝 **Audit Trail** | Timestamped logging of all create/update/delete operations |
-| ☁️ **Cloud Storage** | All tracker types + milestones + enabled_modules persist to Neon Postgres via `VITE_USE_CLOUD=true`. Local mode uses localStorage as fallback. |
-| 📥 **Data Import** | Bulk import via CSV/Excel for all entry types |
+| ☁️ **Cloud Storage** | All diary trackers except leap diary/symptom logs, plus milestones and enabled modules, persist to Neon Postgres via `VITE_USE_CLOUD=true`. Local mode uses localStorage as fallback. |
+| 📥 **Data Import** | Settings UI imports drinks / urine / bowel templates from CSV, JSON, or XLSX. The `/api/data` endpoint also accepts direct payload arrays for sleep, toilet attempts, and food. |
 | 🎉 **Gentle celebrations** | Supportive, non-punitive celebration banners for milestones and daily effort |
 | 🧱 **Brand & asset registry** | Brand copy in `src/content/presentation.ts` and asset references in `src/assets/index.ts` for easier updates |
 
@@ -190,7 +190,7 @@ This section highlights the experience that already exists in the product today.
 
 - **What it does:** Entry cards in the Diary and Today views are now expandable to show the full entry data and an audit history. Entries are read-only by default; an explicit Edit control enables inline editing of the entry data and a Save action persists changes to the backend.
 - **Audit trail:** All create and update operations now write structured audit events to the server. Audit events can be queried per-entry via the API: [api/audit.ts](api/audit.ts#L1) (`GET /api/audit?subject=<entryId>`).
-- **Where it appears:** Diary (`/log`) and Today (`/`) pages include the expanded entry detail UI. Calendar integration is planned as a follow-up.
+- **Where it appears:** Diary (`/log`) and Today (`/`) pages include the expanded entry detail UI and per-entry audit history.
 
 
 | Page | Route | Nav Icon | Description |
@@ -294,9 +294,10 @@ Local mode uses `localStorage` — no database required.
 
 ```bash
 # 1. Set environment variables
-export DATABASE_URL="postgres://user:pass@ep-xxx.neon.tech/dbname?sslmode=require"
-export JWT_SECRET="your-secure-random-secret"
+export DATABASE_URL="postgres://<db-user>:<db-password>@<neon-host>/<db-name>?sslmode=require"
+export JWT_SECRET="<32+ character random secret>"
 export VITE_USE_CLOUD=true
+export ADMIN_ACCESS_KEY="<admin-promotion-key>"
 
 # 2. Initialize the database (creates all 20 tables)
 curl -X POST https://your-app.vercel.app/api/migrate
@@ -308,7 +309,7 @@ vercel --prod
 Or for local cloud development:
 
 ```bash
-vercel dev            # Runs API functions locally with env vars from Vercel
+VITE_USE_CLOUD=true vercel dev   # Runs API functions locally with cloud mode enabled
 ```
 
 ### Build Commands
@@ -318,7 +319,7 @@ vercel dev            # Runs API functions locally with env vars from Vercel
 | `npm run dev` | Vite dev server with HMR |
 | `npm run build` | `tsc -b && vite build` — type-check + production bundle |
 | `npm run lint` | ESLint across the entire project |
-| `npm test` | Vitest + React Testing Library smoke, storage, and accessibility checks |
+| `npm test` | Vitest + React Testing Library checks (includes one live deployed-host integration test that needs network/DNS access to its configured Vercel URL) |
 | `npm run preview` | Preview the production build locally |
 | `vercel dev` | Local dev with serverless functions + cloud DB |
 
@@ -335,7 +336,7 @@ cp .env.example .env.local
 | Variable | Required when | Purpose |
 |----------|----------------|---------|
 | `VITE_USE_CLOUD` | Cloud mode | Switches the frontend from localStorage mode to the Vercel/Neon API |
-| `VITE_ADMIN_KEY` | Local-only admin setup | Allows local/offline admin promotion without hardcoding a key in source |
+| `VITE_ADMIN_KEY` | Local-only admin setup | Allows local/offline admin promotion via `?admin-access=<key>` without hardcoding a key in source |
 | `DATABASE_URL` / `POSTGRES_URL` | Cloud mode | Neon Postgres connection string |
 | `JWT_SECRET` | Cloud mode | Signs server-side session tokens |
 | `ADMIN_ACCESS_KEY` | Cloud mode | Server-side admin promotion key used by `/api/auth` |
@@ -372,12 +373,12 @@ Deployment checklist:
 | `routine_entries` | Daily routines | `child_id`, `date`, `time`, `routine_name`, `completed`, `duration_minutes` |
 | `milestones` | Developmental goals | `child_id`, `name`, `category`, `status`, `date_achieved`, `notes`, `created_by` |
 | `enabled_modules` | Module toggles | `child_id`, `module_id` (UNIQUE constraint) |
-| `reminder_preferences` | Reminder settings | `child_id`, `module_id`, `frequency`, `created_by` |
+| `reminder_preferences` | Reminder settings | `user_id`, `child_id`, `module_id`, `frequency`, `enabled`, `snoozed_until`, `next_reminder_at`, `created_at`, `updated_at` |
 | `invites` | Caregiver invites | `child_id`, `email`, `role`, `status`, `token` (UNIQUE), `invited_by` |
 | `notifications` | User notifications | `user_id`, `title`, `message`, `read` |
 | `audit_events` | Activity log | `user_id`, `action`, `subject`, `detail`, `created_at` |
 
-All entry tables share: `id` (UUID PK), `created_by` (FK → accounts), `created_at` (timestamp), `notes`.
+All entry tables share opaque text IDs, `created_by` (FK → accounts), `created_at` (timestamp), and `notes`.
 
 ---
 
@@ -390,9 +391,9 @@ The following roles are supported in registration and invite flows. The `child_a
 | `admin` | System administrator | ✅ All | ✅ | ✅ | ✅ | ✅ | Via `promote` action only |
 | `parent` | Primary caregiver | ✅ Own children | ✅ | ✅ | ✅ | ❌ | ✅ |
 | `caregiver` | Invited collaborator | ✅ Shared children | ✅ | ❌ | ❌ | ❌ | ✅ |
-| `schoolAdmin` | School/educational staff | ✅ Shared children | ✅ | ❌ | ❌ | ❌ | ✅ (grants caregiver DB access) |
-| `therapist` | Clinical therapist | ✅ Shared children | ✅ therapy & milestones | ❌ | ❌ | ❌ | ✅ (grants caregiver DB access) |
-| `specialist` | Medical specialist | ✅ Shared children | ✅ therapy & milestones | ❌ | ❌ | ❌ | ✅ (grants caregiver DB access) |
+| `schoolAdmin` | School/educational staff | ✅ Shared children | ✅ | ❌ | ✅ caregivers only | ❌ | ✅ (grants caregiver DB access) |
+| `therapist` | Invite-only clinical label | ✅ Shared children | ✅ | ❌ | ❌ | ❌ | Invite only (grants caregiver DB access) |
+| `specialist` | Invite-only clinical label | ✅ Shared children | ✅ | ❌ | ❌ | ❌ | Invite only (grants caregiver DB access) |
 
 **Note:** `schoolAdmin`, `therapist`, and `specialist` invites all grant `caregiver`-level DB access (same data permissions as caregiver). The labels are retained for contextual clarity in their respective workflows. See `docs/API.md` for the canonical invite permission matrix.
 
@@ -497,10 +498,10 @@ All endpoints are Vercel Serverless Functions under `/api/`. Auth is via JWT in 
 | `GET/POST/PUT/DELETE /api/drinks` | Drink entries |
 | `GET/POST/PUT/DELETE /api/urine` | Urine entries |
 | `GET/POST/PUT/DELETE /api/bowel` | Bowel entries |
-| `GET/POST/PUT/DELETE /api/trackers?type=<type>` | `sleep`, `toilet`, `food` |
+| `GET/POST/PUT/DELETE /api/trackers?type=<type>` | `sleep`, `toilet_attempt`, `food` |
 | `GET/POST/PUT/DELETE /api/modules?type=<type>` | `mood`, `sensory`, `medication`, `therapy`, `routine`, `milestones` |
 
-All tracker endpoints accept `?childId=<id>` for filtering and return `{ entries: Entry[] }`.
+Tracker list endpoints return entries for all children the signed-in user can access; only module toggles and reminder preferences use `childId` query parameters directly. There is currently **no cloud API for leap diary or leap symptom log data**.
 
 ### `/api/modules` — New Module Endpoint
 
@@ -661,8 +662,8 @@ src/
 - **State management:** React Context + hooks (`useApp()`, `useTheme()`) — no external state library
 - **Storage duality:** Every data operation exists in both `storage.ts` (local) and `api.ts` (cloud); `AppContext` switches based on `VITE_USE_CLOUD`
 - **Naming:** camelCase for TS, snake_case for DB columns, `bt_` prefix for localStorage keys
-- **Auth pattern:** JWT in HttpOnly cookies; server functions call `authenticate(req)` from `_lib/auth.ts`
-- **Audit:** All mutations should call `logAuditEvent()` / write to `audit_events`
+- **Auth pattern:** JWT in HttpOnly cookies; handlers use `getSessionFromRequest(req)` or `requireAuth(...)` from `_lib/auth.ts`
+- **Audit:** Mutating endpoints write to `audit_events`; local mode records equivalent events in browser storage
 
 ### Getting Started with Development
 
@@ -703,6 +704,7 @@ npm run build         # Full type-check + production build
 | [docs/API.md](./docs/API.md) | API endpoint reference |
 | [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) | System architecture |
 | [docs/MODULES.md](./docs/MODULES.md) | Module field reference and clinical guidance |
+| [docs/DOCUMENTATION_AUDIT.md](./docs/DOCUMENTATION_AUDIT.md) | Latest documentation audit summary and follow-up notes |
 | [docs/REPO_STATUS.md](./docs/REPO_STATUS.md) | Durable list of genuine remaining work |
 | [docs/PROJECT_PLAN.md](./docs/PROJECT_PLAN.md) | Lightweight planning index and historical context |
 | [CHANGELOG.md](./CHANGELOG.md) | Release notes and version history |
@@ -789,11 +791,11 @@ Changes apply **instantly** (no Save button) and persist to localStorage (local 
 
 ## 🧪 Testing & QA
 
-### Automated checks run
-- `npm test` ✅
+### Automated checks run during this audit
 - `npm run build` ✅
 - `./node_modules/.bin/tsc --project tsconfig.api.json --noEmit` ✅
 - `npm run lint` ✅
+- `npm test` ⚠️ all local tests passed except the live deployed-host integration test, which failed in this environment because its configured Vercel hostname could not be resolved
 
 ### Manual QA checklist
 - [ ] Milestones timeline: weekly/monthly/annual zoom, filters, and jump controls

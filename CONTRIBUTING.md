@@ -3,10 +3,9 @@
 
 **Current State (March 2026):**
 
-- All tracked issues are resolved and archived. See [`docs/issues-archive.md`](./docs/issues-archive.md) for a summary of completed work.
-- Documentation, process, and code are fully aligned. All files reflect the current state and workflow.
-- End-to-end integration tests are in place and passing against the deployed Vercel API.
-- For any new work, log in [`docs/REPO_STATUS.md`](./docs/REPO_STATUS.md) or as GitHub issues per the documented workflow.
+- See [`docs/DOCUMENTATION_AUDIT.md`](./docs/DOCUMENTATION_AUDIT.md) for the latest repository-wide documentation audit.
+- See [`docs/issues-archive.md`](./docs/issues-archive.md) for archived work and [`docs/REPO_STATUS.md`](./docs/REPO_STATUS.md) for genuinely open follow-up items.
+- The app supports both local/offline mode (`localStorage`) and optional cloud mode (Vercel + Neon).
 
 ---
 
@@ -24,21 +23,27 @@ Thank you for your interest in contributing! This guide will help you get up and
 2. **Install dependencies**
 
    ```bash
-   npm ci
+   npm install
    ```
 
 3. **Run locally (localStorage mode)**
 
    ```bash
-   npm run dev
-   ```
+    npm run dev
+    ```
 
-   This starts the Vite dev server with all data stored in the browser's localStorage.
+    This starts the Vite dev server with all data stored in the browser's localStorage.
+
+    To test local admin promotion, set `VITE_ADMIN_KEY` in `.env.local`, sign in, then open a URL such as:
+
+    ```text
+    http://localhost:5173/?admin-access=<your-local-key>
+    ```
 
 4. **Run with cloud backend**
 
-   ```bash
-   VITE_USE_CLOUD=true vercel dev
+    ```bash
+    VITE_USE_CLOUD=true vercel dev
    ```
 
    This connects to the Neon PostgreSQL database via Vercel Serverless Functions.
@@ -120,7 +125,8 @@ Follow these steps to add a new tracking module (e.g. sleep, meals, milestones):
 Use the following to validate changes:
 
 ```bash
-# Unit, route smoke, storage, invite role, reminder scope, and accessibility checks
+# Unit, route smoke, storage, invite role, reminder scope, accessibility,
+# and one live deployed-host integration test
 npm test
 
 # Type-check and bundle
@@ -135,6 +141,10 @@ npm run lint
 # Manual testing
 npm run dev
 ```
+
+Notes:
+- `src/test/integration/api-auth.integration.test.ts` reaches a fixed deployed Vercel hostname. In isolated environments without working DNS/network access to that host, `npm test` can fail even when the rest of the suite is green.
+- Focused API handler unit tests live under `src/test/integration/` and mock the serverless auth/db helpers.
 
 ### Test file map
 
@@ -179,7 +189,7 @@ For security concerns, please follow [`SECURITY.md`](./SECURITY.md) instead of f
 ## Pull Request Guidelines
 
 - Keep changes **focused** — one feature or fix per PR.
-- Ensure `npm test`, `npm run build`, `npm run lint`, and the API type-check pass before opening the PR.
+- Ensure `npm run build`, `npm run lint`, and the API type-check pass before opening the PR. Also run `npm test`; if the only failure is the live deployed-host integration test being unreachable, note that clearly in the PR.
 - Follow **existing patterns** in the codebase for consistency.
 - Describe what you changed and why in the PR description.
 
@@ -196,5 +206,9 @@ For security concerns, please follow [`SECURITY.md`](./SECURITY.md) instead of f
 | `/calendar`   | Calendar           |
 | `/profiles`   | Profiles           |
 | `/settings`   | Account / Settings |
+| `/gdpr`       | GDPR policy        |
+| `/audit-trail`| Audit Trail        |
 | `/help`       | Help & Support     |
 | `/admin`      | Admin Panel        |
+
+Legacy redirects in `src/App.tsx` map `/journal` → `/log`, `/charts` → `/reports`, `/caregiver` → `/profiles`, and `/profile` → `/settings`.
