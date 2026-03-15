@@ -282,7 +282,7 @@ export default function HelpPage() {
               </div>
             ))}
           </div>
-          <div className="mt-4 rounded-2xl border border-lavender-100 bg-lavender-50 p-4 text-xs leading-relaxed text-lavender-800">
+          <div className="mt-4 rounded-2xl border border-amber-100 bg-amber-50 p-4 text-xs leading-relaxed text-amber-800">
             {BRAND.name} is designed to support observation and care coordination. It does not replace medical advice or emergency support. If you are worried about a child&apos;s immediate health or safety, contact your local urgent care service, NHS 111, or emergency services.
           </div>
         </section>
