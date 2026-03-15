@@ -67,11 +67,9 @@ export default function LeapsPage() {
       userId: user.id,
     });
 
-    // Add each new milestone via the context so state refreshes correctly
-    for (const m of newMilestones) {
-      // eslint-disable-next-line no-await-in-loop
-      await Promise.resolve(addMilestone(m));
-    }
+    // Add all new milestones concurrently — in local mode storage writes are
+    // synchronous so all milestones are in localStorage before refreshLocalData runs.
+    await Promise.all(newMilestones.map((m) => addMilestone(m)));
   }, [effectiveChild, user, milestonesEnabled, milestonesInitialised, milestones, addMilestone]);
 
   useEffect(() => {

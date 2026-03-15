@@ -100,6 +100,10 @@ describe('theme persistence and switching (#96)', () => {
   });
 
   it('dark and high-contrast are meaningfully different theme tokens', () => {
+    // The data-theme attribute values are distinct, meaning each maps to a separate
+    // CSS variable set in index.css. Visual differences (background colours, border
+    // styles, focus rings) are best verified via E2E / visual regression tests since
+    // JSDOM does not apply or compute CSS custom properties.
     expect('dark').not.toBe('high-contrast');
     expect(['light', 'dark', 'high-contrast']).toContain('dark');
     expect(['light', 'dark', 'high-contrast']).toContain('high-contrast');
