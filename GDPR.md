@@ -45,7 +45,7 @@ We collect and process the following categories of personal data:
 |------|---------|
 | Full name | Identify you within the app and to other care team members |
 | Email address | Account login, caregiver invitations, and notifications |
-| Password (bcrypt-hashed) | Secure account authentication — we never store plaintext passwords |
+| Password | Secure account authentication — bcrypt-hashed in cloud mode and PBKDF2-hashed in local/offline mode; we never store plaintext passwords |
 | Role | Determine your access permissions (see Section 3.7) |
 | Avatar | Optional profile personalisation |
 | Account creation date | Record-keeping |
@@ -56,6 +56,7 @@ We collect and process the following categories of personal data:
 |------|---------|
 | Child's name | Identify the child within the app |
 | Date of birth | Age-appropriate tracking and milestone benchmarking |
+| Due date (optional, leaps helper) | Improve leap prediction accuracy where supported |
 | Avatar | Optional profile personalisation |
 | Created by (user reference) | Ownership and access control |
 
@@ -86,6 +87,9 @@ We collect detailed health and development diary entries across the following tr
 - Duration in minutes
 - Quality rating (1–5 scale)
 - Nighttime events
+- Bedtime
+- Sleep onset minutes
+- Night activity flag
 
 #### Toilet Attempts
 - Outcome (success, failure, no event)
@@ -97,6 +101,9 @@ We collect detailed health and development diary entries across the following tr
 - Meal type (breakfast, lunch, dinner, snack)
 - Description of food consumed
 - Portion size
+- Whether it was a new food being tried
+- Texture
+- Acceptance / refusal outcome
 
 #### Mood
 - Mood level (1–5 scale, from very distressed to very happy)
@@ -163,9 +170,9 @@ The application implements six distinct roles with differing levels of access:
 | **Admin** | Full system access including user management |
 | **Parent** | Full access to own children; can invite caregivers and manage child profiles |
 | **Caregiver** | View and edit entries for children they have been invited to access |
-| **School Admin** | Read-only access to shared children's entries |
-| **Therapist** | View and edit entries and milestones for assigned children |
-| **Specialist** | Read-only access for clinical review |
+| **School Admin** | Caregiver-level diary access plus caregiver-invite workflow for linked children |
+| **Therapist** | Invite-only contextual label; currently maps to caregiver-level diary access |
+| **Specialist** | Invite-only contextual label; currently maps to caregiver-level diary access |
 
 ---
 
@@ -219,13 +226,17 @@ We do **not** use your data for:
 
 ## 6. Data Storage and Security
 
-### 6.1 Database
+### 6.1 Storage modes
 
-All application data is stored in a **Neon PostgreSQL** serverless database. Neon provides enterprise-grade PostgreSQL with encryption at rest and in transit.
+- **Cloud mode:** Application data is stored in a **Neon PostgreSQL** serverless database. Neon provides encryption at rest and in transit.
+- **Local/offline mode:** Application data is stored in this browser's `localStorage` on this device and is not synced to a backend unless you explicitly run the cloud mode build.
 
 ### 6.2 Password Security
 
-Passwords are hashed using **bcrypt** with a cost factor of 12 before storage. We never store, log, or transmit plaintext passwords. Bcrypt is a one-way hashing algorithm — your password cannot be recovered from its hash.
+- **Cloud mode:** Passwords are hashed using **bcrypt** with a cost factor of 12 before storage.
+- **Local/offline mode:** Passwords are derived client-side using PBKDF2 via the Web Crypto API and stored only in browser storage on that device.
+
+We never store, log, or transmit plaintext passwords.
 
 ### 6.3 Session Authentication
 

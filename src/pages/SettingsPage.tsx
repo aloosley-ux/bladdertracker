@@ -234,14 +234,14 @@ export default function SettingsPage() {
                 <>
                   <li>View diary entries for linked children</li>
                   <li>Log school-time entries (food, routine, toilet attempts)</li>
-                  <li>Cannot modify child profiles or invite users</li>
+                  <li>Cannot modify child profiles, but can send caregiver invites for linked children</li>
                 </>
               )}
               {(user?.role === 'therapist' || user?.role === 'specialist') && (
                 <>
-                  <li>View all diary entries for linked children</li>
-                  <li>Log therapy and milestone entries</li>
-                  <li>Read-only access to personal profile data</li>
+                  <li>Caregiver-level diary access for linked children</li>
+                  <li>Can log the same diary entries as other invited caregivers</li>
+                  <li>Role label is retained for therapy or clinical context</li>
                 </>
               )}
             </ul>
@@ -739,4 +739,3 @@ export default function SettingsPage() {
     </div>
   );
 }
-
