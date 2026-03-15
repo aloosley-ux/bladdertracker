@@ -20,6 +20,7 @@ const AdminPage = lazy(() => import('./pages/AdminPage'));
 const LogPage = lazy(() => import('./pages/LogPage'));
 const MilestonesPage = lazy(() => import('./pages/MilestonesPage'));
 const LeapsPage = lazy(() => import('./pages/LeapsPage'));
+const LeapEntryPage = lazy(() => import('./pages/LeapEntryPage'));
 const GdprPage = lazy(() => import('./pages/GdprPage'));
 const AuditTrailPage = lazy(() => import('./pages/AuditTrailPage'));
 
@@ -121,6 +122,7 @@ function AppRoutes() {
               <Route path="/reports" element={<ReportsPage />} />
               <Route path="/milestones" element={enabled.has('milestones') ? <MilestonesPage /> : <Navigate to="/" replace />} />
               <Route path="/leaps" element={enabled.has('leaps') ? <LeapsPage /> : <Navigate to="/" replace />} />
+              <Route path="/leap-entry" element={enabled.has('leaps') ? <LeapEntryPage /> : <Navigate to="/" replace />} />
               <Route path="/calendar" element={<CalendarPage />} />
               <Route path="/profiles" element={<ProfilesPage />} />
               <Route path="/settings" element={<SettingsPage />} />

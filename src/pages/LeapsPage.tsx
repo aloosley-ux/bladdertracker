@@ -11,11 +11,6 @@ import { ensureLeapsMilestones, stripSlugSentinel } from '../utils/ensureLeapsMi
 import { UK_SUPPORT_RESOURCES } from '../data/ukSupportResources';
 import {
   AgeCalculator,
-  LeapTimeline,
-  SymptomLogger,
-  LeapDiary,
-  LeapNotifications,
-  LeapCalendarWidget,
   LeapProgressChart,
 } from '../components/leaps';
 import { Link } from 'react-router-dom';
@@ -28,7 +23,7 @@ const SEEK_ADVICE_WEEKS = 8;
 // ── Page Component ───────────────────────────────────────────────────
 
 export default function LeapsPage() {
-  const { selectedChild, children, milestones, user, addMilestone, enabledModules } = useApp();
+  const { selectedChild, children, milestones, user, addMilestone, enabledModules, leapSymptomLogs, leapDiaryEntries } = useApp();
   const [activeSection, setActiveSection] = useState<LeapsSection>('milestones');
   const [milestonesInitialised, setMilestonesInitialised] = useState(false);
 
@@ -168,6 +163,194 @@ export default function LeapsPage() {
         ))}
       </nav>
 
+<<<<<<< HEAD
+=======
+      {/* ── Milestones Section (default) ──────────────────────────────── */}
+      {activeSection === 'milestones' && (
+        <div className="space-y-4">
+          {!milestonesEnabled ? (
+            <section className="rounded-2xl bg-[var(--bg-card)] border border-lavender-100 shadow-sm p-5 text-center">
+              <span className="text-3xl mb-2 block">⭐</span>
+              <h2 className="text-sm font-bold text-[var(--text-primary)] mb-1">Milestones module is turned off</h2>
+              <p className="text-xs text-[var(--text-secondary)] mb-3">
+                Enable the Milestones module in Settings to track and link milestones with developmental leaps.
+              </p>
+              <Link to="/settings" className="inline-flex rounded-full bg-lavender-500 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-lavender-600">
+                Open Settings
+              </Link>
+            </section>
+          ) : (
+            <>
+              {/* Compact quick-log actions: compact buttons + preview, full page at /leap-entry */}
+              <section className="rounded-2xl bg-[var(--bg-card)] border border-lavender-100 shadow-sm p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="text-sm font-bold text-[var(--text-primary)]">Quick log</h2>
+                  <Link to="/leap-entry" className="text-xs font-semibold text-lavender-600 hover:underline">Open full entry page →</Link>
+                </div>
+
+                <div className="flex gap-3">
+                  <Link
+                    to="/leap-entry"
+                    className="flex-1 rounded-lg bg-lavender-600 px-3 py-2 text-sm font-semibold text-white text-center hover:bg-lavender-700"
+                  >
+                    📝 Log symptom or note
+                  </Link>
+                  <Link
+                    to="/leap-entry"
+                    className="flex-1 rounded-lg bg-[var(--bg-primary)] border border-lavender-100 px-3 py-2 text-sm font-semibold text-lavender-700 text-center hover:bg-lavender-50"
+                  >
+                    📚 Add diary note
+                  </Link>
+                </div>
+
+                <div className="mt-3 grid grid-cols-2 gap-3">
+                  <div className="rounded-xl bg-white p-3 border border-gray-100">
+                    <div className="text-xs font-semibold text-gray-700 mb-2">Most recent symptom</div>
+                    {leapSymptomLogs.filter((l) => l.childId === activeChild.id).slice(-1).map((log) => (
+                      <div key={log.id} className="text-sm text-gray-700">
+                        <div className="truncate">{log.symptoms.map((s) => s).join(', ')}</div>
+                        <div className="text-[11px] text-gray-400">{log.date} {log.time}</div>
+                      </div>
+                    ))}
+                    {leapSymptomLogs.filter((l) => l.childId === activeChild.id).length === 0 && (
+                      <div className="text-sm text-gray-400 italic">No recent symptoms</div>
+                    )}
+                  </div>
+                  <div className="rounded-xl bg-white p-3 border border-gray-100">
+                    <div className="text-xs font-semibold text-gray-700 mb-2">Most recent diary note</div>
+                    {leapDiaryEntries.filter((e) => e.childId === activeChild.id).slice(-1).map((entry) => (
+                      <div key={entry.id} className="text-sm text-gray-700">
+                        <div className="font-medium truncate">{entry.title}</div>
+                        <div className="text-[11px] text-gray-400">{entry.date}</div>
+                      </div>
+                    ))}
+                    {leapDiaryEntries.filter((e) => e.childId === activeChild.id).length === 0 && (
+                      <div className="text-sm text-gray-400 italic">No diary notes yet</div>
+                    )}
+                  </div>
+                </div>
+              </section>
+
+              {/* Milestone summary by category */}
+              <section className="rounded-2xl bg-[var(--bg-card)] border border-lavender-100 shadow-sm p-5">
+                <h2 className="text-sm font-bold text-[var(--text-primary)] mb-3">Milestone progress by category</h2>
+                <div className="space-y-2">
+                  {(Object.keys(MILESTONE_GUIDANCE) as Array<keyof typeof MILESTONE_GUIDANCE>).map((cat) => {
+                    const catMilestones = childMilestones.filter((m) => m.category === cat);
+                    const catAchieved = catMilestones.filter((m) => m.status === 'achieved').length;
+                    const isExpected = expectedMilestoneCategories.includes(cat);
+                    return (
+                      <div key={cat} className="flex items-center gap-3 rounded-xl bg-[var(--bg-primary)] px-3 py-2.5">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-xs font-semibold text-[var(--text-primary)] truncate">
+                              {MILESTONE_GUIDANCE[cat].title}
+                            </span>
+                            {isExpected && catMilestones.length === 0 && (
+                              <span className="shrink-0 rounded-full bg-amber-100 px-1.5 py-0.5 text-[9px] font-bold text-amber-700">
+                                Expected
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-[10px] text-[var(--text-secondary)]">
+                            {catMilestones.length === 0
+                              ? 'No milestones tracked yet'
+                              : `${catAchieved} of ${catMilestones.length} achieved`}
+                          </div>
+                        </div>
+                        {catMilestones.length > 0 && (
+                          <div className="h-2 w-16 overflow-hidden rounded-full bg-gray-200">
+                            <div
+                              className="h-full rounded-full bg-emerald-500 transition-all"
+                              style={{ width: `${(catAchieved / catMilestones.length) * 100}%` }}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+                <Link
+                  to="/milestones"
+                  className="mt-3 inline-flex rounded-full bg-lavender-500 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-lavender-600"
+                >
+                  Manage milestones →
+                </Link>
+              </section>
+
+              {/* Missed milestones */}
+              {missedMilestones.length > 0 && (
+                <section className="rounded-2xl bg-rose-50 border border-rose-200 p-4">
+                  <h2 className="flex items-center gap-2 text-sm font-bold text-rose-800 mb-2">
+                    ⚠️ Milestones past target date
+                  </h2>
+                  <p className="text-xs text-rose-600 mb-2">
+                    These milestones have not yet been achieved. Every child is different — use these as conversation starters with professionals, not as cause for alarm.
+                  </p>
+                  <div className="space-y-2">
+                    {missedMilestones.map((m) => {
+                      const guidance = MILESTONE_GUIDANCE[m.category];
+                      return (
+                        <div key={m.id} className="rounded-xl bg-white p-3 ring-1 ring-rose-100">
+                          <div className="text-xs font-semibold text-rose-900">{m.name}</div>
+                          <div className="text-[10px] text-rose-600 mt-0.5">
+                            Category: {guidance?.title ?? m.category} · Target: {m.targetDate}
+                          </div>
+                          {guidance && (
+                            <div className="mt-2 text-[10px] text-rose-700">
+                              <strong>Next steps:</strong> {guidance.nextSteps[0]}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </section>
+              )}
+
+              {/* Guidance by leap stage */}
+              <section className="rounded-2xl bg-[var(--bg-card)] border border-lavender-100 shadow-sm p-5">
+                <h2 className="text-sm font-bold text-[var(--text-primary)] mb-2">🧭 Guidance &amp; support</h2>
+                <p className="text-xs text-[var(--text-secondary)] mb-3">
+                  Helpful resources for each stage of your child&apos;s development.
+                </p>
+                <div className="space-y-2">
+                  <a
+                    href="https://www.nhs.uk/start-for-life/baby/development/"
+                    target="_blank" rel="noopener noreferrer"
+                    className="flex items-center gap-2 rounded-xl bg-[var(--bg-primary)] px-3 py-2.5 text-xs text-[var(--text-primary)] ring-1 ring-[var(--border-color)] hover:ring-lavender-200 transition"
+                  >
+                    🏥 <span className="underline underline-offset-2">NHS Start for Life: Baby development</span>
+                  </a>
+                  <a
+                    href="https://www.nhs.uk/conditions/baby/babys-development/is-my-child-developing-normally/"
+                    target="_blank" rel="noopener noreferrer"
+                    className="flex items-center gap-2 rounded-xl bg-[var(--bg-primary)] px-3 py-2.5 text-xs text-[var(--text-primary)] ring-1 ring-[var(--border-color)] hover:ring-lavender-200 transition"
+                  >
+                    👶 <span className="underline underline-offset-2">NHS: Is my child developing normally?</span>
+                  </a>
+                  <a
+                    href="https://www.nhs.uk/conditions/autism/"
+                    target="_blank" rel="noopener noreferrer"
+                    className="flex items-center gap-2 rounded-xl bg-[var(--bg-primary)] px-3 py-2.5 text-xs text-[var(--text-primary)] ring-1 ring-[var(--border-color)] hover:ring-lavender-200 transition"
+                  >
+                    🧩 <span className="underline underline-offset-2">NHS: Autism overview and support</span>
+                  </a>
+                  <a
+                    href="https://www.nhs.uk/nhs-services/find-your-local-nhs-website/"
+                    target="_blank" rel="noopener noreferrer"
+                    className="flex items-center gap-2 rounded-xl bg-[var(--bg-primary)] px-3 py-2.5 text-xs text-[var(--text-primary)] ring-1 ring-[var(--border-color)] hover:ring-lavender-200 transition"
+                  >
+                    📍 <span className="underline underline-offset-2">Find your local NHS services</span>
+                  </a>
+                </div>
+              </section>
+            </>
+          )}
+        </div>
+      )}
+
+>>>>>>> 1472c63 (Leaps: compact quick-log + dedicated entry page (issue #123))
       {/* ── Overview Section ──────────────────────────────────────────── */}
       {activeSection === 'overview' && (
         <div className="space-y-4">
