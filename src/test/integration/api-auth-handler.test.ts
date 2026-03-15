@@ -35,7 +35,7 @@ describe('API auth handler', () => {
     sqlMock.mockReset();
   });
 
-  it('rejects self-registration for admin role', async () => {
+  it.each(['admin', 'therapist', 'specialist'])('rejects self-registration for unsupported role %s', async (role) => {
     sqlMock.mockResolvedValue({ rows: [] });
     const mod = await import('../../../api/auth');
     const handler = mod.default as unknown as (req: unknown, res: unknown) => Promise<void>;
@@ -46,9 +46,9 @@ describe('API auth handler', () => {
       body: {
         action: 'register',
         name: 'Test User',
-        email: 'test@example.com',
+        email: `test-${role}@example.com`,
         password: 'very-secure-password',
-        role: 'admin',
+        role,
       },
       query: {},
       headers: {},
