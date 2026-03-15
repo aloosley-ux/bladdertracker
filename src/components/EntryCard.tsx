@@ -24,17 +24,17 @@ export default function EntryCard({ icon, title, subtitle, time, color = 'bg-lav
   };
 
   return (
-    <div data-entry-type={entryType ?? ''} className={`${color} rounded-2xl p-4 flex items-start gap-3 relative group`}>
-      <div className="w-10 h-10 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center shadow-sm shrink-0">
+    <div data-entry-type={entryType ?? ''} className={`${color} rounded-2xl p-4 flex items-center gap-3 relative group min-h-[72px]`}>
+      <div className="w-12 h-12 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center shadow-sm shrink-0 flex-shrink-0">
         {icon}
       </div>
       <div className="flex-1 min-w-0">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-3">
           <button onClick={toggle} className="text-left flex-1" aria-expanded={expanded}>
             <h4 className="font-semibold text-sm text-[var(--text-primary)] truncate">{title}</h4>
-            <span className="text-xs text-[var(--text-secondary)] shrink-0 ml-2">{time}</span>
             {subtitle && <p className="text-xs text-[var(--text-secondary)] mt-0.5 truncate">{subtitle}</p>}
           </button>
+          <span className="text-xs text-[var(--text-secondary)] shrink-0 ml-2">{time}</span>
         </div>
         {expanded && (
           <div className="mt-3">
