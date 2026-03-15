@@ -12,8 +12,6 @@ import { UK_SUPPORT_RESOURCES } from '../data/ukSupportResources';
 import {
   AgeCalculator,
   LeapTimeline,
-  SymptomLogger,
-  LeapDiary,
   LeapNotifications,
   LeapCalendarWidget,
   LeapProgressChart,
@@ -28,7 +26,7 @@ const SEEK_ADVICE_WEEKS = 8;
 // ── Page Component ───────────────────────────────────────────────────
 
 export default function LeapsPage() {
-  const { selectedChild, children, milestones, user, addMilestone, enabledModules } = useApp();
+  const { selectedChild, children, milestones, user, addMilestone, enabledModules, leapSymptomLogs, leapDiaryEntries } = useApp();
   const [activeSection, setActiveSection] = useState<LeapsSection>('milestones');
   const [milestonesInitialised, setMilestonesInitialised] = useState(false);
 
@@ -319,6 +317,56 @@ export default function LeapsPage() {
             </section>
           ) : (
             <>
+              {/* Compact quick-log actions: compact buttons + preview, full page at /leap-entry */}
+              <section className="rounded-2xl bg-[var(--bg-card)] border border-lavender-100 shadow-sm p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="text-sm font-bold text-[var(--text-primary)]">📝 Quick logging</h2>
+                  <Link to="/leap-entry" className="text-xs font-semibold text-lavender-600 hover:underline">Open full entry page →</Link>
+                </div>
+
+                <div className="flex gap-3">
+                  <Link
+                    to="/leap-entry"
+                    className="flex-1 rounded-lg bg-lavender-600 px-3 py-2 text-sm font-semibold text-white text-center hover:bg-lavender-700"
+                  >
+                    📝 Log symptom or note
+                  </Link>
+                  <Link
+                    to="/leap-entry"
+                    className="flex-1 rounded-lg bg-[var(--bg-primary)] border border-lavender-100 px-3 py-2 text-sm font-semibold text-lavender-700 text-center hover:bg-lavender-50"
+                  >
+                    📚 Add diary note
+                  </Link>
+                </div>
+
+                <div className="mt-3 grid grid-cols-2 gap-3">
+                  <div className="rounded-xl bg-white p-3 border border-gray-100">
+                    <div className="text-xs font-semibold text-gray-700 mb-2">Most recent symptom</div>
+                    {leapSymptomLogs.filter((l) => l.childId === activeChild.id).slice(-1).map((log) => (
+                      <div key={log.id} className="text-sm text-gray-700">
+                        <div className="truncate">{log.symptoms.map((s) => s).join(', ')}</div>
+                        <div className="text-[11px] text-gray-400">{log.date} {log.time}</div>
+                      </div>
+                    ))}
+                    {leapSymptomLogs.filter((l) => l.childId === activeChild.id).length === 0 && (
+                      <div className="text-sm text-gray-400 italic">No recent symptoms</div>
+                    )}
+                  </div>
+                  <div className="rounded-xl bg-white p-3 border border-gray-100">
+                    <div className="text-xs font-semibold text-gray-700 mb-2">Most recent diary note</div>
+                    {leapDiaryEntries.filter((e) => e.childId === activeChild.id).slice(-1).map((entry) => (
+                      <div key={entry.id} className="text-sm text-gray-700">
+                        <div className="font-medium truncate">{entry.title}</div>
+                        <div className="text-[11px] text-gray-400">{entry.date}</div>
+                      </div>
+                    ))}
+                    {leapDiaryEntries.filter((e) => e.childId === activeChild.id).length === 0 && (
+                      <div className="text-sm text-gray-400 italic">No diary notes yet</div>
+                    )}
+                  </div>
+                </div>
+              </section>
+
               {/* Milestone summary by category */}
               <section className="rounded-2xl bg-[var(--bg-card)] border border-lavender-100 shadow-sm p-5">
                 <h2 className="text-sm font-bold text-[var(--text-primary)] mb-1">Milestone progress by category</h2>
@@ -446,17 +494,7 @@ export default function LeapsPage() {
             </>
           )}
 
-          {/* ── Quick logging access ─────────────────────────────── */}
-          <section className="rounded-2xl bg-[var(--bg-card)] border border-lavender-100 shadow-sm p-5">
-            <h2 className="text-sm font-bold text-[var(--text-primary)] mb-3">📝 Quick logging</h2>
-            <p className="text-xs text-[var(--text-secondary)] mb-3">
-              Log leap-related observations directly from here.
-            </p>
-            <div className="space-y-3">
-              <SymptomLogger child={activeChild} />
-              <LeapDiary child={activeChild} />
-            </div>
-          </section>
+          
 
           {/* ── Leap reminders ───────────────────────────────────── */}
           <section className="rounded-2xl bg-[var(--bg-card)] border border-lavender-100 shadow-sm p-5">
