@@ -27,6 +27,8 @@ export interface Child {
   id: string;
   name: string;
   dateOfBirth: string;
+  /** True when child is born — switches label from Due date to DOB */
+  isBorn?: boolean;
   dueDate?: string;
   avatar?: string;
   caregivers: string[];

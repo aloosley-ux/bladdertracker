@@ -386,6 +386,35 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
     }
   };
 
+  const updateChild = async (childPatch: Partial<Child> & { id: string }) => {
+    let merged: Child;
+    const existing = localStorage.getChildren().find((c) => c.id === childPatch.id);
+    merged = { ...(existing ?? (childPatch as Child)), ...childPatch, lastUpdatedAt: new Date().toISOString() } as Child;
+    if (cloud) {
+      try {
+        await api.apiUpdateChild(childPatch as Partial<Child> & { id: string });
+        await refreshCloudData(user);
+        // attempt to re-resolve merged from refreshed list
+        const refreshed = (localStorage.getChildren() || []).find((c) => c.id === childPatch.id);
+        if (refreshed) merged = refreshed;
+      } catch {
+        // ignore - return merged fallback
+      }
+    } else {
+      localStorage.updateChild(merged);
+      if (user) {
+        localStorage.addAuditEvent({
+          userId: user.id,
+          action: 'Updated child profile',
+          subject: merged.name,
+          detail: `Updated child profile fields: ${Object.keys(childPatch).join(', ')}`,
+        });
+      }
+      refreshLocalData(user, selectedChildId);
+    }
+    return merged;
+  };
+
   const addDrink = async (drink: DrinkEntry) => {
     if (cloud) {
       try {
@@ -1019,6 +1048,7 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
         logout,
         addChild,
         removeChild,
+        updateChild,
         selectChild,
         addDrink,
         updateDrink,
