@@ -13,14 +13,14 @@ describe('LeapsPage', () => {
   it('maps trusted resource links across early and late leaps', () => {
     expect(LEAP_CHART[0].resourceLinks).toEqual([
       {
-        label: 'CDC milestones (1 month)',
-        url: 'https://www.cdc.gov/ncbddd/actearly/milestones/milestones-1mo.html',
+        label: 'Milestones (1 month)',
+        url: '/milestones?module=leaps&leap=1',
       },
     ]);
     expect(LEAP_CHART[9].resourceLinks).toEqual([
       {
-        label: 'CDC milestones (2 years)',
-        url: 'https://www.cdc.gov/ncbddd/actearly/milestones/milestones-2yr.html',
+        label: 'Milestones (2 years)',
+        url: '/milestones?module=leaps&leap=10',
       },
     ]);
   });
@@ -59,13 +59,8 @@ describe('LeapsPage', () => {
 
     await user.click(await screen.findByRole('button', { name: /changing sensations/i }));
 
-    const trustedResourceLink = await screen.findByRole('link', { name: /cdc milestones \(1 month\)/i });
-    expect(trustedResourceLink).toHaveAttribute(
-      'href',
-      'https://www.cdc.gov/ncbddd/actearly/milestones/milestones-1mo.html',
-    );
-    expect(trustedResourceLink).toHaveAttribute('target', '_blank');
-    expect(trustedResourceLink).toHaveAttribute('rel', 'noopener noreferrer');
+    const trustedResourceLink = await screen.findByRole('link', { name: /milestones \(1 month\)/i });
+    expect(trustedResourceLink).toHaveAttribute('href', '/milestones?module=leaps&leap=1');
   });
 });
 
