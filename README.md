@@ -199,11 +199,13 @@ This section highlights the experience that already exists in the product today.
 | Diary | `/log` | 📋 Diary | Full diary history with calendar-strip, filters, and entry management |
 | Add an update | `/add` | — | Fast tabbed entry forms with calmer wording and one-handed quick logging |
 | Reports | `/reports` | 📈 Reports | Charts, trends, milestone summaries, and guided export |
-| Milestones | `/milestones` | ⭐ Milestones | Developmental milestone dashboard |
-| Leaps | `/leaps` | 🌈 Leaps | Developmental leap guidance, predictions, symptom logging, and trusted resource links |
+| Milestones | `/milestones` | ⭐ Milestones | Developmental milestone dashboard (toggle-controlled, hidden when disabled) |
+| Leaps | `/leaps` | 🌈 Leaps | Developmental leap guidance with sections: Overview, Milestones, Timeline, Tools. Includes missed milestone detection and NHS guidance links. (toggle-controlled, default off) |
 | Calendar | `/calendar` | — | Monthly calendar view of all entries |
 | Profiles | `/profiles` | 👥 Profiles | Child profiles, caregiver invites, access review, and notifications |
 | Settings | `/settings` | ⚙️ Settings | Themes, module toggles, reminders, import/export, GDPR, and support |
+| GDPR | `/gdpr` | — | Dedicated GDPR & Data Protection policy page (linked from Settings) |
+| Audit Trail | `/audit-trail` | — | Full audit trail history with filtering (linked from Settings) |
 | Help & Support | `/help` | — | Onboarding guidance, FAQs, accessibility, privacy, and support signposting |
 | Admin | `/admin` | 👑 Crown | System admin (admin role only) |
 | Login | — | — | Register / login / password reset with role descriptions |
@@ -422,6 +424,12 @@ export const DEFAULT_MODULES: TrackerModule[] = [
 
 **Per-child toggling:** Parents toggle modules on/off in Settings (or Profile). Toggles apply **instantly** — no Save button required. State persists to the `enabled_modules` table in Neon DB (cloud mode) or `bt_enabled_modules` localStorage key (local mode). The enabled set is reloaded per-child on login and child selection, ensuring correct state across sessions and multiple children.
 
+**Page-level toggle behaviour:**
+
+- **Leaps** (`defaultEnabled: false`): When the Leaps module is toggled off, the entire Leaps page is hidden from navigation (both desktop and mobile), the `/leaps` route redirects to the dashboard, and all Leaps-related quick links are removed. Leaps defaults to **off** for new users and existing users without a saved preference.
+- **Milestones** (`defaultEnabled: true`): When the Milestones module is toggled off, the Milestones page is hidden from navigation, the `/milestones` route redirects to the dashboard, and milestone quick links are removed from the dashboard. Milestones defaults to **on**.
+- Both toggles persist correctly and hydrate on reload/app restart.
+
 ---
 
 ## ⭐ Milestone Tracking
@@ -452,10 +460,10 @@ Three themes controlled via `ThemeContext` with `data-theme` attribute on `<html
 | Theme | Key | Description |
 |-------|-----|-------------|
 | ☀️ Light | `light` | Default — soft lavender palette |
-| 🌙 Dark | `dark` | Dark backgrounds, muted accents |
-| 🔲 High Contrast | `high-contrast` | Maximum contrast for accessibility |
+| 🌙 Dark | `dark` | Dark backgrounds, muted accents, full text/card/input/nav/button theming |
+| 🔲 High Contrast | `high-contrast` | Maximum contrast for accessibility with yellow accent for interactive elements |
 
-Persisted to `localStorage` key `bt_theme`. All components use CSS custom properties (`--bg-primary`, `--text-primary`, etc.) for seamless switching.
+Persisted to `localStorage` key `bt_theme`. All components use CSS custom properties (`--bg-primary`, `--bg-card`, `--bg-input`, `--text-primary`, `--text-secondary`, `--text-accent`, `--border-color`, `--divider-color`, `--ring-color`, `--bg-hover`, `--bg-accent`, `--icon-color`, etc.) for seamless switching across text, cards, inputs, buttons, navigation, modals, and dividers.
 
 ---
 
@@ -760,11 +768,12 @@ Changes apply **instantly** (no Save button) and persist to localStorage (local 
 
 ## 🔒 GDPR & Privacy
 
-- Full [GDPR Policy](./GDPR.md) available
+- Full [GDPR Policy](./GDPR.md) available, also accessible as a dedicated in-app page at `/gdpr`
 - **Export**: Download all diary data as CSV from Settings > Data & Privacy
 - **Delete**: Permanently remove your account and all data
 - **Clear**: Remove all local app data
-- **Audit Trail**: View all account actions in Settings
+- **Audit Trail**: View all account actions in Settings, with a dedicated full-history page at `/audit-trail` featuring filtering by category (account, data, settings)
+- **In-app GDPR page**: Structured sections covering data collected, storage approach, user rights, data deletion, retention policy, and contact information
 - Data isolation per child and per user
 - Role-based access control (6 roles)
 

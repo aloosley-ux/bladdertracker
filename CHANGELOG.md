@@ -7,6 +7,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased]
 
 ### Added
+ - Dedicated GDPR & Data Protection page at `/gdpr` with structured sections (data collected, storage, rights, deletion, retention, contact) (#102)
+ - Dedicated Audit Trail page at `/audit-trail` with category filtering and expandable event details (#99)
+ - Leaps page restructured into 4 sections: Overview, Milestones, Timeline, Tools (#98)
+ - Missed milestone detection with visual alerts and NHS guidance links (#98)
+ - Milestone integration on Leaps page with progress-by-category view (#98)
+ - NHS resource links and next-step guidance for missed milestones (#98)
  - End-to-end integration test for `/api/auth` endpoint against deployed Vercel API (see `src/test/integration/api-auth.integration.test.ts`).
  - All tracked issues resolved and archived (see `docs/issues-archive.md`).
  - Documentation and process alignment: README, REPO_STATUS.md, PROJECT_PLAN.md, and all issue/process files updated for accuracy and single-source-of-truth workflow.
@@ -16,6 +22,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Reusable `EmptyState` component applied across LogPage, CalendarPage, ReportsPage, and MilestonesPage
 - CHANGELOG.md for structured release communication
 - PR template with documentation verification checklist
+
+### Fixed
+- Milestone SummaryCard on Dashboard now navigates to `/milestones` instead of opening the drink entry form (#104)
+- Leaps toggle now controls entire Leaps page: navigation, route access, and dashboard links. Defaults to off (#93, #96)
+- Milestones toggle now controls entire Milestones page: navigation, route access, and dashboard links (#103)
+- Dark and High Contrast modes now apply comprehensively across text, cards, inputs, buttons, navigation, headers, dividers, rings, and form elements (#97)
 
 ### Changed
 - Combined "Today's snapshot" and "Quick updates" into a single `TodayCombined` card on the Dashboard to streamline the Today view (see `src/components/TodayCombined.tsx` and `src/pages/DashboardPage.tsx`).
