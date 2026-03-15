@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useApp } from '../context/useApp';
-import { updateChild } from '../utils/storage';
 import type { Child } from '../types';
 import {
   predictLeaps,
@@ -11,7 +10,6 @@ import { MILESTONE_GUIDANCE } from '../data/milestoneGuidance';
 import { ensureLeapsMilestones, stripSlugSentinel } from '../utils/ensureLeapsMilestones';
 import { UK_SUPPORT_RESOURCES } from '../data/ukSupportResources';
 import {
-  DueDateEditor,
   AgeCalculator,
   LeapTimeline,
   SymptomLogger,
@@ -22,7 +20,7 @@ import {
 } from '../components/leaps';
 import { Link } from 'react-router-dom';
 
-type LeapsSection = 'overview' | 'milestones' | 'timeline' | 'tools';
+type LeapsSection = 'overview' | 'milestones' | 'timeline';
 
 // Number of weeks past the target date before a milestone enters "seek advice" state
 const SEEK_ADVICE_WEEKS = 8;
@@ -31,27 +29,13 @@ const SEEK_ADVICE_WEEKS = 8;
 
 export default function LeapsPage() {
   const { selectedChild, children, milestones, user, addMilestone, enabledModules } = useApp();
-  const [dueDateChild, setDueDateChild] = useState<Child | null>(null);
-  const [activeSection, setActiveSection] = useState<LeapsSection>('overview');
+  const [activeSection, setActiveSection] = useState<LeapsSection>('milestones');
   const [milestonesInitialised, setMilestonesInitialised] = useState(false);
 
   // Use the selected child, or the first child available
   const child = selectedChild ?? children[0] ?? null;
 
-  // Sync dueDateChild whenever child changes
-  useEffect(() => {
-    setDueDateChild(child);
-  }, [child]);
-
-  const handleSaveDueDate = (dueDate: string) => {
-    if (!child) return;
-    const updatedChild = { ...child, dueDate, lastUpdatedAt: new Date().toISOString() };
-    updateChild(updatedChild);
-    setDueDateChild(updatedChild);
-  };
-
-  // Use patched child with dueDate if available
-  const effectiveChild = dueDateChild ?? child;
+  const effectiveChild = child;
 
   const milestonesEnabled = enabledModules.includes('milestones');
 
@@ -140,7 +124,6 @@ export default function LeapsPage() {
     { id: 'overview', label: 'Overview', emoji: '📊' },
     { id: 'milestones', label: 'Milestones', emoji: '⭐' },
     { id: 'timeline', label: 'Timeline', emoji: '📅' },
-    { id: 'tools', label: 'Tools', emoji: '🛠️' },
   ];
 
   if (!child) {
@@ -165,15 +148,7 @@ export default function LeapsPage() {
         </p>
       </header>
 
-      {/* Due-date editor (if not set) */}
-      {!activeChild.dueDate && (
-        <div className="rounded-2xl bg-amber-50 border border-amber-200 p-4">
-          <p className="text-sm text-amber-700 mb-3">
-            💡 For more accurate leap predictions, set {activeChild.name}&apos;s due date.
-          </p>
-          <DueDateEditor child={activeChild} onSave={handleSaveDueDate} />
-        </div>
-      )}
+      {/* Due-date editor removed from top — set DOB in Settings → Child Profiles */}
 
       {/* Section tabs */}
       <nav className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1" aria-label="Leaps page sections">
@@ -470,6 +445,28 @@ export default function LeapsPage() {
               </section>
             </>
           )}
+
+          {/* ── Quick logging access ─────────────────────────────── */}
+          <section className="rounded-2xl bg-[var(--bg-card)] border border-lavender-100 shadow-sm p-5">
+            <h2 className="text-sm font-bold text-[var(--text-primary)] mb-3">📝 Quick logging</h2>
+            <p className="text-xs text-[var(--text-secondary)] mb-3">
+              Log leap-related observations directly from here.
+            </p>
+            <div className="space-y-3">
+              <SymptomLogger child={activeChild} />
+              <LeapDiary child={activeChild} />
+            </div>
+          </section>
+
+          {/* ── Leap reminders ───────────────────────────────────── */}
+          <section className="rounded-2xl bg-[var(--bg-card)] border border-lavender-100 shadow-sm p-5">
+            <h2 className="text-sm font-bold text-[var(--text-primary)] mb-2">🔔 Leap reminders</h2>
+            <p className="text-xs text-[var(--text-secondary)] mb-3">
+              Reminders can be configured in{' '}
+              <Link to="/settings" className="text-lavender-600 underline underline-offset-2">Settings</Link>.
+            </p>
+            <LeapNotifications key={activeChild.id} child={activeChild} />
+          </section>
         </div>
       )}
 
@@ -478,15 +475,6 @@ export default function LeapsPage() {
         <div className="space-y-4">
           <LeapTimeline child={activeChild} />
           <LeapCalendarWidget child={activeChild} />
-        </div>
-      )}
-
-      {/* ── Tools Section ─────────────────────────────────────────────── */}
-      {activeSection === 'tools' && (
-        <div className="space-y-4">
-          <SymptomLogger child={activeChild} />
-          <LeapDiary child={activeChild} />
-          <LeapNotifications key={activeChild.id} child={activeChild} />
         </div>
       )}
     </div>

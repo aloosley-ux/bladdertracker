@@ -3,7 +3,6 @@ import { formatDistanceToNow } from 'date-fns';
 import {
   AlertTriangle,
   Bell,
-  ChevronDown,
   Crown,
   Download,
   FileUp,
@@ -22,9 +21,10 @@ import { Link } from 'react-router-dom';
 import { useApp } from '../context/useApp';
 import { useTheme } from '../context/useTheme';
 import ModuleSettings from '../components/settings/ModuleSettings';
-import { generateId } from '../utils/storage';
+import { generateId, updateChild } from '../utils/storage';
 import { apiDeleteAccount } from '../utils/api';
 import { getImportTemplateDescription, parseImportFile } from '../utils/importers';
+import { DueDateEditor } from '../components/leaps';
 import type { Child, ModuleId } from '../types';
 
 const REMINDER_ENABLED_MODULES: ModuleId[] = ['milestones', 'therapy', 'routine', 'mood'];
@@ -63,12 +63,19 @@ export default function SettingsPage() {
   const [showDeleteAccount, setShowDeleteAccount] = useState(false);
   const [deleteAccountText, setDeleteAccountText] = useState('');
 
-  const [showAllAudit, setShowAllAudit] = useState(false);
-
   // Import state
   const [importMessage, setImportMessage] = useState('');
   const [importing, setImporting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Due date editing state for child profiles
+  const [dueDateTargetId, setDueDateTargetId] = useState<string | null>(null);
+
+  const handleSaveDueDate = (child: Child, dueDate: string) => {
+    const updated = { ...child, dueDate, lastUpdatedAt: new Date().toISOString() };
+    updateChild(updated);
+    setDueDateTargetId(null);
+  };
 
   const cloud = typeof window !== 'undefined' && !!import.meta.env.VITE_USE_CLOUD;
 
@@ -170,7 +177,7 @@ export default function SettingsPage() {
     }
   };
 
-  const visibleAudit = showAllAudit ? auditTrail : auditTrail.slice(0, 5);
+  const visibleAudit = auditTrail.slice(0, 5);
   const templateHints = getImportTemplateDescription();
   const reminderForChild = selectedChildId
     ? reminderPreferences.filter((entry) => entry.childId === selectedChildId)
@@ -388,24 +395,56 @@ export default function SettingsPage() {
                 <button
                   onClick={() => selectChild(child.id)}
                   className={`w-full rounded-2xl p-4 text-left ring-1 transition-all ${
-                    selectedChild?.id === child.id ? 'bg-lavender-50 ring-lavender-200' : 'bg-[#faf7ff] ring-lavender-100'
+                    selectedChild?.id === child.id ? 'bg-lavender-50 ring-lavender-200' : 'bg-[var(--bg-accent)] ring-[var(--border-color)]'
                   }`}
                 >
-                  <div className="text-sm font-semibold text-gray-900">{child.name}</div>
-                  <div className="mt-1 text-xs text-gray-500">{child.dateOfBirth || 'DOB not recorded'}</div>
+                  <div className="text-sm font-semibold text-[var(--text-primary)]">{child.name}</div>
+                  <div className="mt-1 text-xs text-[var(--text-secondary)]">{child.dateOfBirth || 'DOB not recorded'}</div>
+                  {child.dueDate && (
+                    <div className="mt-0.5 text-xs text-[var(--text-secondary)]">Due: {child.dueDate}</div>
+                  )}
                 </button>
 
                 {canManageChildren && (
-                  <button
-                    onClick={() => {
-                      setRemoveTargetId(removeTargetId === child.id ? null : child.id);
-                      setRemoveConfirmText('');
-                    }}
-                    className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-rose-50 text-rose-400 transition hover:bg-rose-100"
-                    title={`Remove ${child.name}`}
-                  >
-                    <Trash2 size={12} />
-                  </button>
+                  <>
+                    {/* Due date edit button for leap accuracy */}
+                    <button
+                      onClick={() => setDueDateTargetId(dueDateTargetId === child.id ? null : child.id)}
+                      className="absolute right-10 top-3 flex h-7 items-center gap-1 rounded-full bg-lavender-50 px-2 text-[10px] font-semibold text-lavender-600 ring-1 ring-lavender-100 transition hover:bg-lavender-100"
+                      title={`Set due date for ${child.name} (improves leap accuracy)`}
+                    >
+                      Due date
+                    </button>
+                    <button
+                      onClick={() => {
+                        setRemoveTargetId(removeTargetId === child.id ? null : child.id);
+                        setRemoveConfirmText('');
+                      }}
+                      className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-rose-50 text-rose-400 transition hover:bg-rose-100"
+                      title={`Remove ${child.name}`}
+                    >
+                      <Trash2 size={12} />
+                    </button>
+                  </>
+                )}
+
+                {dueDateTargetId === child.id && (
+                  <div className="mt-2 rounded-2xl bg-[var(--bg-accent)] p-4 ring-1 ring-[var(--border-color)]">
+                    <p className="text-xs text-[var(--text-secondary)] mb-3">
+                      💡 Setting {child.name}&apos;s due date improves developmental leap predictions.
+                    </p>
+                    <DueDateEditor
+                      child={child}
+                      onSave={(dueDate) => handleSaveDueDate(child, dueDate)}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setDueDateTargetId(null)}
+                      className="mt-2 text-xs text-[var(--text-secondary)] underline"
+                    >
+                      Cancel
+                    </button>
+                  </div>
                 )}
 
                 {removeTargetId === child.id && (
@@ -455,7 +494,7 @@ export default function SettingsPage() {
           </div>
 
           {showAddChild && canManageChildren && (
-            <form onSubmit={handleAddChild} className="mt-4 space-y-3 rounded-2xl bg-[#faf7ff] p-4 ring-1 ring-lavender-100">
+            <form onSubmit={handleAddChild} className="mt-4 space-y-3 rounded-2xl bg-[var(--bg-accent)] p-4 ring-1 ring-[var(--border-color)]">
               <input
                 type="text"
                 value={childName}
@@ -666,7 +705,7 @@ export default function SettingsPage() {
             </div>
             <div className="space-y-2">
               {visibleAudit.map((event) => (
-                <div key={event.id} className="rounded-2xl bg-[#faf7ff] px-4 py-3 ring-1 ring-lavender-100">
+                <div key={event.id} className="rounded-2xl bg-[var(--bg-card)] px-4 py-3 ring-1 ring-[var(--border-color)]">
                   <div className="text-sm font-semibold text-gray-900">{event.action}</div>
                   <div className="mt-1 text-xs text-gray-500">{event.detail}</div>
                   <div className="mt-2 text-[11px] text-gray-400">
@@ -676,15 +715,6 @@ export default function SettingsPage() {
               ))}
               {auditTrail.length === 0 && <p className="text-sm text-gray-500">No audit events yet.</p>}
             </div>
-            {auditTrail.length > 5 && (
-              <button
-                onClick={() => setShowAllAudit((v) => !v)}
-                className="mt-3 flex items-center gap-1 text-xs font-semibold text-lavender-600"
-              >
-                {showAllAudit ? 'Show less' : 'Show all'}
-                <ChevronDown size={14} className={`transition-transform ${showAllAudit ? 'rotate-180' : ''}`} />
-              </button>
-            )}
           </div>
 
           {/* GDPR link */}

@@ -278,20 +278,20 @@ export default function ReportsPage() {
         <NhsCard>
           <h3 className="text-sm font-bold text-gray-700 mb-3">📈 {days}-day summary for {selectedChild?.name ?? 'child'}</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
-            {enabledFilterKeys.has('drinks') && <StatTile emoji="💧" text={`${stats.drinks} drinks · avg ${stats.avgMl}ml/day`} bg="bg-sky-50" />}
-            {enabledFilterKeys.has('urine') && <StatTile emoji="💦" text={`${stats.urineEvents} wee updates`} bg="bg-amber-50" />}
-            {enabledFilterKeys.has('bowel') && <StatTile emoji="🚽" text={`${stats.bowelEvents} poo updates`} bg="bg-emerald-50" />}
-            {enabledFilterKeys.has('sleep') && <StatTile emoji="🌙" text={`${stats.sleepEvents} sleep events`} bg="bg-indigo-50" />}
-            {enabledFilterKeys.has('toilet') && <StatTile emoji="🎯" text={`${stats.toiletAttempts} toilet visits (${stats.toiletSuccess} successful)`} bg="bg-purple-50" />}
-            {enabledFilterKeys.has('food') && <StatTile emoji="🍽️" text={`${stats.meals} meals · ${stats.newFoods} new foods tried`} bg="bg-orange-50" />}
+            {enabledFilterKeys.has('drinks') && <StatTile emoji="💧" text={`${stats.drinks} drinks · avg ${stats.avgMl}ml/day`} />}
+            {enabledFilterKeys.has('urine') && <StatTile emoji="💦" text={`${stats.urineEvents} wee updates`} />}
+            {enabledFilterKeys.has('bowel') && <StatTile emoji="🚽" text={`${stats.bowelEvents} poo updates`} />}
+            {enabledFilterKeys.has('sleep') && <StatTile emoji="🌙" text={`${stats.sleepEvents} sleep events`} />}
+            {enabledFilterKeys.has('toilet') && <StatTile emoji="🎯" text={`${stats.toiletAttempts} toilet visits (${stats.toiletSuccess} successful)`} />}
+            {enabledFilterKeys.has('food') && <StatTile emoji="🍽️" text={`${stats.meals} meals · ${stats.newFoods} new foods tried`} />}
             {enabledFilterKeys.has('mood') && (
-              <StatTile emoji="😊" text={`${stats.moodLogs} mood logs${stats.avgMood !== null ? ` · avg ${stats.avgMood}/5` : ''}`} bg="bg-pink-50" />
+              <StatTile emoji="😊" text={`${stats.moodLogs} mood logs${stats.avgMood !== null ? ` · avg ${stats.avgMood}/5` : ''}`} />
             )}
-            {enabledFilterKeys.has('sensory') && <StatTile emoji="🎨" text={`${stats.sensoryLogs} sensory observations`} bg="bg-teal-50" />}
-            {enabledFilterKeys.has('medication') && <StatTile emoji="💊" text={`${stats.medicationLogs} medication logs`} bg="bg-slate-50" />}
-            {enabledFilterKeys.has('therapy') && <StatTile emoji="🧩" text={`${stats.therapySessions} therapy sessions`} bg="bg-violet-50" />}
+            {enabledFilterKeys.has('sensory') && <StatTile emoji="🎨" text={`${stats.sensoryLogs} sensory observations`} />}
+            {enabledFilterKeys.has('medication') && <StatTile emoji="💊" text={`${stats.medicationLogs} medication logs`} />}
+            {enabledFilterKeys.has('therapy') && <StatTile emoji="🧩" text={`${stats.therapySessions} therapy sessions`} />}
             {enabledFilterKeys.has('routine') && (
-              <StatTile emoji="📋" text={`${stats.routineChecks} routines · ${stats.routineCompleted} completed`} bg="bg-stone-50" />
+              <StatTile emoji="📋" text={`${stats.routineChecks} routines · ${stats.routineCompleted} completed`} />
             )}
           </div>
         </NhsCard>
@@ -468,9 +468,9 @@ function ChartCard({ title, children }: { title: string; children: ReactNode }) 
   );
 }
 
-function StatTile({ emoji, text, bg }: { emoji: string; text: string; bg: string }) {
+function StatTile({ emoji, text }: { emoji: string; text: string }) {
   return (
-    <div className={`rounded-xl ${bg} px-3 py-2`}>
+    <div className="rounded-xl bg-[var(--bg-card)] px-3 py-2 text-[var(--text-primary)] ring-1 ring-[var(--border-color)]">
       {emoji} {text}
     </div>
   );
