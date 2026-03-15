@@ -129,8 +129,8 @@ export default function AddEntryPage() {
         </div>
 
         <div className="mb-3 px-1">
-          <h1 className="text-lg font-bold text-gray-900">Add an update</h1>
-          <p className="mt-1 text-sm text-gray-500">Choose the quickest thing you want to log.</p>
+          <h1 className="text-lg font-bold text-[var(--text-primary)]">Add an update</h1>
+          <p className="mt-1 text-sm text-[var(--text-muted)]">Choose the quickest thing you want to log.</p>
         </div>
 
         <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2 pb-1">
@@ -141,7 +141,7 @@ export default function AddEntryPage() {
               className={`w-full sm:w-auto flex min-h-12 items-center justify-center gap-1.5 rounded-xl py-2.5 px-3 text-xs font-medium transition-all ${
                 activeTab === type
                   ? 'bg-lavender-500 text-white shadow-md'
-                  : 'bg-white text-gray-500 shadow-sm ring-1 ring-black/5 hover:bg-lavender-50'
+                  : 'bg-[var(--bg-card)] text-[var(--text-muted)] shadow-sm ring-1 ring-[var(--border-color)] hover:bg-[var(--bg-input)]'
               }`}
             >
               <Icon size={14} className={activeTab === type ? 'text-white' : color} />
