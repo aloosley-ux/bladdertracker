@@ -351,10 +351,10 @@ export default function MilestonesPage() {
                               {STATUS_LABELS[status]}
                             </button>
                           ))}
-                          <button type="button" onClick={() => setGuidanceMilestone(entry)} className="inline-flex min-h-10 items-center gap-1 rounded-full bg-amber-100 px-3 text-xs font-semibold text-amber-900">
+                          <button type="button" onClick={() => setGuidanceMilestone(entry)} className="nhs-guidance-btn inline-flex min-h-10 items-center gap-1 rounded-full px-3 text-xs font-semibold">
                             <CircleHelp size={14} /> NHS guidance
                           </button>
-                          <button type="button" onClick={() => deleteMilestone(entry.id)} className="ml-auto min-h-10 rounded-full bg-rose-100 px-3 text-xs font-semibold text-rose-700">Delete</button>
+                          <button type="button" onClick={() => deleteMilestone(entry.id)} className="btn-delete ml-auto min-h-10 rounded-full bg-rose-100 px-3 text-xs font-semibold text-rose-700">Delete</button>
                         </div>
                       </article>
                     );

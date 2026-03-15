@@ -1,6 +1,5 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useApp } from '../context/useApp';
-import { updateChild } from '../utils/storage';
 import type { Child } from '../types';
 import {
   predictLeaps,
@@ -9,43 +8,27 @@ import {
 } from '../data/leapData';
 import { MILESTONE_GUIDANCE } from '../data/milestoneGuidance';
 import {
-  DueDateEditor,
   AgeCalculator,
   LeapTimeline,
   SymptomLogger,
   LeapDiary,
-  LeapNotifications,
-  LeapCalendarWidget,
   LeapProgressChart,
 } from '../components/leaps';
 import { Link } from 'react-router-dom';
 
-type LeapsSection = 'overview' | 'milestones' | 'timeline' | 'tools';
+type LeapsSection = 'milestones' | 'overview' | 'timeline';
 
 // ── Page Component ───────────────────────────────────────────────────
 
 export default function LeapsPage() {
   const { selectedChild, children, milestones, enabledModules } = useApp();
-  const [dueDateChild, setDueDateChild] = useState<Child | null>(null);
-  const [activeSection, setActiveSection] = useState<LeapsSection>('overview');
+  const [activeSection, setActiveSection] = useState<LeapsSection>('milestones');
 
   // Use the selected child, or the first child available
   const child = selectedChild ?? children[0] ?? null;
 
-  // Sync dueDateChild whenever child changes
-  useEffect(() => {
-    setDueDateChild(child);
-  }, [child]);
-
-  const handleSaveDueDate = (dueDate: string) => {
-    if (!child) return;
-    const updatedChild = { ...child, dueDate, lastUpdatedAt: new Date().toISOString() };
-    updateChild(updatedChild);
-    setDueDateChild(updatedChild);
-  };
-
-  // Use patched child with dueDate if available
-  const effectiveChild = dueDateChild ?? child;
+  // Use child directly (dueDate editing is now in Settings)
+  const effectiveChild = child;
 
   // Compute leap data for milestone integration
   const leapPredictions = useMemo(() => {
@@ -93,10 +76,9 @@ export default function LeapsPage() {
   const milestonesEnabled = enabledModules.includes('milestones');
 
   const sections: { id: LeapsSection; label: string; emoji: string }[] = [
-    { id: 'overview', label: 'Overview', emoji: '📊' },
     { id: 'milestones', label: 'Milestones', emoji: '⭐' },
+    { id: 'overview', label: 'Overview', emoji: '📊' },
     { id: 'timeline', label: 'Timeline', emoji: '📅' },
-    { id: 'tools', label: 'Tools', emoji: '🛠️' },
   ];
 
   if (!child) {
@@ -119,17 +101,12 @@ export default function LeapsPage() {
         <p className="text-sm text-[var(--text-secondary)] mt-1">
           Track <strong>{activeChild.name}&apos;s</strong> developmental leaps, milestones, and growth
         </p>
+        {!activeChild.dueDate && (
+          <Link to="/settings" className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-amber-50 border border-amber-200 px-4 py-2 text-xs font-semibold text-amber-700">
+            💡 Set due date in Settings for better leap accuracy
+          </Link>
+        )}
       </header>
-
-      {/* Due-date editor (if not set) */}
-      {!activeChild.dueDate && (
-        <div className="rounded-2xl bg-amber-50 border border-amber-200 p-4">
-          <p className="text-sm text-amber-700 mb-3">
-            💡 For more accurate leap predictions, set {activeChild.name}&apos;s due date.
-          </p>
-          <DueDateEditor child={activeChild} onSave={handleSaveDueDate} />
-        </div>
-      )}
 
       {/* Section tabs */}
       <nav className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1" aria-label="Leaps page sections">
@@ -149,122 +126,7 @@ export default function LeapsPage() {
         ))}
       </nav>
 
-      {/* ── Overview Section ──────────────────────────────────────────── */}
-      {activeSection === 'overview' && (
-        <div className="space-y-4">
-          <AgeCalculator child={activeChild} />
-          <LeapProgressChart child={activeChild} />
-
-          {/* Current leap guidance */}
-          {currentLeap && (
-            <section className="rounded-2xl bg-[var(--bg-card)] border border-lavender-100 shadow-sm p-5">
-              <h2 className="flex items-center gap-2 text-sm font-bold text-[var(--text-primary)] mb-3">
-                🌊 Currently in Leap {currentLeap.leap.number}: {currentLeap.leap.title}
-              </h2>
-              <p className="text-sm text-[var(--text-secondary)] mb-3">{currentLeap.leap.description}</p>
-
-              <div className="space-y-3">
-                <div>
-                  <h3 className="text-xs font-semibold text-[var(--text-primary)] mb-1">🌟 Skills emerging</h3>
-                  <div className="flex flex-wrap gap-1.5">
-                    {currentLeap.leap.skills.map((skill) => (
-                      <span key={skill} className="rounded-full bg-lavender-50 px-2.5 py-1 text-xs text-lavender-700">
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="text-xs font-semibold text-[var(--text-primary)] mb-1">💡 Tips for parents</h3>
-                  <ul className="space-y-1">
-                    {currentLeap.leap.parentalTips.slice(0, 3).map((tip) => (
-                      <li key={tip} className="text-xs text-[var(--text-secondary)] flex gap-1.5">
-                        <span className="text-lavender-400 shrink-0">•</span>
-                        {tip}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </section>
-          )}
-
-          {/* Missed milestones alert */}
-          {missedMilestones.length > 0 && (
-            <section className="rounded-2xl bg-rose-50 border border-rose-200 p-4">
-              <h2 className="flex items-center gap-2 text-sm font-bold text-rose-800 mb-2">
-                ⚠️ {missedMilestones.length} milestone{missedMilestones.length !== 1 ? 's' : ''} may need attention
-              </h2>
-              <p className="text-xs text-rose-700 mb-3">
-                The following milestones have passed their target date without being marked as achieved.
-                This is not necessarily a concern — every child develops at their own pace.
-              </p>
-              <ul className="space-y-2 mb-3">
-                {missedMilestones.slice(0, 3).map((m) => (
-                  <li key={m.id} className="rounded-xl bg-white px-3 py-2 text-xs ring-1 ring-rose-100">
-                    <span className="font-semibold text-rose-900">{m.name}</span>
-                    <span className="text-rose-600 ml-2">Target: {m.targetDate}</span>
-                  </li>
-                ))}
-                {missedMilestones.length > 3 && (
-                  <li className="text-xs text-rose-600">
-                    +{missedMilestones.length - 3} more
-                  </li>
-                )}
-              </ul>
-              <div className="space-y-2">
-                <h3 className="text-xs font-semibold text-rose-800">Suggested next steps:</h3>
-                <ul className="space-y-1 text-xs text-rose-700">
-                  <li className="flex gap-1.5"><span>🩺</span> Speak to your GP or health visitor about any concerns</li>
-                  <li className="flex gap-1.5"><span>📋</span> Review milestones with your child&apos;s therapy or SEND team</li>
-                  <li className="flex gap-1.5"><span>🔗</span>
-                    <a href="https://www.nhs.uk/conditions/baby/babys-development/is-my-child-developing-normally/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">
-                      NHS: Is my child developing normally?
-                    </a>
-                  </li>
-                  <li className="flex gap-1.5"><span>📞</span>
-                    <a href="https://www.nhs.uk/nhs-services/find-your-local-nhs-website/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">
-                      Find your local NHS services
-                    </a>
-                  </li>
-                </ul>
-              </div>
-              {milestonesEnabled && (
-                <Link
-                  to="/milestones"
-                  className="mt-3 inline-flex rounded-full bg-rose-600 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-rose-700"
-                >
-                  Review milestones →
-                </Link>
-              )}
-            </section>
-          )}
-
-          {/* Quick stats */}
-          {milestonesEnabled && (
-            <section className="rounded-2xl bg-[var(--bg-card)] border border-lavender-100 shadow-sm p-5">
-              <h2 className="text-sm font-bold text-[var(--text-primary)] mb-3">📈 Progress at a glance</h2>
-              <div className="grid grid-cols-3 gap-3">
-                <div className="rounded-xl bg-[var(--bg-primary)] p-3 text-center">
-                  <div className="text-lg font-bold text-lavender-700">{pastLeaps.length}</div>
-                  <div className="text-[10px] text-[var(--text-secondary)]">Leaps completed</div>
-                </div>
-                <div className="rounded-xl bg-[var(--bg-primary)] p-3 text-center">
-                  <div className="text-lg font-bold text-emerald-600">{achievedCount}</div>
-                  <div className="text-[10px] text-[var(--text-secondary)]">Milestones achieved</div>
-                </div>
-                <div className="rounded-xl bg-[var(--bg-primary)] p-3 text-center">
-                  <div className="text-lg font-bold text-amber-600">{inProgressCount}</div>
-                  <div className="text-[10px] text-[var(--text-secondary)]">In progress</div>
-                </div>
-              </div>
-            </section>
-          )}
-        </div>
-      )}
-
-      {/* ── Milestones Section ────────────────────────────────────────── */}
+      {/* ── Milestones Section (default) ──────────────────────────────── */}
       {activeSection === 'milestones' && (
         <div className="space-y-4">
           {!milestonesEnabled ? (
@@ -280,6 +142,15 @@ export default function LeapsPage() {
             </section>
           ) : (
             <>
+              {/* Quick-log actions for leap symptoms & diary */}
+              <section className="rounded-2xl bg-[var(--bg-card)] border border-lavender-100 shadow-sm p-5">
+                <h2 className="text-sm font-bold text-[var(--text-primary)] mb-3">Quick log</h2>
+                <div className="space-y-3">
+                  <SymptomLogger child={activeChild} />
+                  <LeapDiary child={activeChild} />
+                </div>
+              </section>
+
               {/* Milestone summary by category */}
               <section className="rounded-2xl bg-[var(--bg-card)] border border-lavender-100 shadow-sm p-5">
                 <h2 className="text-sm font-bold text-[var(--text-primary)] mb-3">Milestone progress by category</h2>
@@ -399,20 +270,139 @@ export default function LeapsPage() {
         </div>
       )}
 
+      {/* ── Overview Section ──────────────────────────────────────────── */}
+      {activeSection === 'overview' && (
+        <div className="space-y-4">
+          <AgeCalculator child={activeChild} />
+          <LeapProgressChart child={activeChild} />
+
+          {/* Current leap guidance */}
+          {currentLeap && (
+            <section className="rounded-2xl bg-[var(--bg-card)] border border-lavender-100 shadow-sm p-5">
+              <h2 className="flex items-center gap-2 text-sm font-bold text-[var(--text-primary)] mb-3">
+                🌊 Currently in Leap {currentLeap.leap.number}: {currentLeap.leap.title}
+              </h2>
+              <p className="text-sm text-[var(--text-secondary)] mb-3">{currentLeap.leap.description}</p>
+
+              <div className="space-y-3">
+                <div>
+                  <h3 className="text-xs font-semibold text-[var(--text-primary)] mb-1">🌟 Skills emerging</h3>
+                  <div className="flex flex-wrap gap-1.5">
+                    {currentLeap.leap.skills.map((skill) => (
+                      <span key={skill} className="rounded-full bg-lavender-50 px-2.5 py-1 text-xs text-lavender-700">
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-xs font-semibold text-[var(--text-primary)] mb-1">💡 Tips for parents</h3>
+                  <ul className="space-y-1">
+                    {currentLeap.leap.parentalTips.slice(0, 3).map((tip) => (
+                      <li key={tip} className="text-xs text-[var(--text-secondary)] flex gap-1.5">
+                        <span className="text-lavender-400 shrink-0">•</span>
+                        {tip}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </section>
+          )}
+
+          {/* Missed milestones alert */}
+          {missedMilestones.length > 0 && (
+            <section className="rounded-2xl bg-rose-50 border border-rose-200 p-4">
+              <h2 className="flex items-center gap-2 text-sm font-bold text-rose-800 mb-2">
+                ⚠️ {missedMilestones.length} milestone{missedMilestones.length !== 1 ? 's' : ''} may need attention
+              </h2>
+              <p className="text-xs text-rose-700 mb-3">
+                The following milestones have passed their target date without being marked as achieved.
+                This is not necessarily a concern — every child develops at their own pace.
+              </p>
+              <ul className="space-y-2 mb-3">
+                {missedMilestones.slice(0, 3).map((m) => (
+                  <li key={m.id} className="rounded-xl bg-white px-3 py-2 text-xs ring-1 ring-rose-100">
+                    <span className="font-semibold text-rose-900">{m.name}</span>
+                    <span className="text-rose-600 ml-2">Target: {m.targetDate}</span>
+                  </li>
+                ))}
+                {missedMilestones.length > 3 && (
+                  <li className="text-xs text-rose-600">
+                    +{missedMilestones.length - 3} more
+                  </li>
+                )}
+              </ul>
+              <div className="space-y-2">
+                <h3 className="text-xs font-semibold text-rose-800">Suggested next steps:</h3>
+                <ul className="space-y-1 text-xs text-rose-700">
+                  <li className="flex gap-1.5"><span>🩺</span> Speak to your GP or health visitor about any concerns</li>
+                  <li className="flex gap-1.5"><span>📋</span> Review milestones with your child&apos;s therapy or SEND team</li>
+                  <li className="flex gap-1.5"><span>🔗</span>
+                    <a href="https://www.nhs.uk/conditions/baby/babys-development/is-my-child-developing-normally/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">
+                      NHS: Is my child developing normally?
+                    </a>
+                  </li>
+                  <li className="flex gap-1.5"><span>📞</span>
+                    <a href="https://www.nhs.uk/nhs-services/find-your-local-nhs-website/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">
+                      Find your local NHS services
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              {milestonesEnabled && (
+                <Link
+                  to="/milestones"
+                  className="mt-3 inline-flex rounded-full bg-rose-600 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-rose-700"
+                >
+                  Review milestones →
+                </Link>
+              )}
+            </section>
+          )}
+
+          {/* Quick stats */}
+          {milestonesEnabled && (
+            <section className="rounded-2xl bg-[var(--bg-card)] border border-lavender-100 shadow-sm p-5">
+              <h2 className="text-sm font-bold text-[var(--text-primary)] mb-3">📈 Progress at a glance</h2>
+              <div className="grid grid-cols-3 gap-3">
+                <div className="rounded-xl bg-[var(--bg-primary)] p-3 text-center">
+                  <div className="text-lg font-bold text-lavender-700">{pastLeaps.length}</div>
+                  <div className="text-[10px] text-[var(--text-secondary)]">Leaps completed</div>
+                </div>
+                <div className="rounded-xl bg-[var(--bg-primary)] p-3 text-center">
+                  <div className="text-lg font-bold text-emerald-600">{achievedCount}</div>
+                  <div className="text-[10px] text-[var(--text-secondary)]">Milestones achieved</div>
+                </div>
+                <div className="rounded-xl bg-[var(--bg-primary)] p-3 text-center">
+                  <div className="text-lg font-bold text-amber-600">{inProgressCount}</div>
+                  <div className="text-[10px] text-[var(--text-secondary)]">In progress</div>
+                </div>
+              </div>
+            </section>
+          )}
+        </div>
+      )}
+
       {/* ── Timeline Section ──────────────────────────────────────────── */}
       {activeSection === 'timeline' && (
         <div className="space-y-4">
           <LeapTimeline child={activeChild} />
-          <LeapCalendarWidget child={activeChild} />
-        </div>
-      )}
-
-      {/* ── Tools Section ─────────────────────────────────────────────── */}
-      {activeSection === 'tools' && (
-        <div className="space-y-4">
-          <SymptomLogger child={activeChild} />
-          <LeapDiary child={activeChild} />
-          <LeapNotifications key={activeChild.id} child={activeChild} />
+          {milestonesEnabled && (
+            <section className="rounded-2xl bg-[var(--bg-card)] border border-lavender-100 shadow-sm p-5">
+              <h2 className="text-sm font-bold text-[var(--text-primary)] mb-2">View full milestones timeline</h2>
+              <p className="text-xs text-[var(--text-secondary)] mb-3">
+                See detailed milestone progress, filters, and categories on the dedicated Milestones page.
+              </p>
+              <Link
+                to="/milestones"
+                className="inline-flex rounded-full bg-lavender-500 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-lavender-600"
+              >
+                Open milestones →
+              </Link>
+            </section>
+          )}
         </div>
       )}
     </div>

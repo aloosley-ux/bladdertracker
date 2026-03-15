@@ -22,4 +22,20 @@ describe('DashboardPage', () => {
 
     expect(seriousViolations).toEqual([]);
   }, 15000);
+
+  it('does not render quick navigation links', async () => {
+    renderWithProviders(<DashboardPage />);
+
+    await screen.findByRole('heading', { name: /dashboard heading/i }, { timeout: 5000 });
+
+    expect(screen.queryByRole('navigation', { name: /quick navigation/i })).not.toBeInTheDocument();
+    expect(screen.queryByText('Open diary')).not.toBeInTheDocument();
+    expect(screen.queryByText('Reports')).not.toBeInTheDocument();
+  }, 15000);
+
+  it('renders "Today\'s entries" heading above the feed', async () => {
+    renderWithProviders(<DashboardPage />);
+
+    expect(await screen.findByRole('heading', { name: /today.s entries/i }, { timeout: 5000 })).toBeInTheDocument();
+  }, 15000);
 });

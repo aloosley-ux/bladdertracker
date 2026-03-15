@@ -3,7 +3,6 @@ import { formatDistanceToNow } from 'date-fns';
 import {
   AlertTriangle,
   Bell,
-  ChevronDown,
   Crown,
   Download,
   FileUp,
@@ -27,7 +26,7 @@ import { apiDeleteAccount } from '../utils/api';
 import { getImportTemplateDescription, parseImportFile } from '../utils/importers';
 import type { Child, ModuleId } from '../types';
 
-const REMINDER_ENABLED_MODULES: ModuleId[] = ['milestones', 'therapy', 'routine', 'mood'];
+const REMINDER_ENABLED_MODULES: ModuleId[] = ['milestones', 'therapy', 'routine', 'mood', 'leaps'];
 
 export default function SettingsPage() {
   const {
@@ -62,8 +61,6 @@ export default function SettingsPage() {
 
   const [showDeleteAccount, setShowDeleteAccount] = useState(false);
   const [deleteAccountText, setDeleteAccountText] = useState('');
-
-  const [showAllAudit, setShowAllAudit] = useState(false);
 
   // Import state
   const [importMessage, setImportMessage] = useState('');
@@ -170,7 +167,7 @@ export default function SettingsPage() {
     }
   };
 
-  const visibleAudit = showAllAudit ? auditTrail : auditTrail.slice(0, 5);
+  const visibleAudit = auditTrail.slice(0, 5);
   const templateHints = getImportTemplateDescription();
   const reminderForChild = selectedChildId
     ? reminderPreferences.filter((entry) => entry.childId === selectedChildId)
@@ -180,34 +177,34 @@ export default function SettingsPage() {
   return (
     <div className="pb-20">
       {/* Header */}
-      <div className="bg-[linear-gradient(180deg,#fbf7f2_0%,#ffffff_100%)] px-4 pb-6 pt-8">
-        <h1 className="text-xl font-bold text-gray-900">Account &amp; Settings</h1>
-        <p className="mt-1 text-sm text-gray-500">
+      <div className="bg-[linear-gradient(180deg,#fbf7f2_0%,#ffffff_100%)] px-4 pb-6 pt-8 theme-surface-banner">
+        <h1 className="text-xl font-bold text-[var(--text-primary)]">Account &amp; Settings</h1>
+        <p className="mt-1 text-sm text-[var(--text-secondary)]">
           Manage your profile, preferences, data, and privacy in one place.
         </p>
       </div>
 
       <div className="space-y-4 px-4 pt-2">
         {/* ── User Profile Card ─────────────────────────────────────── */}
-        <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
+        <section className="rounded-2xl bg-[var(--bg-card)] p-5 shadow-sm ring-1 ring-[var(--border-color)]">
           <div className="flex items-center gap-4">
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-lavender-50 text-lg font-bold text-lavender-700">
               {userInitials}
             </div>
             <div>
-              <h2 className="text-lg font-bold text-gray-900">{user?.name}</h2>
-              <p className="flex items-center gap-1.5 text-sm text-gray-500">
+              <h2 className="text-lg font-bold text-[var(--text-primary)]">{user?.name}</h2>
+              <p className="flex items-center gap-1.5 text-sm text-[var(--text-secondary)]">
                 {isAdmin && <Crown size={12} className="text-amber-500" />}
                 {formatRole(user?.role ?? '')}
               </p>
-              <p className="text-xs text-gray-400">{user?.email}</p>
+              <p className="text-xs text-[var(--text-secondary)]">{user?.email}</p>
             </div>
           </div>
         </section>
 
         {/* ── Role & Permissions ────────────────────────────────────── */}
-        <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5" aria-labelledby="role-heading">
-          <h3 id="role-heading" className="mb-3 flex items-center gap-2 text-sm font-bold text-gray-700">
+        <section className="rounded-2xl bg-[var(--bg-card)] p-5 shadow-sm ring-1 ring-[var(--border-color)]" aria-labelledby="role-heading">
+          <h3 id="role-heading" className="mb-3 flex items-center gap-2 text-sm font-bold text-[var(--text-primary)]">
             <UserCheck size={16} className="text-lavender-500" /> Your Role &amp; Access
           </h3>
           <div className="mb-3 rounded-xl bg-lavender-50 p-3">
@@ -252,8 +249,8 @@ export default function SettingsPage() {
         </section>
 
         {/* ── Appearance ────────────────────────────────────────────── */}
-        <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
-          <h3 className="mb-3 flex items-center gap-2 text-sm font-bold text-gray-700">
+        <section className="rounded-2xl bg-[var(--bg-card)] p-5 shadow-sm ring-1 ring-[var(--border-color)]">
+          <h3 className="mb-3 flex items-center gap-2 text-sm font-bold text-[var(--text-primary)]">
             <Palette size={16} className="text-lavender-500" /> Appearance
           </h3>
           <div className="flex gap-2">
@@ -303,8 +300,8 @@ export default function SettingsPage() {
         )}
 
         {selectedChild && (
-          <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
-            <h3 className="mb-2 flex items-center gap-2 text-sm font-bold text-gray-700">
+          <section className="rounded-2xl bg-[var(--bg-card)] p-5 shadow-sm ring-1 ring-[var(--border-color)]">
+            <h3 className="mb-2 flex items-center gap-2 text-sm font-bold text-[var(--text-primary)]">
               <Bell size={16} className="text-lavender-500" /> Reminder preferences
             </h3>
             <p className="mb-3 text-xs text-gray-500">
@@ -370,9 +367,9 @@ export default function SettingsPage() {
         )}
 
         {/* ── Child Profiles ───────────────────────────────────────── */}
-        <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
+        <section className="rounded-2xl bg-[var(--bg-card)] p-5 shadow-sm ring-1 ring-[var(--border-color)]">
           <div className="mb-3 flex items-center justify-between">
-            <h3 className="flex items-center gap-2 text-sm font-bold text-gray-700">
+            <h3 className="flex items-center gap-2 text-sm font-bold text-[var(--text-primary)]">
               <Settings size={16} className="text-lavender-500" /> Child profiles
             </h3>
             {canManageChildren && (
@@ -388,11 +385,11 @@ export default function SettingsPage() {
                 <button
                   onClick={() => selectChild(child.id)}
                   className={`w-full rounded-2xl p-4 text-left ring-1 transition-all ${
-                    selectedChild?.id === child.id ? 'bg-lavender-50 ring-lavender-200' : 'bg-[#faf7ff] ring-lavender-100'
+                    selectedChild?.id === child.id ? 'bg-lavender-50 ring-lavender-200' : 'theme-surface-muted'
                   }`}
                 >
-                  <div className="text-sm font-semibold text-gray-900">{child.name}</div>
-                  <div className="mt-1 text-xs text-gray-500">{child.dateOfBirth || 'DOB not recorded'}</div>
+                  <div className="text-sm font-semibold text-[var(--text-primary)]">{child.name}</div>
+                  <div className="mt-1 text-xs text-[var(--text-secondary)]">{child.dateOfBirth || 'DOB not recorded'}</div>
                 </button>
 
                 {canManageChildren && (
@@ -455,7 +452,7 @@ export default function SettingsPage() {
           </div>
 
           {showAddChild && canManageChildren && (
-            <form onSubmit={handleAddChild} className="mt-4 space-y-3 rounded-2xl bg-[#faf7ff] p-4 ring-1 ring-lavender-100">
+            <form onSubmit={handleAddChild} className="mt-4 space-y-3 rounded-2xl theme-surface-muted p-4">
               <input
                 type="text"
                 value={childName}
@@ -478,8 +475,8 @@ export default function SettingsPage() {
         </section>
 
         {/* ── Data & Privacy (unified) ─────────────────────────────── */}
-        <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5" aria-labelledby="data-privacy-heading">
-          <h3 id="data-privacy-heading" className="mb-1 flex items-center gap-2 text-sm font-bold text-gray-700">
+        <section className="rounded-2xl bg-[var(--bg-card)] p-5 shadow-sm ring-1 ring-[var(--border-color)]" aria-labelledby="data-privacy-heading">
+          <h3 id="data-privacy-heading" className="mb-1 flex items-center gap-2 text-sm font-bold text-[var(--text-primary)]">
             <Shield size={16} className="text-lavender-500" /> Data &amp; Privacy
           </h3>
           <p className="mb-4 text-xs text-gray-400">
@@ -666,25 +663,16 @@ export default function SettingsPage() {
             </div>
             <div className="space-y-2">
               {visibleAudit.map((event) => (
-                <div key={event.id} className="rounded-2xl bg-[#faf7ff] px-4 py-3 ring-1 ring-lavender-100">
-                  <div className="text-sm font-semibold text-gray-900">{event.action}</div>
-                  <div className="mt-1 text-xs text-gray-500">{event.detail}</div>
-                  <div className="mt-2 text-[11px] text-gray-400">
+                <div key={event.id} className="rounded-2xl theme-surface-muted px-4 py-3">
+                  <div className="text-sm font-semibold text-[var(--text-primary)]">{event.action}</div>
+                  <div className="mt-1 text-xs text-[var(--text-secondary)]">{event.detail}</div>
+                  <div className="mt-2 text-[11px] text-[var(--text-secondary)]">
                     {formatDistanceToNow(new Date(event.createdAt), { addSuffix: true })}
                   </div>
                 </div>
               ))}
-              {auditTrail.length === 0 && <p className="text-sm text-gray-500">No audit events yet.</p>}
+              {auditTrail.length === 0 && <p className="text-sm text-[var(--text-secondary)]">No audit events yet.</p>}
             </div>
-            {auditTrail.length > 5 && (
-              <button
-                onClick={() => setShowAllAudit((v) => !v)}
-                className="mt-3 flex items-center gap-1 text-xs font-semibold text-lavender-600"
-              >
-                {showAllAudit ? 'Show less' : 'Show all'}
-                <ChevronDown size={14} className={`transition-transform ${showAllAudit ? 'rotate-180' : ''}`} />
-              </button>
-            )}
           </div>
 
           {/* GDPR link */}
@@ -701,12 +689,12 @@ export default function SettingsPage() {
         {/* ── Help ──────────────────────────────────────────────────── */}
         <Link
           to="/help"
-          className="flex w-full items-center gap-3 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5 transition hover:bg-lavender-50"
+          className="flex w-full items-center gap-3 rounded-2xl bg-[var(--bg-card)] p-5 shadow-sm ring-1 ring-[var(--border-color)] transition hover:bg-lavender-50"
         >
           <HelpCircle size={18} className="text-lavender-500" />
           <div>
-            <div className="text-sm font-semibold text-gray-900">Help &amp; Support</div>
-            <div className="text-xs text-gray-500">FAQs, guides, and contact information.</div>
+            <div className="text-sm font-semibold text-[var(--text-primary)]">Help &amp; Support</div>
+            <div className="text-xs text-[var(--text-secondary)]">FAQs, guides, and contact information.</div>
           </div>
         </Link>
 
@@ -727,12 +715,12 @@ export default function SettingsPage() {
         {/* ── Sign out ─────────────────────────────────────────────── */}
         <button
           onClick={logout}
-          className="flex w-full items-center gap-3 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5 transition hover:bg-rose-50"
+          className="flex w-full items-center gap-3 rounded-2xl bg-[var(--bg-card)] p-5 shadow-sm ring-1 ring-[var(--border-color)] transition hover:bg-rose-50"
         >
           <LogOut size={18} className="text-rose-500" />
           <div className="text-left">
-            <div className="text-sm font-semibold text-gray-900">Sign out</div>
-            <div className="text-xs text-gray-500">End your current session.</div>
+            <div className="text-sm font-semibold text-[var(--text-primary)]">Sign out</div>
+            <div className="text-xs text-[var(--text-secondary)]">End your current session.</div>
           </div>
         </button>
       </div>

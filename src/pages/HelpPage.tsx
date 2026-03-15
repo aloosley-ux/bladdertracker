@@ -145,11 +145,11 @@ export default function HelpPage() {
   return (
     <div className="pb-20">
       {/* ── Header ──────────────────────────────────────────────── */}
-      <div className="bg-[linear-gradient(180deg,#fbf7f2_0%,#ffffff_100%)] px-4 pb-4 pt-6">
+      <div className="bg-[linear-gradient(180deg,#fbf7f2_0%,#ffffff_100%)] px-4 pb-4 pt-6 theme-surface-banner">
         <div className="flex flex-col items-center text-center px-4">
           <HelpCircle size={28} className="text-lavender-500 mb-1" />
-          <h1 className="mt-1 text-base font-bold text-gray-900">Help &amp; support</h1>
-          <p className="mt-0.5 text-xs text-gray-500">
+          <h1 className="mt-1 text-base font-bold text-[var(--text-primary)]">Help &amp; support</h1>
+          <p className="mt-0.5 text-xs text-[var(--text-secondary)]">
             Calm guidance, privacy notes, and accessibility support
           </p>
         </div>
@@ -157,8 +157,8 @@ export default function HelpPage() {
 
       <div className="space-y-4 px-4 pt-4">
         {/* ── Getting Started ───────────────────────────────────── */}
-        <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
-          <h2 className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-4">
+        <section className="rounded-2xl bg-[var(--bg-card)] p-5 shadow-sm ring-1 ring-[var(--border-color)]">
+          <h2 className="flex items-center gap-2 text-sm font-bold text-[var(--text-primary)] mb-4">
             <BookOpen size={16} className="text-lavender-500" />
             Getting Started
           </h2>
@@ -170,16 +170,16 @@ export default function HelpPage() {
                   {i + 1}
                 </span>
                 <div>
-                  <p className="text-sm font-semibold text-gray-900">{step.title}</p>
-                  <p className="text-xs text-gray-500 mt-0.5">{step.description}</p>
+                  <p className="text-sm font-semibold text-[var(--text-primary)]">{step.title}</p>
+                  <p className="text-xs text-[var(--text-secondary)] mt-0.5">{step.description}</p>
                 </div>
               </li>
             ))}
           </ol>
         </section>
 
-        <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
-          <h2 className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-4">
+        <section className="rounded-2xl bg-[var(--bg-card)] p-5 shadow-sm ring-1 ring-[var(--border-color)]">
+          <h2 className="flex items-center gap-2 text-sm font-bold text-[var(--text-primary)] mb-4">
             <Sparkles size={16} className="text-lavender-500" />
             Where to go next
           </h2>
@@ -188,15 +188,15 @@ export default function HelpPage() {
               <Link
                 key={to}
                 to={to}
-                className="rounded-2xl bg-[#faf7ff] p-4 ring-1 ring-lavender-100 transition hover:bg-lavender-50"
+                className="rounded-2xl theme-surface-muted p-4 transition hover:bg-lavender-50"
               >
                 <div className="flex items-start gap-3">
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-lavender-100 text-lavender-700">
                     <Icon size={18} />
                   </span>
                   <div>
-                    <div className="text-sm font-semibold text-gray-900">{title}</div>
-                    <p className="mt-1 text-xs leading-relaxed text-gray-500">{description}</p>
+                    <div className="text-sm font-semibold text-[var(--text-primary)]">{title}</div>
+                    <p className="mt-1 text-xs leading-relaxed text-[var(--text-secondary)]">{description}</p>
                   </div>
                 </div>
               </Link>
@@ -205,8 +205,8 @@ export default function HelpPage() {
         </section>
 
         {/* ── FAQ ────────────────────────────────────────────────── */}
-        <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
-          <h2 className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-4">
+        <section className="rounded-2xl bg-[var(--bg-card)] p-5 shadow-sm ring-1 ring-[var(--border-color)]">
+          <h2 className="flex items-center gap-2 text-sm font-bold text-[var(--text-primary)] mb-4">
             <HelpCircle size={16} className="text-lavender-500" />
             Frequently Asked Questions
           </h2>
@@ -215,12 +215,12 @@ export default function HelpPage() {
             {FAQ_ITEMS.map((item, i) => (
               <div
                 key={i}
-                className="rounded-xl bg-gray-50 ring-1 ring-black/5 overflow-hidden"
+                className="rounded-xl bg-[var(--bg-secondary)] ring-1 ring-[var(--border-color)] overflow-hidden faq-item"
               >
                 <button
                   type="button"
                   onClick={() => toggleFaq(i)}
-                  className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium text-gray-800 transition hover:bg-lavender-50"
+                  className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium text-[var(--text-primary)] transition"
                   aria-expanded={openFaq === i}
                   aria-controls={`faq-panel-${i}`}
                   id={`faq-button-${i}`}
@@ -237,7 +237,7 @@ export default function HelpPage() {
                     id={`faq-panel-${i}`}
                     role="region"
                     aria-labelledby={`faq-button-${i}`}
-                    className="px-4 pb-3 text-xs text-gray-600 leading-relaxed"
+                    className="px-4 pb-3 text-xs text-[var(--text-secondary)] leading-relaxed"
                   >
                     {item.answer}
                   </div>
@@ -248,15 +248,15 @@ export default function HelpPage() {
         </section>
 
         {/* ── Accessibility ──────────────────────────────────────── */}
-        <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
-          <h2 className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-3">
+        <section className="rounded-2xl bg-[var(--bg-card)] p-5 shadow-sm ring-1 ring-[var(--border-color)]">
+          <h2 className="flex items-center gap-2 text-sm font-bold text-[var(--text-primary)] mb-3">
             <Accessibility size={16} className="text-lavender-500" />
             Accessibility
           </h2>
 
           <ul className="space-y-2">
             {ACCESSIBILITY_FEATURES.map((feature, i) => (
-              <li key={i} className="flex items-start gap-2 text-xs text-gray-600">
+              <li key={i} className="flex items-start gap-2 text-xs text-[var(--text-secondary)]">
                 <span className="mt-0.5 text-lavender-400">•</span>
                 {feature}
               </li>
@@ -264,20 +264,20 @@ export default function HelpPage() {
           </ul>
         </section>
 
-        <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
-          <h2 className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-4">
+        <section className="rounded-2xl bg-[var(--bg-card)] p-5 shadow-sm ring-1 ring-[var(--border-color)]">
+          <h2 className="flex items-center gap-2 text-sm font-bold text-[var(--text-primary)] mb-4">
             <Shield size={16} className="text-lavender-500" />
             Privacy & data care
           </h2>
           <div className="space-y-3">
             {PRIVACY_COMMITMENTS.map(({ title, description, icon: Icon }) => (
-              <div key={title} className="flex gap-3 rounded-2xl bg-[#faf7ff] p-4 ring-1 ring-lavender-100">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white text-lavender-600 ring-1 ring-lavender-100">
+              <div key={title} className="flex gap-3 rounded-2xl theme-surface-muted p-4">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--bg-card)] text-lavender-600 ring-1 ring-[var(--border-color)]">
                   <Icon size={18} />
                 </span>
                 <div>
-                  <p className="text-sm font-semibold text-gray-900">{title}</p>
-                  <p className="mt-1 text-xs leading-relaxed text-gray-500">{description}</p>
+                  <p className="text-sm font-semibold text-[var(--text-primary)]">{title}</p>
+                  <p className="mt-1 text-xs leading-relaxed text-[var(--text-secondary)]">{description}</p>
                 </div>
               </div>
             ))}
@@ -287,12 +287,12 @@ export default function HelpPage() {
           </div>
         </section>
 
-        <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
-          <h2 className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-2">
+        <section className="rounded-2xl bg-[var(--bg-card)] p-5 shadow-sm ring-1 ring-[var(--border-color)]">
+          <h2 className="flex items-center gap-2 text-sm font-bold text-[var(--text-primary)] mb-2">
             <ShieldCheck size={16} className="text-lavender-500" />
             Need more help?
           </h2>
-          <p className="text-xs text-gray-600 leading-relaxed">
+          <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
             Start with your child&apos;s care team or your organisation&apos;s administrator if you need help with access, shared roles, or clinical interpretation of the information you have logged.
           </p>
           <div className="mt-4 flex gap-3">

@@ -38,4 +38,18 @@ describe('LeapsPage', () => {
     expect(trustedResourceLink).toHaveAttribute('target', '_blank');
     expect(trustedResourceLink).toHaveAttribute('rel', 'noopener noreferrer');
   });
+
+  it('defaults to the milestones tab', async () => {
+    renderWithProviders(<LeapsPage />);
+
+    // The Milestones section should be active by default
+    const milestonesButton = await screen.findByRole('button', { name: /milestones/i });
+    expect(milestonesButton.className).toMatch(/bg-lavender-500/);
+  });
+
+  it('does not render a tools tab', async () => {
+    renderWithProviders(<LeapsPage />);
+
+    expect(screen.queryByRole('button', { name: /tools/i })).not.toBeInTheDocument();
+  });
 });

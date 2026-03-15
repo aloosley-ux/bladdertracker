@@ -1,5 +1,5 @@
-import type { ReactNode } from 'react';
-import { Sparkles } from 'lucide-react';
+import { useState, type ReactNode } from 'react';
+import { Sparkles, X } from 'lucide-react';
 
 type CelebrationTone = 'lavender' | 'emerald' | 'sky';
 
@@ -15,15 +15,31 @@ export default function CelebrationBanner({
   message,
   tone = 'lavender',
   action,
+  dismissible = true,
 }: {
   emoji: string;
   title: string;
   message: string;
   tone?: CelebrationTone;
   action?: ReactNode;
+  dismissible?: boolean;
 }) {
+  const [dismissed, setDismissed] = useState(false);
+
+  if (dismissed) return null;
+
   return (
-    <section className={`rounded-3xl border p-4 shadow-sm ${TONE_STYLES[tone]}`} aria-label={title}>
+    <section className={`rounded-3xl border p-4 shadow-sm theme-surface-card ${TONE_STYLES[tone]} relative`} aria-label={title}>
+      {dismissible && (
+        <button
+          type="button"
+          onClick={() => setDismissed(true)}
+          className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-white/80 text-gray-400 hover:text-gray-600 transition"
+          aria-label="Dismiss banner"
+        >
+          <X size={14} />
+        </button>
+      )}
       <div className="flex items-start gap-3">
         <span className="mt-0.5 text-2xl" aria-hidden="true">{emoji}</span>
         <div className="min-w-0 flex-1">

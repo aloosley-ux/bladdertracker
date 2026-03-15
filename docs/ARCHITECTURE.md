@@ -276,3 +276,21 @@ See the `runMigrations()` function in `api/_lib/db.ts` for the full, up-to-date 
 ## Themes
 
 Three themes are supported: `light`, `dark`, `high-contrast`. Implemented via CSS custom properties on the `data-theme` attribute of the root `<html>` element. Theme preference is stored in `localStorage` key `bt_theme`. See `src/index.css` for all CSS variables.
+
+### Theme-Aware CSS Classes
+
+Semantic CSS utility classes are defined at the end of `src/index.css` to provide consistent theme-aware styling across all pages and themes:
+
+| Class | Purpose |
+|-------|---------|
+| `.theme-surface-card` | Card background, text color, border — adapts to dark/HC |
+| `.theme-stat-tile` | Report stat tile background with theme-appropriate tint |
+| `.theme-surface-banner` | Gradient header/banner backgrounds for dark/HC |
+| `.theme-surface-muted` | Light muted background for cards (profiles, invites, audit) |
+| `.faq-item` | FAQ accordion item hover states for dark/HC |
+| `.nhs-guidance-btn` | NHS guidance button styling (white bg/blue text in all themes) |
+| `.btn-delete` | Delete button with enhanced contrast in dark/HC |
+| `.tag-selected` | "Selected" tag visibility fix in dark/HC |
+| `.landing-top` | Login page header gradient dark/HC override |
+
+All components should use `var(--text-primary)`, `var(--text-secondary)`, `var(--bg-card)`, `var(--bg-primary)`, `var(--border-color)` etc. instead of hardcoded Tailwind gray/white classes to ensure proper theme support.

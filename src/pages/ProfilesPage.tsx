@@ -125,15 +125,15 @@ export default function ProfilesPage() {
     <div className="pb-20">
       {/* Header */}
       <div className="px-4 pt-6 pb-4">
-        <h1 className="text-lg font-bold text-gray-900">Profiles</h1>
-        <p className="mt-0.5 text-xs text-gray-500">Manage children, caregivers, and permissions</p>
+        <h1 className="text-lg font-bold text-[var(--text-primary)]">Profiles</h1>
+        <p className="mt-0.5 text-xs text-[var(--text-secondary)]">Manage children, caregivers, and permissions</p>
       </div>
 
       <div className="space-y-4 px-4">
         {/* Child selector */}
         {children.length > 1 && (
-          <div className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-black/5">
-            <label className="text-xs font-semibold text-gray-500">Active child</label>
+          <div className="rounded-2xl bg-[var(--bg-card)] p-4 shadow-sm ring-1 ring-[var(--border-color)]">
+            <label className="text-xs font-semibold text-[var(--text-secondary)]">Active child</label>
             <select
               value={selectedChildId ?? ''}
               onChange={(event) => selectChild(event.target.value)}
@@ -149,9 +149,9 @@ export default function ProfilesPage() {
         )}
 
         {/* Child profiles */}
-        <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
+        <section className="rounded-2xl bg-[var(--bg-card)] p-5 shadow-sm ring-1 ring-[var(--border-color)]">
           <div className="mb-3 flex items-center justify-between">
-            <h3 className="flex items-center gap-2 text-sm font-bold text-gray-700">
+            <h3 className="flex items-center gap-2 text-sm font-bold text-[var(--text-primary)]">
               <Baby size={16} className="text-lavender-500" /> Child profiles
             </h3>
             {canManageChildren && (
@@ -167,13 +167,13 @@ export default function ProfilesPage() {
                 <button
                   onClick={() => selectChild(child.id)}
                   className={`w-full rounded-2xl p-4 text-left ring-1 transition-all ${
-                    selectedChild?.id === child.id ? 'bg-lavender-50 ring-lavender-200' : 'bg-[#faf7ff] ring-lavender-100'
+                    selectedChild?.id === child.id ? 'bg-lavender-50 ring-lavender-200' : 'theme-surface-muted'
                   }`}
                 >
-                  <div className="text-sm font-semibold text-gray-900">{child.name}</div>
-                  <div className="mt-1 text-xs text-gray-500">{child.dateOfBirth || 'DOB not recorded'}</div>
+                  <div className="text-sm font-semibold text-[var(--text-primary)]">{child.name}</div>
+                  <div className="mt-1 text-xs text-[var(--text-secondary)]">{child.dateOfBirth || 'DOB not recorded'}</div>
                   {selectedChild?.id === child.id && (
-                    <span className="mt-1 inline-block rounded-full bg-lavender-100 px-2 py-0.5 text-[11px] font-semibold text-lavender-700">
+                    <span className="mt-1 inline-block rounded-full bg-lavender-100 px-2 py-0.5 text-[11px] font-semibold text-lavender-700 tag-selected">
                       Selected
                     </span>
                   )}
@@ -230,14 +230,14 @@ export default function ProfilesPage() {
               </div>
             ))}
             {children.length === 0 && (
-              <div className="rounded-2xl bg-[#faf7ff] px-4 py-6 text-center text-sm text-gray-500 ring-1 ring-lavender-100">
+              <div className="rounded-2xl theme-surface-muted px-4 py-6 text-center text-sm text-[var(--text-secondary)]">
                 No children added yet. Use the button above to add a child profile.
               </div>
             )}
           </div>
 
           {showAddChild && canManageChildren && (
-            <form onSubmit={handleAddChild} className="mt-4 space-y-3 rounded-2xl bg-[#faf7ff] p-4 ring-1 ring-lavender-100">
+            <form onSubmit={handleAddChild} className="mt-4 space-y-3 rounded-2xl theme-surface-muted p-4">
               <input
                 type="text"
                 value={childName}
@@ -259,14 +259,14 @@ export default function ProfilesPage() {
 
         {/* Caregiver management */}
         {canManageInvites && (
-          <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
+          <section className="rounded-2xl bg-[var(--bg-card)] p-5 shadow-sm ring-1 ring-[var(--border-color)]">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-lavender-50 text-lavender-600">
                 <MailPlus size={18} />
               </div>
               <div>
-                <h2 className="text-sm font-bold text-gray-700">Team invites</h2>
-                <p className="mt-1 text-xs text-gray-400">Generate role-specific access links for parents, caregivers, school admins, therapists, or specialists.</p>
+                <h2 className="text-sm font-bold text-[var(--text-primary)]">Team invites</h2>
+                <p className="mt-1 text-xs text-[var(--text-secondary)]">Generate role-specific access links for parents, caregivers, school admins, therapists, or specialists.</p>
               </div>
             </div>
 
@@ -305,11 +305,11 @@ export default function ProfilesPage() {
               <div className="mt-4 space-y-3">
                 <h4 className="text-xs font-semibold text-gray-500">Sent invites</h4>
                 {sentInvites.map((invite) => (
-                  <div key={invite.id} className="rounded-2xl bg-[#faf7ff] px-4 py-3 ring-1 ring-lavender-100">
+                  <div key={invite.id} className="rounded-2xl theme-surface-muted px-4 py-3">
                     <div className="flex items-start justify-between gap-3">
                       <div>
-                        <div className="text-sm font-semibold text-gray-900">{invite.email}</div>
-                        <div className="mt-1 text-xs text-gray-500">
+                        <div className="text-sm font-semibold text-[var(--text-primary)]">{invite.email}</div>
+                        <div className="mt-1 text-xs text-[var(--text-secondary)]">
                           {invite.childName} · {formatRole(invite.role)} ·{' '}
                           <span className={invite.status === 'accepted' ? 'text-green-600' : 'text-amber-600'}>
                             {invite.status}
@@ -333,24 +333,24 @@ export default function ProfilesPage() {
 
         {/* Pending invites for current user */}
         {pendingReceivedInvites.length > 0 && (
-          <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
+          <section className="rounded-2xl bg-[var(--bg-card)] p-5 shadow-sm ring-1 ring-[var(--border-color)]">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#eef9ff] text-sky-600">
                 <Users size={18} />
               </div>
               <div>
-                <h2 className="text-sm font-bold text-gray-700">Pending invites for you</h2>
-                <p className="mt-1 text-xs text-gray-400">Accept diary access that matches your signed-in email address.</p>
+                <h2 className="text-sm font-bold text-[var(--text-primary)]">Pending invites for you</h2>
+                <p className="mt-1 text-xs text-[var(--text-secondary)]">Accept diary access that matches your signed-in email address.</p>
               </div>
             </div>
 
             <div className="mt-4 space-y-3">
               {pendingReceivedInvites.map((invite) => (
-                <div key={invite.id} className="rounded-2xl bg-[#faf7ff] px-4 py-3 ring-1 ring-lavender-100">
+                <div key={invite.id} className="rounded-2xl theme-surface-muted px-4 py-3">
                   <div className="flex items-center justify-between gap-3">
                     <div>
-                      <div className="text-sm font-semibold text-gray-900">{invite.childName}</div>
-                      <div className="mt-1 text-xs text-gray-500">Role: {formatRole(invite.role)}</div>
+                      <div className="text-sm font-semibold text-[var(--text-primary)]">{invite.childName}</div>
+                      <div className="mt-1 text-xs text-[var(--text-secondary)]">Role: {formatRole(invite.role)}</div>
                     </div>
                     <button
                       onClick={async () => {
@@ -369,13 +369,13 @@ export default function ProfilesPage() {
         )}
 
         {/* Notifications */}
-        <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
+        <section className="rounded-2xl bg-[var(--bg-card)] p-5 shadow-sm ring-1 ring-[var(--border-color)]">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-lavender-50 text-lavender-600">
               <Bell size={18} />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-gray-700">
+              <h2 className="text-sm font-bold text-[var(--text-primary)]">
                 Notifications
                 {unreadNotifications.length > 0 && (
                   <span className="ml-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">
@@ -383,7 +383,7 @@ export default function ProfilesPage() {
                   </span>
                 )}
               </h2>
-              <p className="mt-1 text-xs text-gray-400">Recent activity and updates.</p>
+              <p className="mt-1 text-xs text-[var(--text-secondary)]">Recent activity and updates.</p>
             </div>
           </div>
 
@@ -393,52 +393,52 @@ export default function ProfilesPage() {
                 key={notification.id}
                 onClick={() => markNotificationRead(notification.id)}
                 className={`w-full rounded-2xl px-4 py-3 text-left ring-1 transition-all ${
-                  notification.read ? 'bg-white ring-gray-100' : 'bg-lavender-50 ring-lavender-100'
+                  notification.read ? 'bg-[var(--bg-card)] ring-[var(--border-color)]' : 'bg-lavender-50 ring-lavender-100'
                 }`}
               >
-                <div className="text-sm font-semibold text-gray-900">{notification.title}</div>
-                <div className="mt-1 text-xs text-gray-500">{notification.message}</div>
-                <div className="mt-2 text-[11px] text-gray-400">
+                <div className="text-sm font-semibold text-[var(--text-primary)]">{notification.title}</div>
+                <div className="mt-1 text-xs text-[var(--text-secondary)]">{notification.message}</div>
+                <div className="mt-2 text-[11px] text-[var(--text-secondary)]">
                   {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
                 </div>
               </button>
             ))}
-            {notifications.length === 0 && <p className="text-sm text-gray-500">No notifications yet.</p>}
+            {notifications.length === 0 && <p className="text-sm text-[var(--text-secondary)]">No notifications yet.</p>}
           </div>
         </section>
 
         {/* Who can see/edit — per child access list */}
         {selectedChild && (
-          <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
+          <section className="rounded-2xl bg-[var(--bg-card)] p-5 shadow-sm ring-1 ring-[var(--border-color)]">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-lavender-50 text-lavender-600">
                 <Shield size={18} />
               </div>
               <div>
-                <h2 className="text-sm font-bold text-gray-700">Who can see / edit {selectedChild.name}</h2>
-                <p className="mt-1 text-xs text-gray-400">People with access to this child's diary.</p>
+                <h2 className="text-sm font-bold text-[var(--text-primary)]">Who can see / edit {selectedChild.name}</h2>
+                <p className="mt-1 text-xs text-[var(--text-secondary)]">People with access to this child's diary.</p>
               </div>
             </div>
 
             <div className="mt-4 space-y-2">
               {selectedChild.parentIds.length > 0 && (
-                <div className="rounded-2xl bg-[#faf7ff] px-4 py-3 ring-1 ring-lavender-100">
-                  <div className="text-xs font-semibold text-gray-500">Parents</div>
-                  <div className="mt-1 text-sm text-gray-900">
+                <div className="rounded-2xl theme-surface-muted px-4 py-3">
+                  <div className="text-xs font-semibold text-[var(--text-secondary)]">Parents</div>
+                  <div className="mt-1 text-sm text-[var(--text-primary)]">
                     {selectedChild.parentIds.length} parent{selectedChild.parentIds.length === 1 ? '' : 's'} linked
                   </div>
                 </div>
               )}
               {selectedChild.caregivers.length > 0 && (
-                <div className="rounded-2xl bg-[#faf7ff] px-4 py-3 ring-1 ring-lavender-100">
-                  <div className="text-xs font-semibold text-gray-500">Caregivers</div>
-                  <div className="mt-1 text-sm text-gray-900">
+                <div className="rounded-2xl theme-surface-muted px-4 py-3">
+                  <div className="text-xs font-semibold text-[var(--text-secondary)]">Caregivers</div>
+                  <div className="mt-1 text-sm text-[var(--text-primary)]">
                     {selectedChild.caregivers.length} caregiver{selectedChild.caregivers.length === 1 ? '' : 's'} linked
                   </div>
                 </div>
               )}
               {selectedChild.parentIds.length === 0 && selectedChild.caregivers.length === 0 && (
-                <p className="text-sm text-gray-500">No one else has access yet. Send an invite above.</p>
+                <p className="text-sm text-[var(--text-secondary)]">No one else has access yet. Send an invite above.</p>
               )}
             </div>
           </section>

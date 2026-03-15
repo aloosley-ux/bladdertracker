@@ -115,7 +115,13 @@ Milestones has a dedicated page and remains available in navigation.
 - `notes`: string
 
 ## Leaps (`leaps`)
-Leaps is configured as a module and has a dedicated page (`/leaps`) with timeline, diary, and symptom logging components.
+Leaps is configured as a module and has a dedicated page (`/leaps`) with three sub-sections:
+
+- **Milestones** (default tab): Quick-log symptom/diary entries, milestone progress by category, missed milestones alerts, and guidance/support links. Links to the dedicated Milestones page for detailed management.
+- **Overview**: Age calculator, leap progress chart, current leap guidance with skills and parental tips, missed milestones alert, and quick stats.
+- **Timeline**: Leap timeline and a link to the full Milestones page.
+
+The previous "Tools" tab has been removed — SymptomLogger and LeapDiary are now available directly on the Milestones sub-page. Leap reminder settings have been moved to the Settings page under "Reminder preferences". The inline DOB editor has been removed; users are directed to Settings to set a due date.
 
 ---
 
@@ -127,6 +133,7 @@ Supported reminder modules (those that appear in reminder settings):
 - `therapy`
 - `routine`
 - `mood`
+- `leaps`
 
 Each preference is scoped per user + child + module and supports:
 - `frequency`: `daily | weekly`

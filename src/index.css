@@ -477,3 +477,160 @@ button.btn-compact {
 [data-theme="high-contrast"] .nhs-toggle[data-on="true"] {
   background-color: #00cc00;
 }
+
+/* ── Theme-aware semantic surfaces (#118) ───────────────────────── */
+/* Entry cards: readable backgrounds in all themes */
+.theme-surface-card {
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+.theme-surface-card h4,
+.theme-surface-card .font-semibold {
+  color: var(--text-primary);
+}
+
+.theme-surface-card .text-xs,
+.theme-surface-card .text-sm {
+  color: var(--text-secondary);
+}
+
+/* Stat tiles in Reports / summary cards */
+.theme-stat-tile {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+/* Banner / header surfaces */
+.theme-surface-banner {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+/* Profile/invite/audit cards */
+.theme-surface-muted {
+  background: var(--bg-accent);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.theme-surface-muted .text-gray-900,
+.theme-surface-muted .text-sm.font-semibold {
+  color: var(--text-primary) !important;
+}
+
+.theme-surface-muted .text-gray-500,
+.theme-surface-muted .text-xs {
+  color: var(--text-secondary) !important;
+}
+
+/* FAQ hover state fix for dark/high-contrast */
+[data-theme="dark"] .faq-item:hover,
+[data-theme="dark"] .faq-item button:hover {
+  background: var(--bg-hover) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="high-contrast"] .faq-item:hover,
+[data-theme="high-contrast"] .faq-item button:hover {
+  background: var(--bg-hover) !important;
+  color: var(--text-primary) !important;
+}
+
+/* NHS guidance button: white bg, blue text for all themes */
+.nhs-guidance-btn {
+  background-color: #ffffff !important;
+  color: #005eb8 !important;
+  border: 1px solid #005eb8;
+}
+
+[data-theme="dark"] .nhs-guidance-btn {
+  background-color: #1a1a2e !important;
+  color: #66b5ff !important;
+  border-color: #66b5ff;
+}
+
+[data-theme="high-contrast"] .nhs-guidance-btn {
+  background-color: #000000 !important;
+  color: #66b5ff !important;
+  border: 2px solid #ffffff;
+}
+
+/* Delete button enhanced contrast in dark/high-contrast */
+[data-theme="dark"] .btn-delete {
+  background-color: #7f1d1d !important;
+  color: #fecaca !important;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+
+[data-theme="high-contrast"] .btn-delete {
+  background-color: #991b1b !important;
+  color: #ffffff !important;
+  border: 2px solid #ffffff;
+}
+
+/* Selected tag: visible in dark/high-contrast */
+[data-theme="dark"] .tag-selected {
+  background-color: #6d1ce3 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="high-contrast"] .tag-selected {
+  background-color: #ffff00 !important;
+  color: #000000 !important;
+  border: 2px solid #ffffff;
+}
+
+/* ── Landing page theme fixes (#118) ────────────────────────────── */
+[data-theme="dark"] .landing-top {
+  background: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .landing-top h1,
+[data-theme="dark"] .landing-top span,
+[data-theme="dark"] .landing-top div {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="high-contrast"] .landing-top {
+  background: #000000 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="high-contrast"] .landing-top h1,
+[data-theme="high-contrast"] .landing-top span,
+[data-theme="high-contrast"] .landing-top div {
+  color: #ffffff !important;
+}
+
+[data-theme="high-contrast"] .landing-top .text-lavender-400,
+[data-theme="high-contrast"] .landing-top svg {
+  color: #000000 !important;
+}
+
+/* ── Gradient background theme overrides (#118) ─────────────────── */
+[data-theme="dark"] .bg-\[linear-gradient\(180deg\,\#fbf7f2_0\%\,\#ffffff_100\%\)\] {
+  background: var(--bg-secondary) !important;
+}
+
+[data-theme="high-contrast"] .bg-\[linear-gradient\(180deg\,\#fbf7f2_0\%\,\#ffffff_100\%\)\] {
+  background: var(--bg-primary) !important;
+}
+
+[data-theme="dark"] .bg-gradient-to-b {
+  background: var(--bg-primary) !important;
+}
+
+[data-theme="high-contrast"] .bg-gradient-to-b {
+  background: #000000 !important;
+}
+
+[data-theme="dark"] .bg-\[radial-gradient\(ellipse_at_top\,\#f2e7ff_0\%\,\#eef8ff_50\%\,\#ffffff_100\%\)\] {
+  background: var(--bg-secondary) !important;
+}
+
+[data-theme="high-contrast"] .bg-\[radial-gradient\(ellipse_at_top\,\#f2e7ff_0\%\,\#eef8ff_50\%\,\#ffffff_100\%\)\] {
+  background: #000000 !important;
+}

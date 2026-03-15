@@ -24,16 +24,16 @@ export default function EntryCard({ icon, title, subtitle, time, color = 'bg-lav
   };
 
   return (
-    <div data-entry-type={entryType ?? ''} className={`${color} rounded-2xl p-4 flex items-start gap-3 relative group`}>
-      <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm shrink-0">
+    <div data-entry-type={entryType ?? ''} className={`${color} theme-surface-card rounded-2xl p-4 flex items-start gap-3 relative group`}>
+      <div className="w-10 h-10 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center shadow-sm shrink-0">
         {icon}
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between">
           <button onClick={toggle} className="text-left flex-1" aria-expanded={expanded}>
-            <h4 className="font-semibold text-sm text-gray-800 truncate">{title}</h4>
-            <span className="text-xs text-gray-400 shrink-0 ml-2">{time}</span>
-            {subtitle && <p className="text-xs text-gray-500 mt-0.5 truncate">{subtitle}</p>}
+            <h4 className="font-semibold text-sm text-[var(--text-primary)] truncate">{title}</h4>
+            <span className="text-xs text-[var(--text-secondary)] shrink-0 ml-2">{time}</span>
+            {subtitle && <p className="text-xs text-[var(--text-secondary)] mt-0.5 truncate">{subtitle}</p>}
           </button>
         </div>
         {expanded && (
@@ -53,7 +53,7 @@ export default function EntryCard({ icon, title, subtitle, time, color = 'bg-lav
       )}
       {/* If entryData is provided but no children, show a small JSON summary when expanded */}
       {expanded && !children && entryData !== undefined && entryData !== null && (
-        <pre className="text-xs text-gray-600 mt-2 whitespace-pre-wrap">{JSON.stringify(entryData, null, 2)}</pre>
+        <pre className="text-xs text-[var(--text-secondary)] mt-2 whitespace-pre-wrap">{JSON.stringify(entryData, null, 2)}</pre>
       )}
     </div>
   );

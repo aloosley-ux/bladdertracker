@@ -159,18 +159,18 @@ export default function LoginPage() {
       <div className="mx-auto flex min-h-[calc(100vh-3rem)] w-full max-w-sm flex-col justify-center">
         <div className="overflow-hidden rounded-[2rem] bg-white shadow-[0_30px_80px_rgba(139,77,255,0.12)] ring-1 ring-black/5">
           {/* Header */}
-          <div className="bg-[radial-gradient(ellipse_at_top,#f2e7ff_0%,#eef8ff_50%,#ffffff_100%)] px-6 pb-5 pt-7 text-center">
+          <div className="landing-top bg-[radial-gradient(ellipse_at_top,#f2e7ff_0%,#eef8ff_50%,#ffffff_100%)] px-6 pb-5 pt-7 text-center">
             <div className="flex justify-center mb-1">
               <BrandIcon width={180} />
             </div>
-            <h1 className="mt-1 text-xl font-bold tracking-tight text-gray-900">
+            <h1 className="mt-1 text-xl font-bold tracking-tight text-[var(--text-primary)]">
               {BRAND.heroTitle}
             </h1>
-            <div className="mt-3 flex items-center justify-center gap-3 text-[11px] text-gray-500">
+            <div className="mt-3 flex items-center justify-center gap-3 text-[11px] text-[var(--text-secondary)]">
               <span className="inline-flex items-center gap-1"><ShieldCheck size={12} className="text-lavender-400" /> Secure</span>
-              <span className="text-gray-300">·</span>
+              <span className="text-[var(--text-secondary)] opacity-40">·</span>
               <span className="inline-flex items-center gap-1"><Mail size={12} className="text-lavender-400" /> Shared access</span>
-              <span className="text-gray-300">·</span>
+              <span className="text-[var(--text-secondary)] opacity-40">·</span>
               <span className="inline-flex items-center gap-1"><Sparkles size={12} className="text-lavender-400" /> {cloud ? 'Cloud sync' : 'Private'}</span>
             </div>
           </div>
