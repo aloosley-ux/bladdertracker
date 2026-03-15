@@ -87,12 +87,12 @@ export default function AddEntryPage() {
   if (tabs.length === 0) {
     return (
       <div className="pb-20">
-        <div className="bg-[linear-gradient(180deg,#fbf7f2_0%,#ffffff_100%)] px-4 pt-4 pb-3">
+        <div className="bg-[var(--bg-secondary)] px-4 pt-4 pb-3">
           <div className="mb-3 flex items-center gap-3">
             <button
               onClick={() => navigate('/')}
               aria-label="Back to dashboard"
-              className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-gray-500 shadow-sm ring-1 ring-black/5 hover:bg-lavender-50"
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--bg-input)] text-[var(--text-secondary)] shadow-sm ring-1 ring-[var(--border-color)] hover:bg-[var(--bg-card)]"
             >
               <ArrowLeft size={18} />
             </button>
@@ -116,12 +116,12 @@ export default function AddEntryPage() {
 
   return (
     <div className="pb-20">
-      <div className="bg-[linear-gradient(180deg,#fbf7f2_0%,#ffffff_100%)] px-4 pt-4 pb-3">
+      <div className="bg-[var(--bg-secondary)] px-4 pt-4 pb-3">
         <div className="mb-3 flex items-center gap-3">
           <button
             onClick={() => navigate('/')}
             aria-label="Back to dashboard"
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-gray-500 shadow-sm ring-1 ring-black/5 hover:bg-lavender-50"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--bg-input)] text-[var(--text-secondary)] shadow-sm ring-1 ring-[var(--border-color)] hover:bg-[var(--bg-card)]"
           >
             <ArrowLeft size={18} />
           </button>
@@ -129,19 +129,19 @@ export default function AddEntryPage() {
         </div>
 
         <div className="mb-3 px-1">
-          <h1 className="text-lg font-bold text-gray-900">Add an update</h1>
-          <p className="mt-1 text-sm text-gray-500">Choose the quickest thing you want to log.</p>
+          <h1 className="text-lg font-bold text-[var(--text-primary)]">Add an update</h1>
+          <p className="mt-1 text-sm text-[var(--text-muted)]">Choose the quickest thing you want to log.</p>
         </div>
 
-        <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
+        <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2 pb-1">
           {tabs.map(({ type, icon: Icon, label, color }) => (
             <button
               key={type}
               onClick={() => setActiveTab(type)}
-              className={`flex min-h-12 items-center justify-center gap-1.5 rounded-xl py-2.5 px-3 text-xs font-medium transition-all whitespace-nowrap ${
+              className={`w-full sm:w-auto flex min-h-12 items-center justify-center gap-1.5 rounded-xl py-2.5 px-3 text-xs font-medium transition-all ${
                 activeTab === type
                   ? 'bg-lavender-500 text-white shadow-md'
-                  : 'bg-white text-gray-500 shadow-sm ring-1 ring-black/5 hover:bg-lavender-50'
+                  : 'bg-[var(--bg-card)] text-[var(--text-muted)] shadow-sm ring-1 ring-[var(--border-color)] hover:bg-[var(--bg-input)]'
               }`}
             >
               <Icon size={14} className={activeTab === type ? 'text-white' : color} />
