@@ -133,7 +133,7 @@ export default function AddEntryPage() {
           <p className="mt-1 text-sm text-gray-500">Choose the quickest thing you want to log.</p>
         </div>
 
-        <div className="grid grid-cols-4 gap-2 sm:flex sm:overflow-x-auto pb-1 -mx-1 px-1">
+        <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2 pb-1">
           {tabs.map(({ type, icon: Icon, label, color }) => (
             <button
               key={type}
