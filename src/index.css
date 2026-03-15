@@ -18,40 +18,44 @@
   --ring-color: rgba(0,0,0,0.05);
 }
 
-[data-theme="dark"] .bg-gray-50,
-[data-theme="dark"] .bg-gray-100 {
-  background-color: var(--bg-accent) !important;
+[data-theme="dark"] {
+  --bg-primary: #1a1a2e;
+  --bg-secondary: #2d2b55;
+  --bg-card: #2d2b55;
+  --text-primary: #e8e8ff;
+  --text-secondary: #a5a5c0;
+  --border-color: rgba(255,255,255,0.1);
+  --shadow-color: rgba(0,0,0,0.3);
+  --bg-input: #3b3872;
+  --bg-hover: #3b3872;
+  --bg-accent: #3b3872;
+  --text-accent: #c4adff;
+  --icon-color: #a5a5c0;
+  --divider-color: rgba(255,255,255,0.08);
+  --ring-color: rgba(255,255,255,0.1);
 }
 
-/* Override Tailwind opacity variants like bg-white/50, bg-white/60 etc so cards and chips
-   render correctly in dark/high-contrast themes */
-[data-theme="dark"] .bg-white\/50,
-[data-theme="dark"] .bg-white\/40,
-[data-theme="dark"] .bg-white\/60,
-[data-theme="dark"] .bg-white\/95,
-[data-theme="dark"] .bg-white\/90 {
-  background-color: var(--bg-card) !important;
+[data-theme="high-contrast"] {
+  --bg-primary: #000000;
+  --bg-secondary: #1a1a1a;
+  --bg-card: #1a1a1a;
+  --text-primary: #ffffff;
+  --text-secondary: #cccccc;
+  --border-color: #ffffff;
+  --shadow-color: rgba(255,255,255,0.2);
+  --bg-input: #2a2a2a;
+  --bg-hover: #333333;
+  --bg-accent: #2a2a2a;
+  --text-accent: #ffff00;
+  --icon-color: #ffffff;
+  --divider-color: #ffffff;
+  --ring-color: #ffffff;
 }
 
-[data-theme="dark"] .bg-gray-50\/50,
-[data-theme="dark"] .bg-gray-50\/40,
-[data-theme="dark"] .bg-gray-100\/50 {
-  background-color: var(--bg-accent) !important;
-}
-
-[data-theme="high-contrast"] .bg-white\/50,
-[data-theme="high-contrast"] .bg-white\/40,
-[data-theme="high-contrast"] .bg-white\/60,
-[data-theme="high-contrast"] .bg-white\/95,
-[data-theme="high-contrast"] .bg-white\/90 {
-  background-color: var(--bg-card) !important;
-}
-
-[data-theme="high-contrast"] .bg-gray-50\/50,
-[data-theme="high-contrast"] .bg-gray-50\/40,
-[data-theme="high-contrast"] .bg-gray-100\/50 {
-  background-color: var(--bg-accent) !important;
-}
+@theme {
+  --color-lavender-50: #f5f0ff;
+  --color-lavender-100: #ede5ff;
+  --color-lavender-200: #ddd0ff;
   --color-lavender-300: #c4adff;
   --color-lavender-400: #a87dff;
   --color-lavender-500: #8b4dff;
@@ -326,39 +330,17 @@ button.btn-compact {
   background-color: var(--bg-accent) !important;
 }
 
-<<<<<<< HEAD
-=======
-/* Override Tailwind opacity variants like bg-white/50, bg-white/60 etc so cards and chips
-   render correctly in dark/high-contrast themes */
-[data-theme="dark"] .bg-white\/50,
-[data-theme="dark"] .bg-white\/40,
-[data-theme="dark"] .bg-white\/60,
-[data-theme="dark"] .bg-white\/95,
-[data-theme="dark"] .bg-white\/90 {
+/* Also match Tailwind opacity utility variants like `bg-white/50` safely via
+   attribute selectors to avoid needing to escape slashes in selectors. */
+[data-theme="dark"] [class*="bg-white/"] {
   background-color: var(--bg-card) !important;
 }
 
-[data-theme="dark"] .bg-gray-50\/50,
-[data-theme="dark"] .bg-gray-50\/40,
-[data-theme="dark"] .bg-gray-100\/50 {
+[data-theme="dark"] [class*="bg-gray-50/"] ,
+[data-theme="dark"] [class*="bg-gray-100/"] {
   background-color: var(--bg-accent) !important;
 }
 
-[data-theme="high-contrast"] .bg-white\/50,
-[data-theme="high-contrast"] .bg-white\/40,
-[data-theme="high-contrast"] .bg-white\/60,
-[data-theme="high-contrast"] .bg-white\/95,
-[data-theme="high-contrast"] .bg-white\/90 {
-  background-color: var(--bg-card) !important;
-}
-
-[data-theme="high-contrast"] .bg-gray-50\/50,
-[data-theme="high-contrast"] .bg-gray-50\/40,
-[data-theme="high-contrast"] .bg-gray-100\/50 {
-  background-color: var(--bg-accent) !important;
-}
-
->>>>>>> 9372001 (theme: make cards/toggles respect dark/high-contrast via CSS vars and override bg-white opacity variants)
 /* Text overrides */
 [data-theme="dark"] .text-gray-900,
 [data-theme="dark"] .text-gray-800,
@@ -391,6 +373,15 @@ button.btn-compact {
 
 [data-theme="high-contrast"] .bg-gray-50,
 [data-theme="high-contrast"] .bg-gray-100 {
+  background-color: var(--bg-accent) !important;
+}
+
+[data-theme="high-contrast"] [class*="bg-white/"] {
+  background-color: var(--bg-card) !important;
+}
+
+[data-theme="high-contrast"] [class*="bg-gray-50/"] ,
+[data-theme="high-contrast"] [class*="bg-gray-100/"] {
   background-color: var(--bg-accent) !important;
 }
 
