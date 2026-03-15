@@ -12,7 +12,6 @@ import { UK_SUPPORT_RESOURCES } from '../data/ukSupportResources';
 import {
   AgeCalculator,
   LeapTimeline,
-  LeapNotifications,
   LeapCalendarWidget,
   LeapProgressChart,
 } from '../components/leaps';
@@ -499,11 +498,10 @@ export default function LeapsPage() {
           {/* ── Leap reminders ───────────────────────────────────── */}
           <section className="rounded-2xl bg-[var(--bg-card)] border border-lavender-100 shadow-sm p-5">
             <h2 className="text-sm font-bold text-[var(--text-primary)] mb-2">🔔 Leap reminders</h2>
-            <p className="text-xs text-[var(--text-secondary)] mb-3">
-              Reminders can be configured in{' '}
-              <Link to="/settings" className="text-lavender-600 underline underline-offset-2">Settings</Link>.
-            </p>
-            <LeapNotifications key={activeChild.id} child={activeChild} />
+              <p className="text-xs text-[var(--text-secondary)] mb-3">
+                Reminders can be configured in{' '}
+                <Link to="/settings" className="text-lavender-600 underline underline-offset-2">Settings</Link>.
+              </p>
           </section>
         </div>
       )}

@@ -200,7 +200,7 @@ This section highlights the experience that already exists in the product today.
 | Add an update | `/add` | — | Fast tabbed entry forms with calmer wording and one-handed quick logging |
 | Reports | `/reports` | 📈 Reports | Charts, trends, milestone summaries, and guided export |
 | Milestones | `/milestones` | ⭐ Milestones | Developmental milestone dashboard (toggle-controlled, hidden when disabled) |
-| Leaps | `/leaps` | 🌈 Leaps | Developmental leap guidance with sections: Overview, Milestones, Timeline, Tools. Includes missed milestone detection and NHS guidance links. (toggle-controlled, default off) |
+| Leaps | `/leaps` | 🌈 Leaps | Developmental leap guidance with sections: Overview, Milestones, Timeline. Includes missed milestone detection and NHS guidance links. (toggle-controlled, default off) |
 | Calendar | `/calendar` | — | Monthly calendar view of all entries |
 | Profiles | `/profiles` | 👥 Profiles | Child profiles, caregiver invites, access review, and notifications |
 | Settings | `/settings` | ⚙️ Settings | Themes, module toggles, reminders, import/export, GDPR, and support |
