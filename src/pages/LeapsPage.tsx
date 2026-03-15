@@ -109,22 +109,25 @@ export default function LeapsPage() {
     );
   }
 
+  // After the guard clause, effectiveChild is guaranteed non-null
+  const activeChild = effectiveChild as Child;
+
   return (
     <div className="space-y-4 pb-4">
       <header className="px-1">
         <h1 className="text-xl font-bold text-lavender-700">🌈 Developmental Leaps</h1>
         <p className="text-sm text-[var(--text-secondary)] mt-1">
-          Track <strong>{effectiveChild!.name}&apos;s</strong> developmental leaps, milestones, and growth
+          Track <strong>{activeChild.name}&apos;s</strong> developmental leaps, milestones, and growth
         </p>
       </header>
 
       {/* Due-date editor (if not set) */}
-      {!effectiveChild!.dueDate && (
+      {!activeChild.dueDate && (
         <div className="rounded-2xl bg-amber-50 border border-amber-200 p-4">
           <p className="text-sm text-amber-700 mb-3">
-            💡 For more accurate leap predictions, set {effectiveChild!.name}&apos;s due date.
+            💡 For more accurate leap predictions, set {activeChild.name}&apos;s due date.
           </p>
-          <DueDateEditor child={effectiveChild!} onSave={handleSaveDueDate} />
+          <DueDateEditor child={activeChild} onSave={handleSaveDueDate} />
         </div>
       )}
 
@@ -149,8 +152,8 @@ export default function LeapsPage() {
       {/* ── Overview Section ──────────────────────────────────────────── */}
       {activeSection === 'overview' && (
         <div className="space-y-4">
-          <AgeCalculator child={effectiveChild!} />
-          <LeapProgressChart child={effectiveChild!} />
+          <AgeCalculator child={activeChild} />
+          <LeapProgressChart child={activeChild} />
 
           {/* Current leap guidance */}
           {currentLeap && (
@@ -308,7 +311,7 @@ export default function LeapsPage() {
                           <div className="h-2 w-16 overflow-hidden rounded-full bg-gray-200">
                             <div
                               className="h-full rounded-full bg-emerald-500 transition-all"
-                              style={{ width: `${catMilestones.length > 0 ? (catAchieved / catMilestones.length) * 100 : 0}%` }}
+                              style={{ width: `${(catAchieved / catMilestones.length) * 100}%` }}
                             />
                           </div>
                         )}
@@ -399,17 +402,17 @@ export default function LeapsPage() {
       {/* ── Timeline Section ──────────────────────────────────────────── */}
       {activeSection === 'timeline' && (
         <div className="space-y-4">
-          <LeapTimeline child={effectiveChild!} />
-          <LeapCalendarWidget child={effectiveChild!} />
+          <LeapTimeline child={activeChild} />
+          <LeapCalendarWidget child={activeChild} />
         </div>
       )}
 
       {/* ── Tools Section ─────────────────────────────────────────────── */}
       {activeSection === 'tools' && (
         <div className="space-y-4">
-          <SymptomLogger child={effectiveChild!} />
-          <LeapDiary child={effectiveChild!} />
-          <LeapNotifications key={effectiveChild!.id} child={effectiveChild!} />
+          <SymptomLogger child={activeChild} />
+          <LeapDiary child={activeChild} />
+          <LeapNotifications key={activeChild.id} child={activeChild} />
         </div>
       )}
     </div>

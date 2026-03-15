@@ -314,6 +314,12 @@ button.btn-compact {
   --tw-ring-color: var(--ring-color);
 }
 
+/*
+ * Theme overrides for Tailwind utility classes require !important because
+ * Tailwind's atomic classes have high specificity. This is the pragmatic
+ * approach for theme switching via data-theme attribute selectors (#97).
+ */
+
 /* Backgrounds that are hardcoded white */
 [data-theme="dark"] .bg-white {
   background-color: var(--bg-card) !important;
