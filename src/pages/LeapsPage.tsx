@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
+import { format, parseISO } from 'date-fns';
 import { useApp } from '../context/useApp';
 import type { Child } from '../types';
 import {
@@ -11,11 +12,6 @@ import { ensureLeapsMilestones, stripSlugSentinel } from '../utils/ensureLeapsMi
 import { UK_SUPPORT_RESOURCES } from '../data/ukSupportResources';
 import {
   AgeCalculator,
-  LeapTimeline,
-  SymptomLogger,
-  LeapDiary,
-  LeapNotifications,
-  LeapCalendarWidget,
   LeapProgressChart,
 } from '../components/leaps';
 import { Link } from 'react-router-dom';
@@ -28,7 +24,7 @@ const SEEK_ADVICE_WEEKS = 8;
 // ── Page Component ───────────────────────────────────────────────────
 
 export default function LeapsPage() {
-  const { selectedChild, children, milestones, user, addMilestone, enabledModules } = useApp();
+  const { selectedChild, children, milestones, user, addMilestone, updateMilestone, deleteMilestone, enabledModules, leapSymptomLogs, leapDiaryEntries } = useApp();
   const [activeSection, setActiveSection] = useState<LeapsSection>('milestones');
   const [milestonesInitialised, setMilestonesInitialised] = useState(false);
 
@@ -125,6 +121,8 @@ export default function LeapsPage() {
     { id: 'milestones', label: 'Milestones', emoji: '⭐' },
     { id: 'timeline', label: 'Timeline', emoji: '📅' },
   ];
+
+  const [expandedLeap, setExpandedLeap] = useState<number | null>(null);
 
   if (!child) {
     return (
@@ -319,6 +317,56 @@ export default function LeapsPage() {
             </section>
           ) : (
             <>
+              {/* Compact quick-log actions: compact buttons + preview, full page at /leap-entry */}
+              <section className="rounded-2xl bg-[var(--bg-card)] border border-lavender-100 shadow-sm p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="text-sm font-bold text-[var(--text-primary)]">📝 Quick logging</h2>
+                  <Link to="/leap-entry" className="text-xs font-semibold text-lavender-600 hover:underline">Open full entry page →</Link>
+                </div>
+
+                <div className="flex gap-3">
+                  <Link
+                    to="/leap-entry"
+                    className="flex-1 rounded-lg bg-lavender-600 px-3 py-2 text-sm font-semibold text-white text-center hover:bg-lavender-700"
+                  >
+                    📝 Log symptom or note
+                  </Link>
+                  <Link
+                    to="/leap-entry"
+                    className="flex-1 rounded-lg bg-[var(--bg-primary)] border border-lavender-100 px-3 py-2 text-sm font-semibold text-lavender-700 text-center hover:bg-lavender-50"
+                  >
+                    📚 Add diary note
+                  </Link>
+                </div>
+
+                <div className="mt-3 grid grid-cols-2 gap-3">
+                  <div className="rounded-xl bg-white p-3 border border-gray-100">
+                    <div className="text-xs font-semibold text-gray-700 mb-2">Most recent symptom</div>
+                    {leapSymptomLogs.filter((l) => l.childId === activeChild.id).slice(-1).map((log) => (
+                      <div key={log.id} className="text-sm text-gray-700">
+                        <div className="truncate">{log.symptoms.map((s) => s).join(', ')}</div>
+                        <div className="text-[11px] text-gray-400">{log.date} {log.time}</div>
+                      </div>
+                    ))}
+                    {leapSymptomLogs.filter((l) => l.childId === activeChild.id).length === 0 && (
+                      <div className="text-sm text-gray-400 italic">No recent symptoms</div>
+                    )}
+                  </div>
+                  <div className="rounded-xl bg-white p-3 border border-gray-100">
+                    <div className="text-xs font-semibold text-gray-700 mb-2">Most recent diary note</div>
+                    {leapDiaryEntries.filter((e) => e.childId === activeChild.id).slice(-1).map((entry) => (
+                      <div key={entry.id} className="text-sm text-gray-700">
+                        <div className="font-medium truncate">{entry.title}</div>
+                        <div className="text-[11px] text-gray-400">{entry.date}</div>
+                      </div>
+                    ))}
+                    {leapDiaryEntries.filter((e) => e.childId === activeChild.id).length === 0 && (
+                      <div className="text-sm text-gray-400 italic">No diary notes yet</div>
+                    )}
+                  </div>
+                </div>
+              </section>
+
               {/* Milestone summary by category */}
               <section className="rounded-2xl bg-[var(--bg-card)] border border-lavender-100 shadow-sm p-5">
                 <h2 className="text-sm font-bold text-[var(--text-primary)] mb-1">Milestone progress by category</h2>
@@ -446,26 +494,15 @@ export default function LeapsPage() {
             </>
           )}
 
-          {/* ── Quick logging access ─────────────────────────────── */}
-          <section className="rounded-2xl bg-[var(--bg-card)] border border-lavender-100 shadow-sm p-5">
-            <h2 className="text-sm font-bold text-[var(--text-primary)] mb-3">📝 Quick logging</h2>
-            <p className="text-xs text-[var(--text-secondary)] mb-3">
-              Log leap-related observations directly from here.
-            </p>
-            <div className="space-y-3">
-              <SymptomLogger child={activeChild} />
-              <LeapDiary child={activeChild} />
-            </div>
-          </section>
+          
 
           {/* ── Leap reminders ───────────────────────────────────── */}
           <section className="rounded-2xl bg-[var(--bg-card)] border border-lavender-100 shadow-sm p-5">
             <h2 className="text-sm font-bold text-[var(--text-primary)] mb-2">🔔 Leap reminders</h2>
-            <p className="text-xs text-[var(--text-secondary)] mb-3">
-              Reminders can be configured in{' '}
-              <Link to="/settings" className="text-lavender-600 underline underline-offset-2">Settings</Link>.
-            </p>
-            <LeapNotifications key={activeChild.id} child={activeChild} />
+              <p className="text-xs text-[var(--text-secondary)] mb-3">
+                Reminders can be configured in{' '}
+                <Link to="/settings" className="text-lavender-600 underline underline-offset-2">Settings</Link>.
+              </p>
           </section>
         </div>
       )}
@@ -473,8 +510,105 @@ export default function LeapsPage() {
       {/* ── Timeline Section ──────────────────────────────────────────── */}
       {activeSection === 'timeline' && (
         <div className="space-y-4">
-          <LeapTimeline child={activeChild} />
-          <LeapCalendarWidget child={activeChild} />
+          {/* Render the 10 leap periods as a timeline, expanded to show their generated milestones (new milestones) */}
+          <section className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
+            <h2 className="mb-3 text-sm font-bold text-slate-800">Leap timeline & milestones</h2>
+            <div className="space-y-3">
+              {leapPredictions.map((pred) => {
+                const leapMilestones = milestones
+                  .filter((m) => m.childId === activeChild.id && (m.moduleId ?? 'milestones') === 'leaps')
+                  .filter((m) => {
+                    const match = /\[slug:leap(\d+)-/.exec(m.description ?? '');
+                    return match ? parseInt(match[1], 10) === pred.leap.number : false;
+                  })
+                  .sort((a, b) => {
+                    const da = new Date(a.targetDate ?? a.createdAt).getTime();
+                    const db = new Date(b.targetDate ?? b.createdAt).getTime();
+                    return da - db;
+                  });
+
+                const isCompleted = leapMilestones.length > 0 && leapMilestones.every((m) => m.status === 'achieved');
+
+                const isOpen = expandedLeap === pred.leap.number;
+
+                return (
+                  <div key={pred.leap.number} className="rounded-xl border p-3">
+                    <button
+                      type="button"
+                      onClick={() => setExpandedLeap(isOpen ? null : pred.leap.number)}
+                      aria-expanded={isOpen}
+                      className="flex w-full items-center justify-between text-left"
+                    >
+                      <div>
+                        <div className="text-sm font-bold">{pred.leap.number}</div>
+                        <div className="text-sm">{pred.leap.title}</div>
+                        <div className="text-xs text-slate-500">{format(pred.stormyStart, 'd MMM')} – {format(pred.sunnyDate, 'd MMM yyyy')}</div>
+                      </div>
+                      <div className="text-xs font-semibold text-emerald-700">{isCompleted ? 'Completed' : 'Ongoing'}</div>
+                    </button>
+                    {isOpen && (
+                      <div className="mt-3 space-y-2">
+                        {pred.leap.resourceLinks && pred.leap.resourceLinks.length > 0 && (
+                          <div className="mt-2 rounded-lg bg-white/40 p-3">
+                            <p className="text-xs font-bold mb-1.5">🔗 Trusted resources</p>
+                            <ul className="space-y-1">
+                              {pred.leap.resourceLinks.map((link) => (
+                                <li key={link.url}>
+                                  {link.url.startsWith('/') ? (
+                                    <Link to={link.url} className="text-xs font-medium underline underline-offset-2">
+                                      {link.label}
+                                    </Link>
+                                  ) : (
+                                    <a href={link.url} target="_blank" rel="noopener noreferrer" className="text-xs font-medium underline underline-offset-2">
+                                      {link.label}
+                                    </a>
+                                  )}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        {leapMilestones.length === 0 ? (
+                          <p className="text-sm text-gray-400">No milestones for this leap yet.</p>
+                        ) : (
+                          leapMilestones.map((entry) => (
+                            <article key={entry.id} className="rounded-xl bg-slate-50 p-3 ring-1">
+                              <div className="flex flex-wrap items-center gap-2">
+                                <span className="text-lg">🌈</span>
+                                <h3 className="text-sm font-semibold text-slate-900">{entry.name}</h3>
+                                <span className="rounded-full bg-white px-2 py-0.5 text-xs font-medium text-slate-600">{entry.category}</span>
+                                <span className="rounded-full px-2 py-0.5 text-xs font-medium bg-amber-100 text-amber-800">{entry.status}</span>
+                                <span className="rounded-full bg-sky-100 px-2 py-0.5 text-xs font-medium text-sky-800">{(entry.milestoneType ?? 'developmental').replace('_', ' ')}</span>
+                              </div>
+                              {entry.description && <p className="mt-1 text-sm text-slate-600">{stripSlugSentinel(entry.description)}</p>}
+                              {entry.notes && <p className="mt-1 text-xs text-slate-500">Diary note: {entry.notes}</p>}
+                              <p className="mt-1 text-xs text-slate-500">Date marker: {entry.targetDate ? format(parseISO(entry.targetDate), 'EEE d MMM yyyy') : entry.createdAt}</p>
+                              <div className="mt-3 flex flex-wrap gap-2">
+                                {(['not_started', 'in_progress', 'achieved'] as const).map((status) => (
+                                  <button
+                                    key={status}
+                                    type="button"
+                                    onClick={() => updateMilestone({ ...entry, status, dateAchieved: status === 'achieved' ? format(new Date(), 'yyyy-MM-dd') : null })}
+                                    className={`min-h-10 rounded-full px-3 text-xs font-semibold ${entry.status === status ? 'bg-violet-600 text-white' : 'bg-white text-slate-700'}`}
+                                  >
+                                    {status === 'not_started' ? 'Not started' : status === 'in_progress' ? 'In progress' : 'Achieved'}
+                                  </button>
+                                ))}
+                                <button type="button" onClick={() => window.location.assign(`/milestones?module=leaps&leap=${pred.leap.number}`)} className="inline-flex min-h-10 items-center gap-1 rounded-full border border-blue-200 bg-white px-3 text-xs font-semibold text-blue-700">
+                                  NHS guidance
+                                </button>
+                                <button type="button" onClick={() => deleteMilestone(entry.id)} className="ml-auto min-h-10 rounded-full bg-rose-600 px-3 text-xs font-semibold text-white">Delete</button>
+                              </div>
+                            </article>
+                          ))
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </section>
         </div>
       )}
     </div>

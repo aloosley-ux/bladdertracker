@@ -4,7 +4,6 @@ export { default as LeapTimeline } from './LeapTimeline';
 export { default as LeapTimelineCard } from './LeapTimelineCard';
 export { default as SymptomLogger } from './SymptomLogger';
 export { default as LeapDiary } from './LeapDiary';
-export { default as LeapNotifications } from './LeapNotifications';
 export { default as generateICS } from './generateICS';
 export { default as LeapCalendarWidget } from './LeapCalendarWidget';
 export { default as LeapProgressChart } from './LeapProgressChart';

@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Added
  - Dedicated GDPR & Data Protection page at `/gdpr` with structured sections (data collected, storage, rights, deletion, retention, contact) (#102)
  - Dedicated Audit Trail page at `/audit-trail` with category filtering and expandable event details (#99)
- - Leaps page restructured into 4 sections: Overview, Milestones, Timeline, Tools (#98)
+ - Leaps page restructured into sections: Overview, Milestones, Timeline (#98)
  - Missed milestone detection with visual alerts and NHS guidance links (#98)
  - Milestone integration on Leaps page with progress-by-category view (#98)
  - NHS resource links and next-step guidance for missed milestones (#98)

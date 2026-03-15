@@ -27,7 +27,7 @@ import { getImportTemplateDescription, parseImportFile } from '../utils/importer
 import { DueDateEditor } from '../components/leaps';
 import type { Child, ModuleId } from '../types';
 
-const REMINDER_ENABLED_MODULES: ModuleId[] = ['milestones', 'therapy', 'routine', 'mood'];
+const REMINDER_ENABLED_MODULES: ModuleId[] = ['milestones', 'therapy', 'routine', 'mood', 'leaps'];
 
 export default function SettingsPage() {
   const {

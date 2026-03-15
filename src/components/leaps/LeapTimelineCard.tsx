@@ -1,5 +1,6 @@
 import { format } from 'date-fns';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import type { LeapPrediction } from '../../data/leapData';
 import { STATUS_COLOURS, STATUS_LABELS } from './leapConstants';
 
@@ -80,14 +81,20 @@ export default function LeapTimelineCard({
               <ul className="space-y-1">
                 {leap.resourceLinks.map((link) => (
                   <li key={link.url}>
-                    <a
-                      href={link.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-xs font-medium underline underline-offset-2"
-                    >
-                      {link.label}
-                    </a>
+                    {link.url.startsWith('/') ? (
+                      <Link to={link.url} className="text-xs font-medium underline underline-offset-2">
+                        {link.label}
+                      </Link>
+                    ) : (
+                      <a
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs font-medium underline underline-offset-2"
+                      >
+                        {link.label}
+                      </a>
+                    )}
                   </li>
                 ))}
               </ul>
