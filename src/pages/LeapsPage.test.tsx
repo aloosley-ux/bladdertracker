@@ -25,6 +25,9 @@ describe('LeapsPage', () => {
 
     renderWithProviders(<LeapsPage />);
 
+    // Navigate to the Timeline section first (LeapTimeline is in the Timeline tab)
+    await user.click(await screen.findByRole('button', { name: /timeline/i }));
+
     await user.click(await screen.findByRole('button', { name: /changing sensations/i }));
 
     const trustedResourceLink = await screen.findByRole('link', { name: /cdc milestones \(1 month\)/i });

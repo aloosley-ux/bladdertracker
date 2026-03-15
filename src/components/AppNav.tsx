@@ -1,19 +1,29 @@
+import { useMemo } from 'react';
 import { NavLink } from 'react-router-dom';
 import { LayoutDashboard, ClipboardList, BarChart3, Users, Settings, Crown, Star, Rainbow } from 'lucide-react';
 import { useApp } from '../context/useApp';
+import { DEFAULT_MODULES } from '../types';
 import { BRAND } from '../content/presentation';
 import NotificationBell from './NotificationBell';
 
+/** Fallback used before enabledModules is populated. */
+const DEFAULT_ENABLED = new Set(DEFAULT_MODULES.filter((m) => m.defaultEnabled).map((m) => m.id));
+
 export default function AppNav() {
-  const { user } = useApp();
+  const { user, enabledModules } = useApp();
   const isAdmin = user?.role === 'admin';
+
+  const enabled = useMemo(
+    () => (enabledModules.length > 0 ? new Set(enabledModules) : DEFAULT_ENABLED),
+    [enabledModules],
+  );
 
   const navItems = [
     { to: '/', icon: LayoutDashboard, label: 'Today', mobileLabel: 'Today' },
     { to: '/log', icon: ClipboardList, label: 'Diary', mobileLabel: 'Diary' },
     { to: '/reports', icon: BarChart3, label: 'Reports', mobileLabel: 'Trends' },
-    { to: '/milestones', icon: Star, label: 'Milestones', mobileLabel: 'Goals' },
-    { to: '/leaps', icon: Rainbow, label: 'Leaps', mobileLabel: 'Leaps' },
+    ...(enabled.has('milestones') ? [{ to: '/milestones', icon: Star, label: 'Milestones', mobileLabel: 'Goals' }] : []),
+    ...(enabled.has('leaps') ? [{ to: '/leaps', icon: Rainbow, label: 'Leaps', mobileLabel: 'Leaps' }] : []),
     { to: '/profiles', icon: Users, label: 'Profiles', mobileLabel: 'Family' },
     { to: '/settings', icon: Settings, label: 'Settings', mobileLabel: 'Settings' },
     ...(isAdmin ? [{ to: '/admin', icon: Crown, label: 'Admin', mobileLabel: 'Admin' }] : []),
