@@ -1,8 +1,9 @@
-import { Suspense, lazy, useEffect } from 'react';
+import { Suspense, lazy, useEffect, useMemo } from 'react';
 import { BrowserRouter, Navigate, Route, Routes, useSearchParams } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import { AppProvider } from './context/AppContext';
 import { useApp } from './context/useApp';
+import { DEFAULT_MODULES } from './types';
 import AppNav from './components/AppNav';
 import ErrorBoundary from './components/ErrorBoundary';
 import LoginPage from './pages/LoginPage';
@@ -19,6 +20,8 @@ const AdminPage = lazy(() => import('./pages/AdminPage'));
 const LogPage = lazy(() => import('./pages/LogPage'));
 const MilestonesPage = lazy(() => import('./pages/MilestonesPage'));
 const LeapsPage = lazy(() => import('./pages/LeapsPage'));
+const GdprPage = lazy(() => import('./pages/GdprPage'));
+const AuditTrailPage = lazy(() => import('./pages/AuditTrailPage'));
 
 function RouteLoadingFallback() {
   return (
@@ -82,8 +85,16 @@ function AdminAccessHandler() {
   return null;
 }
 
+/** Fallback used during the brief loading window before enabledModules is populated. */
+const DEFAULT_ENABLED = new Set(DEFAULT_MODULES.filter((m) => m.defaultEnabled).map((m) => m.id));
+
 function AppRoutes() {
-  const { user } = useApp();
+  const { user, enabledModules } = useApp();
+
+  const enabled = useMemo(
+    () => (enabledModules.length > 0 ? new Set(enabledModules) : DEFAULT_ENABLED),
+    [enabledModules],
+  );
 
   if (!user) {
     return <LoginPage />;
@@ -108,11 +119,13 @@ function AppRoutes() {
               <Route path="/log" element={<LogPage />} />
               <Route path="/add" element={<AddEntryPage />} />
               <Route path="/reports" element={<ReportsPage />} />
-              <Route path="/milestones" element={<MilestonesPage />} />
-              <Route path="/leaps" element={<LeapsPage />} />
+              <Route path="/milestones" element={enabled.has('milestones') ? <MilestonesPage /> : <Navigate to="/" replace />} />
+              <Route path="/leaps" element={enabled.has('leaps') ? <LeapsPage /> : <Navigate to="/" replace />} />
               <Route path="/calendar" element={<CalendarPage />} />
               <Route path="/profiles" element={<ProfilesPage />} />
               <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/gdpr" element={<GdprPage />} />
+              <Route path="/audit-trail" element={<AuditTrailPage />} />
               <Route path="/help" element={<HelpPage />} />
               <Route path="/admin" element={<AdminPage />} />
               {/* Legacy redirects */}
