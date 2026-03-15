@@ -25,7 +25,7 @@ describe('DashboardPage', () => {
 
     await screen.findByRole('heading', { name: /dashboard heading/i }, { timeout: 5000 });
 
-    expect(screen.getByText(/today's entries/i)).toBeInTheDocument();
+    expect(screen.getByText(/home entries/i)).toBeInTheDocument();
   }, 15000);
 
   it('CelebrationBanner renders with a dismiss button', async () => {

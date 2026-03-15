@@ -24,8 +24,8 @@ export default function EntryCard({ icon, title, subtitle, time, color = 'bg-lav
   };
 
   return (
-    <div data-entry-type={entryType ?? ''} className={`${color} rounded-2xl p-4 flex items-start gap-3 relative group`}>
-      <div className="w-10 h-10 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center shadow-sm shrink-0">
+    <div data-entry-type={entryType ?? ''} className={`rounded-2xl p-4 flex items-start gap-3 relative group bg-[var(--bg-card)] ring-1 ring-[var(--border-color)]`}>
+      <div className={`w-10 h-10 rounded-full flex items-center justify-center shadow-sm shrink-0 ${color ?? 'bg-[var(--bg-secondary)]'}`}>
         {icon}
       </div>
       <div className="flex-1 min-w-0">
