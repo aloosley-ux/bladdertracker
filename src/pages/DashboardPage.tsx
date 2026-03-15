@@ -633,26 +633,26 @@ export default function DashboardPage() {
 
 /** Summary stat card with coloured top border [3] high-contrast */
 function SummaryCard({ icon, label, value, sub, accent, addTo, addTab }: { icon: ReactNode; label: string; value: string; sub: string; accent: string; addTo?: string; addTab?: string | undefined }) {
+  const CardWrapper = (addTo ? Link : 'div') as unknown as React.ComponentType<Record<string, unknown>>;
   return (
-    <div
-      className="rounded-2xl bg-white p-3 text-center shadow-sm ring-1 ring-black/5 overflow-hidden relative"
+    <CardWrapper
+      to={addTo}
+      state={addTab ? { tab: addTab } : undefined}
+      aria-label={addTo ? `Add ${label} entry` : undefined}
+      className="rounded-2xl bg-white p-3 text-center shadow-sm ring-1 ring-black/5 overflow-hidden relative block"
       style={{ borderTop: `3px solid ${accent}` }}
     >
-      {addTo && (
-        <Link
-          to={addTo}
-          state={addTab ? { tab: addTab } : undefined}
-          className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold leading-none text-white shadow-sm"
-          aria-label={`Add ${label} entry`}
-          style={{ background: accent }}
-        >
-          +
-        </Link>
-      )}
+      <span
+        className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold leading-none text-white shadow-sm"
+        style={{ background: accent }}
+        aria-hidden="true"
+      >
+        +
+      </span>
       <div className="mb-1 flex justify-center">{icon}</div>
       <div className="text-base font-bold text-gray-800 leading-tight">{value}</div>
       <div className="text-[10px] font-semibold uppercase tracking-wide text-gray-600 mt-0.5">{label}</div>
       <div className="text-[10px] text-gray-400">{sub}</div>
-    </div>
+    </CardWrapper>
   );
 }
