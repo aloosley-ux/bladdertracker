@@ -57,6 +57,7 @@ export interface AppContextType extends AppState {
   addChild: (child: Child) => void | Promise<void>;
   removeChild: (childId: string) => void | Promise<void>;
   selectChild: (childId: string) => void;
+  updateChild: (child: Partial<Child> & { id: string }) => Child | Promise<Child>;
   addDrink: (drink: DrinkEntry) => void | Promise<void>;
   updateDrink: (drink: DrinkEntry) => void | Promise<void>;
   deleteDrink: (id: string) => void | Promise<void>;

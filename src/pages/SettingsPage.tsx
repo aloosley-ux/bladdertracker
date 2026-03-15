@@ -21,7 +21,7 @@ import { Link } from 'react-router-dom';
 import { useApp } from '../context/useApp';
 import { useTheme } from '../context/useTheme';
 import ModuleSettings from '../components/settings/ModuleSettings';
-import { generateId, updateChild } from '../utils/storage';
+import { generateId } from '../utils/storage';
 import { apiDeleteAccount } from '../utils/api';
 import { getImportTemplateDescription, parseImportFile } from '../utils/importers';
 import { DueDateEditor } from '../components/leaps';
@@ -47,6 +47,7 @@ export default function SettingsPage() {
     setEnabledModules,
     reminderPreferences,
     setReminderPreferences,
+    updateChild,
   } = useApp();
   const { theme, setTheme, dyslexiaFont, setDyslexiaFont } = useTheme();
 
@@ -71,9 +72,16 @@ export default function SettingsPage() {
   // Due date editing state for child profiles
   const [dueDateTargetId, setDueDateTargetId] = useState<string | null>(null);
 
-  const handleSaveDueDate = (child: Child, dueDate: string) => {
-    const updated = { ...child, dueDate, lastUpdatedAt: new Date().toISOString() };
-    updateChild(updated);
+  const handleSaveDueDate = (child: Child, date: string) => {
+    const updated: Partial<Child> = { ...child, lastUpdatedAt: new Date().toISOString() };
+    if (child.isBorn) {
+      updated.dateOfBirth = date;
+      // clear dueDate when saving DOB
+      updated.dueDate = undefined;
+    } else {
+      updated.dueDate = date;
+    }
+    updateChild(updated as Child);
     setDueDateTargetId(null);
   };
 
@@ -187,9 +195,9 @@ export default function SettingsPage() {
   return (
     <div className="pb-20">
       {/* Header */}
-      <div className="bg-[linear-gradient(180deg,#fbf7f2_0%,#ffffff_100%)] px-4 pb-6 pt-8">
-        <h1 className="text-xl font-bold text-gray-900">Account &amp; Settings</h1>
-        <p className="mt-1 text-sm text-gray-500">
+      <div className="px-4 pb-6 pt-8 bg-[var(--bg-accent)]">
+        <h1 className="text-xl font-bold text-[var(--text-primary)]">Account &amp; Settings</h1>
+        <p className="mt-1 text-sm text-[var(--text-secondary)]">
           Manage your profile, preferences, data, and privacy in one place.
         </p>
       </div>
@@ -399,21 +407,44 @@ export default function SettingsPage() {
                   }`}
                 >
                   <div className="text-sm font-semibold text-[var(--text-primary)]">{child.name}</div>
-                  <div className="mt-1 text-xs text-[var(--text-secondary)]">{child.dateOfBirth || 'DOB not recorded'}</div>
-                  {child.dueDate && (
+                  <div className="mt-1 text-xs text-[var(--text-secondary)]">
+                    {child.isBorn ? `DOB: ${child.dateOfBirth || 'not recorded'}` : child.dateOfBirth || 'DOB not recorded'}
+                  </div>
+                  {!child.isBorn && child.dueDate && (
                     <div className="mt-0.5 text-xs text-[var(--text-secondary)]">Due: {child.dueDate}</div>
                   )}
                 </button>
 
                 {canManageChildren && (
                   <>
-                    {/* Due date edit button for leap accuracy */}
+                    {/* Mark as born toggle */}
+                    <button
+                      onClick={() => {
+                        const updated = { ...child, isBorn: !child.isBorn };
+                        if (!child.isBorn && child.dueDate && !child.dateOfBirth) {
+                          updated.dateOfBirth = child.dueDate;
+                          delete updated.dueDate;
+                        }
+                        updateChild(updated);
+                      }}
+                      aria-pressed={child.isBorn}
+                      aria-label={child.isBorn ? `Marked as born` : `Mark ${child.name} as born`}
+                      className={`absolute right-20 top-3 flex h-8 items-center gap-1 rounded-full px-3 text-[10px] font-semibold transition ${
+                        child.isBorn ? 'bg-lavender-600 text-white' : 'bg-lavender-50 text-lavender-600 ring-1 ring-lavender-100'
+                      }`}
+                      title={child.isBorn ? `Marked as born` : `Mark ${child.name} as born`}
+                    >
+                      <UserCheck size={12} className="inline-block" />
+                      <span className="pl-1">{child.isBorn ? 'Born' : 'Mark born'}</span>
+                    </button>
+
+                    {/* Due date / DOB edit button for leap accuracy */}
                     <button
                       onClick={() => setDueDateTargetId(dueDateTargetId === child.id ? null : child.id)}
-                      className="absolute right-10 top-3 flex h-7 items-center gap-1 rounded-full bg-lavender-50 px-2 text-[10px] font-semibold text-lavender-600 ring-1 ring-lavender-100 transition hover:bg-lavender-100"
-                      title={`Set due date for ${child.name} (improves leap accuracy)`}
+                      className="absolute right-14 top-3 flex h-7 items-center gap-1 rounded-full bg-lavender-50 px-2 text-[10px] font-semibold text-lavender-600 ring-1 ring-lavender-100 transition hover:bg-lavender-100"
+                      title={child.isBorn ? `Set DOB for ${child.name}` : `Set due date for ${child.name} (improves leap accuracy)`}
                     >
-                      Due date
+                      {child.isBorn ? 'DOB' : 'Due date'}
                     </button>
                     <button
                       onClick={() => {
@@ -435,7 +466,8 @@ export default function SettingsPage() {
                     </p>
                     <DueDateEditor
                       child={child}
-                      onSave={(dueDate) => handleSaveDueDate(child, dueDate)}
+                      mode={child.isBorn ? 'dob' : 'due'}
+                      onSave={(d) => handleSaveDueDate(child, d)}
                     />
                     <button
                       type="button"
