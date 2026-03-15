@@ -1,6 +1,6 @@
 import { useMemo, type ReactNode } from 'react';
 import { format } from 'date-fns';
-import { Apple, BarChart3, BookOpen, CloudRain, ClipboardList, Droplets, Moon, Palette, Pill, Plus, Puzzle, Smile, Star, Stethoscope, Target } from 'lucide-react';
+import { Apple, CloudRain, ClipboardList, Droplets, Moon, Palette, Pill, Puzzle, Smile, Stethoscope, Target } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useApp } from '../context/useApp';
 import EntryCard from '../components/EntryCard';
@@ -172,15 +172,15 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="pb-20 bg-white min-h-screen">
+    <div className="pb-20 bg-[var(--bg-primary)] min-h-screen">
       {/* ── Header ──────────────────────────────────────────────────── */}
-      <div className="bg-white pb-4">
+      <div className="bg-[var(--bg-secondary)] pb-4">
         <div className="flex flex-col gap-1 px-4 pt-6">
-           <h1 className="text-xl font-bold leading-snug text-gray-900" aria-label="Dashboard heading">
+           <h1 className="text-xl font-bold leading-snug text-[var(--text-primary)]" aria-label="Dashboard heading">
              Today
            </h1>
-          <p className="text-sm text-gray-500">Everything you need for {selectedChild.name}</p>
-          <p className="text-xs text-gray-400">{todayLabel}</p>
+          <p className="text-sm text-[var(--text-secondary)]">Everything you need for {selectedChild.name}</p>
+          <p className="text-xs text-[var(--text-secondary)]">{todayLabel}</p>
         </div>
 
         {children.length > 1 && (
@@ -188,7 +188,7 @@ export default function DashboardPage() {
             aria-label="Select child"
             value={selectedChildId ?? ''}
             onChange={(event) => selectChild(event.target.value)}
-            className="mx-4 mt-3 mb-2 w-[calc(100%-2rem)] rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-sm outline-none"
+            className="mx-4 mt-3 mb-2 w-[calc(100%-2rem)] rounded-2xl border border-[var(--border-color)] bg-[var(--bg-input)] px-4 py-3 text-sm font-medium text-[var(--text-primary)] shadow-sm outline-none"
           >
             {children.map((child) => (
               <option key={child.id} value={child.id}>
@@ -198,39 +198,7 @@ export default function DashboardPage() {
           </select>
         )}
 
-        {/* Quick nav links */}
-        <nav aria-label="Quick navigation" className="mt-3 flex gap-2 overflow-x-auto px-4 pb-1">
-          <Link
-            to="/log"
-            className="inline-flex items-center gap-1.5 rounded-full bg-gray-100 px-4 py-2 text-xs font-semibold text-gray-700 transition hover:bg-gray-200"
-          >
-            <BookOpen size={14} />
-            Open diary
-          </Link>
-          <Link
-            to="/reports"
-            className="inline-flex items-center gap-1.5 rounded-full bg-gray-100 px-4 py-2 text-xs font-semibold text-gray-700 transition hover:bg-gray-200"
-          >
-            <BarChart3 size={14} />
-            Reports
-          </Link>
-          {on('milestones') && (
-            <Link
-              to="/milestones"
-              className="inline-flex items-center gap-1.5 rounded-full bg-gray-100 px-4 py-2 text-xs font-semibold text-gray-700 transition hover:bg-gray-200"
-            >
-              <Star size={14} />
-              Milestones
-            </Link>
-          )}
-          <Link
-            to="/add"
-            className="inline-flex items-center gap-1.5 rounded-full bg-lavender-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-lavender-600"
-          >
-            <Plus size={14} />
-            Quick add
-          </Link>
-        </nav>
+        {/* Quick nav links removed — redundant with bottom navigation and module entry points */}
       </div>
 
       <div className="space-y-4 px-4 pt-4">
@@ -268,6 +236,7 @@ export default function DashboardPage() {
           title={celebration.title}
           message={celebration.message}
           tone={celebration.tone}
+          dismissible
           action={(
             <Link to="/add" className="inline-flex rounded-full bg-white px-4 py-2 text-xs font-semibold text-gray-700 ring-1 ring-black/5">
               Add a quick update
@@ -423,10 +392,11 @@ export default function DashboardPage() {
 
         {/* ── Today's entries feed ──────────────────────────────────── */}
         <div aria-label="Today's entries" className="space-y-3">
+          <h2 className="text-sm font-bold text-[var(--text-primary)]">Today&apos;s entries</h2>
           {!hasEntries && (
-            <div className="rounded-2xl bg-white py-12 text-center shadow-sm ring-1 ring-black/5">
+            <div className="rounded-2xl bg-[var(--bg-card)] py-12 text-center shadow-sm ring-1 ring-[var(--border-color)]">
               <span className="text-4xl">📋</span>
-              <p className="mt-2 text-sm text-gray-400">Nothing logged yet today. Start with the quickest update above.</p>
+              <p className="mt-2 text-sm text-[var(--text-secondary)]">Nothing logged yet today. Start with the quickest update above.</p>
             </div>
           )}
 
@@ -641,7 +611,7 @@ function SummaryCard({ icon, label, value, sub, accent, addTo, addTab }: { icon:
       to={addTo}
       state={addTab ? { tab: addTab } : undefined}
       aria-label={addTo ? `Add ${label} entry` : undefined}
-      className="rounded-2xl bg-white p-3 text-center shadow-sm ring-1 ring-black/5 overflow-hidden relative block"
+      className="rounded-2xl bg-[var(--bg-card)] p-3 text-center shadow-sm ring-1 ring-[var(--border-color)] overflow-hidden relative block"
       style={{ borderTop: `3px solid ${accent}` }}
     >
       <span
@@ -652,9 +622,9 @@ function SummaryCard({ icon, label, value, sub, accent, addTo, addTab }: { icon:
         +
       </span>
       <div className="mb-1 flex justify-center">{icon}</div>
-      <div className="text-base font-bold text-gray-800 leading-tight">{value}</div>
-      <div className="text-[10px] font-semibold uppercase tracking-wide text-gray-600 mt-0.5">{label}</div>
-      <div className="text-[10px] text-gray-400">{sub}</div>
+      <div className="text-base font-bold text-[var(--text-primary)] leading-tight">{value}</div>
+      <div className="text-[10px] font-semibold uppercase tracking-wide text-[var(--text-secondary)] mt-0.5">{label}</div>
+      <div className="text-[10px] text-[var(--text-secondary)]">{sub}</div>
     </CardWrapper>
   );
 }

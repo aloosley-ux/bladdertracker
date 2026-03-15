@@ -145,11 +145,11 @@ export default function HelpPage() {
   return (
     <div className="pb-20">
       {/* ── Header ──────────────────────────────────────────────── */}
-      <div className="bg-[linear-gradient(180deg,#fbf7f2_0%,#ffffff_100%)] px-4 pb-4 pt-6">
+      <div className="bg-[var(--bg-secondary)] px-4 pb-4 pt-6">
         <div className="flex flex-col items-center text-center px-4">
           <HelpCircle size={28} className="text-lavender-500 mb-1" />
-          <h1 className="mt-1 text-base font-bold text-gray-900">Help &amp; support</h1>
-          <p className="mt-0.5 text-xs text-gray-500">
+          <h1 className="mt-1 text-base font-bold text-[var(--text-primary)]">Help &amp; support</h1>
+          <p className="mt-0.5 text-xs text-[var(--text-secondary)]">
             Calm guidance, privacy notes, and accessibility support
           </p>
         </div>
@@ -188,15 +188,15 @@ export default function HelpPage() {
               <Link
                 key={to}
                 to={to}
-                className="rounded-2xl bg-[#faf7ff] p-4 ring-1 ring-lavender-100 transition hover:bg-lavender-50"
+                className="rounded-2xl bg-[var(--bg-card)] p-4 ring-1 ring-[var(--border-color)] transition hover:ring-lavender-200"
               >
                 <div className="flex items-start gap-3">
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-lavender-100 text-lavender-700">
                     <Icon size={18} />
                   </span>
                   <div>
-                    <div className="text-sm font-semibold text-gray-900">{title}</div>
-                    <p className="mt-1 text-xs leading-relaxed text-gray-500">{description}</p>
+                    <div className="text-sm font-semibold text-[var(--text-primary)]">{title}</div>
+                    <p className="mt-1 text-xs leading-relaxed text-[var(--text-secondary)]">{description}</p>
                   </div>
                 </div>
               </Link>
@@ -220,7 +220,7 @@ export default function HelpPage() {
                 <button
                   type="button"
                   onClick={() => toggleFaq(i)}
-                  className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium text-gray-800 transition hover:bg-lavender-50"
+                  className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium text-[var(--text-primary)] transition hover:bg-[var(--bg-hover)]"
                   aria-expanded={openFaq === i}
                   aria-controls={`faq-panel-${i}`}
                   id={`faq-button-${i}`}
@@ -237,7 +237,7 @@ export default function HelpPage() {
                     id={`faq-panel-${i}`}
                     role="region"
                     aria-labelledby={`faq-button-${i}`}
-                    className="px-4 pb-3 text-xs text-gray-600 leading-relaxed"
+                    className="px-4 pb-3 text-xs text-[var(--text-secondary)] leading-relaxed"
                   >
                     {item.answer}
                   </div>
@@ -271,13 +271,13 @@ export default function HelpPage() {
           </h2>
           <div className="space-y-3">
             {PRIVACY_COMMITMENTS.map(({ title, description, icon: Icon }) => (
-              <div key={title} className="flex gap-3 rounded-2xl bg-[#faf7ff] p-4 ring-1 ring-lavender-100">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white text-lavender-600 ring-1 ring-lavender-100">
+              <div key={title} className="flex gap-3 rounded-2xl bg-[var(--bg-card)] p-4 ring-1 ring-[var(--border-color)]">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--bg-secondary)] text-lavender-600 ring-1 ring-[var(--border-color)]">
                   <Icon size={18} />
                 </span>
                 <div>
-                  <p className="text-sm font-semibold text-gray-900">{title}</p>
-                  <p className="mt-1 text-xs leading-relaxed text-gray-500">{description}</p>
+                  <p className="text-sm font-semibold text-[var(--text-primary)]">{title}</p>
+                  <p className="mt-1 text-xs leading-relaxed text-[var(--text-secondary)]">{description}</p>
                 </div>
               </div>
             ))}

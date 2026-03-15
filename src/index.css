@@ -704,3 +704,90 @@ button.btn-compact {
 [data-theme="high-contrast"] [class*="bg-white/90"] {
   background-color: var(--bg-card) !important;
 }
+
+/* ── EntryCard: override colored light backgrounds in dark/HC (#accessibility) ── */
+/*
+ * EntryCard uses a `color` prop (e.g. bg-sky-light, bg-peach, bg-mint, bg-rose
+ * and inline colour classes) for visual grouping in light mode. In dark and
+ * high-contrast modes these light pastel backgrounds are unreadable. We
+ * override all [data-entry-type] containers so every diary card uses the
+ * correct themed surface colour regardless of which colour was passed.
+ */
+[data-theme="dark"] [data-entry-type],
+[data-theme="high-contrast"] [data-entry-type] {
+  background-color: var(--bg-card) !important;
+}
+
+/* Ensure icon container inside EntryCard is visible in dark/HC */
+[data-theme="dark"] [data-entry-type] .bg-white,
+[data-theme="high-contrast"] [data-entry-type] .bg-white {
+  background-color: var(--bg-secondary) !important;
+}
+
+/* ── NHS Guidance button: override amber styles for blue in all themes ── */
+/*
+ * Milestones page NHS Guidance buttons were amber (bg-amber-100 text-amber-900).
+ * Now styled as white/blue but need explicit HC override to ensure visibility.
+ */
+[data-theme="high-contrast"] .border-blue-200 {
+  border-color: #ffffff !important;
+}
+[data-theme="high-contrast"] .text-blue-700 {
+  color: #ffffff !important;
+}
+
+/* ── Delete button: ensure rose-600 is visible in dark/HC ── */
+[data-theme="dark"] .bg-rose-600,
+[data-theme="high-contrast"] .bg-rose-600 {
+  background-color: #dc2626 !important;
+}
+
+/* ── Remaining light bg-*-50 colours used in stat tiles and surfaces ── */
+/*
+ * StatTile in ReportsPage now uses var(--bg-card) directly, but other
+ * components may still use these. Keep them overridden for safety.
+ */
+[data-theme="dark"] .bg-sky-50,
+[data-theme="dark"] .bg-indigo-50,
+[data-theme="dark"] .bg-purple-50,
+[data-theme="dark"] .bg-orange-50,
+[data-theme="dark"] .bg-pink-50,
+[data-theme="dark"] .bg-teal-50,
+[data-theme="dark"] .bg-violet-50,
+[data-theme="dark"] .bg-stone-50 {
+  background-color: var(--bg-card) !important;
+}
+
+[data-theme="high-contrast"] .bg-sky-50,
+[data-theme="high-contrast"] .bg-indigo-50,
+[data-theme="high-contrast"] .bg-purple-50,
+[data-theme="high-contrast"] .bg-orange-50,
+[data-theme="high-contrast"] .bg-pink-50,
+[data-theme="high-contrast"] .bg-teal-50,
+[data-theme="high-contrast"] .bg-violet-50,
+[data-theme="high-contrast"] .bg-stone-50 {
+  background-color: var(--bg-card) !important;
+}
+
+/* ── Custom @theme colours (bg-sky-light, bg-peach, bg-mint, bg-rose) ── */
+/*
+ * These map to Tailwind custom colour tokens. We can only override them by
+ * setting the underlying CSS custom property at the theme level.
+ */
+[data-theme="dark"],
+[data-theme="high-contrast"] {
+  --color-sky-light: var(--bg-card);
+  --color-peach: var(--bg-card);
+  --color-mint: var(--bg-card);
+  --color-rose: var(--bg-card);
+}
+
+/* ── CelebrationBanner: ensure themed backgrounds in dark/HC ── */
+[data-theme="dark"] .bg-lavender-900,
+[data-theme="dark"] .bg-emerald-900,
+[data-theme="dark"] .bg-sky-900 {
+  color: var(--text-primary) !important;
+}
+
+/* ── LoginPage header: icons now use text-[var(--icon-color)] directly ── */
+/* No additional CSS override needed for LoginPage HC icon colours. */
