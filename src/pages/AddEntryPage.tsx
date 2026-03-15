@@ -133,12 +133,12 @@ export default function AddEntryPage() {
           <p className="mt-1 text-sm text-gray-500">Choose the quickest thing you want to log.</p>
         </div>
 
-        <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
+        <div className="grid grid-cols-4 gap-2 sm:flex sm:overflow-x-auto pb-1 -mx-1 px-1">
           {tabs.map(({ type, icon: Icon, label, color }) => (
             <button
               key={type}
               onClick={() => setActiveTab(type)}
-              className={`flex min-h-12 items-center justify-center gap-1.5 rounded-xl py-2.5 px-3 text-xs font-medium transition-all whitespace-nowrap ${
+              className={`w-full sm:w-auto flex min-h-12 items-center justify-center gap-1.5 rounded-xl py-2.5 px-3 text-xs font-medium transition-all ${
                 activeTab === type
                   ? 'bg-lavender-500 text-white shadow-md'
                   : 'bg-white text-gray-500 shadow-sm ring-1 ring-black/5 hover:bg-lavender-50'

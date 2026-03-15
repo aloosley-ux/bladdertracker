@@ -611,11 +611,11 @@ function SummaryCard({ icon, label, value, sub, accent, addTo, addTab }: { icon:
       to={addTo}
       state={addTab ? { tab: addTab } : undefined}
       aria-label={addTo ? `Add ${label} entry` : undefined}
-      className="rounded-2xl bg-[var(--bg-card)] p-3 shadow-sm ring-1 ring-[var(--border-color)] overflow-hidden relative block"
+      className="rounded-2xl bg-[var(--bg-card)] pt-6 pb-3 px-3 shadow-sm ring-1 ring-[var(--border-color)] overflow-hidden relative block min-h-[72px]"
       style={{ borderTop: `3px solid ${accent}` }}
     >
       <span
-        className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold leading-none text-white shadow-sm"
+        className="absolute right-3 top-3 flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold leading-none text-white shadow-sm"
         style={{ background: accent }}
         aria-hidden="true"
       >
