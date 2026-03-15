@@ -18,44 +18,40 @@
   --ring-color: rgba(0,0,0,0.05);
 }
 
-[data-theme="dark"] {
-  --bg-primary: #1a1a2e;
-  --bg-secondary: #2d2b55;
-  --bg-card: #2d2b55;
-  --text-primary: #e8e8ff;
-  --text-secondary: #a5a5c0;
-  --border-color: rgba(255,255,255,0.1);
-  --shadow-color: rgba(0,0,0,0.3);
-  --bg-input: #3b3872;
-  --bg-hover: #3b3872;
-  --bg-accent: #3b3872;
-  --text-accent: #c4adff;
-  --icon-color: #a5a5c0;
-  --divider-color: rgba(255,255,255,0.08);
-  --ring-color: rgba(255,255,255,0.1);
+[data-theme="dark"] .bg-gray-50,
+[data-theme="dark"] .bg-gray-100 {
+  background-color: var(--bg-accent) !important;
 }
 
-[data-theme="high-contrast"] {
-  --bg-primary: #000000;
-  --bg-secondary: #1a1a1a;
-  --bg-card: #1a1a1a;
-  --text-primary: #ffffff;
-  --text-secondary: #cccccc;
-  --border-color: #ffffff;
-  --shadow-color: rgba(255,255,255,0.2);
-  --bg-input: #2a2a2a;
-  --bg-hover: #333333;
-  --bg-accent: #2a2a2a;
-  --text-accent: #ffff00;
-  --icon-color: #ffffff;
-  --divider-color: #ffffff;
-  --ring-color: #ffffff;
+/* Override Tailwind opacity variants like bg-white/50, bg-white/60 etc so cards and chips
+   render correctly in dark/high-contrast themes */
+[data-theme="dark"] .bg-white\/50,
+[data-theme="dark"] .bg-white\/40,
+[data-theme="dark"] .bg-white\/60,
+[data-theme="dark"] .bg-white\/95,
+[data-theme="dark"] .bg-white\/90 {
+  background-color: var(--bg-card) !important;
 }
 
-@theme {
-  --color-lavender-50: #f5f0ff;
-  --color-lavender-100: #ede5ff;
-  --color-lavender-200: #ddd0ff;
+[data-theme="dark"] .bg-gray-50\/50,
+[data-theme="dark"] .bg-gray-50\/40,
+[data-theme="dark"] .bg-gray-100\/50 {
+  background-color: var(--bg-accent) !important;
+}
+
+[data-theme="high-contrast"] .bg-white\/50,
+[data-theme="high-contrast"] .bg-white\/40,
+[data-theme="high-contrast"] .bg-white\/60,
+[data-theme="high-contrast"] .bg-white\/95,
+[data-theme="high-contrast"] .bg-white\/90 {
+  background-color: var(--bg-card) !important;
+}
+
+[data-theme="high-contrast"] .bg-gray-50\/50,
+[data-theme="high-contrast"] .bg-gray-50\/40,
+[data-theme="high-contrast"] .bg-gray-100\/50 {
+  background-color: var(--bg-accent) !important;
+}
   --color-lavender-300: #c4adff;
   --color-lavender-400: #a87dff;
   --color-lavender-500: #8b4dff;
@@ -104,11 +100,11 @@ textarea {
 .input-card {
   width: 100%;
   border-radius: 1rem;
-  border: 1px solid #ece7f7;
-  background: #fff;
+  border: 1px solid var(--border-color);
+  background: var(--bg-input);
   padding: 0.875rem 1rem;
   font-size: 0.95rem;
-  color: #1f2937;
+  color: var(--text-primary);
   outline: none;
   transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
 }
@@ -148,7 +144,7 @@ textarea {
   height: 1.125rem;
   width: 1.125rem;
   border-radius: 50%;
-  background: white;
+  background: var(--bg-card);
   box-shadow: 0 1px 3px rgba(0,0,0,0.2);
   transition: transform 0.2s ease;
 }
@@ -330,6 +326,39 @@ button.btn-compact {
   background-color: var(--bg-accent) !important;
 }
 
+<<<<<<< HEAD
+=======
+/* Override Tailwind opacity variants like bg-white/50, bg-white/60 etc so cards and chips
+   render correctly in dark/high-contrast themes */
+[data-theme="dark"] .bg-white\/50,
+[data-theme="dark"] .bg-white\/40,
+[data-theme="dark"] .bg-white\/60,
+[data-theme="dark"] .bg-white\/95,
+[data-theme="dark"] .bg-white\/90 {
+  background-color: var(--bg-card) !important;
+}
+
+[data-theme="dark"] .bg-gray-50\/50,
+[data-theme="dark"] .bg-gray-50\/40,
+[data-theme="dark"] .bg-gray-100\/50 {
+  background-color: var(--bg-accent) !important;
+}
+
+[data-theme="high-contrast"] .bg-white\/50,
+[data-theme="high-contrast"] .bg-white\/40,
+[data-theme="high-contrast"] .bg-white\/60,
+[data-theme="high-contrast"] .bg-white\/95,
+[data-theme="high-contrast"] .bg-white\/90 {
+  background-color: var(--bg-card) !important;
+}
+
+[data-theme="high-contrast"] .bg-gray-50\/50,
+[data-theme="high-contrast"] .bg-gray-50\/40,
+[data-theme="high-contrast"] .bg-gray-100\/50 {
+  background-color: var(--bg-accent) !important;
+}
+
+>>>>>>> 9372001 (theme: make cards/toggles respect dark/high-contrast via CSS vars and override bg-white opacity variants)
 /* Text overrides */
 [data-theme="dark"] .text-gray-900,
 [data-theme="dark"] .text-gray-800,
