@@ -141,7 +141,7 @@ export default function FoodForm() {
                     className={`py-2 rounded-xl text-xs font-medium transition-all ${
                       texture === t.value
                         ? 'bg-orange-400 text-white shadow-md'
-                        ? 'bg-[var(--bg-card)] text-[var(--text-secondary)] hover:bg-orange-50'
+                        : 'bg-[var(--bg-card)] text-[var(--text-secondary)] hover:bg-orange-50'
                     }`}>
                     {t.label}
                   </button>
