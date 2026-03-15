@@ -281,67 +281,142 @@ export default function DashboardPage() {
                 <p className="text-xs text-gray-400">At-a-glance totals</p>
               </div>
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-              {on('drinks') && <SummaryCard icon={<Droplets size={18} className="text-sky-500" />} label={getModuleLabel('drinks', 'summary')} value={`${totalMl}ml`} sub={`${dayDrinks.length} entries`} accent="#0ea5e9" />}
-              {on('urine') && <SummaryCard icon={<CloudRain size={18} className="text-amber-500" />} label={getModuleLabel('urine', 'summary')} value={`${wetCount + passCount}`} sub={urineSub} accent="#f59e0b" />}
-              {on('bowel') && <SummaryCard icon={<Stethoscope size={18} className="text-emerald-500" />} label={getModuleLabel('bowel', 'summary')} value={`${bowelCount}`} sub="entries" accent="#22c55e" />}
-              {on('sleep') && <SummaryCard icon={<Moon size={18} className="text-indigo-500" />} label="Sleep" value={`${sleepCount}`} sub="events" accent="#6366f1" />}
-              {on('toilet') && <SummaryCard icon={<Target size={18} className="text-purple-500" />} label={getModuleLabel('toilet', 'summary')} value={`${toiletCount}`} sub="logged" accent="#a855f7" />}
-              {on('food') && <SummaryCard icon={<Apple size={18} className="text-orange-500" />} label={getModuleLabel('food', 'summary')} value={`${foodCount}`} sub="logged" accent="#f97316" />}
-              {on('mood') && <SummaryCard icon={<Smile size={18} className="text-pink-500" />} label="Mood" value={`${moodCount}`} sub="entries" accent="#ec4899" />}
-              {on('sensory') && <SummaryCard icon={<Palette size={18} className="text-teal-500" />} label="Sensory" value={`${sensoryCount}`} sub="events" accent="#14b8a6" />}
-              {on('medication') && <SummaryCard icon={<Pill size={18} className="text-red-500" />} label="Meds" value={`${medicationCount}`} sub="doses" accent="#ef4444" />}
-              {on('therapy') && <SummaryCard icon={<Puzzle size={18} className="text-cyan-500" />} label="Therapy" value={`${therapyCount}`} sub="sessions" accent="#06b6d4" />}
-              {on('routine') && <SummaryCard icon={<ClipboardList size={18} className="text-lime-600" />} label="Routine" value={`${routineCount}`} sub="entries" accent="#84cc16" />}
-              {on('milestones') && <SummaryCard icon={<Star size={18} className="text-yellow-500" />} label="Milestones" value={`${milestoneAchieved}`} sub={`of ${childMilestones.length}`} accent="#eab308" />}
+                {on('drinks') && (
+                  <SummaryCard
+                    icon={<span className="text-2xl">🥤</span>}
+                    label={getModuleLabel('drinks', 'summary')}
+                    value={`${totalMl}ml`}
+                    sub={`${dayDrinks.length} entries`}
+                    accent="#0ea5e9"
+                    addTo="/add"
+                    addTab="drink"
+                  />
+                )}
+                {on('urine') && (
+                  <SummaryCard
+                    icon={<span className="text-2xl">💦</span>}
+                    label={getModuleLabel('urine', 'summary')}
+                    value={`${wetCount + passCount}`}
+                    sub={urineSub}
+                    accent="#f59e0b"
+                    addTo="/add"
+                    addTab="urine"
+                  />
+                )}
+                {on('bowel') && (
+                  <SummaryCard
+                    icon={<span className="text-2xl">🚽</span>}
+                    label={getModuleLabel('bowel', 'summary')}
+                    value={`${bowelCount}`}
+                    sub="entries"
+                    accent="#22c55e"
+                    addTo="/add"
+                    addTab="bowel"
+                  />
+                )}
+                {on('sleep') && (
+                  <SummaryCard
+                    icon={<span className="text-2xl">🌙</span>}
+                    label="Sleep"
+                    value={`${sleepCount}`}
+                    sub="events"
+                    accent="#6366f1"
+                    addTo="/add"
+                    addTab="sleep"
+                  />
+                )}
+                {on('toilet') && (
+                  <SummaryCard
+                    icon={<span className="text-2xl">🎯</span>}
+                    label={getModuleLabel('toilet', 'summary')}
+                    value={`${toiletCount}`}
+                    sub="logged"
+                    accent="#a855f7"
+                    addTo="/add"
+                    addTab="toilet"
+                  />
+                )}
+                {on('food') && (
+                  <SummaryCard
+                    icon={<span className="text-2xl">🍽️</span>}
+                    label={getModuleLabel('food', 'summary')}
+                    value={`${foodCount}`}
+                    sub="logged"
+                    accent="#f97316"
+                    addTo="/add"
+                    addTab="food"
+                  />
+                )}
+                {on('mood') && (
+                  <SummaryCard
+                    icon={<span className="text-2xl">😊</span>}
+                    label="Mood"
+                    value={`${moodCount}`}
+                    sub="entries"
+                    accent="#ec4899"
+                    addTo="/add"
+                    addTab="mood"
+                  />
+                )}
+                {on('sensory') && (
+                  <SummaryCard
+                    icon={<span className="text-2xl">🎨</span>}
+                    label="Sensory"
+                    value={`${sensoryCount}`}
+                    sub="events"
+                    accent="#14b8a6"
+                    addTo="/add"
+                    addTab="sensory"
+                  />
+                )}
+                {on('medication') && (
+                  <SummaryCard
+                    icon={<span className="text-2xl">💊</span>}
+                    label="Meds"
+                    value={`${medicationCount}`}
+                    sub="doses"
+                    accent="#ef4444"
+                    addTo="/add"
+                    addTab="medication"
+                  />
+                )}
+                {on('therapy') && (
+                  <SummaryCard
+                    icon={<span className="text-2xl">🧩</span>}
+                    label="Therapy"
+                    value={`${therapyCount}`}
+                    sub="sessions"
+                    accent="#06b6d4"
+                    addTo="/add"
+                    addTab="therapy"
+                  />
+                )}
+                {on('routine') && (
+                  <SummaryCard
+                    icon={<span className="text-2xl">📋</span>}
+                    label="Routine"
+                    value={`${routineCount}`}
+                    sub="entries"
+                    accent="#84cc16"
+                    addTo="/add"
+                    addTab="routine"
+                  />
+                )}
+                {on('milestones') && (
+                  <SummaryCard
+                    icon={<span className="text-2xl">⭐</span>}
+                    label="Milestones"
+                    value={`${milestoneAchieved}`}
+                    sub={`of ${childMilestones.length}`}
+                    accent="#eab308"
+                    addTo="/add"
+                    addTab={undefined}
+                  />
+                )}
               </div>
             </section>
           )}
-          quickAdd={(
-            <section aria-label="Quick log">
-              <div className="mb-2 flex items-center justify-between">
-                <h2 className="text-sm font-bold text-gray-700">Quick updates</h2>
-                <p className="text-xs text-gray-400">Made for one-handed use</p>
-              </div>
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-              {on('drinks') && (
-                <QuickAddBtn to="/add" tab="drink" emoji="🥤" label={getModuleLabel('drinks', 'quickAction')} accent="#0ea5e9" />
-              )}
-              {on('urine') && (
-                <QuickAddBtn to="/add" tab="urine" emoji="💦" label={getModuleLabel('urine', 'quickAction')} accent="#f59e0b" />
-              )}
-              {on('bowel') && (
-                <QuickAddBtn to="/add" tab="bowel" emoji="🚽" label={getModuleLabel('bowel', 'quickAction')} accent="#22c55e" />
-              )}
-              {on('sleep') && (
-                <QuickAddBtn to="/add" tab="sleep" emoji="🌙" label="Sleep" accent="#6366f1" />
-              )}
-              {on('toilet') && (
-                <QuickAddBtn to="/add" tab="toilet" emoji="🎯" label={getModuleLabel('toilet', 'quickAction')} accent="#a855f7" />
-              )}
-              {on('food') && (
-                <QuickAddBtn to="/add" tab="food" emoji="🍽️" label={getModuleLabel('food', 'quickAction')} accent="#f97316" />
-              )}
-              {on('mood') && (
-                <QuickAddBtn to="/add" tab="mood" emoji="😊" label="Mood" accent="#ec4899" />
-              )}
-              {on('sensory') && (
-                <QuickAddBtn to="/add" tab="sensory" emoji="🎨" label="Sensory" accent="#14b8a6" />
-              )}
-              {on('medication') && (
-                <QuickAddBtn to="/add" tab="medication" emoji="💊" label="Meds" accent="#ef4444" />
-              )}
-              {on('therapy') && (
-                <QuickAddBtn to="/add" tab="therapy" emoji="🧩" label="Therapy" accent="#06b6d4" />
-              )}
-              {on('routine') && (
-                <QuickAddBtn to="/add" tab="routine" emoji="📋" label="Routine" accent="#84cc16" />
-              )}
-              {on('milestones') && (
-                <QuickAddBtn to="/add" tab={undefined} emoji="⭐" label={getModuleLabel('milestones', 'quickAction')} accent="#eab308" />
-              )}
-              </div>
-            </section>
-          )}
+          quickAdd={null}
         />
 
         {/* ── Today's entries feed ──────────────────────────────────── */}
@@ -554,26 +629,7 @@ export default function DashboardPage() {
   );
 }
 
-/** Quick-add tile — large tap target [1], coloured accent badge */
-function QuickAddBtn({ to, tab, emoji, label, accent }: {
-  to: string; tab?: string; emoji: string; label: string; accent: string;
-}) {
-  return (
-    <Link
-      to={to}
-      state={tab ? { tab } : undefined}
-       className="relative flex min-h-28 flex-col items-center justify-center gap-2 rounded-2xl bg-white px-3 py-5 shadow-sm ring-1 ring-black/5 transition hover:bg-gray-50 active:scale-95"
-      aria-label={`Add ${label} entry`}
-    >
-      <span
-        className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full text-[11px] font-bold leading-none text-white shadow-sm"
-        style={{ background: accent }}
-      >+</span>
-      <span className="text-3xl">{emoji}</span>
-      <span className="text-xs font-semibold text-gray-700">{label}</span>
-    </Link>
-  );
-}
+/* QuickAddBtn removed — quick-add functionality merged into SummaryCard */
 
 /** Summary stat card with coloured top border [3] high-contrast */
 function SummaryCard({ icon, label, value, sub, accent, addTo, addTab }: { icon: ReactNode; label: string; value: string; sub: string; accent: string; addTo?: string; addTab?: string | undefined }) {
