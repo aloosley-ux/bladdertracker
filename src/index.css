@@ -9,6 +9,13 @@
   --text-secondary: #6b7280;
   --border-color: rgba(0,0,0,0.05);
   --shadow-color: rgba(139,77,255,0.08);
+  --bg-input: #ffffff;
+  --bg-hover: #f5f0ff;
+  --bg-accent: #faf7ff;
+  --text-accent: #6d1ce3;
+  --icon-color: #6b7280;
+  --divider-color: #f3f4f6;
+  --ring-color: rgba(0,0,0,0.05);
 }
 
 [data-theme="dark"] {
@@ -19,6 +26,13 @@
   --text-secondary: #a5a5c0;
   --border-color: rgba(255,255,255,0.1);
   --shadow-color: rgba(0,0,0,0.3);
+  --bg-input: #3b3872;
+  --bg-hover: #3b3872;
+  --bg-accent: #3b3872;
+  --text-accent: #c4adff;
+  --icon-color: #a5a5c0;
+  --divider-color: rgba(255,255,255,0.08);
+  --ring-color: rgba(255,255,255,0.1);
 }
 
 [data-theme="high-contrast"] {
@@ -29,6 +43,13 @@
   --text-secondary: #cccccc;
   --border-color: #ffffff;
   --shadow-color: rgba(255,255,255,0.2);
+  --bg-input: #2a2a2a;
+  --bg-hover: #333333;
+  --bg-accent: #2a2a2a;
+  --text-accent: #ffff00;
+  --icon-color: #ffffff;
+  --divider-color: #ffffff;
+  --ring-color: #ffffff;
 }
 
 @theme {
@@ -209,7 +230,7 @@ button.btn-compact {
 
 /* ── Dark theme text and card improvements (#31) ────────────────── */
 [data-theme="dark"] .input-card {
-  background: var(--bg-card);
+  background: var(--bg-input);
   border-color: var(--border-color);
   color: var(--text-primary);
 }
@@ -217,6 +238,215 @@ button.btn-compact {
 [data-theme="dark"] .input-card:focus {
   border-color: #a87dff;
   box-shadow: 0 0 0 4px rgba(168, 125, 255, 0.3);
+}
+
+/* ── Comprehensive dark theme (#97) ─────────────────────────────── */
+[data-theme="dark"] body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Cards, sections, panels */
+[data-theme="dark"] section,
+[data-theme="dark"] [role="region"] {
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+/* Navigation */
+[data-theme="dark"] nav {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+
+[data-theme="dark"] nav a {
+  color: var(--text-secondary);
+}
+
+[data-theme="dark"] nav a[aria-current="page"],
+[data-theme="dark"] nav a.active {
+  color: var(--text-accent);
+}
+
+/* Headings and text */
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4 {
+  color: var(--text-primary);
+}
+
+/* Buttons */
+[data-theme="dark"] button {
+  color: var(--text-primary);
+}
+
+/* Form elements */
+[data-theme="dark"] input,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+  background: var(--bg-input);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder {
+  color: var(--text-secondary);
+}
+
+/* Select dropdown text */
+[data-theme="dark"] option {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+/* Dividers */
+[data-theme="dark"] hr,
+[data-theme="dark"] [class*="border-gray"],
+[data-theme="dark"] [class*="border-lavender-100"] {
+  border-color: var(--divider-color);
+}
+
+/* Ring overrides for dark cards */
+[data-theme="dark"] [class*="ring-black/5"],
+[data-theme="dark"] [class*="ring-black/10"] {
+  --tw-ring-color: var(--ring-color);
+}
+
+/*
+ * Theme overrides for Tailwind utility classes require !important because
+ * Tailwind's atomic classes have high specificity. This is the pragmatic
+ * approach for theme switching via data-theme attribute selectors (#97).
+ */
+
+/* Backgrounds that are hardcoded white */
+[data-theme="dark"] .bg-white {
+  background-color: var(--bg-card) !important;
+}
+
+[data-theme="dark"] .bg-gray-50,
+[data-theme="dark"] .bg-gray-100 {
+  background-color: var(--bg-accent) !important;
+}
+
+/* Text overrides */
+[data-theme="dark"] .text-gray-900,
+[data-theme="dark"] .text-gray-800,
+[data-theme="dark"] .text-gray-700 {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .text-gray-600,
+[data-theme="dark"] .text-gray-500,
+[data-theme="dark"] .text-gray-400 {
+  color: var(--text-secondary) !important;
+}
+
+/* Mobile header */
+[data-theme="dark"] header {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+
+/* ── Comprehensive high-contrast theme (#97) ────────────────────── */
+[data-theme="high-contrast"] body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Cards, sections, panels */
+[data-theme="high-contrast"] .bg-white {
+  background-color: var(--bg-card) !important;
+}
+
+[data-theme="high-contrast"] .bg-gray-50,
+[data-theme="high-contrast"] .bg-gray-100 {
+  background-color: var(--bg-accent) !important;
+}
+
+/* Text */
+[data-theme="high-contrast"] .text-gray-900,
+[data-theme="high-contrast"] .text-gray-800,
+[data-theme="high-contrast"] .text-gray-700 {
+  color: #ffffff !important;
+}
+
+[data-theme="high-contrast"] .text-gray-600,
+[data-theme="high-contrast"] .text-gray-500,
+[data-theme="high-contrast"] .text-gray-400 {
+  color: #cccccc !important;
+}
+
+/* Navigation */
+[data-theme="high-contrast"] nav {
+  background: var(--bg-secondary);
+}
+
+[data-theme="high-contrast"] nav a {
+  color: var(--text-secondary);
+}
+
+/* Navigation link active state */
+[data-theme="high-contrast"] nav a[aria-current="page"],
+[data-theme="high-contrast"] nav a.active {
+  color: var(--text-accent);
+}
+
+/* Inputs */
+[data-theme="high-contrast"] .input-card {
+  background: var(--bg-input);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+[data-theme="high-contrast"] input,
+[data-theme="high-contrast"] select,
+[data-theme="high-contrast"] textarea {
+  background: var(--bg-input);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+[data-theme="high-contrast"] input::placeholder,
+[data-theme="high-contrast"] textarea::placeholder {
+  color: var(--text-secondary);
+}
+
+[data-theme="high-contrast"] option {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+/* Ring overrides */
+[data-theme="high-contrast"] [class*="ring-black/5"],
+[data-theme="high-contrast"] [class*="ring-black/10"] {
+  --tw-ring-color: var(--ring-color);
+}
+
+/* Headings */
+[data-theme="high-contrast"] h1,
+[data-theme="high-contrast"] h2,
+[data-theme="high-contrast"] h3,
+[data-theme="high-contrast"] h4 {
+  color: var(--text-primary);
+}
+
+/* Mobile header */
+[data-theme="high-contrast"] header {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+
+/* Dividers */
+[data-theme="high-contrast"] hr {
+  border-color: var(--divider-color);
+}
+
+/* Lavender text for high contrast = yellow for visibility */
+[data-theme="high-contrast"] .text-lavender-700,
+[data-theme="high-contrast"] .text-lavender-600 {
+  color: var(--text-accent) !important;
 }
 
 /* ── High-contrast toggle styling (#31) ─────────────────────────── */

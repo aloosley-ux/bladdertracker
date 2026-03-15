@@ -214,13 +214,15 @@ export default function DashboardPage() {
             <BarChart3 size={14} />
             Reports
           </Link>
-          <Link
-            to="/milestones"
-            className="inline-flex items-center gap-1.5 rounded-full bg-gray-100 px-4 py-2 text-xs font-semibold text-gray-700 transition hover:bg-gray-200"
-          >
-            <Star size={14} />
-            Milestones
-          </Link>
+          {on('milestones') && (
+            <Link
+              to="/milestones"
+              className="inline-flex items-center gap-1.5 rounded-full bg-gray-100 px-4 py-2 text-xs font-semibold text-gray-700 transition hover:bg-gray-200"
+            >
+              <Star size={14} />
+              Milestones
+            </Link>
+          )}
           <Link
             to="/add"
             className="inline-flex items-center gap-1.5 rounded-full bg-lavender-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-lavender-600"
@@ -409,7 +411,7 @@ export default function DashboardPage() {
                     value={`${milestoneAchieved}`}
                     sub={`of ${childMilestones.length}`}
                     accent="#eab308"
-                    addTo="/add"
+                    addTo="/milestones"
                     addTab={undefined}
                   />
                 )}

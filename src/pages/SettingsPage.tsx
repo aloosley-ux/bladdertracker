@@ -658,7 +658,12 @@ export default function SettingsPage() {
 
           {/* Audit trail */}
           <div className="mt-4 border-t border-gray-100 pt-4">
-            <h4 className="mb-3 text-xs font-bold text-gray-600">Recent audit trail</h4>
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="text-xs font-bold text-gray-600">Recent audit trail</h4>
+              <Link to="/audit-trail" className="text-xs font-semibold text-lavender-600 underline underline-offset-2 hover:text-lavender-700">
+                View full history
+              </Link>
+            </div>
             <div className="space-y-2">
               {visibleAudit.map((event) => (
                 <div key={event.id} className="rounded-2xl bg-[#faf7ff] px-4 py-3 ring-1 ring-lavender-100">
@@ -687,7 +692,7 @@ export default function SettingsPage() {
             <div className="flex items-center gap-2 text-xs text-gray-500">
               <Globe size={14} className="text-lavender-500" />
               <Link to="/gdpr" className="underline underline-offset-2 hover:text-lavender-600">
-                View our full GDPR policy
+                View our full GDPR &amp; Data Protection policy
               </Link>
             </div>
           </div>
