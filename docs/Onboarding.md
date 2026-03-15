@@ -14,6 +14,7 @@ BladderTracker is a mobile-first diary for continence, routines, milestones, and
    - School staff
 
 > Note: The wider role type system includes additional roles (`therapist`, `specialist`, `admin`), but the signup UI currently exposes the three roles above.
+> `therapist` and `specialist` are invite-only labels in the current build; they are not self-service signup roles.
 
 ## Add a child profile
 
@@ -60,7 +61,7 @@ Current invite-role behaviour is role-dependent in-app (for example parent/admin
 
 In **Settings** you can:
 - Export child data
-- Import supported diary data
+- Import supported diary data (the built-in CSV / JSON / XLSX template covers drinks, urine, and bowel entries)
 - Clear local browser data
 - Delete account data
 - Review GDPR policy and audit history

@@ -16,7 +16,7 @@ Use `action` in body.
 
 | Action | Required fields | Notes |
 |---|---|---|
-| `register` | `name`, `email`, `password`, `role?` | Creates account + signs in. Valid roles for self-registration: `parent`, `caregiver`, `schoolAdmin`. |
+| `register` | `name`, `email`, `password`, `role?` | Creates account + signs in. Self-registration roles are restricted to `parent`, `caregiver`, or `schoolAdmin`. |
 | `login` | `email`, `password` | Signs in existing account. |
 | `logout` | none | Clears session cookie. |
 | `reset` | `email`, `password` | Resets password for matching account. |
@@ -128,8 +128,8 @@ Milestones include `moduleId?`, `milestoneType?`, `targetDate?`, `dateAchieved?`
 | `parent` | `parent` | Read + write all entries; can manage child profile and send invites |
 | `caregiver` | `caregiver` | Read + write diary entries for the shared child |
 | `schoolAdmin` | `caregiver` | Read + write diary entries (same as caregiver; label is contextual only) |
-| `therapist` | `caregiver` | View diary entries + log therapy and milestone entries (label is contextual only) |
-| `specialist` | `caregiver` | View diary entries + log therapy and milestone entries (label is contextual only) |
+| `therapist` | `caregiver` | Caregiver-level diary access; label is contextual only |
+| `specialist` | `caregiver` | Caregiver-level diary access; label is contextual only |
 
 Notes:
 - `admin` is not a valid invite role. Admin access is granted via the `promote` auth action, not via invites.
@@ -147,7 +147,9 @@ Notes:
 
 ## Data import/export — `/api/data`
 - `GET ?childId=<id>` returns CSV export.
-- `POST` accepts bulk import payload for core trackers.
+- `POST` accepts bulk import payload for drinks, urine, bowel, sleep, toilet attempts, and food.
+- Both import and export verify that the signed-in user can access the requested child.
+- There is currently no `/api/*` endpoint for leap diary or leap symptom log data; those flows remain local-only in the current implementation.
 
 ## Schema migration — `/api/migrate`
 - `POST` runs idempotent schema/table setup.

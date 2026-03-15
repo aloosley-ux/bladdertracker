@@ -151,8 +151,8 @@ User roles are defined as:
 - parent: Manage children, all trackers, invite caregivers
 - caregiver: View/edit entries for shared children
 - schoolAdmin: View/edit entries for shared children (school context label)
-- therapist: Reserved for future implementation — not available for registration/invite
-- specialist: Reserved for future implementation — not available for registration/invite
+- therapist: Invite-only contextual label; currently maps to caregiver-level diary access
+- specialist: Invite-only contextual label; currently maps to caregiver-level diary access
 
 ---
 
@@ -184,6 +184,8 @@ The following tables are created and managed by the migration logic in `api/_lib
 **AppContext** is the single source of truth. All pages consume data via `useApp()` and call CRUD methods on the context. The context delegates to either:
 - `src/utils/api.ts` — HTTP calls to Vercel Serverless Functions → Neon Postgres
 - `src/utils/storage.ts` — localStorage reads/writes (offline/development mode)
+
+Leap symptom logs and leap diary entries currently remain local-only in `AppContext`; there is no cloud API route for them in `/api/*`.
 
 Route components are lazy-loaded in `src/App.tsx` so the initial mobile shell can render more quickly while larger diary, reporting, and settings pages load on demand.
 

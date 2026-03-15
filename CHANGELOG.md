@@ -24,6 +24,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - PR template with documentation verification checklist
 
 ### Fixed
+- Documentation audit completed across README, docs/, contributing notes, and policy files; obsolete issue-draft docs removed and a dedicated audit report added
+- `/api/auth` self-registration is now restricted to `parent`, `caregiver`, and `schoolAdmin` to match the UI and published role model
+- `/api/data` import/export now verifies child access before reading or writing child data
 - Milestone SummaryCard on Dashboard now navigates to `/milestones` instead of opening the drink entry form (#104)
 - Leaps toggle now controls entire Leaps page: navigation, route access, and dashboard links. Defaults to off (#93, #96)
 - Milestones toggle now controls entire Milestones page: navigation, route access, and dashboard links (#103)

@@ -10,7 +10,7 @@ The following items were completed and removed:
 - Invite role labels now match enforced access model (`api/invites.ts`, `ProfilesPage.tsx`, `docs/API.md`).
 - Reminder scope standardised as module-wide; UI copy and docs updated (`SettingsPage.tsx`, `DashboardPage.tsx`, `docs/MODULES.md`).
 - Invite and reminder scope unit tests added (`src/test/invites.test.ts`, `src/test/reminderScope.test.ts`).
-- Therapist/specialist roles de-scoped in type comment and docs; no unsupported claims remain.
+- Therapist/specialist roles are now documented as invite-only contextual labels with caregiver-level access.
 - Extended sleep/food fields (`bedtime`, `sleepOnsetMinutes`, `nightActivity`, `isTrying`, `texture`, `accepted`) are now fully round-tripped through DB schema, API GET/POST/PUT, CSV export, and CSV import.
 - Cloud/local parity matrix added to `docs/MODULES.md`.
 
@@ -32,5 +32,7 @@ The following items were completed and removed:
 - **Recommended next action:** Profile bundle and apply targeted lazy-loading/splitting where impact is measurable.
 
 
-### 3) Full server-side API integration tests
-- **Description:** Integration test for `/api/auth` endpoint is now deployed and passing against Vercel (see `src/test/integration/api-auth.integration.test.ts`). All tracked issues are now resolved.
+### 3) Live API integration test depends on external hostname
+- **Description:** `src/test/integration/api-auth.integration.test.ts` hits a fixed deployed Vercel hostname. In isolated or offline environments, `npm test` can fail even when the local/unit suite is healthy.
+- **Priority:** Low
+- **Recommended next action:** Convert the test to a configurable base URL, mock it locally, or gate it behind an explicit integration-test flag.

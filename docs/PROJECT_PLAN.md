@@ -5,11 +5,12 @@ This file now serves as a lightweight planning index.
 The previous long-form epic/task log had become mostly historical and was hard to maintain as a living backlog. Active outstanding work is now tracked in:
 
 - `docs/REPO_STATUS.md` (single source of truth for remaining work)
-- GitHub issues (or `docs/GITHUB_ISSUES_DRAFT.md` when issue creation is unavailable)
+- GitHub issues for discrete actionable tasks
+- `docs/DOCUMENTATION_AUDIT.md` for the latest repo-wide documentation review
 
 ## Current status snapshot (March 2026)
 
-All tracked issues and priorities are now resolved. Integration tests run against the deployed Vercel API. For any new work, see `docs/REPO_STATUS.md` as the single source of truth.
+All tracked product issues are currently resolved. For any new work, use `docs/REPO_STATUS.md` as the single source of truth and keep documentation changes aligned with `docs/DOCUMENTATION_AUDIT.md`.
 
 ## Planning policy going forward
 

@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest';
 
 const BASE_URL = 'https://bladdertracker-git-testing-aloosley-uxs-projects.vercel.app/api';
+// This test intentionally reaches a deployed environment and may fail in isolated
+// CI or sandbox environments where that hostname is unavailable.
 
 // Helper to make requests
 async function apiRequest(path: string, options: RequestInit = {}) {

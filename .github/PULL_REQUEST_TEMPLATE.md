@@ -7,5 +7,5 @@
 - [ ] docs/ARCHITECTURE.md reviewed for affected flows or infrastructure changes
 - [ ] SECURITY.md and issue templates reviewed if contributor support or disclosure guidance changed
 - [ ] Tests added or updated for code changes
-- [ ] `npm test`, `npm run lint`, `npm run build`, and `./node_modules/.bin/tsc --project tsconfig.api.json --noEmit` pass locally
+- [ ] `npm run lint`, `npm run build`, and `./node_modules/.bin/tsc --project tsconfig.api.json --noEmit` pass locally, and `npm test` passes locally or any failure is documented (for example the live deployed-host integration test being unreachable)
 - [ ] No hardcoded secrets or environment-specific values were introduced

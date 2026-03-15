@@ -117,6 +117,10 @@ Milestones has a dedicated page and remains available in navigation.
 ## Leaps (`leaps`)
 Leaps is configured as a module and has a dedicated page (`/leaps`) with timeline, diary, and symptom logging components.
 
+Current persistence note:
+- Leap diary entries and leap symptom logs are handled through local storage helpers only.
+- There is currently no cloud `/api/*` endpoint for leap diary or leap symptom log CRUD.
+
 ---
 
 ## Reminder preferences
@@ -135,6 +139,14 @@ Each preference is scoped per user + child + module and supports:
 - `nextReminderAt?`: ISO timestamp
 
 The dashboard reminder banner covers all active module reminders, not just milestones. The Settings page calls these "module reminders".
+
+---
+
+## Import/export caveats
+
+- The **Settings UI import flow** currently parses CSV / JSON / XLSX templates for **drinks, urine, and bowel** rows.
+- The underlying `/api/data` import endpoint can also accept direct payload arrays for **sleep**, **toilet attempts**, and **food**.
+- CSV export covers all diary trackers and milestones available in the current storage mode.
 
 ---
 
