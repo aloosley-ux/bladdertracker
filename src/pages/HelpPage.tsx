@@ -166,7 +166,7 @@ export default function HelpPage() {
           <ol className="space-y-3">
             {ONBOARDING_STEPS.map((step, i) => (
               <li key={i} className="flex gap-3">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-lavender-100 text-xs font-bold text-lavender-600">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--bg-secondary)] text-xs font-bold text-lavender-600 ring-1 ring-[var(--border-color)]">
                   {i + 1}
                 </span>
                 <div>
@@ -191,12 +191,12 @@ export default function HelpPage() {
                 className="rounded-2xl bg-[var(--bg-card)] p-4 ring-1 ring-[var(--border-color)] transition hover:ring-lavender-200"
               >
                 <div className="flex items-start gap-3">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-lavender-100 text-lavender-700">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--bg-secondary)] text-lavender-600 ring-1 ring-[var(--border-color)]">
                     <Icon size={18} />
                   </span>
                   <div>
                     <div className="text-sm font-semibold text-[var(--text-primary)]">{title}</div>
-                    <p className="mt-1 text-xs leading-relaxed text-[var(--text-secondary)]">{description}</p>
+                    <p className="mt-1 text-xs leading-relaxed text-gray-500">{description}</p>
                   </div>
                 </div>
               </Link>
@@ -282,7 +282,7 @@ export default function HelpPage() {
               </div>
             ))}
           </div>
-          <div className="mt-4 rounded-2xl border border-lavender-100 bg-lavender-50 p-4 text-xs leading-relaxed text-lavender-800">
+          <div className="mt-4 rounded-2xl border border-amber-100 bg-amber-50 p-4 text-xs leading-relaxed text-amber-800">
             {BRAND.name} is designed to support observation and care coordination. It does not replace medical advice or emergency support. If you are worried about a child&apos;s immediate health or safety, contact your local urgent care service, NHS 111, or emergency services.
           </div>
         </section>
