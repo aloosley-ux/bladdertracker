@@ -622,9 +622,9 @@ function SummaryCard({ icon, label, value, sub, accent, addTo, addTab }: { icon:
         +
       </span>
       <div className="flex items-center gap-3">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col items-center gap-1">
           <div className="rounded-full p-2 bg-[var(--bg-secondary)] flex items-center justify-center">{icon}</div>
-          <div className="text-[10px] font-semibold uppercase tracking-wide text-[var(--text-secondary)]">{label}</div>
+          <div className="text-sm font-semibold text-[var(--text-secondary)]">{label}</div>
         </div>
         <div className="ml-auto text-right">
           <div className="text-base font-bold text-[var(--text-primary)] leading-tight">{value}</div>
