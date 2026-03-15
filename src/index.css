@@ -789,7 +789,5 @@ button.btn-compact {
   color: var(--text-primary) !important;
 }
 
-/* ── LoginPage header: ensure readable icon colours in HC ── */
-[data-theme="high-contrast"] .text-lavender-400 {
-  color: #000000 !important;
-}
+/* ── LoginPage header: icons now use text-[var(--icon-color)] directly ── */
+/* No additional CSS override needed for LoginPage HC icon colours. */
