@@ -66,8 +66,8 @@ export default function FoodForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-3xl bg-[#fff5eb] p-5 shadow-sm space-y-5">
-      <h2 className="text-base font-bold text-gray-800 flex items-center gap-2">
+    <form onSubmit={handleSubmit} className="rounded-3xl bg-[var(--bg-card)] p-5 shadow-sm space-y-5">
+      <h2 className="text-base font-bold text-[var(--text-primary)] flex items-center gap-2">
         <Apple size={18} className="text-orange-500" /> Log Food
       </h2>
 
@@ -85,12 +85,12 @@ export default function FoodForm() {
           <div>
             <label className="text-xs font-medium text-gray-600">Date</label>
             <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
-              className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
+              className="w-full mt-1 px-3 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-input)] focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm text-[var(--text-primary)]" />
           </div>
           <div>
             <label className="text-xs font-medium text-gray-600">Time</label>
             <input type="time" value={time} onChange={(e) => setTime(e.target.value)}
-              className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
+              className="w-full mt-1 px-3 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-input)] focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm text-[var(--text-primary)]" />
           </div>
         </div>
       </FormStep>
@@ -104,7 +104,7 @@ export default function FoodForm() {
                 className={`py-2.5 rounded-xl text-xs font-medium transition-all ${
                   mealType === m.value
                     ? 'bg-orange-500 text-white shadow-md'
-                    : 'bg-white text-gray-600 hover:bg-orange-50'
+                    : 'bg-[var(--bg-card)] text-[var(--text-secondary)] hover:bg-orange-50'
                 }`}>
                 {m.emoji} {m.label}
               </button>
@@ -114,9 +114,9 @@ export default function FoodForm() {
 
         <div>
           <label className="text-xs font-medium text-gray-600">Food description</label>
-          <input type="text" value={description} onChange={(e) => setDescription(e.target.value)}
+            <input type="text" value={description} onChange={(e) => setDescription(e.target.value)}
             placeholder="e.g. Pasta with vegetables, yoghurt"
-            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm"
+            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-input)] focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm text-[var(--text-primary)]"
             required />
         </div>
 
@@ -141,7 +141,7 @@ export default function FoodForm() {
                     className={`py-2 rounded-xl text-xs font-medium transition-all ${
                       texture === t.value
                         ? 'bg-orange-400 text-white shadow-md'
-                        : 'bg-white text-gray-600 hover:bg-orange-50'
+                        ? 'bg-[var(--bg-card)] text-[var(--text-secondary)] hover:bg-orange-50'
                     }`}>
                     {t.label}
                   </button>
@@ -173,7 +173,7 @@ export default function FoodForm() {
           <label className="text-xs font-medium text-gray-600">Portions <span className="text-gray-400 font-normal">— optional</span></label>
           <input type="number" value={portions} onChange={(e) => setPortions(e.target.value)}
             placeholder="Number of portions"
-            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm"
+            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-input)] focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm text-[var(--text-primary)]"
             min="0" step="0.5" />
         </div>
       </FormStep>
@@ -182,7 +182,7 @@ export default function FoodForm() {
         <textarea value={notes} onChange={(e) => setNotes(e.target.value)}
           placeholder="Dietary notes, allergies, reactions..."
           aria-label="Food notes"
-          className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm resize-none"
+          className="w-full px-3 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-input)] focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm text-[var(--text-primary)] resize-none"
           rows={2} />
       </FormStep>
 

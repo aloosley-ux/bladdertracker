@@ -44,8 +44,8 @@ export default function DrinkForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-3xl bg-[#eef8ff] p-5 shadow-sm space-y-5">
-      <h2 className="text-base font-bold text-gray-800 flex items-center gap-2">
+    <form onSubmit={handleSubmit} className="rounded-3xl bg-[var(--bg-card)] p-5 shadow-sm space-y-5">
+      <h2 className="text-base font-bold text-[var(--text-primary)] flex items-center gap-2">
         <Droplets size={18} className="text-blue-500" /> Log a Drink
       </h2>
 
@@ -61,12 +61,12 @@ export default function DrinkForm() {
           <div>
             <label className="text-xs font-medium text-gray-600">Date</label>
             <input aria-label="Drink date" type="date" value={date} onChange={(e) => setDate(e.target.value)}
-              className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
+              className="w-full mt-1 px-3 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-input)] focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm text-[var(--text-primary)]" />
           </div>
           <div>
             <label className="text-xs font-medium text-gray-600">Time</label>
             <input aria-label="Drink time" type="time" value={time} onChange={(e) => setTime(e.target.value)}
-              className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
+              className="w-full mt-1 px-3 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-input)] focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm text-[var(--text-primary)]" />
           </div>
         </div>
       </FormStep>
@@ -80,7 +80,7 @@ export default function DrinkForm() {
                 className={`px-3 py-2 rounded-xl text-sm transition-all ${
                   type === dt.value
                     ? 'bg-lavender-500 text-white shadow-md'
-                    : 'bg-white text-gray-600 hover:bg-lavender-50'
+                    : 'bg-[var(--bg-card)] text-[var(--text-secondary)] hover:bg-lavender-50'
                 }`}>
                 {dt.label}
               </button>
@@ -92,13 +92,13 @@ export default function DrinkForm() {
           <label className="text-xs font-medium text-gray-600">Amount (ml)</label>
           <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)}
             placeholder="Enter amount in ml"
-            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm"
+            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-input)] focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm text-[var(--text-primary)]"
             min="0" required />
           <div className="flex gap-2 mt-2 flex-wrap">
             {quickAmounts.map((qa) => (
               <button key={qa} type="button" onClick={() => setAmount(String(qa))}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                  amount === String(qa) ? 'bg-sky-200 text-sky-800' : 'bg-white text-gray-500 hover:bg-sky-50'
+                  amount === String(qa) ? 'bg-sky-200 text-sky-800' : 'bg-[var(--bg-card)] text-[var(--text-secondary)] hover:bg-sky-50'
                 }`}>
                 {qa}ml
               </button>
@@ -108,10 +108,10 @@ export default function DrinkForm() {
       </FormStep>
 
       <FormStep step={3} title="Notes (optional)">
-        <textarea value={notes} onChange={(e) => setNotes(e.target.value)}
+          <textarea value={notes} onChange={(e) => setNotes(e.target.value)}
           placeholder="Optional notes..."
           aria-label="Drink notes"
-          className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm resize-none"
+          className="w-full px-3 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-input)] focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm text-[var(--text-primary)] resize-none"
           rows={2} />
       </FormStep>
 

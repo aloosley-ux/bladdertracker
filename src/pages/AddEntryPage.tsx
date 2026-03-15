@@ -87,12 +87,12 @@ export default function AddEntryPage() {
   if (tabs.length === 0) {
     return (
       <div className="pb-20">
-        <div className="bg-[linear-gradient(180deg,#fbf7f2_0%,#ffffff_100%)] px-4 pt-4 pb-3">
+        <div className="bg-[var(--bg-secondary)] px-4 pt-4 pb-3">
           <div className="mb-3 flex items-center gap-3">
             <button
               onClick={() => navigate('/')}
               aria-label="Back to dashboard"
-              className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-gray-500 shadow-sm ring-1 ring-black/5 hover:bg-lavender-50"
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--bg-input)] text-[var(--text-secondary)] shadow-sm ring-1 ring-[var(--border-color)] hover:bg-[var(--bg-card)]"
             >
               <ArrowLeft size={18} />
             </button>
@@ -116,12 +116,12 @@ export default function AddEntryPage() {
 
   return (
     <div className="pb-20">
-      <div className="bg-[linear-gradient(180deg,#fbf7f2_0%,#ffffff_100%)] px-4 pt-4 pb-3">
+      <div className="bg-[var(--bg-secondary)] px-4 pt-4 pb-3">
         <div className="mb-3 flex items-center gap-3">
           <button
             onClick={() => navigate('/')}
             aria-label="Back to dashboard"
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-gray-500 shadow-sm ring-1 ring-black/5 hover:bg-lavender-50"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--bg-input)] text-[var(--text-secondary)] shadow-sm ring-1 ring-[var(--border-color)] hover:bg-[var(--bg-card)]"
           >
             <ArrowLeft size={18} />
           </button>
