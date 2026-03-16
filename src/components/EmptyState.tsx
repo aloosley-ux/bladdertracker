@@ -1,5 +1,11 @@
+import AssetImage from './AssetImage';
+import type { AssetKey } from '../assets/assetTypes';
+
 interface EmptyStateProps {
+  /** Emoji string rendered as a large icon (existing behaviour). */
   icon?: string;
+  /** Semantic asset key for a themed empty-state illustration. */
+  illustrationAsset?: AssetKey;
   title: string;
   description?: string;
   actionLabel?: string;
@@ -8,6 +14,7 @@ interface EmptyStateProps {
 
 export default function EmptyState({
   icon,
+  illustrationAsset,
   title,
   description,
   actionLabel,
@@ -15,10 +22,20 @@ export default function EmptyState({
 }: EmptyStateProps) {
   return (
     <div className="py-8 text-center">
-      {icon && <p className="text-3xl">{icon}</p>}
-      <p className="mt-2 text-sm font-semibold text-gray-700">{title}</p>
+      {/* Illustration asset takes precedence over emoji icon */}
+      {illustrationAsset ? (
+        <AssetImage
+          assetKey={illustrationAsset}
+          alt={title}
+          className="mx-auto mb-2 h-24 w-24 object-contain"
+          fallback={icon ? <p className="text-3xl">{icon}</p> : null}
+        />
+      ) : (
+        icon && <p className="text-3xl">{icon}</p>
+      )}
+      <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">{title}</p>
       {description && (
-        <p className="mt-1 text-xs text-gray-400">{description}</p>
+        <p className="mt-1 text-xs text-[var(--text-secondary)]">{description}</p>
       )}
       {actionLabel && onAction && (
         <button
