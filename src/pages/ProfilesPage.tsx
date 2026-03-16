@@ -237,7 +237,7 @@ export default function ProfilesPage() {
           </div>
 
           {showAddChild && canManageChildren && (
-            <form onSubmit={handleAddChild} className="mt-4 space-y-3 rounded-2xl bg-[#faf7ff] p-4 ring-1 ring-lavender-100">
+            <form onSubmit={handleAddChild} className="mt-4 space-y-3 rounded-2xl bg-[var(--bg-accent)] p-4 ring-1 ring-lavender-100">
               <input
                 type="text"
                 value={childName}
@@ -346,7 +346,7 @@ export default function ProfilesPage() {
 
             <div className="mt-4 space-y-3">
               {pendingReceivedInvites.map((invite) => (
-                <div key={invite.id} className="rounded-2xl bg-[#faf7ff] px-4 py-3 ring-1 ring-lavender-100">
+                <div key={invite.id} className="rounded-2xl bg-[var(--bg-accent)] px-4 py-3 ring-1 ring-lavender-100">
                   <div className="flex items-center justify-between gap-3">
                     <div>
                       <div className="text-sm font-semibold text-gray-900">{invite.childName}</div>
@@ -422,7 +422,7 @@ export default function ProfilesPage() {
 
             <div className="mt-4 space-y-2">
               {selectedChild.parentIds.length > 0 && (
-                <div className="rounded-2xl bg-[#faf7ff] px-4 py-3 ring-1 ring-lavender-100">
+                <div className="rounded-2xl bg-[var(--bg-accent)] px-4 py-3 ring-1 ring-lavender-100">
                   <div className="text-xs font-semibold text-[var(--text-secondary)]">Parents</div>
                   <div className="mt-1 text-sm text-[var(--text-primary)]">
                     {selectedChild.parentIds.length} parent{selectedChild.parentIds.length === 1 ? '' : 's'} linked
@@ -430,7 +430,7 @@ export default function ProfilesPage() {
                 </div>
               )}
               {selectedChild.caregivers.length > 0 && (
-                <div className="rounded-2xl bg-[#faf7ff] px-4 py-3 ring-1 ring-lavender-100">
+                <div className="rounded-2xl bg-[var(--bg-accent)] px-4 py-3 ring-1 ring-lavender-100">
                   <div className="text-xs font-semibold text-[var(--text-secondary)]">Caregivers</div>
                   <div className="mt-1 text-sm text-[var(--text-primary)]">
                     {selectedChild.caregivers.length} caregiver{selectedChild.caregivers.length === 1 ? '' : 's'} linked

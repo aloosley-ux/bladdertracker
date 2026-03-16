@@ -35,9 +35,9 @@ function RouteLoadingFallback() {
         <div className="h-3 w-32 rounded-full bg-lavender-100" />
         <div className="mt-4 h-5 w-48 rounded-full bg-lavender-50" />
         <div className="mt-6 space-y-3">
-          <div className="h-20 rounded-3xl bg-[#faf7ff]" />
-          <div className="h-20 rounded-3xl bg-[#faf7ff]" />
-          <div className="h-20 rounded-3xl bg-[#faf7ff]" />
+          <div className="h-20 rounded-3xl bg-[var(--bg-accent)]" />
+          <div className="h-20 rounded-3xl bg-[var(--bg-accent)]" />
+          <div className="h-20 rounded-3xl bg-[var(--bg-accent)]" />
         </div>
         <p className="mt-4 text-sm font-medium text-gray-500">Loading your tracker…</p>
       </div>

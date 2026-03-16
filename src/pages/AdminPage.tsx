@@ -123,7 +123,7 @@ export default function AdminPage() {
           </h3>
           <div className="space-y-3">
             {accounts.map((account) => (
-              <div key={account.id} className="rounded-[1.5rem] bg-[#faf7ff] p-4 ring-1 ring-lavender-100">
+              <div key={account.id} className="rounded-[1.5rem] bg-[var(--bg-accent)] p-4 ring-1 ring-lavender-100">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1">
                     <div className="text-sm font-semibold text-gray-900 flex items-center gap-2">
@@ -222,7 +222,7 @@ export default function AdminPage() {
           </h3>
           <div className="space-y-2">
             {allChildren.map((child) => (
-              <div key={child.id} className="rounded-[1.5rem] bg-[#faf7ff] px-4 py-3 ring-1 ring-lavender-100">
+              <div key={child.id} className="rounded-[1.5rem] bg-[var(--bg-accent)] px-4 py-3 ring-1 ring-lavender-100">
                 <div className="text-sm font-semibold text-gray-900">{child.name}</div>
                 <div className="text-xs text-gray-500 mt-0.5">
                   {child.dateOfBirth || 'DOB not recorded'} · {child.parentIds.length} parent{child.parentIds.length !== 1 ? 's' : ''} · {child.caregivers.length} caregiver{child.caregivers.length !== 1 ? 's' : ''}
@@ -240,7 +240,7 @@ export default function AdminPage() {
           </h3>
           <div className="space-y-2 max-h-96 overflow-y-auto">
             {auditEvents.map((event) => (
-              <div key={event.id} className="rounded-[1.5rem] bg-[#faf7ff] px-4 py-3 ring-1 ring-lavender-100">
+              <div key={event.id} className="rounded-[1.5rem] bg-[var(--bg-accent)] px-4 py-3 ring-1 ring-lavender-100">
                 <div className="text-sm font-semibold text-gray-900">{event.action}</div>
                 <div className="mt-0.5 text-xs text-gray-500">{event.detail}</div>
                 <div className="mt-1 text-[11px] text-gray-400">
