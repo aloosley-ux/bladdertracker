@@ -19,9 +19,9 @@ test('mark child as born updates label and button', async () => {
   // wait for the heading
   await screen.findByRole('heading', { name: /account & settings/i });
 
-  // Due date button should be present
-  const dueBtn = await screen.findByRole('button', { name: /Due date/i });
-  expect(dueBtn).toBeInTheDocument();
+  // Small DOB edit button should be present (separate from the card)
+  const dobEditBtn = await screen.findByTitle(/Set DOB for Baby One/i);
+  expect(dobEditBtn).toBeInTheDocument();
 
   // Mark born button should be present and clickable
   const markBtn = await screen.findByRole('button', { name: /Mark born|Born/i });

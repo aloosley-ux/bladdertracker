@@ -71,18 +71,29 @@ export default function SettingsPage() {
 
   // Due date editing state for child profiles
   const [dueDateTargetId, setDueDateTargetId] = useState<string | null>(null);
+  // When editing DOB, allow treating it as a due date until the child is born
+  const [useAsDueUntilBorn, setUseAsDueUntilBorn] = useState(false);
 
-  const handleSaveDueDate = (child: Child, date: string) => {
+  const handleSaveDueDate = (child: Child, date: string, useAsDue = false) => {
     const updated: Partial<Child> = { ...child, lastUpdatedAt: new Date().toISOString() };
+    // Always save to dateOfBirth (used by leap calculations)
+    updated.dateOfBirth = date;
+
     if (child.isBorn) {
-      updated.dateOfBirth = date;
-      // clear dueDate when saving DOB
+      // If child is already born, ensure any dueDate is cleared
       updated.dueDate = undefined;
     } else {
-      updated.dueDate = date;
+      // If child is not born, optionally treat this DOB value as the due date until born
+      if (useAsDue) {
+        updated.dueDate = date;
+      } else {
+        updated.dueDate = undefined;
+      }
     }
+
     updateChild(updated as Child);
     setDueDateTargetId(null);
+    setUseAsDueUntilBorn(false);
   };
 
   const cloud = typeof window !== 'undefined' && !!import.meta.env.VITE_USE_CLOUD;
@@ -408,11 +419,7 @@ export default function SettingsPage() {
                 >
                   <div className="text-sm font-semibold text-[var(--text-primary)]">{child.name}</div>
                   <div className="mt-1 text-xs text-[var(--text-secondary)]">
-                    {child.isBorn
-                      ? `DOB: ${child.dateOfBirth || 'not recorded'}`
-                      : child.dueDate
-                      ? `Due: ${child.dueDate}`
-                      : 'Due date not recorded'}
+                    {`DOB: ${child.dateOfBirth || child.dueDate || 'not recorded'}`}
                   </div>
                 </button>
 
@@ -439,13 +446,16 @@ export default function SettingsPage() {
                       <span className="pl-1">{child.isBorn ? 'Born' : 'Mark born'}</span>
                     </button>
 
-                    {/* Due date / DOB edit button for leap accuracy */}
+                    {/* DOB edit button (treat as due date until born option available) */}
                     <button
-                      onClick={() => setDueDateTargetId(dueDateTargetId === child.id ? null : child.id)}
+                      onClick={() => {
+                        setDueDateTargetId(dueDateTargetId === child.id ? null : child.id);
+                        setUseAsDueUntilBorn(!child.isBorn && !!child.dueDate);
+                      }}
                       className="absolute right-16 top-3 flex h-7 items-center gap-1 rounded-full bg-lavender-50 px-2 text-[10px] font-semibold text-lavender-600 ring-1 ring-lavender-100 transition hover:bg-lavender-100"
-                      title={child.isBorn ? `Set DOB for ${child.name}` : `Set due date for ${child.name} (improves leap accuracy)`}
+                      title={child.isBorn ? `Set DOB for ${child.name}` : `Set DOB for ${child.name} (optionally treat as due date until born)`}
                     >
-                      {child.isBorn ? 'DOB' : 'Due date'}
+                      DOB
                     </button>
                     <button
                       onClick={() => {
@@ -463,20 +473,37 @@ export default function SettingsPage() {
                 {dueDateTargetId === child.id && (
                   <div className="mt-2 rounded-2xl bg-[var(--bg-accent)] p-4 ring-1 ring-[var(--border-color)]">
                     <p className="text-xs text-[var(--text-secondary)] mb-3">
-                      💡 Setting {child.name}&apos;s due date improves developmental leap predictions.
+                      💡 Setting {child.name}&apos;s date of birth helps developmental leap predictions. For children not yet born,
+                      you can choose to treat this date as the expected due date until they are marked born.
                     </p>
                     <DueDateEditor
                       child={child}
-                      mode={child.isBorn ? 'dob' : 'due'}
-                      onSave={(d) => handleSaveDueDate(child, d)}
+                      mode="dob"
+                      onSave={(d) => handleSaveDueDate(child, d, useAsDueUntilBorn)}
                     />
-                    <button
-                      type="button"
-                      onClick={() => setDueDateTargetId(null)}
-                      className="mt-2 text-xs text-[var(--text-secondary)] underline"
-                    >
-                      Cancel
-                    </button>
+                    {!child.isBorn && (
+                      <div className="mt-3 flex items-center gap-2">
+                        <input
+                          id={`as-due-${child.id}`}
+                          type="checkbox"
+                          checked={useAsDueUntilBorn}
+                          onChange={(e) => setUseAsDueUntilBorn(e.target.checked)}
+                          className="h-4 w-4"
+                        />
+                        <label htmlFor={`as-due-${child.id}`} className="text-xs text-[var(--text-secondary)]">
+                          Treat this date as the expected due date until marked born
+                        </label>
+                      </div>
+                    )}
+                    <div className="mt-2">
+                      <button
+                        type="button"
+                        onClick={() => setDueDateTargetId(null)}
+                        className="mt-2 text-xs text-[var(--text-secondary)] underline"
+                      >
+                        Cancel
+                      </button>
+                    </div>
                   </div>
                 )}
 
