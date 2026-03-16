@@ -98,10 +98,10 @@ export async function apiGetChildren(): Promise<Child[]> {
   return children;
 }
 
-export async function apiAddChild(name: string, dateOfBirth?: string): Promise<Child> {
+export async function apiAddChild(name: string, dateOfBirth?: string, dueDate?: string): Promise<Child> {
   const { child } = await request<{ child: Child }>('/children', {
     method: 'POST',
-    body: JSON.stringify({ name, dateOfBirth }),
+    body: JSON.stringify({ name, dateOfBirth, dueDate }),
   });
   return child;
 }
