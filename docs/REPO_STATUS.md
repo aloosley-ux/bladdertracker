@@ -35,4 +35,4 @@ The following items were completed and removed:
 ### 3) Live API integration test depends on external hostname
 - **Description:** `src/test/integration/api-auth.integration.test.ts` hits a fixed deployed Vercel hostname. In isolated or offline environments, `npm test` can fail even when the local/unit suite is healthy.
 - **Priority:** Low
-- **Recommended next action:** Convert the test to a configurable base URL, mock it locally, or gate it behind an explicit integration-test flag
+- **Recommended next action:** Convert the test to a configurable base URL, mock it locally, or gate it behind an explicit integration-test flag.
