@@ -11,7 +11,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (req.method === 'GET') {
     const result = await sql`
-      SELECT c.id, c.name, c.date_of_birth, c.avatar, c.created_by, c.last_updated_at,
+      SELECT c.id, c.name, c.date_of_birth, c.due_date, c.avatar, c.created_by, c.last_updated_at,
         COALESCE(
           (SELECT json_agg(ca.user_id) FILTER (WHERE ca.access_type = 'parent') FROM child_access ca WHERE ca.child_id = c.id),
           '[]'
@@ -30,6 +30,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       id: row.id,
       name: row.name,
       dateOfBirth: row.date_of_birth || '',
+      dueDate: row.due_date || '',
       avatar: row.avatar,
       parentIds: row.parent_ids || [],
       caregivers: row.caregivers || [],
@@ -41,16 +42,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return;
   }
 
-  if (req.method === 'POST') {
-    const { name, dateOfBirth, avatar } = req.body ?? {};
+    if (req.method === 'POST') {
+    const { name, dateOfBirth, dueDate, avatar } = req.body ?? {};
     if (!name) { res.status(400).json({ error: 'Name is required' }); return; }
 
     const id = generateId();
     const accessType = session.role === 'parent' ? 'parent' : 'caregiver';
 
     await sql`
-      INSERT INTO children (id, name, date_of_birth, avatar, created_by)
-      VALUES (${id}, ${name.trim()}, ${dateOfBirth || ''}, ${avatar || null}, ${session.userId})
+      INSERT INTO children (id, name, date_of_birth, due_date, avatar, created_by)
+      VALUES (${id}, ${name.trim()}, ${dateOfBirth || ''}, ${dueDate || ''}, ${avatar || null}, ${session.userId})
     `;
     await sql`
       INSERT INTO child_access (id, child_id, user_id, access_type)
@@ -61,6 +62,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       id,
       name: name.trim(),
       dateOfBirth: dateOfBirth || '',
+      dueDate: dueDate || '',
       avatar: avatar || undefined,
       parentIds: accessType === 'parent' ? [session.userId] : [],
       caregivers: accessType === 'caregiver' ? [session.userId] : [],
@@ -78,13 +80,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   if (req.method === 'PUT') {
-    const { id, name, dateOfBirth, avatar } = req.body ?? {};
+    const { id, name, dateOfBirth, dueDate, avatar } = req.body ?? {};
     if (!id) { res.status(400).json({ error: 'Child id is required' }); return; }
 
     await sql`
       UPDATE children SET
         name = COALESCE(${name || null}, name),
         date_of_birth = COALESCE(${dateOfBirth || null}, date_of_birth),
+        due_date = COALESCE(${dueDate || null}, due_date),
         avatar = COALESCE(${avatar || null}, avatar),
         last_updated_at = NOW()
       WHERE id = ${id}

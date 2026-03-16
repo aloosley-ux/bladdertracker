@@ -34,12 +34,17 @@ export async function migrate(): Promise<string[]> {
       id TEXT PRIMARY KEY,
       name VARCHAR(255) NOT NULL,
       date_of_birth VARCHAR(20) DEFAULT '',
+      due_date VARCHAR(20) DEFAULT '',
       avatar VARCHAR(512),
       created_by TEXT REFERENCES accounts(id),
       last_updated_at TIMESTAMPTZ DEFAULT NOW()
     )
   `;
   log.push('children table ready');
+
+  // Ensure due_date exists on older schemas
+  await sql`ALTER TABLE children ADD COLUMN IF NOT EXISTS due_date VARCHAR(20) DEFAULT ''`;
+  log.push('children table columns up to date (due_date)');
 
   await sql`
     CREATE TABLE IF NOT EXISTS child_access (
