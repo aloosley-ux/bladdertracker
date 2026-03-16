@@ -71,16 +71,25 @@ export default function SettingsPage() {
 
   // Due date editing state for child profiles
   const [dueDateTargetId, setDueDateTargetId] = useState<string | null>(null);
+  // local editor UI state
 
-  const handleSaveDueDate = (child: Child, date: string) => {
+  const handleSaveDueDate = (child: Child, date: string, useAsDue = false) => {
     const updated: Partial<Child> = { ...child, lastUpdatedAt: new Date().toISOString() };
+    // Always save to dateOfBirth (used by leap calculations)
+    updated.dateOfBirth = date;
+
     if (child.isBorn) {
-      updated.dateOfBirth = date;
-      // clear dueDate when saving DOB
+      // If child is already born, ensure any dueDate is cleared
       updated.dueDate = undefined;
     } else {
-      updated.dueDate = date;
+      // If child is not born, optionally treat this DOB value as the due date until born
+      if (useAsDue) {
+        updated.dueDate = date;
+      } else {
+        updated.dueDate = undefined;
+      }
     }
+
     updateChild(updated as Child);
     setDueDateTargetId(null);
   };
@@ -197,7 +206,7 @@ export default function SettingsPage() {
       {/* Header */}
       <div className="px-4 pb-6 pt-8 bg-[var(--bg-accent)]">
         <h1 className="text-xl font-bold text-[var(--text-primary)]">Account &amp; Settings</h1>
-        <p className="mt-1 text-sm text-[var(--text-secondary)]">
+        <p className="mt-1 text-sm text-[var(--text-primary)]">
           Manage your profile, preferences, data, and privacy in one place.
         </p>
       </div>
@@ -408,43 +417,29 @@ export default function SettingsPage() {
                 >
                   <div className="text-sm font-semibold text-[var(--text-primary)]">{child.name}</div>
                   <div className="mt-1 text-xs text-[var(--text-secondary)]">
-                    {child.isBorn ? `DOB: ${child.dateOfBirth || 'not recorded'}` : child.dateOfBirth || 'DOB not recorded'}
+                    {(() => {
+                      const showDue = !!child.dueDate && !child.isBorn;
+                      const label = showDue ? 'DUE' : 'DOB';
+                      const value = child.dateOfBirth || child.dueDate || 'not recorded';
+                      return `${label}: ${value}`;
+                    })()}
                   </div>
-                  {!child.isBorn && child.dueDate && (
-                    <div className="mt-0.5 text-xs text-[var(--text-secondary)]">Due: {child.dueDate}</div>
-                  )}
                 </button>
 
                 {canManageChildren && (
                   <>
-                    {/* Mark as born toggle */}
+                    {/* DOB edit button (opens DOB editor) */}
+                    {child.dueDate && (
+                      <div className="absolute right-28 top-3 text-xs font-semibold text-[var(--text-primary)] uppercase">DUE</div>
+                    )}
                     <button
                       onClick={() => {
-                        const updated = { ...child, isBorn: !child.isBorn };
-                        if (!child.isBorn && child.dueDate && !child.dateOfBirth) {
-                          updated.dateOfBirth = child.dueDate;
-                          delete updated.dueDate;
-                        }
-                        updateChild(updated);
+                        setDueDateTargetId(dueDateTargetId === child.id ? null : child.id);
                       }}
-                      aria-pressed={child.isBorn}
-                      aria-label={child.isBorn ? `Marked as born` : `Mark ${child.name} as born`}
-                      className={`absolute right-20 top-3 flex h-8 items-center gap-1 rounded-full px-3 text-[10px] font-semibold transition ${
-                        child.isBorn ? 'bg-lavender-600 text-white' : 'bg-lavender-50 text-lavender-600 ring-1 ring-lavender-100'
-                      }`}
-                      title={child.isBorn ? `Marked as born` : `Mark ${child.name} as born`}
+                      className="absolute right-12 top-3 flex h-7 items-center gap-2 rounded-full bg-lavender-50 px-3 text-xs font-semibold text-lavender-600 ring-1 ring-lavender-100 transition hover:bg-lavender-100"
+                      title={child.isBorn ? `Set DOB for ${child.name}` : `Set DOB for ${child.name}`}
                     >
-                      <UserCheck size={12} className="inline-block" />
-                      <span className="pl-1">{child.isBorn ? 'Born' : 'Mark born'}</span>
-                    </button>
-
-                    {/* Due date / DOB edit button for leap accuracy */}
-                    <button
-                      onClick={() => setDueDateTargetId(dueDateTargetId === child.id ? null : child.id)}
-                      className="absolute right-14 top-3 flex h-7 items-center gap-1 rounded-full bg-lavender-50 px-2 text-[10px] font-semibold text-lavender-600 ring-1 ring-lavender-100 transition hover:bg-lavender-100"
-                      title={child.isBorn ? `Set DOB for ${child.name}` : `Set due date for ${child.name} (improves leap accuracy)`}
-                    >
-                      {child.isBorn ? 'DOB' : 'Due date'}
+                      {child.dateOfBirth || child.dueDate || 'Set DOB'}
                     </button>
                     <button
                       onClick={() => {
@@ -462,20 +457,23 @@ export default function SettingsPage() {
                 {dueDateTargetId === child.id && (
                   <div className="mt-2 rounded-2xl bg-[var(--bg-accent)] p-4 ring-1 ring-[var(--border-color)]">
                     <p className="text-xs text-[var(--text-secondary)] mb-3">
-                      💡 Setting {child.name}&apos;s due date improves developmental leap predictions.
+                      💡 Setting {child.name}&apos;s date of birth helps developmental leap predictions. For children not yet born,
+                      you can choose to treat this date as the expected due date until they are marked born.
                     </p>
                     <DueDateEditor
                       child={child}
-                      mode={child.isBorn ? 'dob' : 'due'}
-                      onSave={(d) => handleSaveDueDate(child, d)}
+                      mode="dob"
+                      onSave={(d, useAsDue) => handleSaveDueDate(child, d, useAsDue)}
                     />
-                    <button
-                      type="button"
-                      onClick={() => setDueDateTargetId(null)}
-                      className="mt-2 text-xs text-[var(--text-secondary)] underline"
-                    >
-                      Cancel
-                    </button>
+                    <div className="mt-2">
+                      <button
+                        type="button"
+                        onClick={() => setDueDateTargetId(null)}
+                        className="mt-2 text-xs text-[var(--text-secondary)] underline"
+                      >
+                        Cancel
+                      </button>
+                    </div>
                   </div>
                 )}
 
