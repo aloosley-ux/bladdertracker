@@ -197,7 +197,7 @@ export default function SettingsPage() {
       {/* Header */}
       <div className="px-4 pb-6 pt-8 bg-[var(--bg-accent)]">
         <h1 className="text-xl font-bold text-[var(--text-primary)]">Account &amp; Settings</h1>
-        <p className="mt-1 text-sm text-[var(--text-secondary)]">
+        <p className="mt-1 text-sm text-[var(--text-primary)]">
           Manage your profile, preferences, data, and privacy in one place.
         </p>
       </div>
@@ -408,11 +408,12 @@ export default function SettingsPage() {
                 >
                   <div className="text-sm font-semibold text-[var(--text-primary)]">{child.name}</div>
                   <div className="mt-1 text-xs text-[var(--text-secondary)]">
-                    {child.isBorn ? `DOB: ${child.dateOfBirth || 'not recorded'}` : child.dateOfBirth || 'DOB not recorded'}
+                    {child.isBorn
+                      ? `DOB: ${child.dateOfBirth || 'not recorded'}`
+                      : child.dueDate
+                      ? `Due: ${child.dueDate}`
+                      : 'Due date not recorded'}
                   </div>
-                  {!child.isBorn && child.dueDate && (
-                    <div className="mt-0.5 text-xs text-[var(--text-secondary)]">Due: {child.dueDate}</div>
-                  )}
                 </button>
 
                 {canManageChildren && (
@@ -429,7 +430,7 @@ export default function SettingsPage() {
                       }}
                       aria-pressed={child.isBorn}
                       aria-label={child.isBorn ? `Marked as born` : `Mark ${child.name} as born`}
-                      className={`absolute right-20 top-3 flex h-8 items-center gap-1 rounded-full px-3 text-[10px] font-semibold transition ${
+                      className={`absolute right-24 top-3 flex h-8 items-center gap-1 rounded-full px-3 text-[10px] font-semibold transition ${
                         child.isBorn ? 'bg-lavender-600 text-white' : 'bg-lavender-50 text-lavender-600 ring-1 ring-lavender-100'
                       }`}
                       title={child.isBorn ? `Marked as born` : `Mark ${child.name} as born`}
@@ -441,7 +442,7 @@ export default function SettingsPage() {
                     {/* Due date / DOB edit button for leap accuracy */}
                     <button
                       onClick={() => setDueDateTargetId(dueDateTargetId === child.id ? null : child.id)}
-                      className="absolute right-14 top-3 flex h-7 items-center gap-1 rounded-full bg-lavender-50 px-2 text-[10px] font-semibold text-lavender-600 ring-1 ring-lavender-100 transition hover:bg-lavender-100"
+                      className="absolute right-16 top-3 flex h-7 items-center gap-1 rounded-full bg-lavender-50 px-2 text-[10px] font-semibold text-lavender-600 ring-1 ring-lavender-100 transition hover:bg-lavender-100"
                       title={child.isBorn ? `Set DOB for ${child.name}` : `Set due date for ${child.name} (improves leap accuracy)`}
                     >
                       {child.isBorn ? 'DOB' : 'Due date'}
