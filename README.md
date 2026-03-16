@@ -466,6 +466,17 @@ Three themes controlled via `ThemeContext` with `data-theme` attribute on `<html
 
 Persisted to `localStorage` key `bt_theme`. All components use CSS custom properties (`--bg-primary`, `--bg-card`, `--bg-input`, `--text-primary`, `--text-secondary`, `--text-accent`, `--border-color`, `--divider-color`, `--ring-color`, `--bg-hover`, `--bg-accent`, `--icon-color`, etc.) for seamless switching across text, cards, inputs, buttons, navigation, modals, and dividers.
 
+### Asset-driven theming
+
+The app supports a **theme-aware asset system** that automatically serves the correct visual asset (icon, background, illustration) for the active theme.
+
+- **Asset registry**: `src/assets/assetRegistry.ts` — central mapping of semantic asset keys to per-theme file URLs.
+- **Hook**: `useThemeAsset(key)` — resolves the asset URL for the current theme.
+- **Component**: `<AssetImage assetKey="..." fallback={...} />` — renders an image with graceful fallback.
+- **Fallback chain**: dark/HC → light → `undefined` (CSS fallback).
+
+See [docs/ui-asset-integration-guide.md](./docs/ui-asset-integration-guide.md) for the full integration guide, and [docs/ui-asset-inventory.md](./docs/ui-asset-inventory.md) for the complete asset catalogue.
+
 ---
 
 ## 📡 API Reference
@@ -704,6 +715,8 @@ npm run build         # Full type-check + production build
 | [docs/API.md](./docs/API.md) | API endpoint reference |
 | [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) | System architecture |
 | [docs/MODULES.md](./docs/MODULES.md) | Module field reference and clinical guidance |
+| [docs/ui-asset-integration-guide.md](./docs/ui-asset-integration-guide.md) | How to prepare, drop in, and manage custom visual assets |
+| [docs/ui-asset-inventory.md](./docs/ui-asset-inventory.md) | Complete catalogue of every visual asset slot with dimensions and format guidance |
 | [docs/DOCUMENTATION_AUDIT.md](./docs/DOCUMENTATION_AUDIT.md) | Latest documentation audit summary and follow-up notes |
 | [docs/REPO_STATUS.md](./docs/REPO_STATUS.md) | Durable list of genuine remaining work |
 | [docs/PROJECT_PLAN.md](./docs/PROJECT_PLAN.md) | Lightweight planning index and historical context |

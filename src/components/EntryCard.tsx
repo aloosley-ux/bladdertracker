@@ -1,13 +1,19 @@
 import { useState } from 'react';
 import type { ReactNode } from 'react';
 import clsx from 'clsx';
+import { useThemeAsset } from '../hooks/useThemeAsset';
+import type { AssetKey } from '../assets/assetTypes';
 
 interface EntryCardProps {
   icon?: ReactNode;
+  /** Semantic asset key for a custom icon (takes priority over `icon`). */
+  iconAsset?: AssetKey;
   title: string;
   subtitle?: string;
   time?: string;
   color?: string;
+  /** Semantic asset key for a card background image. */
+  backgroundAsset?: AssetKey;
   onDelete?: () => void;
   entryType?: string;
   entryData?: unknown;
@@ -17,10 +23,12 @@ interface EntryCardProps {
 
 export default function EntryCard({
   icon,
+  iconAsset,
   title,
   subtitle,
   time,
   color = '',
+  backgroundAsset,
   onDelete,
   entryType,
   entryData,
@@ -29,18 +37,29 @@ export default function EntryCard({
 }: EntryCardProps) {
   const [expanded, setExpanded] = useState(false);
   const toggle = () => setExpanded((s) => !s);
+  const bgUrl = useThemeAsset(backgroundAsset);
+  const iconUrl = useThemeAsset(iconAsset);
 
   return (
     <article
       data-entry-type={entryType ?? ''}
       className={clsx(
         color,
-        'rounded-2xl p-3 flex items-start gap-3 relative group',
+        'rounded-2xl p-3 flex items-start gap-3 relative group overflow-hidden',
         className,
       )}
+      style={
+        bgUrl
+          ? { backgroundImage: `url(${bgUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' }
+          : undefined
+      }
     >
       <div className="w-10 h-10 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center shadow-sm shrink-0">
-        {icon}
+        {iconUrl ? (
+          <img src={iconUrl} alt="" className="w-5 h-5 object-contain" draggable={false} />
+        ) : (
+          icon
+        )}
       </div>
 
       <div className="flex-1 min-w-0">

@@ -35,14 +35,14 @@ export default function AppNav() {
       <nav
         role="navigation"
         aria-label="Primary navigation"
-        className="sticky top-0 z-50 hidden border-b border-lavender-100 bg-white md:block"
+        className="sticky top-0 z-50 hidden border-b border-[var(--border-color)] bg-[var(--bg-secondary)] md:block"
       >
         <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-6">
           <div className="flex flex-col">
               <span className="text-lg font-bold tracking-tight text-lavender-700">
                {BRAND.name}
               </span>
-              <span className="text-[11px] font-medium text-gray-400">
+              <span className="text-[11px] font-medium text-[var(--text-secondary)]">
                {BRAND.tagline}
               </span>
             </div>
@@ -57,7 +57,7 @@ export default function AppNav() {
                   `flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm transition-colors ${
                     isActive
                       ? 'font-semibold text-lavender-700 underline underline-offset-4 decoration-2 decoration-lavender-500'
-                      : 'text-gray-500 hover:text-lavender-600'
+                      : 'text-[var(--text-secondary)] hover:text-lavender-600'
                   }`
                 }
               >
@@ -73,7 +73,7 @@ export default function AppNav() {
       {/* Mobile: sticky top bar with brand + notification bell */}
       <header
         aria-label="App header"
-        className="sticky top-0 z-50 flex items-center justify-between border-b border-lavender-100 bg-white px-4 py-2 md:hidden"
+        className="sticky top-0 z-50 flex items-center justify-between border-b border-[var(--border-color)] bg-[var(--bg-secondary)] px-4 py-2 md:hidden"
       >
         <span className="text-base font-bold tracking-tight text-lavender-700">{BRAND.name}</span>
         <NotificationBell />
@@ -83,7 +83,7 @@ export default function AppNav() {
       <nav
         role="navigation"
         aria-label="Mobile navigation"
-        className="fixed bottom-0 left-0 right-0 z-50 border-t border-lavender-100/80 bg-white/95 backdrop-blur safe-area-bottom md:hidden"
+        className="fixed bottom-0 left-0 right-0 z-50 border-t border-[var(--border-color)] bg-[var(--bg-secondary)]/95 backdrop-blur safe-area-bottom md:hidden"
       >
         <div className="mx-auto flex h-17 max-w-2xl items-center justify-around px-2">
           {navItems.map(({ to, icon: Icon, label, mobileLabel }) => (
@@ -96,7 +96,7 @@ export default function AppNav() {
                 `flex min-w-12 flex-col items-center gap-1 rounded-2xl px-1.5 py-2 text-[10px] transition-all ${
                   isActive
                     ? 'bg-lavender-50 text-lavender-700 font-semibold shadow-sm'
-                    : 'text-gray-400 hover:text-lavender-500'
+                    : 'text-[var(--text-secondary)] hover:text-lavender-500'
                 }`
               }
             >
