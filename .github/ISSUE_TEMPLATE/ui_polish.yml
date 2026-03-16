@@ -1,0 +1,76 @@
+name: UI / polish request
+description: Report a visual, accessibility, or interaction improvement
+title: "[UI]: "
+labels:
+  - ui
+  - polish
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for visual bugs, accessibility gaps, theme inconsistencies, layout issues, or interaction improvements.
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What needs improving?
+      description: Describe the visual or interaction issue clearly.
+      placeholder: The entry cards on the Log page have low contrast text in high-contrast mode.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour or outcome
+      placeholder: Text on entry cards should meet WCAG AA contrast ratios in all three themes.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected area
+      options:
+        - Component (shared)
+        - Specific page
+        - Navigation
+        - Forms
+        - Theme / dark mode / high contrast
+        - Accessibility
+        - Layout / responsive
+        - Animation / interaction
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: page_or_component
+    attributes:
+      label: Affected page or component
+      placeholder: LogPage, EntryCard, AppNav, AddEntryPage
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots or visual reference
+      description: Paste screenshots showing the current and desired state. Remove any sensitive data.
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      placeholder: |
+        - [ ] Text meets WCAG AA contrast in all themes
+        - [ ] Change does not break other entry types
+        - [ ] Visually verified on mobile and desktop
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues for duplicates.
+          required: true
+        - label: I tested in all three themes (light, dark, high-contrast) if relevant.
+          required: true

@@ -1,11 +1,45 @@
 ## Summary
 
-- [ ] Linked issue(s), backlog item(s), or a clear maintenance rationale are included in the PR description
+<!-- What does this PR do? Keep it to one or two sentences. -->
+
+## Why
+
+<!-- Link the issue, backlog item, or explain the maintenance rationale. -->
+
+Closes #
+
+## What changed
+
+<!-- List the key changes. Be specific about files and behaviour. -->
+
+-
+
+## Validation performed
+
+<!-- Describe how you verified the change works. Include manual testing steps if UI-related. -->
+
+- [ ] `npm run lint` passes
+- [ ] `npm run build` passes
+- [ ] `npx tsc --project tsconfig.api.json --noEmit` passes
+- [ ] `npm test` passes (or failure is documented, e.g. live integration test unreachable)
+- [ ] Manually tested in dev server (`npm run dev`)
+- [ ] Tested in all three themes (light, dark, high-contrast) if UI change
+
+## Documentation
+
 - [ ] README updated if product behaviour, setup, routes, or environment variables changed
-- [ ] docs/MODULES.md matches the current module labels and tracker behaviour
-- [ ] docs/API.md matches the current API behaviour and cookie/security notes
+- [ ] docs/MODULES.md updated if tracker labels, fields, or defaults changed
+- [ ] docs/API.md updated if API contracts or auth behaviour changed
 - [ ] docs/ARCHITECTURE.md reviewed for affected flows or infrastructure changes
-- [ ] SECURITY.md and issue templates reviewed if contributor support or disclosure guidance changed
+- [ ] No documentation changes needed
+
+## Risks and follow-up
+
+<!-- Note anything reviewers should watch for, known limitations, or follow-up work. -->
+
+## Checklist
+
+- [ ] Changes are focused — one concern per PR
 - [ ] Tests added or updated for code changes
-- [ ] `npm run lint`, `npm run build`, and `./node_modules/.bin/tsc --project tsconfig.api.json --noEmit` pass locally, and `npm test` passes locally or any failure is documented (for example the live deployed-host integration test being unreachable)
-- [ ] No hardcoded secrets or environment-specific values were introduced
+- [ ] No hardcoded secrets or environment-specific values introduced
+- [ ] No sensitive child data in tests, fixtures, or screenshots
