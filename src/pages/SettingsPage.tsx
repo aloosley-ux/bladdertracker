@@ -71,8 +71,7 @@ export default function SettingsPage() {
 
   // Due date editing state for child profiles
   const [dueDateTargetId, setDueDateTargetId] = useState<string | null>(null);
-  // When editing DOB, allow treating it as a due date until the child is born
-  const [useAsDueUntilBorn, setUseAsDueUntilBorn] = useState(false);
+  // local editor UI state
 
   const handleSaveDueDate = (child: Child, date: string, useAsDue = false) => {
     const updated: Partial<Child> = { ...child, lastUpdatedAt: new Date().toISOString() };
@@ -93,7 +92,6 @@ export default function SettingsPage() {
 
     updateChild(updated as Child);
     setDueDateTargetId(null);
-    setUseAsDueUntilBorn(false);
   };
 
   const cloud = typeof window !== 'undefined' && !!import.meta.env.VITE_USE_CLOUD;
@@ -419,43 +417,29 @@ export default function SettingsPage() {
                 >
                   <div className="text-sm font-semibold text-[var(--text-primary)]">{child.name}</div>
                   <div className="mt-1 text-xs text-[var(--text-secondary)]">
-                    {`DOB: ${child.dateOfBirth || child.dueDate || 'not recorded'}`}
+                    {(() => {
+                      const showDue = !!child.dueDate && !child.isBorn;
+                      const label = showDue ? 'DUE' : 'DOB';
+                      const value = child.dateOfBirth || child.dueDate || 'not recorded';
+                      return `${label}: ${value}`;
+                    })()}
                   </div>
                 </button>
 
                 {canManageChildren && (
                   <>
-                    {/* Mark as born toggle */}
-                    <button
-                      onClick={() => {
-                        const updated = { ...child, isBorn: !child.isBorn };
-                        if (!child.isBorn && child.dueDate && !child.dateOfBirth) {
-                          updated.dateOfBirth = child.dueDate;
-                          delete updated.dueDate;
-                        }
-                        updateChild(updated);
-                      }}
-                      aria-pressed={child.isBorn}
-                      aria-label={child.isBorn ? `Marked as born` : `Mark ${child.name} as born`}
-                      className={`absolute right-24 top-3 flex h-8 items-center gap-1 rounded-full px-3 text-[10px] font-semibold transition ${
-                        child.isBorn ? 'bg-lavender-600 text-white' : 'bg-lavender-50 text-lavender-600 ring-1 ring-lavender-100'
-                      }`}
-                      title={child.isBorn ? `Marked as born` : `Mark ${child.name} as born`}
-                    >
-                      <UserCheck size={12} className="inline-block" />
-                      <span className="pl-1">{child.isBorn ? 'Born' : 'Mark born'}</span>
-                    </button>
-
-                    {/* DOB edit button (treat as due date until born option available) */}
+                    {/* DOB edit button (opens DOB editor) */}
+                    {child.dueDate && (
+                      <div className="absolute right-28 top-3 text-xs font-semibold text-[var(--text-primary)] uppercase">DUE</div>
+                    )}
                     <button
                       onClick={() => {
                         setDueDateTargetId(dueDateTargetId === child.id ? null : child.id);
-                        setUseAsDueUntilBorn(!child.isBorn && !!child.dueDate);
                       }}
-                      className="absolute right-16 top-3 flex h-7 items-center gap-1 rounded-full bg-lavender-50 px-2 text-[10px] font-semibold text-lavender-600 ring-1 ring-lavender-100 transition hover:bg-lavender-100"
-                      title={child.isBorn ? `Set DOB for ${child.name}` : `Set DOB for ${child.name} (optionally treat as due date until born)`}
+                      className="absolute right-12 top-3 flex h-7 items-center gap-2 rounded-full bg-lavender-50 px-3 text-xs font-semibold text-lavender-600 ring-1 ring-lavender-100 transition hover:bg-lavender-100"
+                      title={child.isBorn ? `Set DOB for ${child.name}` : `Set DOB for ${child.name}`}
                     >
-                      DOB
+                      {child.dateOfBirth || child.dueDate || 'Set DOB'}
                     </button>
                     <button
                       onClick={() => {
@@ -479,22 +463,8 @@ export default function SettingsPage() {
                     <DueDateEditor
                       child={child}
                       mode="dob"
-                      onSave={(d) => handleSaveDueDate(child, d, useAsDueUntilBorn)}
+                      onSave={(d, useAsDue) => handleSaveDueDate(child, d, useAsDue)}
                     />
-                    {!child.isBorn && (
-                      <div className="mt-3 flex items-center gap-2">
-                        <input
-                          id={`as-due-${child.id}`}
-                          type="checkbox"
-                          checked={useAsDueUntilBorn}
-                          onChange={(e) => setUseAsDueUntilBorn(e.target.checked)}
-                          className="h-4 w-4"
-                        />
-                        <label htmlFor={`as-due-${child.id}`} className="text-xs text-[var(--text-secondary)]">
-                          Treat this date as the expected due date until marked born
-                        </label>
-                      </div>
-                    )}
                     <div className="mt-2">
                       <button
                         type="button"
