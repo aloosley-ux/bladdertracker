@@ -8,7 +8,7 @@ export function FormStep({ step, title, children }: { step: number; title: strin
         >
           {step}
         </span>
-        <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{title}</span>
+        <span className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wide">{title}</span>
       </div>
       <div className="pl-7 space-y-2">{children}</div>
     </div>
