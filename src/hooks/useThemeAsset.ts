@@ -15,9 +15,10 @@ import type { AssetKey, Theme } from '../assets/assetTypes';
 /**
  * Resolve a semantic asset key against the current theme.
  *
- * @param key  – A semantic asset key (e.g. `'brandMark'`, `'stateEmpty'`),
- *               or `undefined` to skip resolution.
- * @param themeOverride – Force a specific theme instead of the current one.
+ * @param key – A semantic asset key (e.g. `'brandMark'`, `'stateEmpty'`),
+ *              or `undefined` to skip resolution.
+ * @param themeOverride – Optional. Force a specific theme instead of the
+ *                        current one.
  * @returns The asset URL, or `undefined` when no asset is registered or
  *          the key is `undefined`.
  */

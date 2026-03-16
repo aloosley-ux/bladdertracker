@@ -43,7 +43,7 @@ describe('resolveAsset', () => {
   it('returns undefined for all themes when key is unregistered', () => {
     const themes: Theme[] = ['light', 'dark', 'high-contrast'];
     for (const theme of themes) {
-      expect(resolveAsset('navDashboard' as AssetKey, theme)).toBeUndefined();
+      expect(resolveAsset('stateWarning', theme)).toBeUndefined();
     }
   });
 

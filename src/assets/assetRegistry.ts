@@ -68,23 +68,23 @@ export const ASSET_REGISTRY: AssetRegistry = {
   // import themed SVG/PNG files and add them here:
   //
   // navDashboard: { light: dashboardLightUrl, dark: dashboardDarkUrl },
-  // navDiary:     { light: diaryLightUrl,     dark: diaryDarkUrl     },
+  // navDiary: { light: diaryLightUrl, dark: diaryDarkUrl },
 
   // ── Module / entry-type icons ─────────────────────────────────────
   // Currently served by lucide-react inline.  Add custom icon assets:
   //
-  // iconDrinks:    { light: drinksLightUrl },
-  // iconSleep:     { light: sleepLightUrl  },
+  // iconDrinks: { light: drinksLightUrl },
+  // iconSleep: { light: sleepLightUrl },
 
   // ── Backgrounds ───────────────────────────────────────────────────
   // Drop hero/card background images and register them here:
   //
-  // pageDashboardHero:  { light: heroLightUrl, dark: heroDarkUrl },
+  // pageDashboardHero: { light: heroLightUrl, dark: heroDarkUrl },
   // cardEntryBackground: { light: cardBgLightUrl },
 
   // ── State illustrations ───────────────────────────────────────────
-  // stateEmpty:        { light: emptyLightUrl },
-  // stateNoChildren:   { light: noChildrenUrl },
+  // stateEmpty: { light: emptyLightUrl },
+  // stateNoChildren: { light: noChildrenUrl },
 
   // ── UI elements ───────────────────────────────────────────────────
   // buttonPrimaryBackground: { light: btnPrimaryUrl },
