@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { Copy, MailPlus, Baby, Trash2, AlertTriangle, Bell, Users, Shield } from 'lucide-react';
 import { useApp } from '../context/useApp';
+import PageShell from '../components/PageShell';
 import { generateId } from '../utils/storage';
 import type { Child, UserRole } from '../types';
 
@@ -123,12 +124,15 @@ export default function ProfilesPage() {
 
   return (
     <div className="pb-20">
-      {/* Header */}
-      <div className="px-4 pt-6 pb-4">
-        <h1 className="text-lg font-bold text-gray-900">Profiles</h1>
-        <p className="mt-0.5 text-xs text-gray-500">Manage children, caregivers, and permissions</p>
-      </div>
-
+      <PageShell
+        heroAssetKey="pageProfilesHero"
+        heroContent={(
+          <div className="px-4 pt-6 pb-4">
+            <h1 className="text-lg font-bold text-gray-900">Profiles</h1>
+            <p className="mt-0.5 text-xs text-gray-500">Manage children, caregivers, and permissions</p>
+          </div>
+        )}
+      >
       <div className="space-y-4 px-4">
         {/* Child selector */}
         {children.length > 1 && (
@@ -444,6 +448,7 @@ export default function ProfilesPage() {
           </section>
         )}
       </div>
+      </PageShell>
     </div>
   );
 }

@@ -65,6 +65,26 @@ describe('resolveAsset', () => {
       }
     }
   });
+
+  it('resolves all registered page hero assets in light theme', () => {
+    const heroKeys: AssetKey[] = [
+      'pageDashboardHero',
+      'pageAddEntryHero',
+      'pageReportsHero',
+      'pageSettingsHero',
+      'pageMilestonesHero',
+      'pageLeapsHero',
+      'pageProfilesHero',
+      'pageHelpHero',
+      'pageLoginHero',
+    ];
+
+    for (const key of heroKeys) {
+      const url = resolveAsset(key, 'light');
+      expect(url).toBeDefined();
+      expect(typeof url).toBe('string');
+    }
+  });
 });
 
 describe('ASSET_REGISTRY', () => {
@@ -79,6 +99,18 @@ describe('ASSET_REGISTRY', () => {
     expect(ASSET_REGISTRY.brandLockupHorizontal).toBeDefined();
     expect(ASSET_REGISTRY.brandLockupStacked).toBeDefined();
     expect(ASSET_REGISTRY.brandMonochromeMark).toBeDefined();
+  });
+
+  it('has page hero entries registered', () => {
+    expect(ASSET_REGISTRY.pageDashboardHero).toBeDefined();
+    expect(ASSET_REGISTRY.pageAddEntryHero).toBeDefined();
+    expect(ASSET_REGISTRY.pageReportsHero).toBeDefined();
+    expect(ASSET_REGISTRY.pageSettingsHero).toBeDefined();
+    expect(ASSET_REGISTRY.pageMilestonesHero).toBeDefined();
+    expect(ASSET_REGISTRY.pageLeapsHero).toBeDefined();
+    expect(ASSET_REGISTRY.pageProfilesHero).toBeDefined();
+    expect(ASSET_REGISTRY.pageHelpHero).toBeDefined();
+    expect(ASSET_REGISTRY.pageLoginHero).toBeDefined();
   });
 
   it('each registered entry has at least a light variant', () => {
