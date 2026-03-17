@@ -33,7 +33,7 @@ import pageLoginHeroLightUrl from './themes/light/hero-loginheader.png';
 import pageMilestonesHeroLightUrl from './themes/light/hero-milestoneheader.png';
 import pageProfilesHeroLightUrl from './themes/light/hero-profilesheader.png';
 import pageReportsHeroLightUrl from './themes/light/hero-reportsheader.png';
-import pageSettingsHeroLightUrl from './themes/light/heo-settingsheader.png';
+import pageSettingsHeroLightUrl from './themes/light/hero-settingsheader.png';
 
 /**
  * Master asset registry.
