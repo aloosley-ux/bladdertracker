@@ -43,22 +43,29 @@ All assets are managed through a central **asset registry** (`src/assets/assetRe
 
 ```
 src/assets/
-├── brand-mark.svg                  # Shared brand SVG files
-├── brand-wordmark.svg
-├── brand-lockup-horizontal.svg
-├── brand-lockup-stacked.svg
-├── brand-mark-monochrome.svg
+├── brand-icon.png                  # Brand mark (light)
+├── brand-icon-dark.png             # Brand mark (dark)
+├── brand-icon-hc.png               # Brand mark (high-contrast)
+├── brand-wordmark.svg              # Shared brand wordmark
+├── brand-lockup-horizontal.png     # Horizontal lockup (light)
+├── brand-lockup-horizontal-dark.png# Horizontal lockup (dark)
+├── brand-lockup-horizontal-hc.png  # Horizontal lockup (high-contrast)
+├── brand-lockup-stacked.svg        # Stacked lockup (shared)
+├── brand-mark-monochrome.svg       # Monochrome mark (shared)
 ├── index.ts                        # Main export barrel
 ├── assetTypes.ts                   # TypeScript type definitions
 ├── assetRegistry.ts                # ⭐ Central asset registry
 ├── assetResolver.ts                # Resolution logic
 └── themes/
     ├── light/                      # Light-theme-specific assets
-    │   └── README.md
+    │   ├── hero-*.png              # Page hero backgrounds
+    │   └── card-bg-*.png           # Card backgrounds
     ├── dark/                       # Dark-theme-specific assets
-    │   └── README.md
+    │   ├── hero-*-dark.png
+    │   └── card-bg-*-dark.png
     └── high-contrast/              # High-contrast-theme-specific assets
-        └── README.md
+        ├── hero-*-hc.png
+        └── card-bg-*-hc.png
 ```
 
 ### Where to place files

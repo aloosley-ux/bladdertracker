@@ -44,7 +44,7 @@ bladdertracker/
 │   └── PROJECT_PLAN.md         # Project plan and delivery backlog
 ├── src/
 │   ├── assets/
-│   │   ├── brand-icon.svg      # Primary logo asset
+│   │   ├── brand-icon.png      # Primary logo asset (with dark/hc variants)
 │   │   └── index.ts            # Central asset registry
 │   ├── components/
 │   │   ├── forms/              # Extracted entry form components (one per tracker)
