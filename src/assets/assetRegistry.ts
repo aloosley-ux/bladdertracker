@@ -18,6 +18,7 @@
  */
 import type { AssetRegistry } from './assetTypes';
 
+
 // ── Brand SVG imports (shared across themes) ────────────────────────
 import brandMarkUrl from './brand-mark.svg';
 import brandWordmarkUrl from './brand-wordmark.svg';
