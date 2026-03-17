@@ -16,6 +16,7 @@ import { CalendarDays, ChevronRight, Filter } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/useApp';
 import EmptyState from '../components/EmptyState';
+import PageShell from '../components/PageShell';
 import { getModuleLabel, TOILET_OUTCOME_LABELS } from '../content/presentation';
 import { DEFAULT_MODULES } from '../types';
 
@@ -203,37 +204,41 @@ export default function ReportsPage() {
 
   return (
     <div className="min-h-screen bg-white pb-20">
-      {/* Header */}
-      <div className="px-4 pt-6 pb-4">
-        <h1 className="text-xl font-bold text-gray-900">Trends &mdash; Reports</h1>
-        <p className="mt-1 text-sm text-gray-500">
-          A calm visual summary for {selectedChild?.name ?? 'your selected child'}.
-        </p>
-      </div>
+      <PageShell
+        heroAssetKey="pageReportsHero"
+        heroContent={(
+          <>
+            <div className="px-4 pt-6 pb-4">
+              <h1 className="text-xl font-bold text-gray-900">Trends &mdash; Reports</h1>
+              <p className="mt-1 text-sm text-gray-500">
+                A calm visual summary for {selectedChild?.name ?? 'your selected child'}.
+              </p>
+            </div>
 
-      {/* Period selector & calendar link */}
-      <div className="flex items-center justify-between gap-2 px-4 pb-4">
-        <div className="flex-1 grid grid-cols-3 gap-2 rounded-2xl bg-gray-50 p-1 text-sm ring-1 ring-black/5">
-          {(['7d', '14d', '30d'] as Period[]).map((item) => (
-            <button
-              key={item}
-              onClick={() => setPeriod(item)}
-              className={`rounded-2xl px-3 py-2 font-medium transition-all ${
-                period === item ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500'
-              }`}
-            >
-              {item === '7d' ? '7 Days' : item === '14d' ? '14 Days' : '30 Days'}
-            </button>
-          ))}
-        </div>
-        <Link
-          to="/calendar"
-          className="flex items-center gap-1.5 rounded-2xl bg-white px-3 py-2 text-sm font-semibold text-gray-700 shadow-sm ring-1 ring-black/5 whitespace-nowrap"
-        >
-          <CalendarDays size={14} /> Calendar <ChevronRight size={14} />
-        </Link>
-      </div>
-
+            <div className="flex items-center justify-between gap-2 px-4 pb-4">
+              <div className="grid flex-1 grid-cols-3 gap-2 rounded-2xl bg-gray-50 p-1 text-sm ring-1 ring-black/5">
+                {(['7d', '14d', '30d'] as Period[]).map((item) => (
+                  <button
+                    key={item}
+                    onClick={() => setPeriod(item)}
+                    className={`rounded-2xl px-3 py-2 font-medium transition-all ${
+                      period === item ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500'
+                    }`}
+                  >
+                    {item === '7d' ? '7 Days' : item === '14d' ? '14 Days' : '30 Days'}
+                  </button>
+                ))}
+              </div>
+              <Link
+                to="/calendar"
+                className="flex items-center gap-1.5 whitespace-nowrap rounded-2xl bg-white px-3 py-2 text-sm font-semibold text-gray-700 shadow-sm ring-1 ring-black/5"
+              >
+                <CalendarDays size={14} /> Calendar <ChevronRight size={14} />
+              </Link>
+            </div>
+          </>
+        )}
+      >
       <div className="space-y-4 px-4">
         <NhsCard>
           <div className="flex flex-wrap items-center justify-between gap-2">
@@ -424,6 +429,7 @@ export default function ReportsPage() {
         </div>
         )}
       </div>
+      </PageShell>
 
       {confirmExport && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">

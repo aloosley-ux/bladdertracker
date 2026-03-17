@@ -15,6 +15,7 @@ import {
   LeapProgressChart,
 } from '../components/leaps';
 import { Link } from 'react-router-dom';
+import PageShell from '../components/PageShell';
 
 type LeapsSection = 'overview' | 'milestones' | 'timeline';
 
@@ -139,12 +140,17 @@ export default function LeapsPage() {
 
   return (
     <div className="space-y-4 pb-4">
-      <header className="px-1">
-        <h1 className="text-xl font-bold text-lavender-700">🌈 Developmental Leaps</h1>
-        <p className="text-sm text-[var(--text-secondary)] mt-1">
-          Track <strong>{activeChild.name}&apos;s</strong> developmental leaps, milestones, and growth
-        </p>
-      </header>
+      <PageShell
+        heroAssetKey="pageLeapsHero"
+        heroContent={(
+          <header className="px-1 pt-6">
+            <h1 className="text-xl font-bold text-lavender-700">🌈 Developmental Leaps</h1>
+            <p className="mt-1 text-sm text-[var(--text-secondary)]">
+              Track <strong>{activeChild.name}&apos;s</strong> developmental leaps, milestones, and growth
+            </p>
+          </header>
+        )}
+      >
 
       {/* Due-date editor removed from top — set DOB in Settings → Child Profiles */}
 
@@ -611,6 +617,7 @@ export default function LeapsPage() {
           </section>
         </div>
       )}
+      </PageShell>
     </div>
   );
 }

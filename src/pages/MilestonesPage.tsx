@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/useApp';
 import EmptyState from '../components/EmptyState';
 import CelebrationBanner from '../components/CelebrationBanner';
+import PageShell from '../components/PageShell';
 import { MILESTONE_ACHIEVED_CELEBRATION, MILESTONE_SAVE_CELEBRATION } from '../content/presentation';
 import type { Milestone, MilestoneCategory, MilestoneStatus, ModuleId } from '../types';
 import { DEFAULT_MODULES } from '../types';
@@ -192,11 +193,15 @@ export default function MilestonesPage() {
 
   return (
     <div className="pb-24">
-      <header className="bg-white px-4 pt-6 pb-4">
-        <h1 className="text-xl font-bold text-slate-900">Milestones</h1>
-        <p className="text-sm text-slate-500">A clear progress timeline for {selectedChild.name}</p>
-      </header>
-
+      <PageShell
+        heroAssetKey="pageMilestonesHero"
+        heroContent={(
+          <header className="px-4 pt-6 pb-4">
+            <h1 className="text-xl font-bold text-slate-900">Milestones</h1>
+            <p className="text-sm text-slate-500">A clear progress timeline for {selectedChild.name}</p>
+          </header>
+        )}
+      >
       <section className="px-4">
         {celebration ? (
           <div className="mb-3">
@@ -393,6 +398,7 @@ export default function MilestonesPage() {
           </div>
         </div>
       )}
+      </PageShell>
     </div>
   );
 }

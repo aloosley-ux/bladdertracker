@@ -3,6 +3,7 @@ import { Droplets, CloudRain, Stethoscope, Moon, Target, Apple, ArrowLeft, Smile
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useApp } from '../context/useApp';
 import BrandIcon from '../components/BrandIcon';
+import PageShell from '../components/PageShell';
 import { getModuleLabel } from '../content/presentation';
 import { DEFAULT_MODULES } from '../types';
 import type { ModuleId } from '../types';
@@ -116,54 +117,59 @@ export default function AddEntryPage() {
 
   return (
     <div className="pb-20">
-      <div className="bg-[var(--bg-secondary)] px-4 pt-4 pb-3">
-        <div className="mb-3 flex items-center gap-3">
-          <button
-            onClick={() => navigate('/')}
-            aria-label="Back to dashboard"
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--bg-input)] text-[var(--text-secondary)] shadow-sm ring-1 ring-[var(--border-color)] hover:bg-[var(--bg-card)]"
-          >
-            <ArrowLeft size={18} />
-          </button>
-          <BrandIcon width={110} />
-        </div>
+      <PageShell
+        heroAssetKey="pageAddEntryHero"
+        heroContent={(
+          <div className="px-4 pt-4 pb-3">
+            <div className="mb-3 flex items-center gap-3">
+              <button
+                onClick={() => navigate('/')}
+                aria-label="Back to dashboard"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--bg-input)] text-[var(--text-secondary)] shadow-sm ring-1 ring-[var(--border-color)] hover:bg-[var(--bg-card)]"
+              >
+                <ArrowLeft size={18} />
+              </button>
+              <BrandIcon width={110} />
+            </div>
 
-        <div className="mb-3 px-1">
-          <h1 className="text-lg font-bold text-[var(--text-primary)]">Add an update</h1>
-          <p className="mt-1 text-sm text-[var(--text-muted)]">Choose the quickest thing you want to log.</p>
-        </div>
+            <div className="mb-3 px-1">
+              <h1 className="text-lg font-bold text-[var(--text-primary)]">Add an update</h1>
+              <p className="mt-1 text-sm text-[var(--text-muted)]">Choose the quickest thing you want to log.</p>
+            </div>
 
-        <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2 pb-1">
-          {tabs.map(({ type, icon: Icon, label, color }) => (
-            <button
-              key={type}
-              onClick={() => setActiveTab(type)}
-              className={`w-full sm:w-auto flex min-h-12 items-center justify-center gap-1.5 rounded-xl py-2.5 px-3 text-xs font-medium transition-all ${
-                activeTab === type
-                  ? 'bg-lavender-500 text-white shadow-md'
-                  : 'bg-[var(--bg-card)] text-[var(--text-muted)] shadow-sm ring-1 ring-[var(--border-color)] hover:bg-[var(--bg-input)]'
-              }`}
-            >
-              <Icon size={14} className={activeTab === type ? 'text-white' : color} />
-              {label}
-            </button>
-          ))}
+            <div className="grid grid-cols-4 gap-2 pb-1 sm:grid-cols-6 md:grid-cols-8">
+              {tabs.map(({ type, icon: Icon, label, color }) => (
+                <button
+                  key={type}
+                  onClick={() => setActiveTab(type)}
+                  className={`flex min-h-12 w-full items-center justify-center gap-1.5 rounded-xl px-3 py-2.5 text-xs font-medium transition-all sm:w-auto ${
+                    activeTab === type
+                      ? 'bg-lavender-500 text-white shadow-md'
+                      : 'bg-[var(--bg-card)] text-[var(--text-muted)] shadow-sm ring-1 ring-[var(--border-color)] hover:bg-[var(--bg-input)]'
+                  }`}
+                >
+                  <Icon size={14} className={activeTab === type ? 'text-white' : color} />
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      >
+        <div className="mt-4 px-4">
+          {activeTab === 'drink' && <DrinkForm />}
+          {activeTab === 'urine' && <UrineForm />}
+          {activeTab === 'bowel' && <BowelForm />}
+          {activeTab === 'sleep' && <SleepForm />}
+          {activeTab === 'toilet' && <ToiletAttemptForm />}
+          {activeTab === 'food' && <FoodForm />}
+          {activeTab === 'mood' && <MoodForm />}
+          {activeTab === 'sensory' && <SensoryForm />}
+          {activeTab === 'medication' && <MedicationForm />}
+          {activeTab === 'therapy' && <TherapyForm />}
+          {activeTab === 'routine' && <RoutineForm />}
         </div>
-      </div>
-
-      <div className="px-4 mt-4">
-        {activeTab === 'drink' && <DrinkForm />}
-        {activeTab === 'urine' && <UrineForm />}
-        {activeTab === 'bowel' && <BowelForm />}
-        {activeTab === 'sleep' && <SleepForm />}
-        {activeTab === 'toilet' && <ToiletAttemptForm />}
-        {activeTab === 'food' && <FoodForm />}
-        {activeTab === 'mood' && <MoodForm />}
-        {activeTab === 'sensory' && <SensoryForm />}
-        {activeTab === 'medication' && <MedicationForm />}
-        {activeTab === 'therapy' && <TherapyForm />}
-        {activeTab === 'routine' && <RoutineForm />}
-      </div>
+      </PageShell>
     </div>
   );
 }
