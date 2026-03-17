@@ -21,6 +21,7 @@ import { Link } from 'react-router-dom';
 import { useApp } from '../context/useApp';
 import { useTheme } from '../context/useTheme';
 import ModuleSettings from '../components/settings/ModuleSettings';
+import PageShell from '../components/PageShell';
 import { generateId } from '../utils/storage';
 import { apiDeleteAccount } from '../utils/api';
 import { getImportTemplateDescription, parseImportFile } from '../utils/importers';
@@ -203,14 +204,17 @@ export default function SettingsPage() {
 
   return (
     <div className="pb-20">
-      {/* Header */}
-      <div className="px-4 pb-6 pt-8 bg-[var(--bg-accent)]">
-        <h1 className="text-xl font-bold text-[var(--text-primary)]">Account &amp; Settings</h1>
-        <p className="mt-1 text-sm text-[var(--text-primary)]">
-          Manage your profile, preferences, data, and privacy in one place.
-        </p>
-      </div>
-
+      <PageShell
+        heroAssetKey="pageSettingsHero"
+        heroContent={(
+          <div className="px-4 pb-6 pt-8">
+            <h1 className="text-xl font-bold text-[var(--text-primary)]">Account &amp; Settings</h1>
+            <p className="mt-1 text-sm text-[var(--text-primary)]">
+              Manage your profile, preferences, data, and privacy in one place.
+            </p>
+          </div>
+        )}
+      >
       <div className="space-y-4 px-4 pt-2">
         {/* ── User Profile Card ─────────────────────────────────────── */}
         <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
@@ -796,6 +800,7 @@ export default function SettingsPage() {
           </div>
         </button>
       </div>
+      </PageShell>
     </div>
   );
 }
