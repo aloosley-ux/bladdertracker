@@ -48,7 +48,7 @@ src/assets/
 ├── brand-icon-hc.png               # Brand mark (high-contrast)
 ├── brand-wordmark.svg              # Shared brand wordmark
 ├── brand-lockup-horizontal.png     # Horizontal lockup (light)
-├── brand-lockup-horizontal-dark.png# Horizontal lockup (dark)
+├── brand-lockup-horizontal-dark.png # Horizontal lockup (dark)
 ├── brand-lockup-horizontal-hc.png  # Horizontal lockup (high-contrast)
 ├── brand-lockup-stacked.svg        # Stacked lockup (shared)
 ├── brand-mark-monochrome.svg       # Monochrome mark (shared)
