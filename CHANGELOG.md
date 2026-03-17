@@ -21,7 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Architecture decomposition: extracted 10 leap components from LeapsPage into `src/components/leaps/`
 - Reusable `EmptyState` component applied across LogPage, CalendarPage, ReportsPage, and MilestonesPage
 - CHANGELOG.md for structured release communication
-- PR template with documentation verification checklist
+- PR template with documentation verification checklist.
 
 ### Fixed
 - Documentation audit completed across README, docs/, contributing notes, and policy files; obsolete issue-draft docs removed and a dedicated audit report added
