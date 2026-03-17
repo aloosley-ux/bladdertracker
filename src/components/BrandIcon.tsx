@@ -3,10 +3,10 @@ import AssetImage from './AssetImage';
 
 interface BrandIconProps {
   /**
-   * Width in pixels. Height is derived from the SVG viewBox. Defaults to 140.
+   * Width in pixels. Height is derived automatically. Defaults to 140.
    *
    * To swap the brand mark app-wide, either:
-   * - replace `src/assets/brand-mark.svg`, or
+   * - replace `src/assets/brand-icon.png` (and the `-dark` / `-hc` variants), or
    * - add themed variants in `src/assets/themes/<theme>/` and update
    *   the `brandMark` entry in `src/assets/assetRegistry.ts`.
    */
