@@ -15,6 +15,7 @@ import {
 } from '../utils/storage';
 import type { AccountRecord, User, UserRole } from '../types';
 import BrandIcon from '../components/BrandIcon';
+import PageShell from '../components/PageShell';
 import { BRAND } from '../content/presentation';
 
 type AuthMode = 'register' | 'login' | 'reset';
@@ -158,22 +159,26 @@ export default function LoginPage() {
     <div className="min-h-screen bg-[var(--bg-primary)] px-4 py-6">
       <div className="mx-auto flex min-h-[calc(100vh-3rem)] w-full max-w-sm flex-col justify-center">
         <div className="overflow-hidden rounded-[2rem] bg-[var(--bg-card)] shadow-[0_30px_80px_rgba(139,77,255,0.12)] ring-1 ring-[var(--border-color)]">
-          {/* Header */}
-          <div className="bg-[var(--bg-secondary)] px-6 pb-5 pt-7 text-center">
-            <div className="flex justify-center mb-1">
-              <BrandIcon width={180} />
-            </div>
-            <h1 className="mt-1 text-xl font-bold tracking-tight text-[var(--text-primary)]">
-              {BRAND.heroTitle}
-            </h1>
-            <div className="mt-3 flex items-center justify-center gap-3 text-[11px] text-[var(--text-primary)]">
-              <span className="inline-flex items-center gap-1"><ShieldCheck size={12} className="text-[var(--icon-color)]" /> Secure</span>
-              <span className="text-[var(--text-secondary)]">·</span>
-              <span className="inline-flex items-center gap-1"><Mail size={12} className="text-[var(--icon-color)]" /> Shared access</span>
-              <span className="text-[var(--text-secondary)]">·</span>
-              <span className="inline-flex items-center gap-1"><Sparkles size={12} className="text-[var(--icon-color)]" /> {cloud ? 'Cloud sync' : 'Private'}</span>
-            </div>
-          </div>
+          <PageShell
+            heroAssetKey="pageLoginHero"
+            heroContent={(
+              <div className="px-6 pb-5 pt-7 text-center">
+                <div className="mb-1 flex justify-center">
+                  <BrandIcon width={180} />
+                </div>
+                <h1 className="mt-1 text-xl font-bold tracking-tight text-[var(--text-primary)]">
+                  {BRAND.heroTitle}
+                </h1>
+                <div className="mt-3 flex items-center justify-center gap-3 text-[11px] text-[var(--text-primary)]">
+                  <span className="inline-flex items-center gap-1"><ShieldCheck size={12} className="text-[var(--icon-color)]" /> Secure</span>
+                  <span className="text-[var(--text-secondary)]">·</span>
+                  <span className="inline-flex items-center gap-1"><Mail size={12} className="text-[var(--icon-color)]" /> Shared access</span>
+                  <span className="text-[var(--text-secondary)]">·</span>
+                  <span className="inline-flex items-center gap-1"><Sparkles size={12} className="text-[var(--icon-color)]" /> {cloud ? 'Cloud sync' : 'Private'}</span>
+                </div>
+              </div>
+            )}
+          >
 
           {/* Tabs + Form */}
           <div className="px-5 pb-6 pt-4">
@@ -303,6 +308,7 @@ export default function LoginPage() {
               </button>
             </form>
           </div>
+          </PageShell>
         </div>
       </div>
     </div>

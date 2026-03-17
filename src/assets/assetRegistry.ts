@@ -25,6 +25,15 @@ import brandWordmarkUrl from './brand-wordmark.svg';
 import brandLockupHorizontalUrl from './brand-lockup-horizontal.svg';
 import brandLockupStackedUrl from './brand-lockup-stacked.svg';
 import brandMonochromeMarkUrl from './brand-mark-monochrome.svg';
+import pageAddEntryHeroLightUrl from './themes/light/hero-addentryheader.png';
+import pageDashboardHeroLightUrl from './themes/light/hero-dashboardheader.png';
+import pageHelpHeroLightUrl from './themes/light/hero-helpheader.png';
+import pageLeapsHeroLightUrl from './themes/light/hero-leapsheader.png';
+import pageLoginHeroLightUrl from './themes/light/hero-loginheader.png';
+import pageMilestonesHeroLightUrl from './themes/light/hero-milestoneheader.png';
+import pageProfilesHeroLightUrl from './themes/light/hero-profilesheader.png';
+import pageReportsHeroLightUrl from './themes/light/hero-reportsheader.png';
+import pageSettingsHeroLightUrl from './themes/light/hero-settingsheader.png';
 
 /**
  * Master asset registry.
@@ -78,10 +87,15 @@ export const ASSET_REGISTRY: AssetRegistry = {
   // iconSleep: { light: sleepLightUrl },
 
   // ── Backgrounds ───────────────────────────────────────────────────
-  // Drop hero/card background images and register them here:
-  //
-  // pageDashboardHero: { light: heroLightUrl, dark: heroDarkUrl },
-  // cardEntryBackground: { light: cardBgLightUrl },
+  pageDashboardHero: { light: pageDashboardHeroLightUrl },
+  pageAddEntryHero: { light: pageAddEntryHeroLightUrl },
+  pageReportsHero: { light: pageReportsHeroLightUrl },
+  pageSettingsHero: { light: pageSettingsHeroLightUrl },
+  pageMilestonesHero: { light: pageMilestonesHeroLightUrl },
+  pageLeapsHero: { light: pageLeapsHeroLightUrl },
+  pageProfilesHero: { light: pageProfilesHeroLightUrl },
+  pageHelpHero: { light: pageHelpHeroLightUrl },
+  pageLoginHero: { light: pageLoginHeroLightUrl },
 
   // ── State illustrations ───────────────────────────────────────────
   // stateEmpty: { light: emptyLightUrl },

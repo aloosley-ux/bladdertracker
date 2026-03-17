@@ -17,6 +17,7 @@ import {
 import { Link, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/useApp';
 import BrandIcon from '../components/BrandIcon';
+import PageShell from '../components/PageShell';
 import { BRAND, HELP_COPY, getModuleLabel } from '../content/presentation';
 
 const ONBOARDING_KEY = 'bt_onboarding_seen';
@@ -144,17 +145,20 @@ export default function HelpPage() {
 
   return (
     <div className="pb-20">
-      {/* ── Header ──────────────────────────────────────────────── */}
-      <div className="bg-[var(--bg-secondary)] px-4 pb-4 pt-6">
-        <div className="flex flex-col items-center text-center px-4">
-          <HelpCircle size={28} className="text-lavender-500 mb-1" />
-          <h1 className="mt-1 text-base font-bold text-[var(--text-primary)]">Help &amp; support</h1>
-          <p className="mt-0.5 text-xs text-[var(--text-secondary)]">
-            Calm guidance, privacy notes, and accessibility support
-          </p>
-        </div>
-      </div>
-
+      <PageShell
+        heroAssetKey="pageHelpHero"
+        heroContent={(
+          <div className="px-4 pb-4 pt-6">
+            <div className="flex flex-col items-center px-4 text-center">
+              <HelpCircle size={28} className="mb-1 text-lavender-500" />
+              <h1 className="mt-1 text-base font-bold text-[var(--text-primary)]">Help &amp; support</h1>
+              <p className="mt-0.5 text-xs text-[var(--text-secondary)]">
+                Calm guidance, privacy notes, and accessibility support
+              </p>
+            </div>
+          </div>
+        )}
+      >
       <div className="space-y-4 px-4 pt-4">
         {/* ── Getting Started ───────────────────────────────────── */}
         <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
@@ -313,6 +317,7 @@ export default function HelpPage() {
           </div>
         </section>
       </div>
+      </PageShell>
     </div>
   );
 }

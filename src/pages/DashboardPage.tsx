@@ -6,6 +6,7 @@ import { useApp } from '../context/useApp';
 import EntryCard from '../components/EntryCard';
 import EntryDetail from '../components/EntryDetail';
 import CelebrationBanner from '../components/CelebrationBanner';
+import PageShell from '../components/PageShell';
 import TodayCombined from '../components/TodayCombined';
 import { getDashboardCelebration, getModuleLabel, TOILET_OUTCOME_LABELS, URINE_COPY } from '../content/presentation';
 import { DEFAULT_MODULES } from '../types';
@@ -173,34 +174,35 @@ export default function DashboardPage() {
 
   return (
     <div className="pb-20 bg-[var(--bg-primary)] min-h-screen">
-      {/* ── Header ──────────────────────────────────────────────────── */}
-      <div className="bg-[var(--bg-secondary)] pb-4">
-        <div className="flex flex-col gap-1 px-4 pt-6">
-           <h1 className="text-xl font-bold leading-snug text-[var(--text-primary)]" aria-label="Dashboard heading">
-             Home
-           </h1>
-          <p className="text-sm text-[var(--text-secondary)]">Quickly capture and review drinks, sleeps, visits and meals for {selectedChild.name}</p>
-          <p className="text-xs text-[var(--text-secondary)]">{todayLabel}</p>
-        </div>
+      <PageShell
+        heroAssetKey="pageDashboardHero"
+        heroContent={(
+          <div className="pb-4">
+            <div className="flex flex-col gap-1 px-4 pt-6">
+              <h1 className="text-xl font-bold leading-snug text-[var(--text-primary)]" aria-label="Dashboard heading">
+                Home
+              </h1>
+              <p className="text-sm text-[var(--text-secondary)]">Quickly capture and review drinks, sleeps, visits and meals for {selectedChild.name}</p>
+              <p className="text-xs text-[var(--text-secondary)]">{todayLabel}</p>
+            </div>
 
-        {children.length > 1 && (
-          <select
-            aria-label="Select child"
-            value={selectedChildId ?? ''}
-            onChange={(event) => selectChild(event.target.value)}
-            className="mx-4 mt-3 mb-2 w-[calc(100%-2rem)] rounded-2xl border border-[var(--border-color)] bg-[var(--bg-input)] px-4 py-3 text-sm font-medium text-[var(--text-primary)] shadow-sm outline-none"
-          >
-            {children.map((child) => (
-              <option key={child.id} value={child.id}>
-                {child.name}
-              </option>
-            ))}
-          </select>
+            {children.length > 1 && (
+              <select
+                aria-label="Select child"
+                value={selectedChildId ?? ''}
+                onChange={(event) => selectChild(event.target.value)}
+                className="mx-4 mt-3 mb-2 w-[calc(100%-2rem)] rounded-2xl border border-[var(--border-color)] bg-[var(--bg-input)] px-4 py-3 text-sm font-medium text-[var(--text-primary)] shadow-sm outline-none"
+              >
+                {children.map((child) => (
+                  <option key={child.id} value={child.id}>
+                    {child.name}
+                  </option>
+                ))}
+              </select>
+            )}
+          </div>
         )}
-
-        {/* Quick nav links removed — redundant with bottom navigation and module entry points */}
-      </div>
-
+      >
       <div className="space-y-4 px-4 pt-4">
         {dueReminders.length > 0 && selectedChildId && (
           <section aria-label="Reminders" className="rounded-2xl border border-violet-200 bg-violet-50 p-4">
@@ -597,6 +599,7 @@ export default function DashboardPage() {
           ))}
         </div>
       </div>
+      </PageShell>
     </div>
   );
 }
