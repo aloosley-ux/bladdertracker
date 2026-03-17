@@ -5,7 +5,7 @@ import AssetImage from './AssetImage';
  * Full-width banner logo for the top of every main page.
  *
  * To refresh the brand banner:
- * - replace `src/assets/brand-lockup-horizontal.svg`, or
+ * - replace `src/assets/brand-lockup-horizontal.png` (and the `-dark` / `-hc` variants), or
  * - add themed variants and update `brandLockupHorizontal` in the asset registry.
  */
 export default function BrandBanner() {
