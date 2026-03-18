@@ -27,9 +27,9 @@ Each entry describes one **semantic asset slot** in the application.
 
 | Asset Key | Purpose | Where Used | Required | Theme Variants | Format | Dimensions | Transparency | Notes |
 |-----------|---------|-----------|----------|---------------|--------|------------|-------------|-------|
-| `brandMark` | Primary app icon / logo mark | `BrandIcon`, login, PWA icon | ✅ Provided | Light, Dark, High Contrast | SVG | 256×256 | ✅ Yes | Currently uses `brand-mark.svg`. HC uses monochrome variant. |
+| `brandMark` | Primary app icon / logo mark | `BrandIcon`, login, PWA icon | ✅ Provided | Light, Dark, High Contrast | PNG | 256×256 | ✅ Yes | Uses `brand-icon.png` with `-dark` and `-hc` variants. |
 | `brandWordmark` | Text-only logo | Settings, about section | ✅ Provided | All 3 | SVG | 400×80 | ✅ Yes | Should be legible at 60px height. |
-| `brandLockupHorizontal` | Logo + wordmark side-by-side | `BrandBanner` (top of every page) | ✅ Provided | All 3 | SVG | 800×200 | ✅ Yes | Rendered at 100–120px height. Keep text readable at small sizes. |
+| `brandLockupHorizontal` | Logo + wordmark side-by-side | `BrandBanner` (top of every page) | ✅ Provided | All 3 | PNG | 800×200 | ✅ Yes | Uses `brand-lockup-horizontal.png` with `-dark` and `-hc` variants. Rendered at 100–120px height. |
 | `brandLockupStacked` | Logo + wordmark stacked | Splash/onboarding | ✅ Provided | All 3 | SVG | 400×400 | ✅ Yes | Used for square layout contexts. |
 | `brandMonochromeMark` | Single-colour logo variant | High-contrast fallback | ✅ Provided | HC only | SVG | 256×256 | ✅ Yes | White or `currentColor`. Used in HC theme. |
 
@@ -143,11 +143,11 @@ Shown when a page or section has no data, or to indicate success/error/loading s
 | Branding | 5 | 5 ✅ | 0 |
 | Navigation Icons | 11 | 0 | 11 |
 | Module Icons | 13 | 0 | 13 |
-| Page Heroes | 9 | 0 | 9 |
-| Card Backgrounds | 3 | 0 | 3 |
+| Page Heroes | 9 | 9 ✅ | 0 |
+| Card Backgrounds | 3 | 2 ✅ | 1 |
 | State Illustrations | 8 | 0 | 8 |
 | UI Elements | 7 | 0 | 7 |
-| **Total** | **56** | **5** | **51** |
+| **Total** | **56** | **21** | **35** |
 
 ### Priority Order for Asset Creation
 
