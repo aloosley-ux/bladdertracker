@@ -14,6 +14,7 @@ interface BrandIconProps {
   className?: string;
 }
 
+// BrandIcon — themed brand mark image used in login and onboarding screens.
 export default function BrandIcon({ width = 140, className = '' }: BrandIconProps) {
   return (
     <AssetImage

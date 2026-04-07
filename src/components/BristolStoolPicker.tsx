@@ -16,6 +16,7 @@ interface BristolStoolPickerProps {
   onChange: (type: BristolStoolType) => void;
 }
 
+// BristolStoolPicker — interactive Bristol stool chart selector with colour-coded type buttons.
 export default function BristolStoolPicker({ value, onChange }: BristolStoolPickerProps) {
   return (
     <div className="space-y-2">

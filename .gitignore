@@ -13,6 +13,15 @@ dist-ssr
 *.local
 .vercel
 
+# Environment variable files — never commit secrets
+.env
+.env.local
+.env.*.local
+
+# Capacitor native platforms (managed outside repo)
+ios/
+android/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

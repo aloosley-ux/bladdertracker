@@ -9,6 +9,7 @@ import {
 import { STATUS_LABELS } from './leapConstants';
 import LeapTimelineCard from './LeapTimelineCard';
 
+// LeapTimeline — full timeline view of all leaps with status filtering and expand/collapse.
 export default function LeapTimeline({ child }: { child: Child }) {
   const refDate = getLeapReferenceDate(child.dateOfBirth, child.dueDate);
   const predictions = useMemo(() => predictLeaps(refDate, new Date()), [refDate]);

@@ -30,6 +30,7 @@ function applyDyslexia(val: boolean) {
   document.documentElement.setAttribute('data-dyslexia', String(val));
 }
 
+// ThemeProvider — manages light/dark/high-contrast themes and dyslexia font toggle.
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<Theme>(() => {
     const initial = getInitialTheme();

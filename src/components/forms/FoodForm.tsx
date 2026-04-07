@@ -8,6 +8,7 @@ import HelpPanel from '../HelpPanel';
 import { FormStep } from './FormStep';
 import type { MealType, FoodTexture, FoodAcceptance } from '../../types';
 
+// FoodForm — entry form for meals with type, description, portions, texture, and acceptance.
 export default function FoodForm() {
   const { addFoodEntry, selectedChildId, user } = useApp();
   const navigate = useNavigate();

@@ -1,5 +1,5 @@
-import { Suspense, lazy, useEffect, useMemo } from 'react';
-import { BrowserRouter, Navigate, Route, Routes, useSearchParams } from 'react-router-dom';
+import { Suspense, lazy, useCallback, useEffect, useMemo } from 'react';
+import { BrowserRouter, Navigate, Route, Routes, useNavigate, useSearchParams } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import { AppProvider } from './context/AppContext';
 import { useApp } from './context/useApp';
@@ -10,6 +10,7 @@ import LoginPage from './pages/LoginPage';
 import HelpPage, { WelcomeModal } from './pages/HelpPage';
 import { promoteToAdmin, addAuditEvent } from './utils/storage';
 import { apiPromoteToAdmin } from './utils/api';
+import { usePushNotifications } from './hooks/usePushNotifications';
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 const AddEntryPage = lazy(() => import('./pages/AddEntryPage'));
 const ReportsPage = lazy(() => import('./pages/ReportsPage'));
@@ -89,6 +90,27 @@ function AdminAccessHandler() {
 /** Fallback used during the brief loading window before enabledModules is populated. */
 const DEFAULT_ENABLED = new Set(DEFAULT_MODULES.filter((m) => m.defaultEnabled).map((m) => m.id));
 
+/** Registers for native push notifications after the user is authenticated. */
+function PushNotificationHandler() {
+  const { user } = useApp();
+  const navigate = useNavigate();
+
+  const handleAction = useCallback(
+    (data: Record<string, unknown>) => {
+      const route = typeof data.route === 'string' ? data.route : '/';
+      navigate(route);
+    },
+    [navigate],
+  );
+
+  usePushNotifications({
+    isAuthenticated: !!user,
+    onNotificationAction: handleAction,
+  });
+
+  return null;
+}
+
 function AppRoutes() {
   const { user, enabledModules } = useApp();
 
@@ -112,6 +134,7 @@ function AppRoutes() {
       <AppNav />
       <WelcomeModal />
       <AdminAccessHandler />
+      <PushNotificationHandler />
       <main id="main-content" className="mx-auto max-w-5xl px-0 md:px-6 pb-20 md:pb-6 pt-0 md:pt-4">
         <ErrorBoundary>
           <Suspense fallback={<RouteLoadingFallback />}>

@@ -12,6 +12,7 @@ interface EmptyStateProps {
   onAction?: () => void;
 }
 
+// EmptyState — centred placeholder with optional illustration, title, and action button.
 export default function EmptyState({
   icon,
   illustrationAsset,

@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { sql } from './_lib/db.js';
 import { getSessionFromRequest, generateId, cors } from './_lib/auth.js';
+import { validateLengths, MAX_LENGTHS } from './_lib/validation.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   cors(res);
@@ -45,6 +46,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (req.method === 'POST') {
     const { name, dateOfBirth, dueDate, avatar } = req.body ?? {};
     if (!name) { res.status(400).json({ error: 'Name is required' }); return; }
+    if (!validateLengths(res, [['name', name, MAX_LENGTHS.name]])) return;
 
     const id = generateId();
     const accessType = session.role === 'parent' ? 'parent' : 'caregiver';
@@ -82,6 +84,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'PUT') {
     const { id, name, dateOfBirth, dueDate, avatar } = req.body ?? {};
     if (!id) { res.status(400).json({ error: 'Child id is required' }); return; }
+    if (!validateLengths(res, [['name', name, MAX_LENGTHS.name]])) return;
+
+    // Only the child's creator may update the profile
+    const access = await sql`SELECT id FROM children WHERE id = ${id} AND created_by = ${session.userId}`;
+    if (!access.rows.length) { res.status(403).json({ error: 'Not found or access denied' }); return; }
 
     await sql`
       UPDATE children SET

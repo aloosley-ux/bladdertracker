@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Child } from '../../types';
 
+// DueDateEditor — editable date input for due date or date of birth with save confirmation.
 export default function DueDateEditor({
   child,
   onSave,

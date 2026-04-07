@@ -50,6 +50,7 @@ function YesNo({ value, onChange, yesLabel = '✓ Yes', noLabel = '✗ No' }: { 
   );
 }
 
+// EntryEditForm — unified edit form that handles all tracker module entry types.
 export default function EntryEditForm({
   type,
   entry,

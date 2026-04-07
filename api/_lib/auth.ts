@@ -1,6 +1,12 @@
 import { SignJWT, jwtVerify } from 'jose';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
+// Fail fast in production if JWT_SECRET is not configured — the fallback value is
+// insecure and must never reach a live deployment.
+if (process.env.NODE_ENV === 'production' && !process.env.JWT_SECRET) {
+  throw new Error('JWT_SECRET environment variable must be set in production');
+}
+
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'bladdertracker-dev-secret-change-me');
 const COOKIE_NAME = 'bt_session';
 
@@ -81,8 +87,13 @@ export function generateId(): string {
 }
 
 export function cors(res: VercelResponse): void {
+  // Restrict CORS to the configured origin. Credentials (cookies) require a specific
+  // origin — browsers reject the wildcard '*' + credentials combination.
+  const origin = process.env.ALLOWED_ORIGIN || process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : 'http://localhost:5173';
   res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', origin);
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 }

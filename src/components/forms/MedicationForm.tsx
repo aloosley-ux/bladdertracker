@@ -6,6 +6,7 @@ import { generateId } from '../../utils/storage';
 import HelpPanel from '../HelpPanel';
 import { FormStep } from './FormStep';
 
+// MedicationForm — entry form for medication name, dosage, and administration status.
 export default function MedicationForm() {
   const { addMedicationEntry, selectedChildId, user } = useApp();
   const navigate = useNavigate();

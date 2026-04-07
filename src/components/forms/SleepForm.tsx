@@ -9,6 +9,7 @@ import { URINE_COPY } from '../../content/presentation';
 import { FormStep } from './FormStep';
 import type { SleepEventType } from '../../types';
 
+// SleepForm — entry form for sleep events with bedtime, duration, quality, and night activity.
 export default function SleepForm() {
   const { addSleepEntry, selectedChildId, user } = useApp();
   const navigate = useNavigate();

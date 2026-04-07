@@ -358,6 +358,19 @@ export async function migrate(): Promise<string[]> {
   `;
   log.push('reminder_preferences table ready');
 
+  // Device tokens for push notifications (Capacitor native apps)
+  await sql`
+    CREATE TABLE IF NOT EXISTS device_tokens (
+      id TEXT PRIMARY KEY,
+      user_id TEXT REFERENCES accounts(id) ON DELETE CASCADE,
+      token TEXT NOT NULL,
+      platform VARCHAR(10) NOT NULL DEFAULT 'unknown' CHECK (platform IN ('ios', 'android', 'unknown')),
+      created_at TIMESTAMPTZ DEFAULT NOW(),
+      UNIQUE (user_id, token)
+    )
+  `;
+  log.push('device_tokens table ready');
+
   // Update accounts role constraint to include new roles (safe: existing roles are a subset)
   try {
     await sql`ALTER TABLE accounts DROP CONSTRAINT IF EXISTS accounts_role_check`;

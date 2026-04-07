@@ -7,6 +7,7 @@ import HelpPanel from '../HelpPanel';
 import { FormStep } from './FormStep';
 import type { TherapyType } from '../../types';
 
+// TherapyForm — entry form for therapy sessions with type, provider, duration, and goals.
 export default function TherapyForm() {
   const { addTherapyEntry, selectedChildId, user } = useApp();
   const navigate = useNavigate();

@@ -1,3 +1,4 @@
+// FormStep — step counter badge and title wrapper used by all tracker entry forms.
 export function FormStep({ step, title, children }: { step: number; title: string; children: React.ReactNode }) {
   return (
     <div className="space-y-2">

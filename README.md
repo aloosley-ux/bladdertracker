@@ -340,6 +340,9 @@ cp .env.example .env.local
 | `DATABASE_URL` / `POSTGRES_URL` | Cloud mode | Neon Postgres connection string |
 | `JWT_SECRET` | Cloud mode | Signs server-side session tokens |
 | `ADMIN_ACCESS_KEY` | Cloud mode | Server-side admin promotion key used by `/api/auth` |
+| `ALLOWED_ORIGIN` | Cloud mode | Restricts CORS to a single origin (e.g. `https://your-app.vercel.app`). Falls back to `VERCEL_URL` then `localhost:5173` |
+| `UPSTASH_REDIS_REST_URL` | Cloud mode (recommended) | Upstash Redis URL for API rate limiting. If unset, rate limiting is disabled |
+| `UPSTASH_REDIS_REST_TOKEN` | Cloud mode (recommended) | Upstash Redis token for API rate limiting |
 | `NODE_ENV` | All environments | Controls production-only cookie hardening |
 
 Deployment checklist:

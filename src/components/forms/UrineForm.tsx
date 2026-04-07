@@ -9,6 +9,7 @@ import { URINE_COPY } from '../../content/presentation';
 import { FormStep } from './FormStep';
 import type { UrineEntry } from '../../types';
 
+// UrineForm — entry form for urine entries with outcome, volume, urgency, and leakage.
 export default function UrineForm() {
   const { addUrineEntry, selectedChildId, user } = useApp();
   const navigate = useNavigate();

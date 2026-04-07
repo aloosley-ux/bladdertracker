@@ -9,6 +9,7 @@ import NotificationBell from './NotificationBell';
 /** Fallback used before enabledModules is populated. */
 const DEFAULT_ENABLED = new Set(DEFAULT_MODULES.filter((m) => m.defaultEnabled).map((m) => m.id));
 
+// AppNav — primary navigation with sticky desktop top bar and fixed mobile bottom bar.
 export default function AppNav() {
   const { user, enabledModules } = useApp();
   const isAdmin = user?.role === 'admin';
@@ -35,7 +36,7 @@ export default function AppNav() {
       <nav
         role="navigation"
         aria-label="Primary navigation"
-        className="sticky top-0 z-50 hidden border-b border-[var(--border-color)] bg-[var(--bg-secondary)] md:block"
+        className="sticky top-0 z-50 hidden border-b border-[var(--border-color)] bg-[var(--bg-secondary)] safe-area-top md:block"
       >
         <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-6">
           <div className="flex flex-col">
@@ -73,7 +74,7 @@ export default function AppNav() {
       {/* Mobile: sticky top bar with brand + notification bell */}
       <header
         aria-label="App header"
-        className="sticky top-0 z-50 flex items-center justify-between border-b border-[var(--border-color)] bg-[var(--bg-secondary)] px-4 py-2 md:hidden"
+        className="sticky top-0 z-50 flex items-center justify-between border-b border-[var(--border-color)] bg-[var(--bg-secondary)] px-4 py-2 safe-area-top md:hidden"
       >
         <span className="text-base font-bold tracking-tight text-lavender-700">{BRAND.name}</span>
         <NotificationBell />

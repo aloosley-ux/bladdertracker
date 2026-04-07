@@ -9,6 +9,7 @@ const TONE_STYLES: Record<CelebrationTone, string> = {
   sky: 'border-sky-200 bg-sky-50 text-sky-900',
 };
 
+// CelebrationBanner — dismissible banner with emoji, title, message, and optional action.
 export default function CelebrationBanner({
   emoji,
   title,
@@ -44,7 +45,7 @@ export default function CelebrationBanner({
           <button
             type="button"
             onClick={() => setDismissed(true)}
-            className="shrink-0 rounded-full p-1 opacity-60 transition hover:opacity-100"
+            className="shrink-0 rounded-full p-3 opacity-60 transition hover:opacity-100"
             aria-label="Dismiss banner"
           >
             <X size={14} />

@@ -11,6 +11,7 @@ import {
 import { STATUS_COLOURS, STATUS_LABELS } from './leapConstants';
 import generateICS from './generateICS';
 
+// LeapCalendarWidget — shows upcoming leaps with iCalendar export functionality.
 export default function LeapCalendarWidget({ child }: { child: Child }) {
   const refDate = getLeapReferenceDate(child.dateOfBirth, child.dueDate);
   const predictions = useMemo(() => predictLeaps(refDate, new Date()), [refDate]);

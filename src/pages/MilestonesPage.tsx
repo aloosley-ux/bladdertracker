@@ -62,6 +62,7 @@ function bucketStart(date: Date, zoom: ZoomMode): Date {
   return startOfMonth(date);
 }
 
+// MilestonesPage — milestone tracker with category, status, and time window filtering.
 export default function MilestonesPage() {
   const {
     selectedChild,

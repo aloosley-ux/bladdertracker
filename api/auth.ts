@@ -10,10 +10,16 @@ import {
   cors,
 } from './_lib/auth.js';
 import { logger } from './_lib/logger.js';
+import { applyRateLimit } from './_lib/rateLimit.js';
+import { validateLengths, MAX_LENGTHS } from './_lib/validation.js';
+import { validateEnv } from './_lib/validateEnv.js';
 
 const SELF_REGISTRATION_ROLES = new Set(['parent', 'caregiver', 'schoolAdmin']);
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  // Fail fast if required env vars are missing (see api/_lib/validateEnv.ts)
+  validateEnv();
+
   cors(res);
   if (req.method === 'OPTIONS') { res.status(200).end(); return; }
 
@@ -33,6 +39,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const action = (req.body?.action || req.query.action) as string | undefined;
+
+  // Rate-limit login, register, and reset to prevent brute-force / credential-stuffing
+  if (action === 'login' || action === 'register' || action === 'reset') {
+    const allowed = await applyRateLimit(req, res);
+    if (!allowed) return;
+  }
 
   switch (action) {
     case 'register': return handleRegister(req, res);
@@ -91,14 +103,15 @@ async function handleLogin(req: VercelRequest, res: VercelResponse) {
   `;
 
   if (result.rows.length === 0) {
-    res.status(401).json({ error: 'No account exists with that email.' });
+    // Use the same response as a wrong password to prevent email enumeration
+    res.status(401).json({ error: 'Invalid email or password.' });
     return;
   }
 
   const account = result.rows[0];
   const valid = await bcrypt.compare(password, account.password_hash);
   if (!valid) {
-    res.status(401).json({ error: 'Incorrect password.' });
+    res.status(401).json({ error: 'Invalid email or password.' });
     return;
   }
 
@@ -129,6 +142,12 @@ async function handleRegister(req: VercelRequest, res: VercelResponse) {
     res.status(400).json({ error: 'Name, email, and password are required.' });
     return;
   }
+
+  if (!validateLengths(res, [
+    ['name', name, MAX_LENGTHS.name],
+    ['email', email, MAX_LENGTHS.email],
+    ['password', password, MAX_LENGTHS.password],
+  ])) return;
 
   if (password.length < 8) {
     res.status(400).json({ error: 'Password must be at least 8 characters.' });
@@ -165,39 +184,57 @@ async function handleRegister(req: VercelRequest, res: VercelResponse) {
 }
 
 async function handleReset(req: VercelRequest, res: VercelResponse) {
-  const { email, password } = req.body ?? {};
-
-  if (!email || !password) {
-    res.status(400).json({ error: 'Email and new password are required.' });
+  // Password reset requires an active session — the user must be logged in to change
+  // their own password. This prevents unauthenticated account takeover via email enumeration.
+  const session = await getSessionFromRequest(req);
+  if (!session) {
+    res.status(401).json({ error: 'You must be signed in to change your password.' });
     return;
   }
+
+  const { currentPassword, password } = req.body ?? {};
+
+  if (!currentPassword || !password) {
+    res.status(400).json({ error: 'Current password and new password are required.' });
+    return;
+  }
+
+  if (!validateLengths(res, [
+    ['password', password, MAX_LENGTHS.password],
+  ])) return;
 
   if (password.length < 8) {
-    res.status(400).json({ error: 'Password must be at least 8 characters.' });
+    res.status(400).json({ error: 'New password must be at least 8 characters.' });
     return;
   }
 
-  const normalEmail = email.trim().toLowerCase();
-
-  const result = await sql`SELECT id, name, role, avatar, created_at FROM accounts WHERE email = ${normalEmail}`;
+  const result = await sql`SELECT id, name, email, role, avatar, created_at, password_hash FROM accounts WHERE id = ${session.userId}`;
   if (result.rows.length === 0) {
-    res.status(404).json({ error: 'No account exists with that email.' });
+    res.status(404).json({ error: 'Account not found.' });
     return;
   }
 
   const account = result.rows[0];
+
+  // Verify current password before allowing the change
+  const validCurrent = await bcrypt.compare(currentPassword, account.password_hash);
+  if (!validCurrent) {
+    res.status(401).json({ error: 'Current password is incorrect.' });
+    return;
+  }
+
   const passwordHash = await bcrypt.hash(password, 12);
 
   await sql`UPDATE accounts SET password_hash = ${passwordHash} WHERE id = ${account.id}`;
 
-  const token = await createSessionToken({ userId: account.id, email: normalEmail, role: account.role });
+  const token = await createSessionToken({ userId: account.id, email: account.email, role: account.role });
   setSessionCookie(res, token);
 
   res.status(200).json({
     user: {
       id: account.id,
       name: account.name,
-      email: normalEmail,
+      email: account.email,
       role: account.role,
       avatar: account.avatar,
       createdAt: account.created_at,
@@ -257,7 +294,7 @@ async function handlePromote(req: VercelRequest, res: VercelResponse) {
     return;
   }
 
-  const configuredKey = process.env.ADMIN_ACCESS_KEY || process.env.VITE_ADMIN_KEY;
+  const configuredKey = process.env.ADMIN_ACCESS_KEY;
   if (!configuredKey) {
     res.status(503).json({ error: 'Admin promotion is not configured.' });
     return;

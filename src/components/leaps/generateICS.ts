@@ -1,6 +1,7 @@
 import { format, addDays } from 'date-fns';
 import type { LeapPrediction } from '../../data/leapData';
 
+// generateICS — generates iCalendar (.ics) string from leap predictions for calendar export.
 export default function generateICS(predictions: LeapPrediction[], childName: string): string {
   const now = new Date();
   const stamp = format(now, "yyyyMMdd'T'HHmmss'Z'");

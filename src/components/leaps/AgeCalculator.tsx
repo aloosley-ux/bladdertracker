@@ -8,6 +8,7 @@ import {
   getNextLeap,
 } from '../../data/leapData';
 
+// AgeCalculator — displays child's age in months and predicts current/next developmental leap.
 export default function AgeCalculator({ child }: { child: Child }) {
   const now = new Date();
   const birthDate = parseISO(child.dateOfBirth);

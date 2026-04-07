@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import type { ReactNode } from 'react';
 import clsx from 'clsx';
 import { useThemeAsset } from '../hooks/useThemeAsset';
@@ -21,7 +21,8 @@ interface EntryCardProps {
   className?: string;
 }
 
-export default function EntryCard({
+// EntryCard — expandable tracker entry card with title, time, icon, and delete action.
+export default memo(function EntryCard({
   icon,
   iconAsset,
   title,
@@ -98,4 +99,4 @@ export default function EntryCard({
       )}
     </article>
   );
-}
+});

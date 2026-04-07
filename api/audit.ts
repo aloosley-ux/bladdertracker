@@ -14,9 +14,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const subject = req.query.subject as string | undefined;
   let result;
   if (subject) {
+    // Scope to the current user — never expose other users' audit events
     result = await sql`
       SELECT id, user_id, action, subject, detail, created_at
-      FROM audit_events WHERE subject = ${subject}
+      FROM audit_events WHERE subject = ${subject} AND user_id = ${session.userId}
       ORDER BY created_at DESC LIMIT 100
     `;
   } else {

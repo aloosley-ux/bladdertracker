@@ -10,6 +10,7 @@ import { BRISTOL_GUIDANCE_TEXT } from '../../content/presentation';
 import { FormStep } from './FormStep';
 import type { BristolStoolType, BowelAmount } from '../../types';
 
+// BowelForm — entry form for bowel movements with Bristol chart, amount, and laxative tracking.
 export default function BowelForm() {
   const { addBowelEntry, selectedChildId, user } = useApp();
   const navigate = useNavigate();

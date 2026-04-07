@@ -40,6 +40,7 @@ function isApiAvailable(): boolean {
 const DAY_IN_MS = 24 * 60 * 60 * 1000;
 const WEEK_IN_MS = 7 * DAY_IN_MS;
 
+// AppProvider — root context provider managing all app state, entries, children, and CRUD operations.
 export function AppProvider({ children: childrenProp }: { children: ReactNode }) {
   const cloud = isApiAvailable();
 

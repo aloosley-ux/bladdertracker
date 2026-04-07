@@ -76,10 +76,10 @@ export async function apiGetSession(): Promise<User | null> {
   return user;
 }
 
-export async function apiResetPassword(email: string, password: string): Promise<User> {
+export async function apiResetPassword(currentPassword: string, password: string): Promise<User> {
   const { user } = await request<{ user: User }>('/auth', {
     method: 'POST',
-    body: JSON.stringify({ action: 'reset', email, password }),
+    body: JSON.stringify({ action: 'reset', currentPassword, password }),
   });
   return user;
 }

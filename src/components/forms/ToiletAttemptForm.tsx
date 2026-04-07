@@ -9,6 +9,7 @@ import { TOILET_OUTCOME_LABELS } from '../../content/presentation';
 import { FormStep } from './FormStep';
 import type { ToiletAttemptOutcome } from '../../types';
 
+// ToiletAttemptForm — entry form for toilet attempts with outcome, supervision, and prompting.
 export default function ToiletAttemptForm() {
   const { addToiletAttemptEntry, selectedChildId, user } = useApp();
   const navigate = useNavigate();

@@ -6,6 +6,7 @@ import { generateId } from '../../utils/storage';
 import HelpPanel from '../HelpPanel';
 import { FormStep } from './FormStep';
 
+// RoutineForm — entry form for daily routine activities with duration in minutes.
 export default function RoutineForm() {
   const { addRoutineEntry, selectedChildId, user } = useApp();
   const navigate = useNavigate();

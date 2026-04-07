@@ -87,7 +87,7 @@ export default function NotificationBell() {
               )}
               <button
                 onClick={() => setOpen(false)}
-                className="rounded-lg p-1 text-gray-400 hover:bg-gray-100 transition-colors"
+                className="rounded-lg p-2.5 text-gray-400 hover:bg-gray-100 transition-colors"
                 aria-label="Close notifications"
               >
                 <X size={14} aria-hidden="true" />

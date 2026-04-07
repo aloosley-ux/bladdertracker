@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import type { LeapPrediction } from '../../data/leapData';
 import { STATUS_COLOURS, STATUS_LABELS } from './leapConstants';
 
+// LeapTimelineCard — expandable card for a single leap showing stormy/sunny phases and skills.
 export default function LeapTimelineCard({
   prediction,
   expanded,

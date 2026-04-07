@@ -19,6 +19,7 @@ function formatRole(role: UserRole): string {
   return role.charAt(0).toUpperCase() + role.slice(1);
 }
 
+// ProfilesPage — child profile management with add/edit/remove and caregiver invites.
 export default function ProfilesPage() {
   const {
     user,
@@ -186,10 +187,10 @@ export default function ProfilesPage() {
                 {canManageChildren && (
                   <button
                     onClick={() => handleToggleRemoveChild(child.id)}
-                    className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-rose-50 text-rose-400 transition hover:bg-rose-100"
+                    className="absolute right-2 top-2 flex h-11 w-11 items-center justify-center rounded-full bg-rose-50 text-rose-400 transition hover:bg-rose-100"
                     title={`Remove ${child.name}`}
                   >
-                    <Trash2 size={12} />
+                    <Trash2 size={14} />
                   </button>
                 )}
 

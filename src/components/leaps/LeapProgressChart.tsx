@@ -6,6 +6,7 @@ import {
   type LeapStatus,
 } from '../../data/leapData';
 
+// LeapProgressChart — visual progress bar showing completed, active, and upcoming leaps.
 export default function LeapProgressChart({ child }: { child: Child }) {
   const refDate = getLeapReferenceDate(child.dateOfBirth, child.dueDate);
   const predictions = useMemo(() => predictLeaps(refDate, new Date()), [refDate]);

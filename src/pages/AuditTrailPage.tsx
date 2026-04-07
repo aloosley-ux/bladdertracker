@@ -6,6 +6,7 @@ import { useApp } from '../context/useApp';
 
 type AuditFilter = 'all' | 'account' | 'data' | 'settings';
 
+// AuditTrailPage — audit log viewer with category filtering and expandable event details.
 export default function AuditTrailPage() {
   const { auditTrail } = useApp();
   const [filter, setFilter] = useState<AuditFilter>('all');

@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 
+// TodayCombined — responsive layout wrapper for today summary and quick-add card.
 export default function TodayCombined({
   summary,
   quickAdd,

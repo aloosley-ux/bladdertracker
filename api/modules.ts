@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { sql, getAccessibleChildIds } from './_lib/db.js';
 import { getSessionFromRequest, generateId, cors } from './_lib/auth.js';
+import { validateLengths, MAX_LENGTHS } from './_lib/validation.js';
 
 type NewTrackerType = 'mood' | 'sensory' | 'medication' | 'therapy' | 'routine' | 'milestones';
 const VALID_TYPES = new Set<NewTrackerType>(['mood', 'sensory', 'medication', 'therapy', 'routine', 'milestones']);
@@ -200,6 +201,7 @@ async function handlePost(req: VercelRequest, res: VercelResponse, userId: strin
 
   if (type === 'mood') {
     const { level = 3, triggers = '' } = body;
+    if (!validateLengths(res, [['notes', notes, MAX_LENGTHS.notes], ['triggers', triggers, MAX_LENGTHS.triggers]])) return;
     await sql`
       INSERT INTO mood_entries (id, child_id, date, time, level, triggers, notes, created_by)
       VALUES (${id}, ${childId}, ${date}, ${time}, ${level}, ${triggers}, ${notes}, ${userId})
@@ -210,6 +212,7 @@ async function handlePost(req: VercelRequest, res: VercelResponse, userId: strin
     `;
   } else if (type === 'sensory') {
     const { sensoryType = 'other', response = 'neutral', intensity = 3 } = body;
+    if (!validateLengths(res, [['notes', notes, MAX_LENGTHS.notes]])) return;
     await sql`
       INSERT INTO sensory_entries (id, child_id, date, time, sensory_type, response, intensity, notes, created_by)
       VALUES (${id}, ${childId}, ${date}, ${time}, ${sensoryType}, ${response}, ${intensity}, ${notes}, ${userId})
@@ -221,6 +224,7 @@ async function handlePost(req: VercelRequest, res: VercelResponse, userId: strin
   } else if (type === 'medication') {
     const { name = '', dosage = '', administered = true } = body;
     if (!name || !name.trim()) { res.status(400).json({ error: 'Medication name is required' }); return; }
+    if (!validateLengths(res, [['name', name, MAX_LENGTHS.name], ['dosage', dosage, MAX_LENGTHS.dosage], ['notes', notes, MAX_LENGTHS.notes]])) return;
     await sql`
       INSERT INTO medication_entries (id, child_id, date, time, name, dosage, administered, notes, created_by)
       VALUES (${id}, ${childId}, ${date}, ${time}, ${name.trim()}, ${dosage}, ${administered}, ${notes}, ${userId})
@@ -231,6 +235,7 @@ async function handlePost(req: VercelRequest, res: VercelResponse, userId: strin
     `;
   } else if (type === 'therapy') {
     const { therapyType = 'other', provider = '', durationMinutes = 0, goals = '' } = body;
+    if (!validateLengths(res, [['provider', provider, MAX_LENGTHS.provider], ['goals', goals, MAX_LENGTHS.goals], ['notes', notes, MAX_LENGTHS.notes]])) return;
     await sql`
       INSERT INTO therapy_entries (id, child_id, date, time, therapy_type, provider, duration_minutes, goals, notes, created_by)
       VALUES (${id}, ${childId}, ${date}, ${time}, ${therapyType}, ${provider}, ${durationMinutes}, ${goals}, ${notes}, ${userId})
@@ -242,6 +247,7 @@ async function handlePost(req: VercelRequest, res: VercelResponse, userId: strin
   } else if (type === 'routine') {
     const { routineName = '', completed = true, durationMinutes = null } = body;
     if (!routineName || !routineName.trim()) { res.status(400).json({ error: 'routineName is required' }); return; }
+    if (!validateLengths(res, [['routineName', routineName, MAX_LENGTHS.name], ['notes', notes, MAX_LENGTHS.notes]])) return;
     await sql`
       INSERT INTO routine_entries (id, child_id, date, time, routine_name, completed, duration_minutes, notes, created_by)
       VALUES (${id}, ${childId}, ${date}, ${time}, ${routineName.trim()}, ${completed}, ${durationMinutes}, ${notes}, ${userId})
@@ -264,6 +270,7 @@ async function handlePost(req: VercelRequest, res: VercelResponse, userId: strin
       sourceRole = null,
     } = body;
     if (!name || !name.trim()) { res.status(400).json({ error: 'Milestone name is required' }); return; }
+    if (!validateLengths(res, [['name', name, MAX_LENGTHS.name], ['description', description, MAX_LENGTHS.description], ['notes', notes, MAX_LENGTHS.notes]])) return;
     await sql`
       INSERT INTO milestones (id, child_id, name, description, category, module_id, milestone_type, status, target_date, date_achieved, notes, source_role, created_by)
       VALUES (${id}, ${childId}, ${name.trim()}, ${description}, ${category}, ${moduleId}, ${milestoneType}, ${status}, ${targetDate}, ${dateAchieved}, ${notes}, ${sourceRole}, ${userId})
@@ -286,6 +293,7 @@ async function handlePut(req: VercelRequest, res: VercelResponse, userId: string
     res.status(400).json({ error: 'Valid trackerType required' }); return;
   }
   if (!id) { res.status(400).json({ error: 'id is required' }); return; }
+  if (!validateLengths(res, [['notes', notes, MAX_LENGTHS.notes]])) return;
 
   const type = trackerType as NewTrackerType;
   const { date, time } = body;
@@ -303,6 +311,7 @@ async function handlePut(req: VercelRequest, res: VercelResponse, userId: string
     }
     const prev = existing.rows[0];
     const { level = 3, triggers = '' } = body;
+    if (!validateLengths(res, [['triggers', triggers, MAX_LENGTHS.triggers]])) return;
     await sql`
       UPDATE mood_entries SET date=${date}, time=${time}, level=${level}, triggers=${triggers}, notes=${notes}
       WHERE id = ${id}
@@ -347,6 +356,7 @@ async function handlePut(req: VercelRequest, res: VercelResponse, userId: string
     }
     const prev = existing.rows[0];
     const { name = '', dosage = '', administered = true } = body;
+    if (!validateLengths(res, [['name', name, MAX_LENGTHS.name], ['dosage', dosage, MAX_LENGTHS.dosage]])) return;
     await sql`
       UPDATE medication_entries SET date=${date}, time=${time}, name=${name},
         dosage=${dosage}, administered=${administered}, notes=${notes}
@@ -370,6 +380,7 @@ async function handlePut(req: VercelRequest, res: VercelResponse, userId: string
     }
     const prev = existing.rows[0];
     const { therapyType = 'other', provider = '', durationMinutes = 0, goals = '' } = body;
+    if (!validateLengths(res, [['provider', provider, MAX_LENGTHS.provider], ['goals', goals, MAX_LENGTHS.goals]])) return;
     await sql`
       UPDATE therapy_entries SET date=${date}, time=${time}, therapy_type=${therapyType},
         provider=${provider}, duration_minutes=${durationMinutes}, goals=${goals}, notes=${notes}
@@ -394,6 +405,7 @@ async function handlePut(req: VercelRequest, res: VercelResponse, userId: string
     }
     const prev = existing.rows[0];
     const { routineName = '', completed = true, durationMinutes = null } = body;
+    if (!validateLengths(res, [['routineName', routineName, MAX_LENGTHS.name]])) return;
     await sql`
       UPDATE routine_entries SET date=${date}, time=${time}, routine_name=${routineName},
         completed=${completed}, duration_minutes=${durationMinutes}, notes=${notes}
@@ -427,6 +439,7 @@ async function handlePut(req: VercelRequest, res: VercelResponse, userId: string
       dateAchieved = null,
       sourceRole = null,
     } = body;
+    if (!validateLengths(res, [['name', name, MAX_LENGTHS.name], ['description', description, MAX_LENGTHS.description]])) return;
     await sql`
       UPDATE milestones SET name=${name}, description=${description}, category=${category},
         module_id=${moduleId}, milestone_type=${milestoneType}, status=${status}, target_date=${targetDate},

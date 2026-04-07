@@ -38,6 +38,7 @@ const ALL_EVENT_FILTERS = [
 
 type FilterKey = typeof ALL_EVENT_FILTERS[number]['key'];
 
+// ReportsPage — trend analysis page with configurable charts and data visualisation.
 export default function ReportsPage() {
   const {
     drinks, urineEntries, bowelEntries, sleepEntries, toiletAttemptEntries, foodEntries,

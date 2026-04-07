@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { sql } from './_lib/db.js';
 import { getSessionFromRequest, generateId, cors } from './_lib/auth.js';
+import { validateLengths, MAX_LENGTHS } from './_lib/validation.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   cors(res);
@@ -84,13 +85,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // Create invite
     const { childId, email, role } = req.body ?? {};
     if (!childId || !email || !role) { res.status(400).json({ error: 'childId, email, and role are required' }); return; }
+    if (!validateLengths(res, [['email', email, MAX_LENGTHS.email]])) return;
 
     const CREATABLE_INVITE_ROLES = new Set(['parent', 'caregiver', 'schoolAdmin', 'therapist', 'specialist']);
     if (!CREATABLE_INVITE_ROLES.has(role)) {
       res.status(400).json({ error: `Invalid invite role. Supported roles: ${[...CREATABLE_INVITE_ROLES].join(', ')}` }); return;
     }
 
-    const childResult = await sql`SELECT name FROM children WHERE id = ${childId}`;
+    // Verify the requester has access to (and owns) this child before creating an invite
+    const childResult = await sql`SELECT name FROM children WHERE id = ${childId} AND created_by = ${session.userId}`;
     if (childResult.rows.length === 0) { res.status(404).json({ error: 'Child not found' }); return; }
     const childName = childResult.rows[0].name;
 

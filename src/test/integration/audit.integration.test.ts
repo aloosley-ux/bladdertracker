@@ -15,9 +15,9 @@ vi.mock('../../../api/_lib/db.js', () => ({
     const text = parts.join('${v}');
     capturedSqlCalls.push({ query: text, values });
 
-    // Simulate SELECT for existing drink entry
-    if (text.includes('SELECT date, time, type, amount_ml, notes FROM drink_entries')) {
-      return { rows: [{ date: '2026-03-14', time: '09:00', type: 'cup', amount_ml: 100, notes: '' }] };
+    // Simulate SELECT for existing drink entry (includes child_id for ownership check)
+    if (text.includes('SELECT date, time, type, amount_ml, notes') && text.includes('FROM drink_entries')) {
+      return { rows: [{ date: '2026-03-14', time: '09:00', type: 'cup', amount_ml: 100, notes: '', child_id: 'child-1' }] };
     }
 
     // Default empty result

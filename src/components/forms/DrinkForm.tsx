@@ -7,6 +7,7 @@ import { generateId } from '../../utils/storage';
 import HelpPanel from '../HelpPanel';
 import { FormStep } from './FormStep';
 
+// DrinkForm — entry form for drinks with type (cup, bottle, sippy) and volume in ml.
 export default function DrinkForm() {
   const { addDrink, selectedChildId, user } = useApp();
   const navigate = useNavigate();

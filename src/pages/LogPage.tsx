@@ -82,6 +82,7 @@ const MODULE_META: { key: ModuleKey; label: string; emoji: string }[] = [
   { key: 'routine', label: getModuleLabel('routine'), emoji: '📋' },
 ];
 
+// LogPage — filtered diary view of all entries with calendar strip, module filtering, and time navigation.
 export default function LogPage() {
   const {
     selectedChild,

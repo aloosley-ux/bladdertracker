@@ -30,6 +30,7 @@ function isCloudMode(): boolean {
   return !!import.meta.env.VITE_USE_CLOUD;
 }
 
+// LoginPage — authentication page supporting registration, login, and password reset modes.
 export default function LoginPage() {
   const { login, acceptInvite } = useApp();
   const [searchParams] = useSearchParams();
@@ -136,8 +137,11 @@ export default function LoginPage() {
     setSubmitting(true);
     try {
       if (cloud) {
-        const user = await api.apiResetPassword(email, password);
-        await finalizeLogin(user);
+        // Cloud mode: password change requires the user to be signed in and provide
+        // their current password. This path is reached only from Settings (authenticated).
+        // Unauthenticated reset is not supported without an email-token flow.
+        setError('To change your password, please sign in first, then use Change Password in Settings.');
+        return;
       } else {
         const account = findAccountByEmail(email);
         if (!account) { setError('No account exists with that email yet.'); return; }

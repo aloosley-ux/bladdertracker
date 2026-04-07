@@ -23,6 +23,7 @@ const allRoles: { value: UserRole; label: string }[] = [
   { value: 'specialist', label: 'Specialist' },
 ];
 
+// AdminPage — admin-only page for user management, password resets, and audit events.
 export default function AdminPage() {
   const { user, login } = useApp();
   const [accounts, setAccounts] = useState(getAllAccounts());

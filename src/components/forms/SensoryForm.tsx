@@ -7,6 +7,7 @@ import HelpPanel from '../HelpPanel';
 import { FormStep } from './FormStep';
 import type { SensoryResponseType } from '../../types';
 
+// SensoryForm — entry form for sensory events with type, response, and intensity (1–5).
 export default function SensoryForm() {
   const { addSensoryEntry, selectedChildId, user } = useApp();
   const navigate = useNavigate();

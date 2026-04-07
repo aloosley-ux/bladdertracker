@@ -5,6 +5,7 @@ interface CalendarStripProps {
   onSelectDate: (date: Date) => void;
 }
 
+// CalendarStrip — horizontal week view with selectable day buttons and today highlight.
 export default function CalendarStrip({ selectedDate, onSelectDate }: CalendarStripProps) {
   const weekStart = startOfWeek(selectedDate, { weekStartsOn: 1 });
   const days = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));

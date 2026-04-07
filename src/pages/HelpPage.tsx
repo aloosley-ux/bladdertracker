@@ -132,6 +132,7 @@ const PRIVACY_COMMITMENTS = [
   },
 ];
 
+// HelpPage — onboarding and help documentation with expandable FAQ sections and resource links.
 export default function HelpPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
@@ -379,7 +380,7 @@ export function WelcomeModal() {
         <button
           type="button"
           onClick={dismiss}
-          className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-500 transition hover:bg-gray-200"
+          className="absolute right-3 top-3 flex h-11 w-11 items-center justify-center rounded-full bg-gray-100 text-gray-500 transition hover:bg-gray-200"
           aria-label="Dismiss welcome screen"
         >
           <X size={16} />

@@ -7,6 +7,7 @@ interface HelpPanelProps {
   children: ReactNode;
 }
 
+// HelpPanel — collapsible help guide panel with aria-expanded toggle.
 export default function HelpPanel({ title, children }: HelpPanelProps) {
   const [open, setOpen] = useState(false);
 

@@ -10,6 +10,7 @@ import {
   SYMPTOM_OPTIONS,
 } from '../../data/leapData';
 
+// SymptomLogger — leap symptom tracker with date, symptom selection, notes, and filtering.
 export default function SymptomLogger({ child }: { child: Child }) {
   const { user, leapSymptomLogs, addLeapSymptomLog, deleteLeapSymptomLog } = useApp();
   const [showForm, setShowForm] = useState(false);
@@ -247,7 +248,7 @@ export default function SymptomLogger({ child }: { child: Child }) {
             </div>
             <button
               onClick={() => deleteLeapSymptomLog(log.id)}
-              className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+              className="p-2.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
               aria-label={`Delete log from ${log.date}`}
             >
               <Trash2 size={14} />

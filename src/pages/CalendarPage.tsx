@@ -16,6 +16,7 @@ import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/useApp';
 import EmptyState from '../components/EmptyState';
 
+// CalendarPage — month calendar view with entry indicators and daily detail sidebar.
 export default function CalendarPage() {
   const { drinks, urineEntries, bowelEntries, sleepEntries, toiletAttemptEntries, foodEntries, selectedChildId, selectedChild } = useApp();
   const navigate = useNavigate();
@@ -75,7 +76,7 @@ export default function CalendarPage() {
             <button
               onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
               aria-label="Previous month"
-              className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-500 hover:bg-lavender-50"
+              className="w-11 h-11 rounded-full bg-gray-50 flex items-center justify-center text-gray-500 hover:bg-lavender-50"
             >
               <ChevronLeft size={16} />
             </button>
@@ -85,7 +86,7 @@ export default function CalendarPage() {
             <button
               onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
               aria-label="Next month"
-              className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-500 hover:bg-lavender-50"
+              className="w-11 h-11 rounded-full bg-gray-50 flex items-center justify-center text-gray-500 hover:bg-lavender-50"
             >
               <ChevronRight size={16} />
             </button>

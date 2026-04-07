@@ -3,6 +3,7 @@ import SymptomLogger from '../components/leaps/SymptomLogger';
 import LeapDiary from '../components/leaps/LeapDiary';
 import { useApp } from '../context/useApp';
 
+// LeapEntryPage — leap symptom logger and diary view for the selected child.
 export default function LeapEntryPage() {
   const { selectedChild, children } = useApp();
   const child = selectedChild ?? children[0] ?? null;

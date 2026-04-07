@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Shield, Database, Eye, Trash2, Clock, Mail } from 'lucide-react';
 
+// GdprPage — information page explaining data collection, storage, and GDPR compliance.
 export default function GdprPage() {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });

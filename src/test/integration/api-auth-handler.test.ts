@@ -15,6 +15,10 @@ vi.mock('../../../api/_lib/auth.js', () => ({
   cors: () => {},
 }));
 
+vi.mock('../../../api/_lib/validateEnv.js', () => ({
+  validateEnv: () => {},
+}));
+
 function createResponse() {
   let statusCode = 0;
   let jsonBody: unknown;

@@ -51,6 +51,7 @@ const ALL_TABS: { type: EntryType; icon: typeof Droplets; label: string; color: 
   { type: 'routine',    icon: ClipboardList, label: 'Routine', color: 'text-lime-600'   },
 ];
 
+// AddEntryPage — multi-tab entry form page routing to the appropriate tracker form.
 export default function AddEntryPage() {
   const location = useLocation();
   const requestedTab: EntryType = (location.state as { tab?: EntryType } | null)?.tab ?? 'drink';

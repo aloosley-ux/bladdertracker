@@ -11,6 +11,7 @@ import {
 } from '../../data/leapData';
 import { MOOD_OPTIONS } from './leapConstants';
 
+// LeapDiary — diary entry manager for leap observations with add, edit, delete, and filtering.
 export default function LeapDiary({ child }: { child: Child }) {
   const { user, leapDiaryEntries, addLeapDiaryEntry, updateLeapDiaryEntry, deleteLeapDiaryEntry } = useApp();
   const [showForm, setShowForm] = useState(false);
@@ -207,14 +208,14 @@ export default function LeapDiary({ child }: { child: Child }) {
                 <div className="flex gap-1 shrink-0">
                   <button
                     onClick={() => openEdit(entry)}
-                    className="p-1.5 rounded-lg text-gray-400 hover:text-lavender-600 hover:bg-lavender-50 transition-colors"
+                    className="p-2.5 rounded-lg text-gray-400 hover:text-lavender-600 hover:bg-lavender-50 transition-colors"
                     aria-label={`Edit note: ${entry.title}`}
                   >
                     <Edit2 size={14} />
                   </button>
                   <button
                     onClick={() => deleteLeapDiaryEntry(entry.id)}
-                    className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                    className="p-2.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
                     aria-label={`Delete note: ${entry.title}`}
                   >
                     <Trash2 size={14} />

@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { X } from 'lucide-react';
 import EntryEditForm from './EntryEditForm';
 
+// EntryEditModal — modal wrapper around EntryEditForm with focus trap and keyboard handling.
 export default function EntryEditModal({ type, entry, onSaved, onCancel }: {
   type: string;
   entry: unknown;
@@ -65,7 +66,7 @@ export default function EntryEditModal({ type, entry, onSaved, onCancel }: {
         <button
           type="button"
           onClick={onCancel}
-          className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-500 transition hover:bg-gray-200"
+          className="absolute right-3 top-3 flex h-11 w-11 items-center justify-center rounded-full bg-gray-100 text-gray-500 transition hover:bg-gray-200"
           aria-label="Close edit"
         >
           <X size={16} />

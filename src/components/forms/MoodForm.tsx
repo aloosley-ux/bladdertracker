@@ -7,6 +7,7 @@ import HelpPanel from '../HelpPanel';
 import { FormStep } from './FormStep';
 import type { MoodLevel } from '../../types';
 
+// MoodForm — entry form for mood level (1–5 scale) and triggers.
 export default function MoodForm() {
   const { addMoodEntry, selectedChildId, user } = useApp();
   const navigate = useNavigate();

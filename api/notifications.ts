@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { sql } from './_lib/db.js';
-import { getSessionFromRequest, cors } from './_lib/auth.js';
+import { getSessionFromRequest, cors, generateId } from './_lib/auth.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   cors(res);
@@ -22,6 +22,31 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }));
 
     res.status(200).json({ notifications });
+    return;
+  }
+
+  if (req.method === 'POST') {
+    const { action, token, platform } = req.body ?? {};
+
+    if (action === 'register-device') {
+      if (!token || typeof token !== 'string') {
+        res.status(400).json({ error: 'Device token is required' });
+        return;
+      }
+      const plat = platform === 'ios' || platform === 'android' ? platform : 'unknown';
+
+      // Upsert: update created_at if same user+token already exists
+      await sql`
+        INSERT INTO device_tokens (id, user_id, token, platform, created_at)
+        VALUES (${generateId()}, ${session.userId}, ${token}, ${plat}, NOW())
+        ON CONFLICT (user_id, token) DO UPDATE SET platform = ${plat}, created_at = NOW()
+      `;
+
+      res.status(200).json({ ok: true });
+      return;
+    }
+
+    res.status(400).json({ error: 'Unknown action' });
     return;
   }
 

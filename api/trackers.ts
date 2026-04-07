@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { sql, getAccessibleChildIds } from './_lib/db.js';
 import { getSessionFromRequest, generateId, cors } from './_lib/auth.js';
+import { validateLengths, MAX_LENGTHS } from './_lib/validation.js';
 
 type TrackerType = 'sleep' | 'toilet_attempt' | 'food';
 
@@ -77,6 +78,7 @@ async function handlePost(req: VercelRequest, res: VercelResponse, userId: strin
     res.status(400).json({ error: 'childId, date, and time are required' });
     return;
   }
+  if (!validateLengths(res, [['notes', notes, MAX_LENGTHS.notes]])) return;
 
   const childIds = await getAccessibleChildIds(userId);
   if (!childIds.includes(childId)) { res.status(403).json({ error: 'Access denied' }); return; }
@@ -108,6 +110,7 @@ async function handlePost(req: VercelRequest, res: VercelResponse, userId: strin
   } else {
     const { mealType = 'snack', description = '', portions = null,
             isTrying = false, texture = null, accepted = null } = body;
+    if (!validateLengths(res, [['description', description, MAX_LENGTHS.description]])) return;
     await sql`
       INSERT INTO food_entries (id, child_id, date, time, meal_type, description, portions, is_trying, texture, accepted, notes, created_by)
       VALUES (${id}, ${childId}, ${date}, ${time}, ${mealType}, ${description}, ${portions}, ${isTrying}, ${texture}, ${accepted}, ${notes}, ${userId})
@@ -131,6 +134,7 @@ async function handlePut(req: VercelRequest, res: VercelResponse, userId: string
   }
   if (!id) { res.status(400).json({ error: 'id is required' }); return; }
   if (!date || !time) { res.status(400).json({ error: 'date and time are required' }); return; }
+  if (!validateLengths(res, [['notes', notes, MAX_LENGTHS.notes]])) return;
 
   // Verify the entry belongs to a child the user can access
   const childIds = await getAccessibleChildIds(userId);

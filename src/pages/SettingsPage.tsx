@@ -8,6 +8,7 @@ import {
   FileUp,
   Globe,
   HelpCircle,
+  Lock,
   LogOut,
   Palette,
   Settings,
@@ -23,13 +24,14 @@ import { useTheme } from '../context/useTheme';
 import ModuleSettings from '../components/settings/ModuleSettings';
 import PageShell from '../components/PageShell';
 import { generateId } from '../utils/storage';
-import { apiDeleteAccount } from '../utils/api';
+import { apiDeleteAccount, apiResetPassword } from '../utils/api';
 import { getImportTemplateDescription, parseImportFile } from '../utils/importers';
 import { DueDateEditor } from '../components/leaps';
 import type { Child, ModuleId } from '../types';
 
 const REMINDER_ENABLED_MODULES: ModuleId[] = ['milestones', 'therapy', 'routine', 'mood', 'leaps'];
 
+// SettingsPage — user settings for theme, font, notifications, password, and data import/export.
 export default function SettingsPage() {
   const {
     user,
@@ -64,6 +66,14 @@ export default function SettingsPage() {
 
   const [showDeleteAccount, setShowDeleteAccount] = useState(false);
   const [deleteAccountText, setDeleteAccountText] = useState('');
+
+  // Change password state (cloud mode only)
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [passwordSuccess, setPasswordSuccess] = useState('');
+  const [changingPassword, setChangingPassword] = useState(false);
 
   // Import state
   const [importMessage, setImportMessage] = useState('');
@@ -169,6 +179,34 @@ export default function SettingsPage() {
     }
   };
 
+  const handleChangePassword = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setPasswordError('');
+    setPasswordSuccess('');
+
+    if (newPassword.length < 8) {
+      setPasswordError('New password must be at least 8 characters.');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setPasswordError('Passwords do not match.');
+      return;
+    }
+
+    setChangingPassword(true);
+    try {
+      await apiResetPassword(currentPassword, newPassword);
+      setPasswordSuccess('Password changed successfully.');
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+    } catch {
+      setPasswordError('Could not change password. Check your current password and try again.');
+    } finally {
+      setChangingPassword(false);
+    }
+  };
+
   const handleImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file || !selectedChildId) return;
@@ -232,6 +270,65 @@ export default function SettingsPage() {
             </div>
           </div>
         </section>
+
+        {/* ── Change Password (cloud only) ──────────────────────────── */}
+        {cloud && (
+          <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5" aria-labelledby="password-heading">
+            <h3 id="password-heading" className="mb-3 flex items-center gap-2 text-sm font-bold text-gray-700">
+              <Lock size={16} className="text-lavender-500" /> Change Password
+            </h3>
+            <form onSubmit={handleChangePassword} className="space-y-3">
+              <div>
+                <label htmlFor="current-password" className="mb-1 block text-xs font-semibold text-gray-600">Current password</label>
+                <input
+                  id="current-password"
+                  type="password"
+                  autoComplete="current-password"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  required
+                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-lavender-400 focus:outline-none focus:ring-2 focus:ring-lavender-200"
+                />
+              </div>
+              <div>
+                <label htmlFor="new-password" className="mb-1 block text-xs font-semibold text-gray-600">New password</label>
+                <input
+                  id="new-password"
+                  type="password"
+                  autoComplete="new-password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  required
+                  minLength={8}
+                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-lavender-400 focus:outline-none focus:ring-2 focus:ring-lavender-200"
+                />
+              </div>
+              <div>
+                <label htmlFor="confirm-password" className="mb-1 block text-xs font-semibold text-gray-600">Confirm new password</label>
+                <input
+                  id="confirm-password"
+                  type="password"
+                  autoComplete="new-password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                  minLength={8}
+                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-lavender-400 focus:outline-none focus:ring-2 focus:ring-lavender-200"
+                />
+              </div>
+              {passwordError && <p className="text-xs font-semibold text-red-600" role="alert">{passwordError}</p>}
+              {passwordSuccess && <p className="text-xs font-semibold text-green-600" role="status">{passwordSuccess}</p>}
+              <button
+                type="submit"
+                disabled={changingPassword}
+                className="rounded-xl bg-lavender-500 px-4 py-2.5 text-xs font-semibold text-white shadow-sm transition-all hover:bg-lavender-600 disabled:opacity-50"
+                aria-label="Change password"
+              >
+                {changingPassword ? 'Changing…' : 'Change password'}
+              </button>
+            </form>
+          </section>
+        )}
 
         {/* ── Role & Permissions ────────────────────────────────────── */}
         <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5" aria-labelledby="role-heading">
@@ -450,10 +547,10 @@ export default function SettingsPage() {
                         setRemoveTargetId(removeTargetId === child.id ? null : child.id);
                         setRemoveConfirmText('');
                       }}
-                      className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-rose-50 text-rose-400 transition hover:bg-rose-100"
+                      className="absolute right-2 top-2 flex h-11 w-11 items-center justify-center rounded-full bg-rose-50 text-rose-400 transition hover:bg-rose-100"
                       title={`Remove ${child.name}`}
                     >
-                      <Trash2 size={12} />
+                      <Trash2 size={14} />
                     </button>
                   </>
                 )}

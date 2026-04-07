@@ -10,6 +10,7 @@ type ErrorBoundaryState = {
   hasError: boolean;
 };
 
+// ErrorBoundary — catches React render errors and displays a recovery UI.
 export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   state: ErrorBoundaryState = {
     hasError: false,

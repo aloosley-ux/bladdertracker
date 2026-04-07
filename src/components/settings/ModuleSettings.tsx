@@ -27,6 +27,7 @@ interface ModuleSettingsProps {
   onSave: (modules: ModuleId[]) => void | Promise<void>;
 }
 
+// ModuleSettings — toggleable module selector for enabling/disabling tracker modules per child.
 export default function ModuleSettings({ childName, initialModules, onSave }: ModuleSettingsProps) {
   // Use a ref to track the most-recently applied module list so that rapid
   // consecutive toggles (before the parent re-renders) compose correctly.

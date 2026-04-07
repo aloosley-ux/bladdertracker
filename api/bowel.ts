@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { sql, getAccessibleChildIds } from './_lib/db.js';
 import { getSessionFromRequest, generateId, cors } from './_lib/auth.js';
+import { validateLengths, MAX_LENGTHS } from './_lib/validation.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   cors(res);
@@ -36,6 +37,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'POST') {
     const { childId, date, time, location, amount, bristolType, laxativesGiven, notes } = req.body ?? {};
     if (!childId || !date || !time) { res.status(400).json({ error: 'childId, date, time required' }); return; }
+    if (!validateLengths(res, [['notes', notes, MAX_LENGTHS.notes]])) return;
+    // Verify the caller has access to this child before inserting
+    if (!childIds.includes(childId)) { res.status(403).json({ error: 'Access denied' }); return; }
 
     const id = generateId();
     await sql`
@@ -55,10 +59,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'PUT') {
     const { id, date, time, location, amount, bristolType, laxativesGiven, notes } = req.body ?? {};
     if (!id) { res.status(400).json({ error: 'id required' }); return; }
+    if (!validateLengths(res, [['notes', notes, MAX_LENGTHS.notes]])) return;
 
-    const existing = await sql`SELECT date, time, location, amount, bristol_type, laxatives_given, notes FROM bowel_entries WHERE id = ${id}`;
+    const existing = await sql`SELECT date, time, location, amount, bristol_type, laxatives_given, notes, child_id FROM bowel_entries WHERE id = ${id}`;
     if (!existing.rows.length) { res.status(404).json({ error: 'Not found' }); return; }
     const prev = existing.rows[0];
+    // Verify ownership before updating
+    if (!childIds.includes(prev.child_id)) { res.status(403).json({ error: 'Access denied' }); return; }
 
     await sql`
       UPDATE bowel_entries SET date=${date}, time=${time}, location=${location}, amount=${amount},
@@ -89,6 +96,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'DELETE') {
     const id = (req.query.id || req.body?.id) as string;
     if (!id) { res.status(400).json({ error: 'id required' }); return; }
+
+    // Verify ownership before deleting
+    const toDelete = await sql`SELECT child_id FROM bowel_entries WHERE id = ${id}`;
+    if (!toDelete.rows.length) { res.status(404).json({ error: 'Not found' }); return; }
+    if (!childIds.includes(toDelete.rows[0].child_id)) { res.status(403).json({ error: 'Access denied' }); return; }
 
     await sql`DELETE FROM bowel_entries WHERE id = ${id}`;
     res.status(200).json({ ok: true });
