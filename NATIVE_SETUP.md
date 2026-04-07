@@ -5,7 +5,7 @@ notifications to work after running `npx cap add ios` / `npx cap add android`.
 
 ---
 
-## iOS — APNs (Apple Push Notification service)
+## iOS — APNs (Apple Push Notification service) 
 
 ### 1. Xcode capabilities (automatic)
 
