@@ -822,3 +822,11 @@ Changes apply **instantly** (no Save button) and persist to localStorage (local 
 - [ ] Reports: milestone trend chart renders; CSV export requires consent modal; PDF print flow works
 - [ ] Accessibility: dyslexia font toggle, keyboard tab order, switch controls, readable contrast
 - [ ] Edge cases: rapid toggle changes, login/logout, no child selected, empty milestone filter results
+
+---
+
+## For AI Agents
+
+See [AGENTS.md](./AGENTS.md) for agent instructions, conventions, and the Definition of Done.
+See [docs/architecture.md](./docs/architecture.md) for the full architecture map.
+See [docs/agents/](./docs/agents/) for reusable task briefs (explorer, reviewer).
