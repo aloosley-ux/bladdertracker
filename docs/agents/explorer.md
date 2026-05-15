@@ -8,7 +8,7 @@ Use this before any implementation task. Map the relevant territory before writi
 
 When given a task, before writing any code:
 
-1. Read `AGENTS.md` and `docs/architecture.md`
+1. Read `AGENTS.md` (conventions, commands, things to avoid, Definition of Done) and `docs/architecture.md` (directory map, module boundaries, extension points)
 2. List the files most relevant to the task
 3. Identify which modules will be touched and which boundaries apply
 4. Flag any items from "Things to Avoid" that are relevant

@@ -88,7 +88,7 @@ Leap symptom logs and leap diary entries are stored in `AppContext` memory only 
 
 - **Frontend:** deployed to Vercel (static + CDN); PWA with offline support via `vite-plugin-pwa`.
 - **API:** Vercel Serverless Functions (Node.js 22).
-- **Database:** Neon Postgres (serverless); schema managed by `api/migrate.ts` via `api/_lib/db.ts`.
+- **Database:** Neon Postgres (serverless); schema managed by `api/migrate.ts` via `api/_lib/db.ts`. Run migrations by calling `POST /api/migrate` after deploying. The `runMigrations()` function in `api/_lib/db.ts` contains the full up-to-date schema.
 - **Auth (cloud):** bcrypt password hashing; JWT stored as `bt_session` HttpOnly cookie.
 - **Auth (local):** PBKDF2 (Web Crypto API); session in localStorage.
 

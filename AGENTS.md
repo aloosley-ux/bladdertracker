@@ -71,7 +71,7 @@ api/
 Key boundaries:
 - All pages access data exclusively via `useApp()` from `AppContext`.
 - `AppContext` delegates to `src/utils/api.ts` (cloud) or `src/utils/storage.ts` (local). Do not call either directly from pages.
-- `api/_lib/` files are shared modules — not endpoints. Do not add new files here unless they are genuinely shared helpers.
+- `api/_lib/` files are shared modules — not endpoints. The two existing files (`auth.ts` for JWT/CORS, `db.ts` for Neon connection and migrations) cover all shared concerns. Do not add new files here unless they are equally cross-cutting.
 - The Vercel Hobby plan allows exactly **12** serverless functions. All 12 slots are used. DO NOT add a new `api/*.ts` endpoint without consolidating or removing an existing one.
 - Leap symptom logs are local-only (no cloud API route exists for them).
 - 13 tracker modules are defined in `src/types/index.ts` as `DEFAULT_MODULES`. Module labels/display strings are in `src/content/presentation.ts`.
@@ -91,6 +91,7 @@ Key boundaries:
 - DO NOT call `src/utils/api.ts` or `src/utils/storage.ts` directly from page components — always go through `useApp()`.
 - DO NOT add a 13th `api/*.ts` serverless function — consolidate into an existing endpoint instead.
 - DO NOT modify `src/context/AppContext.tsx` without running the full test suite — it is consumed by every page.
+- DO NOT modify `src/components/AppNav.tsx` without checking module-based nav filtering — changes affect all navigation.
 - DO NOT modify `src/components/forms/FormStep.tsx` without checking all 11 entry form tabs in `AddEntryPage`.
 - DO NOT modify `src/components/EntryCard.tsx` without verifying `data-entry-type` theme overrides in `src/index.css`.
 - DO NOT add new routes without registering them as lazy routes in `src/App.tsx`.
