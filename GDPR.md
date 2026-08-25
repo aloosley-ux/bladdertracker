@@ -1,7 +1,7 @@
 # GDPR & Data Protection Policy
 
 **EveryStep**
-**Last updated: March 2026**
+**Last updated: August 2026**
 
 ---
 
@@ -173,6 +173,11 @@ The application implements six distinct roles with differing levels of access:
 | **School Admin** | Caregiver-level diary access plus caregiver-invite workflow for linked children |
 | **Therapist** | Invite-only contextual label; currently maps to caregiver-level diary access |
 | **Specialist** | Invite-only contextual label; currently maps to caregiver-level diary access |
+
+Admin promotion is protected by a secret access key. In cloud mode the key is
+transmitted only in the `x-admin-key` request header (never in a URL query
+string or request body), so it does not appear in access logs or browser
+history. In local/offline mode no account data leaves the device at all.
 
 ---
 

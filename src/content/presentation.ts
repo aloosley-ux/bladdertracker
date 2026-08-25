@@ -9,6 +9,12 @@ export const BRAND = {
   bannerAlt: 'EveryStep brand mark',
 } as const;
 
+// Login page copy for trying EveryStep without any backend account.
+export const LOGIN_COPY = {
+  localModeNote:
+    'No sign-up needed to look around — create an account below in private mode and everything stays on this device until you choose cloud sync.',
+} as const;
+
 type ModulePresentation = {
   label: string;
   shortLabel: string;

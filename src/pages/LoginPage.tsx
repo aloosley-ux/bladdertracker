@@ -16,7 +16,7 @@ import {
 import type { AccountRecord, User, UserRole } from '../types';
 import BrandIcon from '../components/BrandIcon';
 import PageShell from '../components/PageShell';
-import { BRAND } from '../content/presentation';
+import { BRAND, LOGIN_COPY } from '../content/presentation';
 
 type AuthMode = 'register' | 'login' | 'reset';
 
@@ -186,6 +186,11 @@ export default function LoginPage() {
 
           {/* Tabs + Form */}
           <div className="px-5 pb-6 pt-4">
+            {!cloud && (
+              <p className="mb-4 rounded-2xl bg-lavender-50 px-4 py-3 text-xs text-lavender-800">
+                {LOGIN_COPY.localModeNote}
+              </p>
+            )}
             <div className="mb-5 grid grid-cols-3 rounded-2xl bg-[#f6f1ff] p-1 text-sm">
               {(['register', 'login', 'reset'] as AuthMode[]).map((item) => (
                 <button

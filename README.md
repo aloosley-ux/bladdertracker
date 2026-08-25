@@ -38,8 +38,10 @@ Local mode uses `localStorage` — no database required.
 
 ### Deploy (cloud mode: Vercel + Neon)
 
+See [DEPLOY.md](./DEPLOY.md) for exact free-tier setup steps.
+
 ```bash
-# 1. Set environment variables (see docs/Product-Guide.md for the full list)
+# 1. Set environment variables (see DEPLOY.md for the full list)
 export DATABASE_URL="postgres://<db-user>:***@<neon-host>/<db-name>?sslmode=require"
 export JWT_SECRET="<32+ character random secret>"
 export VITE_USE_CLOUD=true
@@ -57,6 +59,7 @@ vercel --prod
 | Document | Description |
 |----------|-------------|
 | [docs/Product-Guide.md](./docs/Product-Guide.md) | Detailed product tour: features, pages, API reference, themes, benchmarking |
+| [DEPLOY.md](./DEPLOY.md) | Step-by-step Vercel + Neon free-tier deployment guide |
 | [docs/architecture.md](./docs/architecture.md) | System architecture |
 | [docs/MODULES.md](./docs/MODULES.md) | Module field reference and clinical guidance |
 | [docs/API.md](./docs/API.md) | API endpoint reference |
