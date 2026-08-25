@@ -19,7 +19,7 @@ Check the following against `AGENTS.md`. Report PASS or FAIL for each item.
 - [ ] UI copy changes are in `src/content/presentation.ts`, not hardcoded in components
 - [ ] UI changes have been verified in all three themes: light, dark, high-contrast
 - [ ] All interactive elements have ARIA labels and keyboard support
-- [ ] Docs updated where user-facing behaviour changed (`README.md`, `docs/MODULES.md`, `docs/API.md`, `docs/ARCHITECTURE.md`)
+- [ ] Docs updated where user-facing behaviour changed (`README.md`, `docs/MODULES.md`, `docs/API.md`, `docs/architecture.md`)
 
 ## Output format
 

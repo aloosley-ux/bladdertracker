@@ -1,6 +1,6 @@
 # Architecture
 
-> Agent-focused reference. For the full schema, see [`docs/ARCHITECTURE.md`](./ARCHITECTURE.md).
+> Agent-focused reference. For the full schema, see [`docs/architecture.md`](./architecture.md).
 
 ## System Overview
 

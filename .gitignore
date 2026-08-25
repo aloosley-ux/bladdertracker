@@ -33,3 +33,10 @@ android/
 *.sln
 *.sw?
 /test.png
+
+# Local tooling & build artifacts
+dist/
+.idea/
+allfiles.txt
+*.bat
+*.ps1

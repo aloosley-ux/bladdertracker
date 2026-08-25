@@ -1,8 +1,15 @@
 import { describe, it, expect } from 'vitest';
 
-const BASE_URL = 'https://bladdertracker-git-testing-aloosley-uxs-projects.vercel.app/api';
-// This test intentionally reaches a deployed environment and may fail in isolated
-// CI or sandbox environments where that hostname is unavailable.
+// Live integration test against a deployed environment.
+// Opt in explicitly with RUN_INTEGRATION=1 (and optionally INTEGRATION_BASE_URL)
+// so the default `npm test` / CI runs never depend on an external deployment.
+
+const RUN = process.env.RUN_INTEGRATION === '1';
+const BASE_URL =
+  process.env.INTEGRATION_BASE_URL ||
+  'https://bladdertracker-git-testing-aloosley-uxs-projects.vercel.app/api';
+
+const d = RUN ? describe : describe.skip;
 
 // Helper to make requests
 async function apiRequest(path: string, options: RequestInit = {}) {
@@ -20,7 +27,7 @@ async function apiRequest(path: string, options: RequestInit = {}) {
   return { status: res.status, data };
 }
 
-describe('API Integration: /api/auth', () => {
+d('API Integration: /api/auth', () => {
   it('should return 401 when not authenticated', async () => {
     const { status, data } = await apiRequest('/auth', { method: 'GET' });
     expect(status).toBe(401);

@@ -716,7 +716,7 @@ npm run build         # Full type-check + production build
 | [CONTRIBUTING.md](./CONTRIBUTING.md) | Developer guide, module schema, adding features |
 | [docs/Onboarding.md](./docs/Onboarding.md) | User step-by-step onboarding guide |
 | [docs/API.md](./docs/API.md) | API endpoint reference |
-| [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) | System architecture |
+| [docs/architecture.md](./docs/architecture.md) | System architecture |
 | [docs/MODULES.md](./docs/MODULES.md) | Module field reference and clinical guidance |
 | [docs/ui-asset-integration-guide.md](./docs/ui-asset-integration-guide.md) | How to prepare, drop in, and manage custom visual assets |
 | [docs/ui-asset-inventory.md](./docs/ui-asset-inventory.md) | Complete catalogue of every visual asset slot with dimensions and format guidance |
@@ -830,3 +830,10 @@ Changes apply **instantly** (no Save button) and persist to localStorage (local 
 See [AGENTS.md](./AGENTS.md) for agent instructions, conventions, and the Definition of Done.
 See [docs/architecture.md](./docs/architecture.md) for the full architecture map.
 See [docs/agents/](./docs/agents/) for reusable task briefs (explorer, reviewer).
+
+## AI-Assisted Development
+
+This project was built with heavy use of AI coding agents (GitHub Copilot workspace agent / SWE agent).
+Human direction covered architecture, review, security decisions, and quality gates; the majority of
+implementation commits were agent-generated. See the git history and `docs/DOCUMENTATION_AUDIT.md`
+for an honest account of what was validated versus aspirational.

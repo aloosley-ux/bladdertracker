@@ -166,7 +166,7 @@ Please keep documentation in sync with the code you change.
 - Update `README.md` when product behaviour, setup, routes, environment variables, or public-facing positioning changes.
 - Update `docs/MODULES.md` when tracker labels, fields, or module defaults change.
 - Update `docs/API.md` when request/response contracts, auth behaviour, or security notes change.
-- Update `docs/ARCHITECTURE.md` when infrastructure, routing, storage, or major component structure changes.
+- Update `docs/architecture.md` when infrastructure, routing, storage, or major component structure changes.
 - Update `docs/Onboarding.md` when first-run flow, key pages, or user guidance changes.
 
 ## Opening Issues Well

@@ -73,7 +73,7 @@ Run these in order before opening a PR:
 - Update `README.md` when product behaviour, routes, or environment variables change.
 - Update `docs/MODULES.md` when tracker labels, fields, or defaults change.
 - Update `docs/API.md` when API contracts or auth behaviour changes.
-- Update `docs/ARCHITECTURE.md` when infrastructure, routing, or major structure changes.
+- Update `docs/architecture.md` when infrastructure, routing, or major structure changes.
 
 ## Dependencies
 

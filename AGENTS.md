@@ -108,7 +108,7 @@ Key boundaries:
 - [ ] New/changed behaviour is covered by a test
 - [ ] No new `any`, hardcoded secrets, or debug `console.log` without justification
 - [ ] UI changes verified in all three themes: light, dark, high-contrast
-- [ ] Docs updated: `README.md`, `docs/MODULES.md`, `docs/API.md`, and/or `docs/ARCHITECTURE.md` as applicable
+- [ ] Docs updated: `README.md`, `docs/MODULES.md`, `docs/API.md`, and/or `docs/architecture.md` as applicable
 - [ ] PR contains one concern only
 
 ## Approach by task type
@@ -125,7 +125,7 @@ Key boundaries:
 2. Follow patterns in `CONTRIBUTING.md`.
 3. Types → `src/types/index.ts`; storage → `src/utils/storage.ts`; API → `src/utils/api.ts`.
 4. New pages → `src/pages/`; register as lazy routes in `src/App.tsx`.
-5. Update `README.md`, `docs/MODULES.md`, `docs/API.md`, `docs/ARCHITECTURE.md` as needed.
+5. Update `README.md`, `docs/MODULES.md`, `docs/API.md`, `docs/architecture.md` as needed.
 
 ### UI work
 1. Tailwind CSS only — no inline styles.

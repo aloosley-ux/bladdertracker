@@ -30,7 +30,7 @@ Closes #
 - [ ] README updated if product behaviour, setup, routes, or environment variables changed
 - [ ] docs/MODULES.md updated if tracker labels, fields, or defaults changed
 - [ ] docs/API.md updated if API contracts or auth behaviour changed
-- [ ] docs/ARCHITECTURE.md reviewed for affected flows or infrastructure changes
+- [ ] docs/architecture.md reviewed for affected flows or infrastructure changes
 - [ ] No documentation changes needed
 
 ## Risks and follow-up

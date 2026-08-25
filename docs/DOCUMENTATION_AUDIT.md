@@ -16,7 +16,7 @@ Documentation is now **mostly aligned** with the current codebase. The largest p
 - `.env.example`
 - `.github/PULL_REQUEST_TEMPLATE.md`
 - `docs/API.md`
-- `docs/ARCHITECTURE.md`
+- `docs/architecture.md`
 - `docs/MODULES.md`
 - `docs/Onboarding.md`
 - `docs/PROJECT_PLAN.md`
@@ -34,7 +34,7 @@ Documentation is now **mostly aligned** with the current codebase. The largest p
 | `CONTRIBUTING.md` | Partially accurate | Claimed docs/tests were fully aligned, omitted `/gdpr` and `/audit-trail`, lacked admin-key guidance, overstated `npm test` portability | Updated |
 | `GDPR.md` | Partially accurate | Treated cloud storage as universal, omitted local-mode PBKDF2, understated sleep/food fields, inaccurate role descriptions | Updated |
 | `docs/API.md` | Partially accurate | Needed stronger wording on registration role limits, import/export access checks, and local-only leaps | Updated |
-| `docs/ARCHITECTURE.md` | Partially accurate | Therapist/specialist behavior outdated; no explicit local-only leap persistence note | Updated |
+| `docs/architecture.md` | Partially accurate | Therapist/specialist behavior outdated; no explicit local-only leap persistence note | Updated |
 | `docs/MODULES.md` | Partially accurate | Missing note that leap diary/symptom data has no cloud API; import caveat not documented | Updated |
 | `docs/Onboarding.md` | Partially accurate | Needed clearer wording around invite-only roles and current import template scope | Updated |
 | `docs/PROJECT_PLAN.md` | Inaccurate | Pointed to obsolete draft-issue file and outdated integration-test claim | Updated |
@@ -51,7 +51,7 @@ Documentation is now **mostly aligned** with the current codebase. The largest p
 - `.github/PULL_REQUEST_TEMPLATE.md`
 - `CHANGELOG.md`
 - `docs/API.md`
-- `docs/ARCHITECTURE.md`
+- `docs/architecture.md`
 - `docs/MODULES.md`
 - `docs/Onboarding.md`
 - `docs/PROJECT_PLAN.md`
