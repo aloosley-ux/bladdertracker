@@ -55,7 +55,7 @@ We collect and process the following categories of personal data:
 | Data | Purpose |
 |------|---------|
 | Child's name | Identify the child within the app |
-| Date of birth | Age-appropriate tracking and milestone benchmarking |
+| Date of birth | Age-appropriate tracking and milestone benchmarking. Stored as YYYY-MM-DD. Invalid calendar dates (e.g. 2025-02-30) are rejected in both cloud and local modes for consistency. |
 | Due date (optional, leaps helper) | Improve leap prediction accuracy where supported |
 | Avatar | Optional profile personalisation |
 | Created by (user reference) | Ownership and access control |
