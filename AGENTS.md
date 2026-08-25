@@ -105,6 +105,7 @@ Key boundaries:
 - [ ] `npm run build` passes
 - [ ] `npx tsc --project tsconfig.api.json --noEmit` passes
 - [ ] `npm test` passes (excluding the live integration test if network is unavailable)
+- [ ] `npm run test:e2e` passes (if E2E tests are configured)
 - [ ] New/changed behaviour is covered by a test
 - [ ] No new `any`, hardcoded secrets, or debug `console.log` without justification
 - [ ] UI changes verified in all three themes: light, dark, high-contrast
