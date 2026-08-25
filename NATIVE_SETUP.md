@@ -50,7 +50,7 @@ If using automatic signing in Xcode, this is handled automatically.
 
 1. Go to [Firebase Console](https://console.firebase.google.com/)
 2. Create a new project (or use an existing one)
-3. Add an Android app with package name `com.bladdertracker.app`
+3. Add an Android app with package name `com.everystep.app`
 4. Download `google-services.json` and place it in `android/app/`
 
 ### 2. AndroidManifest.xml permissions
@@ -87,8 +87,8 @@ in `android/app/src/main/java/.../MainActivity.java`:
 ```java
 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
     NotificationChannel channel = new NotificationChannel(
-        "bladdertracker_default",
-        "BladderTracker",
+        "everystep_default",
+        "EveryStep",
         NotificationManager.IMPORTANCE_DEFAULT
     );
     NotificationManager manager = getSystemService(NotificationManager.class);

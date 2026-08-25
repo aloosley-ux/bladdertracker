@@ -2,7 +2,7 @@
 
 _Last updated: March 2026_
 
-This document defines the single, up-to-date process for handling issues in the BladderTracker repository. It covers how to log, track, process, and archive issues, ensuring a clean and transparent workflow.
+This document defines the single, up-to-date process for handling issues in the EveryStep repository. It covers how to log, track, process, and archive issues, ensuring a clean and transparent workflow.
 
 ---
 

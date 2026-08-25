@@ -1,5 +1,5 @@
 
-# Contributing to BladderTracker
+# Contributing to EveryStep
 
 **Current State (March 2026):**
 
@@ -17,7 +17,7 @@ Thank you for your interest in contributing! This guide will help you get up and
 
    ```bash
    git clone <repo-url>
-   cd bladdertracker
+   cd everystep
    ```
 
 2. **Install dependencies**

@@ -1,6 +1,6 @@
 # UI Asset Inventory & Specification
 
-> Complete catalogue of every visual asset that the BladderTracker UI can accept.
+> Complete catalogue of every visual asset that the EveryStep UI can accept.
 > Use this as a production brief for creating custom assets.
 
 ---

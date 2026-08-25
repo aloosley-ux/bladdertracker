@@ -1,6 +1,6 @@
-# BladderTracker Revival Plan
+# EveryStep Revival Plan
 
-**Goal:** ship BladderTracker free-to-use (FOC) for families like ours, with boring,
+**Goal:** ship EveryStep free-to-use (FOC) for families like ours, with boring,
 standard UI instead of bespoke custom components. Solid foundations stay; custom UI
 goes; everything becomes maintainable by AI agents working in small verified steps.
 

@@ -2,7 +2,7 @@
 
 ## Welcome
 
-BladderTracker is a mobile-first diary for continence, routines, milestones, and related support tracking.
+EveryStep is a mobile-first diary for continence, routines, milestones, and related support tracking.
 
 ## Create an account
 

@@ -4,12 +4,12 @@
 
 ## System Overview
 
-BladderTracker is a mobile-first PWA for tracking child health, development, and daily routines. It targets families, caregivers, and care teams. Key constraints: mobile-first, offline-capable, Vercel Hobby tier (12 serverless function limit), privacy-sensitive data.
+EveryStep is a mobile-first PWA for tracking child health, development, and daily routines. It targets families, caregivers, and care teams. Key constraints: mobile-first, offline-capable, Vercel Hobby tier (12 serverless function limit), privacy-sensitive data.
 
 ## Directory Map
 
 ```
-bladdertracker/
+everystep/
 ├── api/                        Vercel Serverless Functions (12 endpoints, Hobby tier limit)
 │   ├── _lib/                   Shared helpers: JWT auth + Neon DB — NOT endpoints
 │   └── *.ts                    One file = one endpoint (auth, children, trackers, modules…)

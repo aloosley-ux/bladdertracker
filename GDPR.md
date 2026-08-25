@@ -1,17 +1,17 @@
 # GDPR & Data Protection Policy
 
-**BladderTracker**
+**EveryStep**
 **Last updated: March 2026**
 
 ---
 
 ## 1. Introduction
 
-BladderTracker is a comprehensive developmental tracking platform designed for children with autism and developmental needs. The application enables parents, caregivers, therapists, educators, and specialists to log daily activities, track developmental milestones, and collaborate on a child's progress through a mobile-first progressive web application.
+EveryStep is a comprehensive developmental tracking platform designed for children with autism and developmental needs. The application enables parents, caregivers, therapists, educators, and specialists to log daily activities, track developmental milestones, and collaborate on a child's progress through a mobile-first progressive web application.
 
 This policy explains how we collect, use, store, and protect personal data in accordance with the **UK General Data Protection Regulation (UK GDPR)**, the **Data Protection Act 2018**, and the **Age Appropriate Design Code** (Children's Code). Because our application processes sensitive health-related data about children, we take our data protection obligations extremely seriously.
 
-This policy applies to all users of BladderTracker, including parents, caregivers, school administrators, therapists, and specialists.
+This policy applies to all users of EveryStep, including parents, caregivers, school administrators, therapists, and specialists.
 
 ---
 
@@ -19,7 +19,7 @@ This policy applies to all users of BladderTracker, including parents, caregiver
 
 The data controller responsible for your personal data is:
 
-**BladderTracker**
+**EveryStep**
 Email: [privacy@childdevelopmenttracker.co.uk](mailto:privacy@childdevelopmenttracker.co.uk)
 
 If you have any questions about this policy or how we handle your data, please contact us using the details provided in [Section 13](#13-contact-information).
@@ -321,7 +321,7 @@ You have the right to object to the processing of your data where we rely on leg
 
 ### 7.7 Rights Related to Automated Decision-Making (Article 22)
 
-BladderTracker does **not** carry out any automated decision-making or profiling. All data is presented as entered by users, and no automated assessments or decisions are made about your child.
+EveryStep does **not** carry out any automated decision-making or profiling. All data is presented as entered by users, and no automated assessments or decisions are made about your child.
 
 ---
 
@@ -348,7 +348,7 @@ We do not currently implement automatic data expiry. If you wish to have data re
 
 ### 9.1 Special Protections for Children
 
-BladderTracker is designed specifically to process children's data. We recognise the heightened responsibility this entails and have implemented the following safeguards:
+EveryStep is designed specifically to process children's data. We recognise the heightened responsibility this entails and have implemented the following safeguards:
 
 - **Parental control:** Only parents and guardians can create child profiles. Children do not create their own accounts or interact with the application directly.
 - **Purpose limitation:** Children's data is used exclusively for developmental tracking, health monitoring, and supporting the child's care team. It is never used for marketing, profiling, or any unrelated purpose.

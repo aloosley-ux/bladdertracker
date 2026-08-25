@@ -1,8 +1,8 @@
-# AGENTS.md — BladderTracker
+# AGENTS.md — EveryStep
 
 ## Project Overview
 
-BladderTracker is a child development, continence, SEND, and daily routine tracker for families, caregivers, and care teams. It runs as a mobile-first PWA with offline-first localStorage and optional cloud mode via Vercel + Neon Postgres.
+EveryStep is a child development, continence, SEND, and daily routine tracker for families, caregivers, and care teams. It runs as a mobile-first PWA with offline-first localStorage and optional cloud mode via Vercel + Neon Postgres.
 
 ## Tech Stack
 

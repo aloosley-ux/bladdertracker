@@ -1,6 +1,6 @@
 # Security Policy
 
-BladderTracker handles sensitive child-health and caregiver data. Please report security concerns responsibly and avoid sharing exploit details publicly.
+EveryStep handles sensitive child-health and caregiver data. Please report security concerns responsibly and avoid sharing exploit details publicly.
 
 ## Supported versions
 
@@ -18,7 +18,7 @@ Please **do not open a public GitHub issue** for vulnerabilities that could expo
 Instead, use one of the following:
 
 1. **GitHub private vulnerability reporting / security advisory** for this repository, if available.
-2. **Direct maintainer contact** via [privacy@childdevelopmenttracker.co.uk](mailto:privacy@childdevelopmenttracker.co.uk) with the subject line `Security report: BladderTracker`.
+2. **Direct maintainer contact** via [privacy@childdevelopmenttracker.co.uk](mailto:privacy@childdevelopmenttracker.co.uk) with the subject line `Security report: EveryStep`.
 
 Please include:
 

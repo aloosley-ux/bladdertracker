@@ -2,7 +2,7 @@
 
 ## Design principles
 
-BladderTracker follows NHS-inspired design principles: clear, accessible, calming. The product is designed for one-handed use on a phone during routines, school handovers, and care conversations.
+EveryStep follows NHS-inspired design principles: clear, accessible, calming. The product is designed for one-handed use on a phone during routines, school handovers, and care conversations.
 
 ## Styling
 

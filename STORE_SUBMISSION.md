@@ -1,6 +1,6 @@
 # App Store Submission Checklist
 
-End-to-end guide for submitting BladderTracker to the iOS App Store and
+End-to-end guide for submitting EveryStep to the iOS App Store and
 Google Play Store.
 
 ---
@@ -22,10 +22,10 @@ Google Play Store.
 
 | Field | Value / Notes |
 |-------|---------------|
-| App Name | BladderTracker |
+| App Name | EveryStep |
 | Subtitle | Child development & continence diary |
-| Bundle ID | com.bladdertracker.app |
-| SKU | com.bladdertracker.app |
+| Bundle ID | com.everystep.app |
+| SKU | com.everystep.app |
 | Primary Language | English (UK) |
 | Category | Health & Fitness (primary), Medical (secondary) |
 | Content Rights | Does not contain third-party content |
@@ -74,7 +74,7 @@ this in the review notes as an alternative testing path.
 
 | Field | Value / Notes |
 |-------|---------------|
-| App name | BladderTracker |
+| App name | EveryStep |
 | Short description | 80 characters max |
 | Full description | 4000 characters max |
 | Application type | Application |
@@ -141,7 +141,7 @@ npx cap open ios
 2. Go to **Signing & Capabilities**
 3. Select your Team (Apple Developer account required)
 4. Ensure **Automatically manage signing** is checked
-5. Bundle Identifier should be `com.bladdertracker.app`
+5. Bundle Identifier should be `com.everystep.app`
 
 ### 4. Add capabilities
 
@@ -201,16 +201,16 @@ npx cap open android
 
 1. **Build → Generate Signed Bundle / APK**
 2. Create a new keystore (save it securely — you need it for every update):
-   - Key store path: `android/app/bladdertracker.jks`
+   - Key store path: `android/app/everystep.jks`
    - Password: (choose a strong password)
-   - Key alias: `bladdertracker`
+   - Key alias: `everystep`
 3. **Add the keystore to `.gitignore`** — never commit it
 
 ### 4. Add Firebase for push
 
 1. Place `google-services.json` in `android/app/`
 2. Verify the `applicationId` in `android/app/build.gradle` matches
-   `com.bladdertracker.app`
+   `com.everystep.app`
 
 ### 5. Set minimum SDK
 

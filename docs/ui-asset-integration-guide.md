@@ -1,6 +1,6 @@
 # UI Asset Integration Guide
 
-> How to prepare, drop in, and manage custom visual assets for BladderTracker.
+> How to prepare, drop in, and manage custom visual assets for EveryStep.
 
 ---
 
@@ -27,7 +27,7 @@
 
 ## Overview
 
-BladderTracker uses a **semantic asset system** that separates _what an asset is for_ (e.g. "dashboard hero background") from _which file provides it_ (e.g. `hero-dashboard-light.png`).
+EveryStep uses a **semantic asset system** that separates _what an asset is for_ (e.g. "dashboard hero background") from _which file provides it_ (e.g. `hero-dashboard-light.png`).
 
 All assets are managed through a central **asset registry** (`src/assets/assetRegistry.ts`).  Components request assets by **semantic key** (e.g. `pageDashboardHero`), and the system automatically resolves the correct file for the current theme.
 
@@ -194,7 +194,7 @@ No component code changes required.
 
 ## Theme-Specific Assets
 
-BladderTracker supports **three themes**:
+EveryStep supports **three themes**:
 
 | Theme | Key | CSS attribute | Typical style |
 |-------|-----|--------------|---------------|

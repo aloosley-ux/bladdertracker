@@ -1,4 +1,4 @@
-# Copilot Instructions — BladderTracker
+# Copilot Instructions — EveryStep
 
 ## Stack
 
