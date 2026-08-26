@@ -336,10 +336,10 @@ cp .env.example .env.local
 | Variable | Required when | Purpose |
 |----------|----------------|---------|
 | `VITE_USE_CLOUD` | Cloud mode | Switches the frontend from localStorage mode to the Vercel/Neon API |
-| `VITE_ADMIN_KEY` | Local-only admin setup | Allows local/offline admin promotion via `?admin-access=<key>` without hardcoding a key in source |
+| `VITE_ADMIN_KEY` | Local-only admin setup | Allows local/offline admin promotion via `?admin-access=<key>` (scrubbed from the URL immediately) without hardcoding a key in source |
 | `DATABASE_URL` / `POSTGRES_URL` | Cloud mode | Neon Postgres connection string |
 | `JWT_SECRET` | Cloud mode | Signs server-side session tokens |
-| `ADMIN_ACCESS_KEY` | Cloud mode | Server-side admin promotion key used by `/api/auth` |
+| `ADMIN_ACCESS_KEY` | Cloud mode | Server-side admin promotion key, sent by clients in the `x-admin-key` request header |
 | `ALLOWED_ORIGIN` | Cloud mode | Restricts CORS to a single origin (e.g. `https://your-app.vercel.app`). Falls back to `VERCEL_URL` then `localhost:5173` |
 | `UPSTASH_REDIS_REST_URL` | Cloud mode (recommended) | Upstash Redis URL for API rate limiting. If unset, rate limiting is disabled |
 | `UPSTASH_REDIS_REST_TOKEN` | Cloud mode (recommended) | Upstash Redis token for API rate limiting |
@@ -361,7 +361,7 @@ Deployment checklist:
 | Table | Purpose | Key Columns |
 |-------|---------|-------------|
 | `accounts` | User auth | `id`, `name`, `email`, `password_hash`, `role`, `avatar`, `created_at` |
-| `children` | Child profiles | `id`, `name`, `date_of_birth`, `avatar`, `created_by` → accounts |
+| `children` | Child profiles | `id`, `name`, `date_of_birth` (DATE), `avatar`, `created_by` → accounts |
 | `child_access` | Shared access | `child_id` → children, `user_id` → accounts, `access_type` |
 | `drink_entries` | Fluid intake | `child_id`, `date`, `time`, `type`, `amount_ml`, `notes`, `created_by` |
 | `urine_entries` | Urination | `child_id`, `date`, `time`, `wet`, `pass`, `volume_ml`, `urgency`, `leakage_amount` |

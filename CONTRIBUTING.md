@@ -40,6 +40,10 @@ Thank you for your interest in contributing! This guide will help you get up and
     http://localhost:5173/?admin-access=<your-local-key>
     ```
 
+    The app reads the key once and immediately removes it from the address bar
+    and browser history. In cloud mode the key is forwarded to the API in the
+    `x-admin-key` request header, not the URL.
+
 4. **Run with cloud backend**
 
     ```bash

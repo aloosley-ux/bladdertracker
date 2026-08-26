@@ -300,7 +300,10 @@ async function handlePromote(req: VercelRequest, res: VercelResponse) {
     return;
   }
 
-  const providedKey = req.body?.key;
+  // The key must arrive in the x-admin-key request header — never in a query
+  // parameter or the JSON body, both of which leak into access logs and history.
+  const headerValue = req.headers['x-admin-key'];
+  const providedKey = Array.isArray(headerValue) ? headerValue[0] : headerValue;
   if (typeof providedKey !== 'string' || providedKey !== configuredKey) {
     res.status(403).json({ error: 'Invalid admin access key.' });
     return;

@@ -20,7 +20,7 @@ Use `action` in body.
 | `login` | `email`, `password` | Signs in existing account. |
 | `logout` | none | Clears session cookie. |
 | `reset` | `email`, `password` | Resets password for matching account. |
-| `promote` | `key` | Promotes signed-in user to `admin` when key matches `ADMIN_ACCESS_KEY` env var. |
+| `promote` | `x-admin-key` header | Promotes signed-in user to `admin`. The key must be sent in the `x-admin-key` request header and match the `ADMIN_ACCESS_KEY` env var — never in a query parameter or body field, so it cannot leak into access logs or browser history. |
 
 ### `DELETE /api/auth`
 Deletes the signed-in account and related data. Returns `{ "ok": true }`.
@@ -32,8 +32,8 @@ Deletes the signed-in account and related data. Returns `{ "ok": true }`.
 | Method | Payload | Result |
 |---|---|---|
 | `GET` | — | `{ children: Child[] }` |
-| `POST` | `{ name, dateOfBirth? }` | `{ child: Child }` |
-| `PUT` | `{ id, ...partialChild }` | `{ ok: true }` |
+| `POST` | `{ name, dateOfBirth? }` — `dateOfBirth` is an ISO `YYYY-MM-DD` string (stored as a Postgres `DATE`; invalid or empty values become NULL) | `{ child: Child }` |
+| `PUT` | `{ id, ...partialChild }` — a malformed `dateOfBirth` is ignored (existing value kept) | `{ ok: true }` |
 | `DELETE` | `?id=<childId>` | `{ ok: true }` |
 
 ---

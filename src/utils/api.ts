@@ -85,9 +85,12 @@ export async function apiResetPassword(currentPassword: string, password: string
 }
 
 export async function apiPromoteToAdmin(key: string): Promise<User> {
+  // The admin key travels in the x-admin-key header (not the URL or body) so it
+  // never leaks into access logs, browser history, or server-side payload logs.
   const { user } = await request<{ user: User }>('/auth', {
     method: 'POST',
-    body: JSON.stringify({ action: 'promote', key }),
+    headers: { 'x-admin-key': key },
+    body: JSON.stringify({ action: 'promote' }),
   });
   return user;
 }

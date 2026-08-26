@@ -3,6 +3,28 @@ import { sql } from './_lib/db.js';
 import { getSessionFromRequest, generateId, cors } from './_lib/auth.js';
 import { validateLengths, MAX_LENGTHS } from './_lib/validation.js';
 
+// date_of_birth is a DATE column; the API contract keeps it as 'YYYY-MM-DD'
+// (or '' when not recorded) so local mode and CSV round-trips are unchanged.
+const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+function toIsoDateOrNull(value: unknown): string | null {
+  if (typeof value !== 'string') return null;
+  const trimmed = value.trim();
+  if (!ISO_DATE_RE.test(trimmed)) return null;
+  // Reject impossible calendar dates (e.g. 2025-02-30) before hitting Postgres.
+  const parsed = new Date(`${trimmed}T00:00:00Z`);
+  if (Number.isNaN(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== trimmed) return null;
+  return trimmed;
+}
+
+// DATE columns come back as JS Date objects from pg drivers; normalise to
+// YYYY-MM-DD in UTC so no timezone shift can move the date by one day.
+function toDateColumnString(value: unknown): string {
+  if (!value) return '';
+  if (value instanceof Date) return value.toISOString().slice(0, 10);
+  return String(value).slice(0, 10);
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   cors(res);
   if (req.method === 'OPTIONS') { res.status(200).end(); return; }
@@ -30,7 +52,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const children = result.rows.map((row) => ({
       id: row.id,
       name: row.name,
-      dateOfBirth: row.date_of_birth || '',
+      dateOfBirth: toDateColumnString(row.date_of_birth),
       dueDate: row.due_date || '',
       avatar: row.avatar,
       parentIds: row.parent_ids || [],
@@ -50,10 +72,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const id = generateId();
     const accessType = session.role === 'parent' ? 'parent' : 'caregiver';
+    const dob = toIsoDateOrNull(dateOfBirth);
 
     await sql`
       INSERT INTO children (id, name, date_of_birth, due_date, avatar, created_by)
-      VALUES (${id}, ${name.trim()}, ${dateOfBirth || ''}, ${dueDate || ''}, ${avatar || null}, ${session.userId})
+      VALUES (${id}, ${name.trim()}, ${dob}, ${dueDate || ''}, ${avatar || null}, ${session.userId})
     `;
     await sql`
       INSERT INTO child_access (id, child_id, user_id, access_type)
@@ -63,7 +86,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const child = {
       id,
       name: name.trim(),
-      dateOfBirth: dateOfBirth || '',
+      dateOfBirth: dob || '',
       dueDate: dueDate || '',
       avatar: avatar || undefined,
       parentIds: accessType === 'parent' ? [session.userId] : [],
@@ -93,7 +116,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     await sql`
       UPDATE children SET
         name = COALESCE(${name || null}, name),
-        date_of_birth = COALESCE(${dateOfBirth || null}, date_of_birth),
+        date_of_birth = COALESCE(${toIsoDateOrNull(dateOfBirth)}, date_of_birth),
         due_date = COALESCE(${dueDate || null}, due_date),
         avatar = COALESCE(${avatar || null}, avatar),
         last_updated_at = NOW()
