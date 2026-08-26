@@ -33,7 +33,7 @@ export async function migrate(): Promise<string[]> {
     CREATE TABLE IF NOT EXISTS children (
       id TEXT PRIMARY KEY,
       name VARCHAR(255) NOT NULL,
-      date_of_birth VARCHAR(20) DEFAULT '',
+      date_of_birth DATE DEFAULT NULL,
       due_date VARCHAR(20) DEFAULT '',
       avatar VARCHAR(512),
       created_by TEXT REFERENCES accounts(id),
@@ -45,6 +45,32 @@ export async function migrate(): Promise<string[]> {
   // Ensure due_date exists on older schemas
   await sql`ALTER TABLE children ADD COLUMN IF NOT EXISTS due_date VARCHAR(20) DEFAULT ''`;
   log.push('children table columns up to date (due_date)');
+
+  // Migrate legacy VARCHAR date_of_birth values to a real DATE column.
+  // Idempotent: only runs while the column is still varchar. Existing
+  // 'YYYY-MM-DD' strings are converted via to_date(); blank or malformed
+  // values become NULL ("not recorded") instead of blocking the migration.
+  const colType = await sql`
+    SELECT data_type FROM information_schema.columns
+    WHERE table_name = 'children' AND column_name = 'date_of_birth'
+  `;
+  if (colType.rows[0]?.data_type === 'character varying') {
+    try {
+      await sql`
+        UPDATE children SET date_of_birth = NULL
+        WHERE date_of_birth IS NULL OR date_of_birth !~ '^\\d{4}-\\d{2}-\\d{2}$'
+      `;
+      await sql`ALTER TABLE children ALTER COLUMN date_of_birth DROP DEFAULT`;
+      // to_date() normalises instead of throwing on edge values (e.g. 2021-02-30)
+      await sql`ALTER TABLE children ALTER COLUMN date_of_birth TYPE DATE USING to_date(date_of_birth, 'YYYY-MM-DD')`;
+      await sql`ALTER TABLE children ALTER COLUMN date_of_birth SET DEFAULT NULL`;
+      log.push('children.date_of_birth migrated from VARCHAR to DATE');
+    } catch (err) {
+      // Real failure (permissions, etc.) — do not swallow. Surface to admin.
+      log.push(`children.date_of_birth migration FAILED: ${err}`);
+      throw err;
+    }
+  }
 
   await sql`
     CREATE TABLE IF NOT EXISTS child_access (
