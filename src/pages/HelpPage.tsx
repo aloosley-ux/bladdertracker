@@ -12,11 +12,12 @@ import {
   Shield,
   Sparkles,
   Users,
+  X,
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/useApp';
 import BrandIcon from '../components/BrandIcon';
-import { Dialog, DialogContent } from '../components/ui/dialog';
+
 import PageShell from '../components/PageShell';
 import { BRAND, HELP_COPY, getModuleLabel } from '../content/presentation';
 
@@ -369,11 +370,22 @@ export function WelcomeModal() {
   if (dismissed || children.length > 0) return null;
 
   return (
-    <Dialog open onOpenChange={() => dismiss()}>
-      <DialogContent
-        className="max-w-sm rounded-3xl p-6 shadow-2xl ring-1 ring-black/10"
-        showCloseButton={true}
-      >
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Welcome to EveryStep"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 backdrop-blur-sm"
+    >
+      <div className="relative w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl ring-1 ring-black/10">
+        <button
+          type="button"
+          onClick={dismiss}
+          className="absolute right-3 top-3 flex h-11 w-11 items-center justify-center rounded-full bg-gray-100 text-gray-500 transition hover:bg-gray-200"
+          aria-label="Dismiss welcome screen"
+        >
+          <X size={16} />
+        </button>
+
         <div className="mb-5 flex flex-col items-center text-center">
           <BrandIcon width={96} className="mb-3" />
           <h2 className="text-lg font-bold text-gray-900">Welcome to EveryStep!</h2>
@@ -408,7 +420,7 @@ export function WelcomeModal() {
         >
           Skip for now
         </button>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </div>
   );
 }
