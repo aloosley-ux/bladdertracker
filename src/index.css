@@ -166,36 +166,7 @@ textarea {
   word-spacing: 0.05em;
 }
 
-/* ── NHS-style toggle switch ─────────────────────────────────────── */
-.nhs-toggle {
-  position: relative;
-  display: inline-flex;
-  height: 1.5rem;
-  width: 2.75rem;
-  cursor: pointer;
-  align-items: center;
-  border-radius: 9999px;
-  transition: background-color 0.2s ease;
-  background-color: #d1d5db;
-  flex-shrink: 0;
-}
-.nhs-toggle[data-on="true"] {
-  background-color: #7c2df7;
-}
-.nhs-toggle::after {
-  content: '';
-  position: absolute;
-  left: 0.2rem;
-  height: 1.125rem;
-  width: 1.125rem;
-  border-radius: 50%;
-  background: var(--card);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-  transition: transform 0.2s ease;
-}
-.nhs-toggle[data-on="true"]::after {
-  transform: translateX(1.25rem);
-}
+
 
 /* ── Large accessible focus rings ───────────────────────────────── */
 button:focus-visible,
@@ -510,14 +481,7 @@ button.btn-compact {
   color: var(--accent-foreground) !important;
 }
 
-/* ── High-contrast toggle styling (#31) ─────────────────────────── */
-[data-theme="high-contrast"] .nhs-toggle {
-  border: 2px solid #ffffff;
-}
 
-[data-theme="high-contrast"] .nhs-toggle[data-on="true"] {
-  background-color: #00cc00;
-}
 
 /* ── Extended dark/high-contrast overrides for Tailwind slate/gray utilities (#96) ── */
 /*
