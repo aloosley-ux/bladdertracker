@@ -4,7 +4,7 @@ import { Sparkles, X } from 'lucide-react';
 type CelebrationTone = 'lavender' | 'emerald' | 'sky';
 
 const TONE_STYLES: Record<CelebrationTone, string> = {
-  lavender: 'border-lavender-200 bg-lavender-50 text-lavender-900',
+  lavender: 'border-violet-200 bg-violet-50 text-violet-900',
   emerald: 'border-emerald-200 bg-emerald-50 text-emerald-900',
   sky: 'border-sky-200 bg-sky-50 text-sky-900',
 };

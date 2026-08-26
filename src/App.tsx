@@ -33,12 +33,12 @@ function RouteLoadingFallback() {
         role="status"
         aria-live="polite"
       >
-        <div className="h-3 w-32 rounded-full bg-lavender-100" />
-        <div className="mt-4 h-5 w-48 rounded-full bg-lavender-50" />
+        <div className="h-3 w-32 rounded-full bg-violet-100" />
+        <div className="mt-4 h-5 w-48 rounded-full bg-violet-50" />
         <div className="mt-6 space-y-3">
-          <div className="h-20 rounded-3xl bg-[var(--bg-accent)]" />
-          <div className="h-20 rounded-3xl bg-[var(--bg-accent)]" />
-          <div className="h-20 rounded-3xl bg-[var(--bg-accent)]" />
+          <div className="h-20 rounded-3xl bg-[var(--muted)]" />
+          <div className="h-20 rounded-3xl bg-[var(--muted)]" />
+          <div className="h-20 rounded-3xl bg-[var(--muted)]" />
         </div>
         <p className="mt-4 text-sm font-medium text-gray-500">Loading your tracker…</p>
       </div>
@@ -124,10 +124,10 @@ function AppRoutes() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--bg-primary)]">
+    <div className="min-h-screen bg-[var(--background)]">
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-full focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-lavender-700"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-full focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-violet-700"
       >
         Skip to main content
       </a>

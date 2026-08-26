@@ -151,9 +151,9 @@ export default function HelpPage() {
         heroContent={(
           <div className="px-4 pb-4 pt-6">
             <div className="flex flex-col items-center px-4 text-center">
-              <HelpCircle size={28} className="mb-1 text-lavender-500" />
-              <h1 className="mt-1 text-base font-bold text-[var(--text-primary)]">Help &amp; support</h1>
-              <p className="mt-0.5 text-xs text-[var(--text-secondary)]">
+              <HelpCircle size={28} className="mb-1 text-violet-500" />
+              <h1 className="mt-1 text-base font-bold text-[var(--foreground)]">Help &amp; support</h1>
+              <p className="mt-0.5 text-xs text-[var(--muted-foreground)]">
                 Calm guidance, privacy notes, and accessibility support
               </p>
             </div>
@@ -164,14 +164,14 @@ export default function HelpPage() {
         {/* ── Getting Started ───────────────────────────────────── */}
         <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
           <h2 className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-4">
-            <BookOpen size={16} className="text-lavender-500" />
+            <BookOpen size={16} className="text-violet-500" />
             Getting Started
           </h2>
 
           <ol className="space-y-3">
             {ONBOARDING_STEPS.map((step, i) => (
               <li key={i} className="flex gap-3">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--bg-secondary)] text-xs font-bold text-lavender-600 ring-1 ring-[var(--border-color)]">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--secondary)] text-xs font-bold text-violet-600 ring-1 ring-[var(--border)]">
                   {i + 1}
                 </span>
                 <div>
@@ -185,7 +185,7 @@ export default function HelpPage() {
 
         <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
           <h2 className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-4">
-            <Sparkles size={16} className="text-lavender-500" />
+            <Sparkles size={16} className="text-violet-500" />
             Where to go next
           </h2>
           <div className="grid gap-3 sm:grid-cols-2">
@@ -193,14 +193,14 @@ export default function HelpPage() {
               <Link
                 key={to}
                 to={to}
-                className="rounded-2xl bg-[var(--bg-card)] p-4 ring-1 ring-[var(--border-color)] transition hover:ring-lavender-200"
+                className="rounded-2xl bg-[var(--card)] p-4 ring-1 ring-[var(--border)] transition hover:ring-violet-200"
               >
                 <div className="flex items-start gap-3">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--bg-secondary)] text-lavender-600 ring-1 ring-[var(--border-color)]">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--secondary)] text-violet-600 ring-1 ring-[var(--border)]">
                     <Icon size={18} />
                   </span>
                   <div>
-                    <div className="text-sm font-semibold text-[var(--text-primary)]">{title}</div>
+                    <div className="text-sm font-semibold text-[var(--foreground)]">{title}</div>
                     <p className="mt-1 text-xs leading-relaxed text-gray-500">{description}</p>
                   </div>
                 </div>
@@ -212,7 +212,7 @@ export default function HelpPage() {
         {/* ── FAQ ────────────────────────────────────────────────── */}
         <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
           <h2 className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-4">
-            <HelpCircle size={16} className="text-lavender-500" />
+            <HelpCircle size={16} className="text-violet-500" />
             Frequently Asked Questions
           </h2>
 
@@ -225,14 +225,14 @@ export default function HelpPage() {
                 <button
                   type="button"
                   onClick={() => toggleFaq(i)}
-                  className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium text-[var(--text-primary)] transition hover:bg-[var(--bg-hover)]"
+                  className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium text-[var(--foreground)] transition hover:bg-[var(--accent)]"
                   aria-expanded={openFaq === i}
                   aria-controls={`faq-panel-${i}`}
                   id={`faq-button-${i}`}
                 >
                   <span>{item.question}</span>
                   {openFaq === i ? (
-                    <ChevronUp size={16} className="shrink-0 text-lavender-500" />
+                    <ChevronUp size={16} className="shrink-0 text-violet-500" />
                   ) : (
                     <ChevronDown size={16} className="shrink-0 text-gray-400" />
                   )}
@@ -242,7 +242,7 @@ export default function HelpPage() {
                     id={`faq-panel-${i}`}
                     role="region"
                     aria-labelledby={`faq-button-${i}`}
-                    className="px-4 pb-3 text-xs text-[var(--text-secondary)] leading-relaxed"
+                    className="px-4 pb-3 text-xs text-[var(--muted-foreground)] leading-relaxed"
                   >
                     {item.answer}
                   </div>
@@ -255,14 +255,14 @@ export default function HelpPage() {
         {/* ── Accessibility ──────────────────────────────────────── */}
         <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
           <h2 className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-3">
-            <Accessibility size={16} className="text-lavender-500" />
+            <Accessibility size={16} className="text-violet-500" />
             Accessibility
           </h2>
 
           <ul className="space-y-2">
             {ACCESSIBILITY_FEATURES.map((feature, i) => (
               <li key={i} className="flex items-start gap-2 text-xs text-gray-600">
-                <span className="mt-0.5 text-lavender-400">•</span>
+                <span className="mt-0.5 text-violet-400">•</span>
                 {feature}
               </li>
             ))}
@@ -271,18 +271,18 @@ export default function HelpPage() {
 
         <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
           <h2 className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-4">
-            <Shield size={16} className="text-lavender-500" />
+            <Shield size={16} className="text-violet-500" />
             Privacy & data care
           </h2>
           <div className="space-y-3">
             {PRIVACY_COMMITMENTS.map(({ title, description, icon: Icon }) => (
-              <div key={title} className="flex gap-3 rounded-2xl bg-[var(--bg-card)] p-4 ring-1 ring-[var(--border-color)]">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--bg-secondary)] text-lavender-600 ring-1 ring-[var(--border-color)]">
+              <div key={title} className="flex gap-3 rounded-2xl bg-[var(--card)] p-4 ring-1 ring-[var(--border)]">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--secondary)] text-violet-600 ring-1 ring-[var(--border)]">
                   <Icon size={18} />
                 </span>
                 <div>
-                  <p className="text-sm font-semibold text-[var(--text-primary)]">{title}</p>
-                  <p className="mt-1 text-xs leading-relaxed text-[var(--text-secondary)]">{description}</p>
+                  <p className="text-sm font-semibold text-[var(--foreground)]">{title}</p>
+                  <p className="mt-1 text-xs leading-relaxed text-[var(--muted-foreground)]">{description}</p>
                 </div>
               </div>
             ))}
@@ -294,7 +294,7 @@ export default function HelpPage() {
 
         <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
           <h2 className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-2">
-            <ShieldCheck size={16} className="text-lavender-500" />
+            <ShieldCheck size={16} className="text-violet-500" />
             Need more help?
           </h2>
           <p className="text-xs text-gray-600 leading-relaxed">
@@ -303,14 +303,14 @@ export default function HelpPage() {
           <div className="mt-4 flex gap-3">
             <Link
               to="/"
-              className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-lavender-50 py-3 text-sm font-semibold text-lavender-600 ring-1 ring-lavender-100 transition hover:bg-lavender-100"
+              className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-violet-50 py-3 text-sm font-semibold text-violet-600 ring-1 ring-violet-100 transition hover:bg-violet-100"
             >
               Dashboard
               <ArrowRight size={14} />
             </Link>
             <Link
               to="/settings"
-              className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-lavender-50 py-3 text-sm font-semibold text-lavender-600 ring-1 ring-lavender-100 transition hover:bg-lavender-100"
+              className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-violet-50 py-3 text-sm font-semibold text-violet-600 ring-1 ring-violet-100 transition hover:bg-violet-100"
             >
               Settings
               <ArrowRight size={14} />
@@ -398,7 +398,7 @@ export function WelcomeModal() {
           {ONBOARDING_MODAL_STEPS.map(({ step, title, description, cta, to }) => (
             <li key={step} className="flex flex-col gap-2">
               <div className="flex items-center gap-2">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-lavender-100 text-xs font-bold text-lavender-700">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-violet-100 text-xs font-bold text-violet-700">
                   {step}
                 </span>
                 <span className="text-sm font-semibold text-gray-800">{title}</span>
@@ -407,7 +407,7 @@ export function WelcomeModal() {
               <button
                 type="button"
                 onClick={() => { dismiss(); navigate(to); }}
-                className="ml-8 w-[calc(100%-2rem)] rounded-xl bg-lavender-500 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-lavender-600 active:scale-95"
+                className="ml-8 w-[calc(100%-2rem)] rounded-xl bg-violet-500 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-violet-600 active:scale-95"
               >
                 {cta}
               </button>

@@ -33,8 +33,8 @@ export default function BristolStoolPicker({ value, onChange }: BristolStoolPick
                 onClick={() => onChange(typeNum)}
                 className={`flex items-center gap-3 p-3 rounded-xl border-2 transition-all text-left ${
                   isSelected
-                    ? 'border-lavender-500 bg-lavender-50 shadow-md'
-                    : 'border-gray-100 bg-white hover:border-lavender-200'
+                    ? 'border-violet-500 bg-violet-50 shadow-md'
+                    : 'border-gray-100 bg-white hover:border-violet-200'
                 }`}
               >
                 <div className={`w-10 h-10 rounded-full ${info.color} flex items-center justify-center text-white text-lg`}>

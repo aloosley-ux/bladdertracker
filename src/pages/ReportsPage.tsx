@@ -248,7 +248,7 @@ export default function ReportsPage() {
               <p className="text-xs text-gray-500">Exports are de-identified unless your role allows named sharing.</p>
             </div>
             <div className="flex gap-2">
-              <button onClick={() => setConfirmExport(true)} className="rounded-full bg-lavender-500 px-3 py-2 text-xs font-semibold text-white">Download CSV</button>
+              <button onClick={() => setConfirmExport(true)} className="rounded-full bg-violet-500 px-3 py-2 text-xs font-semibold text-white">Download CSV</button>
               <button onClick={() => window.print()} className="rounded-full bg-gray-100 px-3 py-2 text-xs font-semibold text-gray-700">Print / PDF</button>
             </div>
           </div>
@@ -446,7 +446,7 @@ export default function ReportsPage() {
                   exportData();
                   setConfirmExport(false);
                 }}
-                className="rounded-full bg-lavender-500 px-4 py-2 text-xs font-semibold text-white"
+                className="rounded-full bg-violet-500 px-4 py-2 text-xs font-semibold text-white"
               >
                 Confirm CSV export
               </button>
@@ -477,7 +477,7 @@ function ChartCard({ title, children }: { title: string; children: ReactNode }) 
 
 function StatTile({ emoji, text }: { emoji: string; text: string }) {
   return (
-    <div className="rounded-xl bg-[var(--bg-card)] px-3 py-2 text-[var(--text-primary)] ring-1 ring-[var(--border-color)]">
+    <div className="rounded-xl bg-[var(--card)] px-3 py-2 text-[var(--foreground)] ring-1 ring-[var(--border)]">
       {emoji} {text}
     </div>
   );

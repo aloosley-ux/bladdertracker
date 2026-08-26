@@ -17,7 +17,7 @@ import type {
 } from '../types';
 
 const inputCls =
-  'w-full mt-1 px-3 py-2 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm';
+  'w-full mt-1 px-3 py-2 rounded-xl border border-gray-200 bg-white focus:border-violet-400 focus:ring-2 focus:ring-violet-100 outline-none text-sm';
 
 function Label({ children, htmlFor }: { children: React.ReactNode; htmlFor?: string }) {
   return (
@@ -33,7 +33,7 @@ function PillBtn({ active, onClick, children }: { active: boolean; onClick: () =
       type="button"
       onClick={onClick}
       className={`px-3 py-1.5 rounded-xl text-sm font-medium transition-all ${
-        active ? 'bg-lavender-500 text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-lavender-50'
+        active ? 'bg-violet-500 text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-violet-50'
       }`}
     >
       {children}
@@ -693,7 +693,7 @@ export default function EntryEditForm({
           type="button"
           onClick={handleSave}
           disabled={saving}
-          className="flex-1 py-2.5 bg-lavender-500 hover:bg-lavender-600 disabled:opacity-60 text-white rounded-xl text-sm font-semibold transition-all shadow-sm shadow-lavender-200"
+          className="flex-1 py-2.5 bg-violet-500 hover:bg-violet-600 disabled:opacity-60 text-white rounded-xl text-sm font-semibold transition-all shadow-sm shadow-violet-200"
         >
           {saving ? 'Saving…' : 'Save changes'}
         </button>

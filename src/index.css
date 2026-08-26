@@ -1,55 +1,60 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/geist";
+
+@custom-variant dark (&:is(.dark *));
 
 :root,
 [data-theme="light"] {
-  --bg-primary: #f8f5ff;
-  --bg-secondary: #ffffff;
-  --bg-card: #ffffff;
-  --text-primary: #1a1a2e;
-  --text-secondary: #6b7280;
-  --border-color: rgba(0,0,0,0.05);
-  --shadow-color: rgba(139,77,255,0.08);
-  --bg-input: #ffffff;
-  --bg-hover: #f5f0ff;
-  --bg-accent: #faf7ff;
-  --text-accent: #6d1ce3;
-  --icon-color: #6b7280;
-  --divider-color: #f3f4f6;
-  --ring-color: rgba(0,0,0,0.05);
+  --background: #f8f5ff;
+  --secondary: #ffffff;
+  --card: #ffffff;
+  --foreground: #1a1a2e;
+  --muted-foreground: #6b7280;
+  --border: rgba(0,0,0,0.05);
+  --ring: rgba(139,77,255,0.08);
+  --input: #ffffff;
+  --accent: #f5f0ff;
+  --muted: #faf7ff;
+  --accent-foreground: #6d1ce3;
+  --muted-foreground: #6b7280;
+  --border: #f3f4f6;
+  --ring: rgba(0,0,0,0.05);
 }
 
 [data-theme="dark"] {
-  --bg-primary: #1a1a2e;
-  --bg-secondary: #2d2b55;
-  --bg-card: #2d2b55;
-  --text-primary: #e8e8ff;
-  --text-secondary: #a5a5c0;
-  --border-color: rgba(255,255,255,0.1);
-  --shadow-color: rgba(0,0,0,0.3);
-  --bg-input: #3b3872;
-  --bg-hover: #3b3872;
-  --bg-accent: #3b3872;
-  --text-accent: #c4adff;
-  --icon-color: #a5a5c0;
-  --divider-color: rgba(255,255,255,0.08);
-  --ring-color: rgba(255,255,255,0.1);
+  --background: #1a1a2e;
+  --secondary: #2d2b55;
+  --card: #2d2b55;
+  --foreground: #e8e8ff;
+  --muted-foreground: #a5a5c0;
+  --border: rgba(255,255,255,0.1);
+  --ring: rgba(0,0,0,0.3);
+  --input: #3b3872;
+  --accent: #3b3872;
+  --muted: #3b3872;
+  --accent-foreground: #c4adff;
+  --muted-foreground: #a5a5c0;
+  --border: rgba(255,255,255,0.08);
+  --ring: rgba(255,255,255,0.1);
 }
 
 [data-theme="high-contrast"] {
-  --bg-primary: #000000;
-  --bg-secondary: #1a1a1a;
-  --bg-card: #1a1a1a;
-  --text-primary: #ffffff;
-  --text-secondary: #cccccc;
-  --border-color: #ffffff;
-  --shadow-color: rgba(255,255,255,0.2);
-  --bg-input: #2a2a2a;
-  --bg-hover: #333333;
-  --bg-accent: #2a2a2a;
-  --text-accent: #ffff00;
-  --icon-color: #ffffff;
-  --divider-color: #ffffff;
-  --ring-color: #ffffff;
+  --background: #000000;
+  --secondary: #1a1a1a;
+  --card: #1a1a1a;
+  --foreground: #ffffff;
+  --muted-foreground: #cccccc;
+  --border: #ffffff;
+  --ring: rgba(255,255,255,0.2);
+  --input: #2a2a2a;
+  --accent: #333333;
+  --muted: #2a2a2a;
+  --accent-foreground: #ffff00;
+  --muted-foreground: #ffffff;
+  --border: #ffffff;
+  --ring: #ffffff;
 }
 
 @theme {
@@ -73,6 +78,38 @@
 
 :root {
   color: #1f2937;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
 }
 
 * {
@@ -86,8 +123,8 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: linear-gradient(180deg, #fbf7f2 0%, #f8f1ff 45%, #ffffff 100%);
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
+  background-color: var(--background);
+  color: var(--foreground);
 }
 
 button,
@@ -108,11 +145,11 @@ textarea {
 .input-card {
   width: 100%;
   border-radius: 1rem;
-  border: 1px solid var(--border-color);
-  background: var(--bg-input);
+  border: 1px solid var(--border);
+  background: var(--input);
   padding: 0.875rem 1rem;
   font-size: 0.95rem;
-  color: var(--text-primary);
+  color: var(--foreground);
   outline: none;
   transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
 }
@@ -152,7 +189,7 @@ textarea {
   height: 1.125rem;
   width: 1.125rem;
   border-radius: 50%;
-  background: var(--bg-card);
+  background: var(--card);
   box-shadow: 0 1px 3px rgba(0,0,0,0.2);
   transition: transform 0.2s ease;
 }
@@ -234,9 +271,9 @@ button.btn-compact {
 
 /* ── Dark theme text and card improvements (#31, #96) ───────────── */
 [data-theme="dark"] .input-card {
-  background: var(--bg-input);
-  border-color: var(--border-color);
-  color: var(--text-primary);
+  background: var(--input);
+  border-color: var(--border);
+  color: var(--foreground);
 }
 
 [data-theme="dark"] .input-card:focus {
@@ -246,30 +283,30 @@ button.btn-compact {
 
 /* ── Comprehensive dark theme (#97) ─────────────────────────────── */
 [data-theme="dark"] body {
-  background: var(--bg-primary);
-  color: var(--text-primary);
+  background: var(--background);
+  color: var(--foreground);
 }
 
 /* Cards, sections, panels */
 [data-theme="dark"] section,
 [data-theme="dark"] [role="region"] {
-  background: var(--bg-card);
-  color: var(--text-primary);
+  background: var(--card);
+  color: var(--foreground);
 }
 
 /* Navigation */
 [data-theme="dark"] nav {
-  background: var(--bg-secondary);
-  border-color: var(--border-color);
+  background: var(--secondary);
+  border-color: var(--border);
 }
 
 [data-theme="dark"] nav a {
-  color: var(--text-secondary);
+  color: var(--muted-foreground);
 }
 
 [data-theme="dark"] nav a[aria-current="page"],
 [data-theme="dark"] nav a.active {
-  color: var(--text-accent);
+  color: var(--accent-foreground);
 }
 
 /* Headings and text */
@@ -277,45 +314,45 @@ button.btn-compact {
 [data-theme="dark"] h2,
 [data-theme="dark"] h3,
 [data-theme="dark"] h4 {
-  color: var(--text-primary);
+  color: var(--foreground);
 }
 
 /* Buttons */
 [data-theme="dark"] button {
-  color: var(--text-primary);
+  color: var(--foreground);
 }
 
 /* Form elements */
 [data-theme="dark"] input,
 [data-theme="dark"] select,
 [data-theme="dark"] textarea {
-  background: var(--bg-input);
-  color: var(--text-primary);
-  border-color: var(--border-color);
+  background: var(--input);
+  color: var(--foreground);
+  border-color: var(--border);
 }
 
 [data-theme="dark"] input::placeholder,
 [data-theme="dark"] textarea::placeholder {
-  color: var(--text-secondary);
+  color: var(--muted-foreground);
 }
 
 /* Select dropdown text */
 [data-theme="dark"] option {
-  background: var(--bg-secondary);
-  color: var(--text-primary);
+  background: var(--secondary);
+  color: var(--foreground);
 }
 
 /* Dividers */
 [data-theme="dark"] hr,
 [data-theme="dark"] [class*="border-gray"],
 [data-theme="dark"] [class*="border-lavender-100"] {
-  border-color: var(--divider-color);
+  border-color: var(--border);
 }
 
 /* Ring overrides for dark cards */
 [data-theme="dark"] [class*="ring-black/5"],
 [data-theme="dark"] [class*="ring-black/10"] {
-  --tw-ring-color: var(--ring-color);
+  --tw-ring-color: var(--ring);
 }
 
 /*
@@ -326,67 +363,67 @@ button.btn-compact {
 
 /* Backgrounds that are hardcoded white */
 [data-theme="dark"] .bg-white {
-  background-color: var(--bg-card) !important;
+  background-color: var(--card) !important;
 }
 
 [data-theme="dark"] .bg-gray-50,
 [data-theme="dark"] .bg-gray-100 {
-  background-color: var(--bg-accent) !important;
+  background-color: var(--muted) !important;
 }
 
 /* Also match Tailwind opacity utility variants like `bg-white/50` safely via
    attribute selectors to avoid needing to escape slashes in selectors. */
 [data-theme="dark"] [class*="bg-white/"] {
-  background-color: var(--bg-card) !important;
+  background-color: var(--card) !important;
 }
 
 [data-theme="dark"] [class*="bg-gray-50/"] ,
 [data-theme="dark"] [class*="bg-gray-100/"] {
-  background-color: var(--bg-accent) !important;
+  background-color: var(--muted) !important;
 }
 
 /* Text overrides */
 [data-theme="dark"] .text-gray-900,
 [data-theme="dark"] .text-gray-800,
 [data-theme="dark"] .text-gray-700 {
-  color: var(--text-primary) !important;
+  color: var(--foreground) !important;
 }
 
 [data-theme="dark"] .text-gray-600,
 [data-theme="dark"] .text-gray-500,
 [data-theme="dark"] .text-gray-400 {
-  color: var(--text-secondary) !important;
+  color: var(--muted-foreground) !important;
 }
 
 /* Mobile header */
 [data-theme="dark"] header {
-  background: var(--bg-secondary);
-  border-color: var(--border-color);
+  background: var(--secondary);
+  border-color: var(--border);
 }
 
 /* ── Comprehensive high-contrast theme (#97) ────────────────────── */
 [data-theme="high-contrast"] body {
-  background: var(--bg-primary);
-  color: var(--text-primary);
+  background: var(--background);
+  color: var(--foreground);
 }
 
 /* Cards, sections, panels */
 [data-theme="high-contrast"] .bg-white {
-  background-color: var(--bg-card) !important;
+  background-color: var(--card) !important;
 }
 
 [data-theme="high-contrast"] .bg-gray-50,
 [data-theme="high-contrast"] .bg-gray-100 {
-  background-color: var(--bg-accent) !important;
+  background-color: var(--muted) !important;
 }
 
 [data-theme="high-contrast"] [class*="bg-white/"] {
-  background-color: var(--bg-card) !important;
+  background-color: var(--card) !important;
 }
 
 [data-theme="high-contrast"] [class*="bg-gray-50/"] ,
 [data-theme="high-contrast"] [class*="bg-gray-100/"] {
-  background-color: var(--bg-accent) !important;
+  background-color: var(--muted) !important;
 }
 
 /* Text */
@@ -404,48 +441,48 @@ button.btn-compact {
 
 /* Navigation */
 [data-theme="high-contrast"] nav {
-  background: var(--bg-secondary);
+  background: var(--secondary);
 }
 
 [data-theme="high-contrast"] nav a {
-  color: var(--text-secondary);
+  color: var(--muted-foreground);
 }
 
 /* Navigation link active state */
 [data-theme="high-contrast"] nav a[aria-current="page"],
 [data-theme="high-contrast"] nav a.active {
-  color: var(--text-accent);
+  color: var(--accent-foreground);
 }
 
 /* Inputs */
 [data-theme="high-contrast"] .input-card {
-  background: var(--bg-input);
-  border-color: var(--border-color);
-  color: var(--text-primary);
+  background: var(--input);
+  border-color: var(--border);
+  color: var(--foreground);
 }
 
 [data-theme="high-contrast"] input,
 [data-theme="high-contrast"] select,
 [data-theme="high-contrast"] textarea {
-  background: var(--bg-input);
-  color: var(--text-primary);
-  border-color: var(--border-color);
+  background: var(--input);
+  color: var(--foreground);
+  border-color: var(--border);
 }
 
 [data-theme="high-contrast"] input::placeholder,
 [data-theme="high-contrast"] textarea::placeholder {
-  color: var(--text-secondary);
+  color: var(--muted-foreground);
 }
 
 [data-theme="high-contrast"] option {
-  background: var(--bg-secondary);
-  color: var(--text-primary);
+  background: var(--secondary);
+  color: var(--foreground);
 }
 
 /* Ring overrides */
 [data-theme="high-contrast"] [class*="ring-black/5"],
 [data-theme="high-contrast"] [class*="ring-black/10"] {
-  --tw-ring-color: var(--ring-color);
+  --tw-ring-color: var(--ring);
 }
 
 /* Headings */
@@ -453,24 +490,24 @@ button.btn-compact {
 [data-theme="high-contrast"] h2,
 [data-theme="high-contrast"] h3,
 [data-theme="high-contrast"] h4 {
-  color: var(--text-primary);
+  color: var(--foreground);
 }
 
 /* Mobile header */
 [data-theme="high-contrast"] header {
-  background: var(--bg-secondary);
-  border-color: var(--border-color);
+  background: var(--secondary);
+  border-color: var(--border);
 }
 
 /* Dividers */
 [data-theme="high-contrast"] hr {
-  border-color: var(--divider-color);
+  border-color: var(--border);
 }
 
 /* Lavender text for high contrast = yellow for visibility */
 [data-theme="high-contrast"] .text-lavender-700,
 [data-theme="high-contrast"] .text-lavender-600 {
-  color: var(--text-accent) !important;
+  color: var(--accent-foreground) !important;
 }
 
 /* ── High-contrast toggle styling (#31) ─────────────────────────── */
@@ -495,42 +532,42 @@ button.btn-compact {
 /* Slate/gray backgrounds */
 [data-theme="dark"] .bg-slate-50,
 [data-theme="dark"] .bg-slate-100 {
-  background-color: var(--bg-accent) !important;
+  background-color: var(--muted) !important;
 }
 
 [data-theme="dark"] .bg-slate-200,
 [data-theme="dark"] .bg-gray-200,
 [data-theme="dark"] .bg-gray-300 {
-  background-color: var(--bg-hover) !important;
+  background-color: var(--accent) !important;
 }
 
 /* Slate text */
 [data-theme="dark"] .text-slate-900,
 [data-theme="dark"] .text-slate-800,
 [data-theme="dark"] .text-slate-700 {
-  color: var(--text-primary) !important;
+  color: var(--foreground) !important;
 }
 
 [data-theme="dark"] .text-slate-600,
 [data-theme="dark"] .text-slate-500,
 [data-theme="dark"] .text-slate-400 {
-  color: var(--text-secondary) !important;
+  color: var(--muted-foreground) !important;
 }
 
 /* Slate/gray border & ring */
 [data-theme="dark"] [class*="ring-slate-"],
 [data-theme="dark"] [class*="ring-gray-"] {
-  --tw-ring-color: var(--ring-color);
+  --tw-ring-color: var(--ring);
 }
 
 [data-theme="dark"] [class*="border-slate-"],
 [data-theme="dark"] [class*="border-gray-"] {
-  border-color: var(--border-color) !important;
+  border-color: var(--border) !important;
 }
 
 /* Progress bars — track colour */
 [data-theme="dark"] .bg-gray-200 {
-  background-color: var(--bg-hover) !important;
+  background-color: var(--accent) !important;
 }
 
 /* Status badge: not_started uses bg-slate-100 text-slate-700 */
@@ -540,13 +577,13 @@ button.btn-compact {
 
 [data-theme="high-contrast"] .bg-slate-50,
 [data-theme="high-contrast"] .bg-slate-100 {
-  background-color: var(--bg-accent) !important;
+  background-color: var(--muted) !important;
 }
 
 [data-theme="high-contrast"] .bg-slate-200,
 [data-theme="high-contrast"] .bg-gray-200,
 [data-theme="high-contrast"] .bg-gray-300 {
-  background-color: var(--bg-hover) !important;
+  background-color: var(--accent) !important;
 }
 
 [data-theme="high-contrast"] .text-slate-900,
@@ -563,12 +600,12 @@ button.btn-compact {
 
 [data-theme="high-contrast"] [class*="ring-slate-"],
 [data-theme="high-contrast"] [class*="ring-gray-"] {
-  --tw-ring-color: var(--ring-color);
+  --tw-ring-color: var(--ring);
 }
 
 [data-theme="high-contrast"] [class*="border-slate-"],
 [data-theme="high-contrast"] [class*="border-gray-"] {
-  border-color: var(--border-color) !important;
+  border-color: var(--border) !important;
 }
 
 /* High-contrast input focus ring — make it prominent yellow */
@@ -582,7 +619,7 @@ button.btn-compact {
 /* High-contrast — ensure ring-black/5 and ring-black/10 show clearly */
 [data-theme="high-contrast"] [class*="ring-black/5"],
 [data-theme="high-contrast"] [class*="ring-black/10"] {
-  --tw-ring-color: var(--ring-color);
+  --tw-ring-color: var(--ring);
 }
 
 /* ── Status/semantic colour adjustments for dark (#96) ────────────
@@ -675,21 +712,21 @@ button.btn-compact {
 [data-theme="high-contrast"] .text-lavender-500,
 [data-theme="high-contrast"] .text-lavender-400,
 [data-theme="high-contrast"] .text-lavender-300 {
-  color: var(--text-accent) !important;
+  color: var(--accent-foreground) !important;
 }
 
 [data-theme="high-contrast"] .bg-lavender-50 {
-  background-color: var(--bg-accent) !important;
+  background-color: var(--muted) !important;
 }
 
 /* Dark: lavender-50 chips/badges should use the dark accent bg */
 [data-theme="dark"] .bg-lavender-50 {
-  background-color: var(--bg-accent) !important;
+  background-color: var(--muted) !important;
 }
 
 [data-theme="dark"] .text-lavender-700,
 [data-theme="dark"] .text-lavender-600 {
-  color: var(--text-accent) !important;
+  color: var(--accent-foreground) !important;
 }
 
 /* ── Ensure section/region backgrounds don't use hard white in dark (#96) ── */
@@ -698,7 +735,7 @@ button.btn-compact {
 [data-theme="dark"] [class*="bg-white/70"],
 [data-theme="dark"] [class*="bg-white/80"],
 [data-theme="dark"] [class*="bg-white/90"] {
-  background-color: var(--bg-card) !important;
+  background-color: var(--card) !important;
 }
 
 [data-theme="high-contrast"] [class*="bg-white/50"],
@@ -706,7 +743,7 @@ button.btn-compact {
 [data-theme="high-contrast"] [class*="bg-white/70"],
 [data-theme="high-contrast"] [class*="bg-white/80"],
 [data-theme="high-contrast"] [class*="bg-white/90"] {
-  background-color: var(--bg-card) !important;
+  background-color: var(--card) !important;
 }
 
 /* ── EntryCard: override colored light backgrounds in dark/HC (#accessibility) ── */
@@ -719,13 +756,13 @@ button.btn-compact {
  */
 [data-theme="dark"] [data-entry-type],
 [data-theme="high-contrast"] [data-entry-type] {
-  background-color: var(--bg-card) !important;
+  background-color: var(--card) !important;
 }
 
 /* Ensure icon container inside EntryCard is visible in dark/HC */
 [data-theme="dark"] [data-entry-type] .bg-white,
 [data-theme="high-contrast"] [data-entry-type] .bg-white {
-  background-color: var(--bg-secondary) !important;
+  background-color: var(--secondary) !important;
 }
 
 /* ── NHS Guidance button: override amber styles for blue in all themes ── */
@@ -748,7 +785,7 @@ button.btn-compact {
 
 /* ── Remaining light bg-*-50 colours used in stat tiles and surfaces ── */
 /*
- * StatTile in ReportsPage now uses var(--bg-card) directly, but other
+ * StatTile in ReportsPage now uses var(--card) directly, but other
  * components may still use these. Keep them overridden for safety.
  */
 [data-theme="dark"] .bg-sky-50,
@@ -759,7 +796,7 @@ button.btn-compact {
 [data-theme="dark"] .bg-teal-50,
 [data-theme="dark"] .bg-violet-50,
 [data-theme="dark"] .bg-stone-50 {
-  background-color: var(--bg-card) !important;
+  background-color: var(--card) !important;
 }
 
 [data-theme="high-contrast"] .bg-sky-50,
@@ -770,7 +807,7 @@ button.btn-compact {
 [data-theme="high-contrast"] .bg-teal-50,
 [data-theme="high-contrast"] .bg-violet-50,
 [data-theme="high-contrast"] .bg-stone-50 {
-  background-color: var(--bg-card) !important;
+  background-color: var(--card) !important;
 }
 
 /* ── Custom @theme colours (bg-sky-light, bg-peach, bg-mint, bg-rose) ── */
@@ -780,18 +817,107 @@ button.btn-compact {
  */
 [data-theme="dark"],
 [data-theme="high-contrast"] {
-  --color-sky-light: var(--bg-card);
-  --color-peach: var(--bg-card);
-  --color-mint: var(--bg-card);
-  --color-rose: var(--bg-card);
+  --color-sky-light: var(--card);
+  --color-peach: var(--card);
+  --color-mint: var(--card);
+  --color-rose: var(--card);
 }
 
 /* ── CelebrationBanner: ensure themed backgrounds in dark/HC ── */
 [data-theme="dark"] .bg-lavender-900,
 [data-theme="dark"] .bg-emerald-900,
 [data-theme="dark"] .bg-sky-900 {
-  color: var(--text-primary) !important;
+  color: var(--foreground) !important;
 }
 
-/* ── LoginPage header: icons now use text-[var(--icon-color)] directly ── */
+/* ── LoginPage header: icons now use text-[var(--muted-foreground)] directly ── */
 /* No additional CSS override needed for LoginPage HC icon colours. */
+
+@theme inline {
+  --font-heading: var(--font-sans);
+  --font-sans: 'Geist Variable', sans-serif;
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}

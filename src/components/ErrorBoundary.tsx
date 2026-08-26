@@ -45,7 +45,7 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
           <button
             type="button"
             onClick={this.handleReload}
-            className="mt-5 rounded-full bg-lavender-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-lavender-700"
+            className="mt-5 rounded-full bg-violet-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-violet-700"
           >
             Refresh tracker
           </button>

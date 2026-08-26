@@ -212,7 +212,7 @@ export default function LogPage() {
               title={`${d.amountMl}ml – ${d.type}`}
               subtitle={d.notes}
               time={d.time}
-              color="bg-sky-light"
+              color="bg-sky-50"
               onDelete={() => deleteDrink(d.id)}
               entryType="drinks"
               entryData={d as unknown}
@@ -244,7 +244,7 @@ export default function LogPage() {
               title={`${getModuleLabel('urine')}: ${parts}`}
               subtitle={[details, e.notes].filter(Boolean).join(' — ')}
               time={e.time}
-              color="bg-peach"
+              color="bg-orange-50"
               onDelete={() => deleteUrineEntry(e.id)}
               entryType="urine"
               entryData={e as unknown}
@@ -267,7 +267,7 @@ export default function LogPage() {
               title={`${getModuleLabel('bowel')}: ${e.location === 'nappy' ? 'Nappy' : 'Toilet'} · ${e.amount} · Type ${e.bristolType}`}
               subtitle={`${e.laxativesGiven ? '💊 Laxatives today. ' : ''}${e.notes}`}
               time={e.time}
-              color="bg-mint"
+              color="bg-emerald-50"
               onDelete={() => deleteBowelEntry(e.id)}
               entryType="bowel"
               entryData={e as unknown}
@@ -537,7 +537,7 @@ export default function LogPage() {
           <select
             value={selectedChildId ?? ''}
             onChange={(e) => selectChild(e.target.value)}
-            className="w-full rounded-2xl border border-lavender-100 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-sm outline-none ring-1 ring-black/5"
+            className="w-full rounded-2xl border border-violet-100 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-sm outline-none ring-1 ring-black/5"
           >
             {children.map((child) => (
               <option key={child.id} value={child.id}>
@@ -563,7 +563,7 @@ export default function LogPage() {
                 key={m.key}
                 onClick={() => toggleFilter(m.key)}
                 aria-pressed={active}
-                className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-all focus-visible:ring-2 focus-visible:ring-lavender-500 focus-visible:ring-offset-2 ${
+                className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-all focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2 ${
                   active
                     ? MODULE_CHIP_ACTIVE[m.key]
                     : MODULE_CHIP_COLOURS[m.key]
@@ -614,7 +614,7 @@ export default function LogPage() {
       <div className="fixed bottom-24 right-4 z-30">
         <Link
           to="/add"
-          className="flex h-14 w-14 items-center justify-center rounded-full bg-lavender-500 text-white shadow-lg shadow-lavender-200 transition hover:bg-lavender-600 active:scale-95"
+          className="flex h-14 w-14 items-center justify-center rounded-full bg-violet-500 text-white shadow-lg shadow-violet-200 transition hover:bg-violet-600 active:scale-95"
           aria-label="Add new entry"
         >
           <Plus size={24} />

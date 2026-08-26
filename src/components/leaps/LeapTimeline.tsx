@@ -19,8 +19,8 @@ export default function LeapTimeline({ child }: { child: Child }) {
   const filtered = filter === 'all' ? predictions : predictions.filter((p) => p.status === filter);
 
   return (
-    <section aria-labelledby="timeline-heading" className="rounded-2xl bg-white border border-lavender-100 shadow-sm p-5">
-      <h2 id="timeline-heading" className="flex items-center gap-2 text-lg font-bold text-lavender-700 mb-4">
+    <section aria-labelledby="timeline-heading" className="rounded-2xl bg-white border border-violet-100 shadow-sm p-5">
+      <h2 id="timeline-heading" className="flex items-center gap-2 text-lg font-bold text-violet-700 mb-4">
         <Calendar size={22} aria-hidden="true" />
         Leap Timeline
       </h2>
@@ -34,8 +34,8 @@ export default function LeapTimeline({ child }: { child: Child }) {
             aria-pressed={filter === f}
             className={`rounded-full px-3 py-1 text-xs font-medium border transition-all ${
               filter === f
-                ? 'bg-lavender-600 text-white border-lavender-600'
-                : 'bg-white text-gray-600 border-gray-200 hover:border-lavender-300'
+                ? 'bg-violet-600 text-white border-violet-600'
+                : 'bg-white text-gray-600 border-gray-200 hover:border-violet-300'
             }`}
           >
             {f === 'all' ? 'All' : STATUS_LABELS[f]}

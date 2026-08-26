@@ -120,17 +120,17 @@ export default function AdminPage() {
         {/* User Accounts */}
         <section className="rounded-[1.75rem] bg-white p-5 shadow-sm ring-1 ring-black/5">
           <h3 className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-4">
-            <UserCog size={16} className="text-lavender-500" /> User accounts ({accounts.length})
+            <UserCog size={16} className="text-violet-500" /> User accounts ({accounts.length})
           </h3>
           <div className="space-y-3">
             {accounts.map((account) => (
-              <div key={account.id} className="rounded-[1.5rem] bg-[var(--bg-accent)] p-4 ring-1 ring-lavender-100">
+              <div key={account.id} className="rounded-[1.5rem] bg-[var(--muted)] p-4 ring-1 ring-violet-100">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1">
                     <div className="text-sm font-semibold text-gray-900 flex items-center gap-2">
                       {account.name}
                       {account.id === user?.id && (
-                        <span className="text-[10px] bg-lavender-100 text-lavender-700 px-2 py-0.5 rounded-full font-bold">You</span>
+                        <span className="text-[10px] bg-violet-100 text-violet-700 px-2 py-0.5 rounded-full font-bold">You</span>
                       )}
                     </div>
                     <div className="text-xs text-gray-500 mt-0.5">{account.email}</div>
@@ -143,7 +143,7 @@ export default function AdminPage() {
                       value={account.role}
                       onChange={(e) => handleRoleChange(account.id, e.target.value as UserRole)}
                       aria-label={`Role for ${account.name}`}
-                      className="rounded-xl border border-lavender-100 bg-white px-2 py-1.5 text-xs font-semibold text-lavender-700 outline-none"
+                      className="rounded-xl border border-violet-100 bg-white px-2 py-1.5 text-xs font-semibold text-violet-700 outline-none"
                     >
                       {allRoles.map((r) => (
                         <option key={r.value} value={r.value}>{r.label}</option>
@@ -159,7 +159,7 @@ export default function AdminPage() {
                       {account.id !== user?.id && (
                         <button
                           onClick={() => { setDeleteConfirmId(deleteConfirmId === account.id ? null : account.id); setDeleteConfirmText(''); }}
-                          className="flex items-center gap-1 rounded-lg bg-rose-50 px-2 py-1 text-[10px] font-semibold text-rose-600 ring-1 ring-rose-200 hover:bg-rose-100"
+                          className="flex items-center gap-1 rounded-lg bg-pink-50 px-2 py-1 text-[10px] font-semibold text-pink-600 ring-1 ring-rose-200 hover:bg-pink-100"
                         >
                           <Trash2 size={10} /> Delete
                         </button>
@@ -176,11 +176,11 @@ export default function AdminPage() {
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
                       placeholder="New password (min 8 chars)"
-                      className="flex-1 rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs outline-none focus:border-lavender-400"
+                      className="flex-1 rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs outline-none focus:border-violet-400"
                     />
                     <button
                       onClick={() => handleResetPassword(account.id)}
-                      className="rounded-xl bg-lavender-500 px-3 py-2 text-xs font-semibold text-white"
+                      className="rounded-xl bg-violet-500 px-3 py-2 text-xs font-semibold text-white"
                     >
                       Reset
                     </button>
@@ -189,8 +189,8 @@ export default function AdminPage() {
 
                 {/* Delete confirmation */}
                 {deleteConfirmId === account.id && (
-                  <div className="mt-3 rounded-xl bg-rose-50 p-3 ring-1 ring-rose-200">
-                    <p className="text-xs text-rose-700 font-medium mb-2">
+                  <div className="mt-3 rounded-xl bg-pink-50 p-3 ring-1 ring-rose-200">
+                    <p className="text-xs text-pink-700 font-medium mb-2">
                       ⚠️ This is irreversible. Type <strong>{account.email}</strong> to confirm:
                     </p>
                     <div className="flex gap-2">
@@ -199,12 +199,12 @@ export default function AdminPage() {
                         value={deleteConfirmText}
                         onChange={(e) => setDeleteConfirmText(e.target.value)}
                         placeholder={account.email}
-                        className="flex-1 rounded-xl border border-rose-200 bg-white px-3 py-2 text-xs outline-none focus:border-rose-400"
+                        className="flex-1 rounded-xl border border-pink-200 bg-white px-3 py-2 text-xs outline-none focus:border-pink-400"
                       />
                       <button
                         onClick={() => handleDeleteUser(account.id)}
                         disabled={deleteConfirmText !== account.email}
-                        className="rounded-xl bg-rose-500 px-3 py-2 text-xs font-semibold text-white disabled:opacity-40"
+                        className="rounded-xl bg-pink-500 px-3 py-2 text-xs font-semibold text-white disabled:opacity-40"
                       >
                         Delete
                       </button>
@@ -219,11 +219,11 @@ export default function AdminPage() {
         {/* All Children */}
         <section className="rounded-[1.75rem] bg-white p-5 shadow-sm ring-1 ring-black/5">
           <h3 className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-3">
-            <Users size={16} className="text-lavender-500" /> All children ({allChildren.length})
+            <Users size={16} className="text-violet-500" /> All children ({allChildren.length})
           </h3>
           <div className="space-y-2">
             {allChildren.map((child) => (
-              <div key={child.id} className="rounded-[1.5rem] bg-[var(--bg-accent)] px-4 py-3 ring-1 ring-lavender-100">
+              <div key={child.id} className="rounded-[1.5rem] bg-[var(--muted)] px-4 py-3 ring-1 ring-violet-100">
                 <div className="text-sm font-semibold text-gray-900">{child.name}</div>
                 <div className="text-xs text-gray-500 mt-0.5">
                   {child.dateOfBirth || 'DOB not recorded'} · {child.parentIds.length} parent{child.parentIds.length !== 1 ? 's' : ''} · {child.caregivers.length} caregiver{child.caregivers.length !== 1 ? 's' : ''}
@@ -237,11 +237,11 @@ export default function AdminPage() {
         {/* Full Audit Trail */}
         <section className="rounded-[1.75rem] bg-white p-5 shadow-sm ring-1 ring-black/5">
           <h3 className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-3">
-            <Shield size={16} className="text-lavender-500" /> Full audit trail ({auditEvents.length})
+            <Shield size={16} className="text-violet-500" /> Full audit trail ({auditEvents.length})
           </h3>
           <div className="space-y-2 max-h-96 overflow-y-auto">
             {auditEvents.map((event) => (
-              <div key={event.id} className="rounded-[1.5rem] bg-[var(--bg-accent)] px-4 py-3 ring-1 ring-lavender-100">
+              <div key={event.id} className="rounded-[1.5rem] bg-[var(--muted)] px-4 py-3 ring-1 ring-violet-100">
                 <div className="text-sm font-semibold text-gray-900">{event.action}</div>
                 <div className="mt-0.5 text-xs text-gray-500">{event.detail}</div>
                 <div className="mt-1 text-[11px] text-gray-400">

@@ -47,8 +47,8 @@ export default function ToiletAttemptForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-3xl bg-[var(--bg-card)] p-5 shadow-sm space-y-5">
-      <h2 className="text-base font-bold text-[var(--text-primary)] flex items-center gap-2">
+    <form onSubmit={handleSubmit} className="rounded-3xl bg-[var(--card)] p-5 shadow-sm space-y-5">
+      <h2 className="text-base font-bold text-[var(--foreground)] flex items-center gap-2">
         <Target size={18} className="text-purple-500" /> Log a toilet visit
       </h2>
 
@@ -64,12 +64,12 @@ export default function ToiletAttemptForm() {
           <div>
             <label className="text-xs font-medium text-gray-600">Date</label>
             <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
-              className="w-full mt-1 px-3 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-input)] focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm text-[var(--text-primary)]" />
+              className="w-full mt-1 px-3 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--input)] focus:border-violet-400 focus:ring-2 focus:ring-violet-100 outline-none text-sm text-[var(--foreground)]" />
           </div>
           <div>
             <label className="text-xs font-medium text-gray-600">Time</label>
             <input type="time" value={time} onChange={(e) => setTime(e.target.value)}
-              className="w-full mt-1 px-3 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-input)] focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm text-[var(--text-primary)]" />
+              className="w-full mt-1 px-3 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--input)] focus:border-violet-400 focus:ring-2 focus:ring-violet-100 outline-none text-sm text-[var(--foreground)]" />
           </div>
         </div>
       </FormStep>
@@ -83,7 +83,7 @@ export default function ToiletAttemptForm() {
                 className={`flex-1 py-3 rounded-xl text-sm font-medium transition-all ${
                   outcome === o.value
                         ? 'bg-purple-500 text-white shadow-md'
-                        : 'bg-[var(--bg-card)] text-[var(--text-secondary)] hover:bg-purple-50'
+                        : 'bg-[var(--card)] text-[var(--muted-foreground)] hover:bg-purple-50'
                 }`}>
                 {o.emoji} {o.label}
               </button>
@@ -94,13 +94,13 @@ export default function ToiletAttemptForm() {
         <div className="flex gap-4">
           <label className="flex items-center gap-3 cursor-pointer flex-1">
             <input type="checkbox" checked={supervised} onChange={(e) => setSupervised(e.target.checked)}
-              className="h-5 w-5 rounded border-[var(--border-color)] text-purple-500 focus:ring-purple-200" />
-            <span className="text-sm font-medium text-[var(--text-primary)]">👀 Supervised</span>
+              className="h-5 w-5 rounded border-[var(--border)] text-purple-500 focus:ring-purple-200" />
+            <span className="text-sm font-medium text-[var(--foreground)]">👀 Supervised</span>
           </label>
           <label className="flex items-center gap-3 cursor-pointer flex-1">
             <input type="checkbox" checked={prompted} onChange={(e) => setPrompted(e.target.checked)}
-              className="h-5 w-5 rounded border-[var(--border-color)] text-purple-500 focus:ring-purple-200" />
-            <span className="text-sm font-medium text-[var(--text-primary)]">🔔 Prompted</span>
+              className="h-5 w-5 rounded border-[var(--border)] text-purple-500 focus:ring-purple-200" />
+            <span className="text-sm font-medium text-[var(--foreground)]">🔔 Prompted</span>
           </label>
         </div>
 
@@ -108,7 +108,7 @@ export default function ToiletAttemptForm() {
           <label className="text-xs font-medium text-gray-600">Duration (minutes) <span className="text-gray-400 font-normal">— optional</span></label>
           <input type="number" value={duration} onChange={(e) => setDuration(e.target.value)}
             placeholder="Time on toilet in minutes"
-            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-input)] focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm text-[var(--text-primary)]"
+            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--input)] focus:border-violet-400 focus:ring-2 focus:ring-violet-100 outline-none text-sm text-[var(--foreground)]"
             min="0" />
         </div>
       </FormStep>
@@ -117,7 +117,7 @@ export default function ToiletAttemptForm() {
         <textarea value={notes} onChange={(e) => setNotes(e.target.value)}
           placeholder="Optional notes..."
           aria-label="Toilet attempt notes"
-          className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm resize-none"
+          className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-violet-400 focus:ring-2 focus:ring-violet-100 outline-none text-sm resize-none"
           rows={2} />
       </FormStep>
 

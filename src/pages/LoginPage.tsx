@@ -160,9 +160,9 @@ export default function LoginPage() {
   const submitHandler = mode === 'register' ? handleRegister : mode === 'login' ? handleLogin : handleReset;
 
   return (
-    <div className="min-h-screen bg-[var(--bg-primary)] px-4 py-6">
+    <div className="min-h-screen bg-[var(--background)] px-4 py-6">
       <div className="mx-auto flex min-h-[calc(100vh-3rem)] w-full max-w-sm flex-col justify-center">
-        <div className="overflow-hidden rounded-[2rem] bg-[var(--bg-card)] shadow-[0_30px_80px_rgba(139,77,255,0.12)] ring-1 ring-[var(--border-color)]">
+        <div className="overflow-hidden rounded-[2rem] bg-[var(--card)] shadow-[0_30px_80px_rgba(139,77,255,0.12)] ring-1 ring-[var(--border)]">
           <PageShell
             heroAssetKey="pageLoginHero"
             heroContent={(
@@ -170,15 +170,15 @@ export default function LoginPage() {
                 <div className="mb-1 flex justify-center">
                   <BrandIcon width={180} />
                 </div>
-                <h1 className="mt-1 text-xl font-bold tracking-tight text-[var(--text-primary)]">
+                <h1 className="mt-1 text-xl font-bold tracking-tight text-[var(--foreground)]">
                   {BRAND.heroTitle}
                 </h1>
-                <div className="mt-3 flex items-center justify-center gap-3 text-[11px] text-[var(--text-primary)]">
-                  <span className="inline-flex items-center gap-1"><ShieldCheck size={12} className="text-[var(--icon-color)]" /> Secure</span>
-                  <span className="text-[var(--text-secondary)]">·</span>
-                  <span className="inline-flex items-center gap-1"><Mail size={12} className="text-[var(--icon-color)]" /> Shared access</span>
-                  <span className="text-[var(--text-secondary)]">·</span>
-                  <span className="inline-flex items-center gap-1"><Sparkles size={12} className="text-[var(--icon-color)]" /> {cloud ? 'Cloud sync' : 'Private'}</span>
+                <div className="mt-3 flex items-center justify-center gap-3 text-[11px] text-[var(--foreground)]">
+                  <span className="inline-flex items-center gap-1"><ShieldCheck size={12} className="text-[var(--muted-foreground)]" /> Secure</span>
+                  <span className="text-[var(--muted-foreground)]">·</span>
+                  <span className="inline-flex items-center gap-1"><Mail size={12} className="text-[var(--muted-foreground)]" /> Shared access</span>
+                  <span className="text-[var(--muted-foreground)]">·</span>
+                  <span className="inline-flex items-center gap-1"><Sparkles size={12} className="text-[var(--muted-foreground)]" /> {cloud ? 'Cloud sync' : 'Private'}</span>
                 </div>
               </div>
             )}
@@ -193,7 +193,7 @@ export default function LoginPage() {
                   type="button"
                   onClick={() => { setMode(item); setError(''); setMessage(''); }}
                   className={`rounded-2xl px-3 py-2 font-medium transition-all ${
-                    mode === item ? 'bg-white text-lavender-700 shadow-sm' : 'text-gray-500'
+                    mode === item ? 'bg-white text-violet-700 shadow-sm' : 'text-gray-500'
                   }`}
                 >
                   {item === 'register' ? 'Get started' : item === 'login' ? 'Sign in' : 'Reset'}
@@ -222,8 +222,8 @@ export default function LoginPage() {
                         onClick={() => setRole(option.value)}
                         className={`rounded-2xl border px-3 py-2 text-xs font-semibold transition-all ${
                           role === option.value
-                            ? 'border-lavender-300 bg-lavender-50 text-lavender-700'
-                            : 'border-gray-200 text-gray-500 hover:border-lavender-200 hover:bg-lavender-50/60'
+                            ? 'border-violet-300 bg-violet-50 text-violet-700'
+                            : 'border-gray-200 text-gray-500 hover:border-violet-200 hover:bg-violet-50/60'
                         }`}
                       >
                         {option.label}
@@ -231,7 +231,7 @@ export default function LoginPage() {
                     ))}
                   </div>
                   {/* Role description */}
-                  <div className="rounded-xl bg-lavender-50 px-3 py-2 text-xs text-lavender-700 mt-2">
+                  <div className="rounded-xl bg-violet-50 px-3 py-2 text-xs text-violet-700 mt-2">
                     {role === 'parent' && 'Full access: manage children, log all entries, invite others, and export data.'}
                     {role === 'caregiver' && 'Can view and log entries for children you are invited to. Cannot manage child profiles or invites.'}
                     {role === 'schoolAdmin' && 'School-based access: log day-to-day support updates such as meals, routines, and toilet visits. Cannot manage family profiles.'}
@@ -289,7 +289,7 @@ export default function LoginPage() {
               )}
 
               {pendingInvites.length > 0 && (
-                <div className="rounded-2xl border border-lavender-100 bg-lavender-50 px-4 py-3 text-xs text-lavender-800">
+                <div className="rounded-2xl border border-violet-100 bg-violet-50 px-4 py-3 text-xs text-violet-800">
                   {pendingInvites.length} secure invite{pendingInvites.length > 1 ? 's are' : ' is'} waiting for this email.
                 </div>
               )}
@@ -300,7 +300,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full rounded-full bg-lavender-500 px-4 py-3 text-sm font-semibold text-white shadow-[0_16px_30px_rgba(139,77,255,0.28)] transition-all hover:bg-lavender-600 disabled:cursor-not-allowed disabled:opacity-70"
+                className="w-full rounded-full bg-violet-500 px-4 py-3 text-sm font-semibold text-white shadow-[0_16px_30px_rgba(139,77,255,0.28)] transition-all hover:bg-violet-600 disabled:cursor-not-allowed disabled:opacity-70"
               >
                 {submitting
                   ? 'Please wait…'

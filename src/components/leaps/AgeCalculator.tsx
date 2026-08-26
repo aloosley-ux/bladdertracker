@@ -18,8 +18,8 @@ export default function AgeCalculator({ child }: { child: Child }) {
   const nextLeap = getNextLeap(refDate, now);
 
   return (
-    <section aria-labelledby="age-calc-heading" className="rounded-2xl bg-white border border-lavender-100 shadow-sm p-5">
-      <h2 id="age-calc-heading" className="flex items-center gap-2 text-lg font-bold text-lavender-700 mb-4">
+    <section aria-labelledby="age-calc-heading" className="rounded-2xl bg-white border border-violet-100 shadow-sm p-5">
+      <h2 id="age-calc-heading" className="flex items-center gap-2 text-lg font-bold text-violet-700 mb-4">
         <Baby size={22} aria-hidden="true" />
         Baby Age &amp; Leap Prediction
       </h2>
@@ -27,8 +27,8 @@ export default function AgeCalculator({ child }: { child: Child }) {
       {/* Age display */}
       <div className="grid grid-cols-3 gap-3 mb-5">
         <div className="rounded-xl bg-gradient-to-br from-pink-50 to-rose-100 p-4 text-center">
-          <div className="text-3xl font-extrabold text-rose-600">{age.months}</div>
-          <div className="text-xs font-medium text-rose-500 mt-1">months</div>
+          <div className="text-3xl font-extrabold text-pink-600">{age.months}</div>
+          <div className="text-xs font-medium text-pink-500 mt-1">months</div>
         </div>
         <div className="rounded-xl bg-gradient-to-br from-sky-50 to-cyan-100 p-4 text-center">
           <div className="text-3xl font-extrabold text-cyan-600">{age.weeks}</div>

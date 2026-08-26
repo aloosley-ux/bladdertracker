@@ -22,12 +22,12 @@ export default function LeapProgressChart({ child }: { child: Child }) {
     current: 'bg-emerald-400',
     upcoming: 'bg-sky-300',
     // 'future' uses a border in addition to the fill to remain visible on white backgrounds
-    future: 'bg-lavender-100 border border-lavender-200',
+    future: 'bg-violet-100 border border-violet-200',
   };
 
   return (
-    <section aria-labelledby="leap-progress-heading" className="rounded-2xl bg-white border border-lavender-100 shadow-sm p-5">
-      <h2 id="leap-progress-heading" className="flex items-center gap-2 text-lg font-bold text-lavender-700 mb-4">
+    <section aria-labelledby="leap-progress-heading" className="rounded-2xl bg-white border border-violet-100 shadow-sm p-5">
+      <h2 id="leap-progress-heading" className="flex items-center gap-2 text-lg font-bold text-violet-700 mb-4">
         📈 Leap Progress Overview
       </h2>
 
@@ -55,7 +55,7 @@ export default function LeapProgressChart({ child }: { child: Child }) {
         </div>
         <div className="h-3 rounded-full bg-gray-100 overflow-hidden" role="progressbar" aria-label="Leap progress" aria-valuenow={progressPct} aria-valuemin={0} aria-valuemax={100}>
           <div
-            className="h-full rounded-full bg-gradient-to-r from-lavender-400 to-lavender-600 transition-all duration-700"
+            className="h-full rounded-full bg-gradient-to-r from-violet-400 to-violet-600 transition-all duration-700"
             style={{ width: `${progressPct}%` }}
           />
         </div>
@@ -85,7 +85,7 @@ export default function LeapProgressChart({ child }: { child: Child }) {
           { status: 'stormy', label: 'Stormy', color: 'bg-amber-400' },
           { status: 'current', label: 'In progress', color: 'bg-emerald-400' },
           { status: 'upcoming', label: 'Upcoming', color: 'bg-sky-300' },
-          { status: 'future', label: 'Future', color: 'bg-lavender-100 border border-lavender-200' },
+          { status: 'future', label: 'Future', color: 'bg-violet-100 border border-violet-200' },
         ] as const).map(({ status, label, color }) => (
           <div key={status} className="flex items-center gap-1.5">
             <span className={`inline-block h-3 w-3 rounded-sm ${color}`} aria-hidden="true" />

@@ -48,17 +48,17 @@ export default function NotificationBell() {
         aria-expanded={open}
         aria-haspopup="true"
         onClick={() => setOpen((v) => !v)}
-        className="relative flex items-center justify-center rounded-xl p-2 text-gray-500 transition-colors hover:bg-lavender-50 hover:text-lavender-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-lavender-500"
+        className="relative flex items-center justify-center rounded-xl p-2 text-gray-500 transition-colors hover:bg-violet-50 hover:text-violet-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-500"
       >
         {unread.length > 0 ? (
-          <Bell size={20} strokeWidth={2} className="text-lavender-600" aria-hidden="true" />
+          <Bell size={20} strokeWidth={2} className="text-violet-600" aria-hidden="true" />
         ) : (
           <BellOff size={20} strokeWidth={2} aria-hidden="true" />
         )}
         {unread.length > 0 && (
           <span
             aria-hidden="true"
-            className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white leading-none"
+            className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-pink-500 text-[9px] font-bold text-white leading-none"
           >
             {unread.length > 9 ? '9+' : unread.length}
           </span>
@@ -69,17 +69,17 @@ export default function NotificationBell() {
         <div
           role="dialog"
           aria-label="Notifications panel"
-          className="absolute right-0 z-50 mt-2 w-80 rounded-2xl border border-lavender-100 bg-white shadow-xl"
+          className="absolute right-0 z-50 mt-2 w-80 rounded-2xl border border-violet-100 bg-white shadow-xl"
           style={{ top: '100%' }}
         >
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-lavender-50 px-4 py-3">
+          <div className="flex items-center justify-between border-b border-violet-50 px-4 py-3">
             <h2 className="text-sm font-bold text-gray-800">Notifications</h2>
             <div className="flex items-center gap-2">
               {unread.length > 0 && (
                 <button
                   onClick={markAllRead}
-                  className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium text-lavender-600 hover:bg-lavender-50 transition-colors"
+                  className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium text-violet-600 hover:bg-violet-50 transition-colors"
                   aria-label="Mark all notifications as read"
                 >
                   <Check size={12} aria-hidden="true" /> Mark all read
@@ -110,7 +110,7 @@ export default function NotificationBell() {
                 <li key={n.id}>
                   <button
                     onClick={() => { if (!n.read) markNotificationRead(n.id); }}
-                    className={`w-full text-left px-4 py-3 transition-colors hover:bg-lavender-50 ${
+                    className={`w-full text-left px-4 py-3 transition-colors hover:bg-violet-50 ${
                       n.read ? 'opacity-60' : ''
                     }`}
                     aria-label={`${n.title}: ${n.message}${n.read ? ' (read)' : ' (unread)'}`}
@@ -119,7 +119,7 @@ export default function NotificationBell() {
                       {!n.read && (
                         <span
                           aria-hidden="true"
-                          className="mt-1.5 h-2 w-2 flex-shrink-0 rounded-full bg-lavender-500"
+                          className="mt-1.5 h-2 w-2 flex-shrink-0 rounded-full bg-violet-500"
                         />
                       )}
                       <div className={!n.read ? '' : 'ml-4'}>

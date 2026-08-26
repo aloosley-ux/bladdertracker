@@ -34,14 +34,14 @@ export default function LeapCalendarWidget({ child }: { child: Child }) {
   };
 
   return (
-    <section aria-labelledby="calendar-heading" className="rounded-2xl bg-white border border-lavender-100 shadow-sm p-5">
-      <h2 id="calendar-heading" className="flex items-center gap-2 text-lg font-bold text-lavender-700 mb-4">
+    <section aria-labelledby="calendar-heading" className="rounded-2xl bg-white border border-violet-100 shadow-sm p-5">
+      <h2 id="calendar-heading" className="flex items-center gap-2 text-lg font-bold text-violet-700 mb-4">
         <Calendar size={22} aria-hidden="true" />
         Calendar &amp; Widget
       </h2>
 
       {/* Mini widget card */}
-      <div className="mb-5 rounded-2xl bg-gradient-to-br from-lavender-500 to-purple-600 p-5 text-white shadow-md" role="region" aria-label="Leap summary widget">
+      <div className="mb-5 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 p-5 text-white shadow-md" role="region" aria-label="Leap summary widget">
         <p className="text-xs font-semibold uppercase tracking-wider opacity-80 mb-1">{child.name}</p>
         {currentLeap ? (
           <>
@@ -92,7 +92,7 @@ export default function LeapCalendarWidget({ child }: { child: Child }) {
         </p>
         <button
           onClick={handleExportICS}
-          className="w-full rounded-lg border-2 border-lavender-300 bg-white px-4 py-2.5 text-sm font-semibold text-lavender-700 hover:bg-lavender-50 transition-colors"
+          className="w-full rounded-lg border-2 border-violet-300 bg-white px-4 py-2.5 text-sm font-semibold text-violet-700 hover:bg-violet-50 transition-colors"
           aria-label="Export leap calendar as ICS file"
         >
           📥 Download Leap Calendar (.ics)

@@ -103,7 +103,7 @@ export default function EntryDetail({ type, entry }: { type: string; entry: unkn
           <button
             type="button"
             onClick={() => setEditMode(true)}
-            className="flex items-center gap-1 text-xs text-lavender-600 font-semibold hover:text-lavender-800 transition-colors"
+            className="flex items-center gap-1 text-xs text-violet-600 font-semibold hover:text-violet-800 transition-colors"
           >
             <Pencil size={11} />
             Edit
@@ -122,7 +122,7 @@ export default function EntryDetail({ type, entry }: { type: string; entry: unkn
           <div className="text-[10px] font-bold uppercase tracking-wide text-gray-400 mb-1.5">History</div>
           <ul className="space-y-1.5 max-h-28 overflow-y-auto pr-1">
             {audit.map((ev) => (
-              <li key={ev.id} className="border-l-2 border-lavender-200 pl-2.5">
+              <li key={ev.id} className="border-l-2 border-violet-200 pl-2.5">
                 <div className="text-xs font-medium text-gray-700">{ev.action}</div>
                 {ev.detail && <div className="text-[11px] text-gray-500">{ev.detail}</div>}
                 <div className="text-[10px] text-gray-400 mt-0.5">{new Date(ev.createdAt).toLocaleString()}</div>

@@ -89,12 +89,12 @@ export default function AddEntryPage() {
   if (tabs.length === 0) {
     return (
       <div className="pb-20">
-        <div className="bg-[var(--bg-secondary)] px-4 pt-4 pb-3">
+        <div className="bg-[var(--secondary)] px-4 pt-4 pb-3">
           <div className="mb-3 flex items-center gap-3">
             <button
               onClick={() => navigate('/')}
               aria-label="Back to dashboard"
-              className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--bg-input)] text-[var(--text-secondary)] shadow-sm ring-1 ring-[var(--border-color)] hover:bg-[var(--bg-card)]"
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--input)] text-[var(--muted-foreground)] shadow-sm ring-1 ring-[var(--border)] hover:bg-[var(--card)]"
             >
               <ArrowLeft size={18} />
             </button>
@@ -107,7 +107,7 @@ export default function AddEntryPage() {
           <p className="text-xs text-gray-400 mt-1 mb-4">Turn on at least one module in Settings to start logging.</p>
           <button
             onClick={() => navigate('/settings')}
-            className="rounded-full bg-lavender-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-lavender-600"
+            className="rounded-full bg-violet-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-violet-600"
           >
             Open settings
           </button>
@@ -126,7 +126,7 @@ export default function AddEntryPage() {
               <button
                 onClick={() => navigate('/')}
                 aria-label="Back to dashboard"
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--bg-input)] text-[var(--text-secondary)] shadow-sm ring-1 ring-[var(--border-color)] hover:bg-[var(--bg-card)]"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--input)] text-[var(--muted-foreground)] shadow-sm ring-1 ring-[var(--border)] hover:bg-[var(--card)]"
               >
                 <ArrowLeft size={18} />
               </button>
@@ -134,8 +134,8 @@ export default function AddEntryPage() {
             </div>
 
             <div className="mb-3 px-1">
-              <h1 className="text-lg font-bold text-[var(--text-primary)]">Add an update</h1>
-              <p className="mt-1 text-sm text-[var(--text-muted)]">Choose the quickest thing you want to log.</p>
+              <h1 className="text-lg font-bold text-[var(--foreground)]">Add an update</h1>
+              <p className="mt-1 text-sm text-[var(--muted-foreground)]">Choose the quickest thing you want to log.</p>
             </div>
 
             <div className="grid grid-cols-4 gap-2 pb-1 sm:grid-cols-6 md:grid-cols-8">
@@ -145,8 +145,8 @@ export default function AddEntryPage() {
                   onClick={() => setActiveTab(type)}
                   className={`flex min-h-12 w-full items-center justify-center gap-1.5 rounded-xl px-3 py-2.5 text-xs font-medium transition-all sm:w-auto ${
                     activeTab === type
-                      ? 'bg-lavender-500 text-white shadow-md'
-                      : 'bg-[var(--bg-card)] text-[var(--text-muted)] shadow-sm ring-1 ring-[var(--border-color)] hover:bg-[var(--bg-input)]'
+                      ? 'bg-violet-500 text-white shadow-md'
+                      : 'bg-[var(--card)] text-[var(--muted-foreground)] shadow-sm ring-1 ring-[var(--border)] hover:bg-[var(--input)]'
                   }`}
                 >
                   <Icon size={14} className={activeTab === type ? 'text-white' : color} />
