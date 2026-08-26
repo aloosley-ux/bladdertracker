@@ -142,6 +142,34 @@ describe('storage utilities', () => {
     expect(storage.getAccounts()).toHaveLength(2);
   });
 
+  it('rejects invalid DOB in local mode (parity with cloud toIsoDateOrNull)', () => {
+    const invalidChild = { ...baseChild, dateOfBirth: '2025-02-30' };
+    storage.addChild(invalidChild);
+    expect(storage.getChildren()[0].dateOfBirth).toBe('');
+
+    storage.updateChild({ ...baseChild, dateOfBirth: '2026-04-01' });
+    expect(storage.getChildren()[0].dateOfBirth).toBe('2026-04-01');
+
+    storage.updateChild({ ...baseChild, dateOfBirth: '2025-02-30' });
+    expect(storage.getChildren()[0].dateOfBirth).toBe('');
+  });
+
+  it('isValidIsoDate validates calendar dates strictly', () => {
+    expect(storage.isValidIsoDate('2026-04-01')).toBe(true);
+    expect(storage.isValidIsoDate('2025-02-30')).toBe(false);
+    expect(storage.isValidIsoDate('2021-02-29')).toBe(false);
+    expect(storage.isValidIsoDate('not-a-date')).toBe(false);
+    expect(storage.isValidIsoDate('')).toBe(false);
+  });
+
+  it('sanitizeDateOfBirth coerces invalid dates to empty string', () => {
+    expect(storage.sanitizeDateOfBirth('2026-04-01')).toBe('2026-04-01');
+    expect(storage.sanitizeDateOfBirth('2025-02-30')).toBe('');
+    expect(storage.sanitizeDateOfBirth('')).toBe('');
+    expect(storage.sanitizeDateOfBirth(null)).toBe('');
+    expect(storage.sanitizeDateOfBirth(123)).toBe('');
+  });
+
   it('stores notifications, reminders, and audit events for the active user', () => {
     storage.setAccounts([baseAccount]);
     storage.setUser(baseAccount);

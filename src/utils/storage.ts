@@ -178,7 +178,7 @@ export function setChildren(children: Child[]): void {
 
 export function addChild(child: Child): void {
   const children = getChildren();
-  children.push(child);
+  children.push({ ...child, dateOfBirth: sanitizeDateOfBirth(child.dateOfBirth) });
   setChildren(children);
 }
 
@@ -186,9 +186,29 @@ export function updateChild(child: Child): void {
   const children = getChildren();
   const index = children.findIndex((item) => item.id === child.id);
   if (index !== -1) {
-    children[index] = child;
+    children[index] = { ...child, dateOfBirth: sanitizeDateOfBirth(child.dateOfBirth) };
     setChildren(children);
   }
+}
+
+// Mirrors cloud toIsoDateOrNull (api/children.ts): only accept real calendar
+// dates in YYYY-MM-DD form so local mode matches cloud validation parity.
+// Cloud rejects 2025-02-30; local must too (P1.3 review finding).
+const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+export function isValidIsoDate(value: string): boolean {
+  if (!ISO_DATE_RE.test(value)) return false;
+  const parsed = new Date(`${value}T00:00:00Z`);
+  return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
+}
+
+// Coerce an arbitrary dateOfBirth to '' or a valid YYYY-MM-DD, dropping
+// anything that isn't a real calendar date. Keeps local mode behaviour
+// consistent with the cloud API contract.
+export function sanitizeDateOfBirth(value: unknown): string {
+  if (typeof value !== 'string') return '';
+  const trimmed = value.trim();
+  return isValidIsoDate(trimmed) ? trimmed : '';
 }
 
 // Diary entries
