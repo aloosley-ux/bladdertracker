@@ -1013,8 +1013,8 @@ export function AppProvider({ children: childrenProp }: { children: ReactNode })
 
   if (!ready) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[var(--bg-primary)]">
-        <div className="animate-pulse text-lavender-500 text-sm font-medium">Loading…</div>
+      <div className="flex min-h-screen items-center justify-center bg-[var(--background)]">
+        <div className="animate-pulse text-violet-500 text-sm font-medium">Loading…</div>
       </div>
     );
   }

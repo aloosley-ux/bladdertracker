@@ -89,15 +89,15 @@ export default function LeapDiary({ child }: { child: Child }) {
   }, [leapDiaryEntries, child.id]);
 
   return (
-    <section aria-labelledby="diary-heading" className="rounded-2xl bg-white border border-lavender-100 shadow-sm p-5">
+    <section aria-labelledby="diary-heading" className="rounded-2xl bg-white border border-violet-100 shadow-sm p-5">
       <div className="flex items-center justify-between mb-4">
-        <h2 id="diary-heading" className="flex items-center gap-2 text-lg font-bold text-lavender-700">
+        <h2 id="diary-heading" className="flex items-center gap-2 text-lg font-bold text-violet-700">
           <BookOpen size={22} aria-hidden="true" />
           Leap Diary
         </h2>
         <button
           onClick={showForm ? handleClose : openNew}
-          className="flex items-center gap-1.5 rounded-lg bg-lavender-600 px-3 py-2 text-sm font-medium text-white hover:bg-lavender-700 transition-colors"
+          className="flex items-center gap-1.5 rounded-lg bg-violet-600 px-3 py-2 text-sm font-medium text-white hover:bg-violet-700 transition-colors"
           aria-label={showForm ? 'Close diary form' : 'Add a diary note'}
         >
           {showForm ? <X size={16} /> : <Plus size={16} />}
@@ -107,7 +107,7 @@ export default function LeapDiary({ child }: { child: Child }) {
 
       {/* Write/Edit form */}
       {showForm && (
-        <div className="mb-5 rounded-xl border border-lavender-200 bg-lavender-50/50 p-4 space-y-3">
+        <div className="mb-5 rounded-xl border border-violet-200 bg-violet-50/50 p-4 space-y-3">
           <p className="text-sm font-semibold text-gray-700">
             {editingEntry ? 'Edit diary note' : `New note${currentLeap ? ` — Leap ${currentLeap.leap.number}: ${currentLeap.leap.title}` : ''}`}
           </p>
@@ -116,7 +116,7 @@ export default function LeapDiary({ child }: { child: Child }) {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Title…"
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-lavender-400 focus:ring-2 focus:ring-lavender-200"
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-violet-400 focus:ring-2 focus:ring-violet-200"
             aria-label="Diary note title"
           />
           <textarea
@@ -124,7 +124,7 @@ export default function LeapDiary({ child }: { child: Child }) {
             onChange={(e) => setBody(e.target.value)}
             placeholder="Write about what you observed today…"
             rows={4}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-lavender-400 focus:ring-2 focus:ring-lavender-200"
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-violet-400 focus:ring-2 focus:ring-violet-200"
             aria-label="Diary note body"
           />
           {/* Mood picker */}
@@ -138,8 +138,8 @@ export default function LeapDiary({ child }: { child: Child }) {
                   aria-pressed={mood === m.id}
                   className={`flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium border transition-all ${
                     mood === m.id
-                      ? 'bg-lavender-600 text-white border-lavender-600'
-                      : 'bg-white text-gray-600 border-gray-200 hover:border-lavender-300'
+                      ? 'bg-violet-600 text-white border-violet-600'
+                      : 'bg-white text-gray-600 border-gray-200 hover:border-violet-300'
                   }`}
                 >
                   <span aria-hidden="true">{m.emoji}</span> {m.label}
@@ -150,7 +150,7 @@ export default function LeapDiary({ child }: { child: Child }) {
           <button
             onClick={handleSubmit}
             disabled={!title.trim() || !body.trim()}
-            className="w-full rounded-lg bg-lavender-600 px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-40 hover:bg-lavender-700 transition-colors"
+            className="w-full rounded-lg bg-violet-600 px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-40 hover:bg-violet-700 transition-colors"
           >
             {editingEntry ? 'Save changes' : 'Save note'}
           </button>
@@ -164,7 +164,7 @@ export default function LeapDiary({ child }: { child: Child }) {
             onClick={() => setFilterLeap('all')}
             aria-pressed={filterLeap === 'all'}
             className={`rounded-full px-3 py-1 text-xs font-medium border transition-all ${
-              filterLeap === 'all' ? 'bg-lavender-600 text-white border-lavender-600' : 'bg-white text-gray-600 border-gray-200'
+              filterLeap === 'all' ? 'bg-violet-600 text-white border-violet-600' : 'bg-white text-gray-600 border-gray-200'
             }`}
           >
             All leaps
@@ -175,7 +175,7 @@ export default function LeapDiary({ child }: { child: Child }) {
               onClick={() => setFilterLeap(l.number)}
               aria-pressed={filterLeap === l.number}
               className={`rounded-full px-3 py-1 text-xs font-medium border transition-all ${
-                filterLeap === l.number ? 'bg-lavender-600 text-white border-lavender-600' : 'bg-white text-gray-600 border-gray-200'
+                filterLeap === l.number ? 'bg-violet-600 text-white border-violet-600' : 'bg-white text-gray-600 border-gray-200'
               }`}
             >
               Leap {l.number}
@@ -197,7 +197,7 @@ export default function LeapDiary({ child }: { child: Child }) {
                     {moodOpt && <span aria-hidden="true" title={moodOpt.label}>{moodOpt.emoji}</span>}
                     <span className="font-semibold text-sm text-gray-800">{entry.title}</span>
                     {leapDef && entry.leapNumber > 0 && (
-                      <span className="rounded-full bg-lavender-100 px-2 py-0.5 text-[11px] font-medium text-lavender-700">
+                      <span className="rounded-full bg-violet-100 px-2 py-0.5 text-[11px] font-medium text-violet-700">
                         Leap {leapDef.number}: {leapDef.title}
                       </span>
                     )}
@@ -208,7 +208,7 @@ export default function LeapDiary({ child }: { child: Child }) {
                 <div className="flex gap-1 shrink-0">
                   <button
                     onClick={() => openEdit(entry)}
-                    className="p-2.5 rounded-lg text-gray-400 hover:text-lavender-600 hover:bg-lavender-50 transition-colors"
+                    className="p-2.5 rounded-lg text-gray-400 hover:text-violet-600 hover:bg-violet-50 transition-colors"
                     aria-label={`Edit note: ${entry.title}`}
                   >
                     <Edit2 size={14} />

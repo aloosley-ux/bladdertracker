@@ -60,7 +60,7 @@ export default function UrineForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-3xl bg-peach p-5 shadow-sm space-y-5">
+    <form onSubmit={handleSubmit} className="rounded-3xl bg-orange-50 p-5 shadow-sm space-y-5">
       <h2 className="text-base font-bold text-gray-800 flex items-center gap-2">
         <CloudRain size={18} className="text-yellow-500" /> {URINE_COPY.heading}
       </h2>
@@ -78,12 +78,12 @@ export default function UrineForm() {
           <div>
             <label className="text-xs font-medium text-gray-600">Date</label>
             <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
-              className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
+              className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-violet-400 focus:ring-2 focus:ring-violet-100 outline-none text-sm" />
           </div>
           <div>
             <label className="text-xs font-medium text-gray-600">Time</label>
             <input type="time" value={time} onChange={(e) => setTime(e.target.value)}
-              className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
+              className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-violet-400 focus:ring-2 focus:ring-violet-100 outline-none text-sm" />
           </div>
         </div>
       </FormStep>
@@ -113,7 +113,7 @@ export default function UrineForm() {
           <label className="text-xs font-medium text-gray-600">{URINE_COPY.volumeLabel} <span className="text-gray-400 font-normal">— optional</span></label>
           <input type="number" value={volumeMl} onChange={(e) => setVolumeMl(e.target.value)}
             placeholder={URINE_COPY.volumePlaceholder}
-            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm"
+            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-violet-400 focus:ring-2 focus:ring-violet-100 outline-none text-sm"
             min="0" />
           <div className="flex gap-2 mt-2 flex-wrap">
             {quickVolumes.map((v) => (
@@ -165,12 +165,12 @@ export default function UrineForm() {
         <textarea value={notes} onChange={(e) => setNotes(e.target.value)}
           placeholder="Optional notes..."
           aria-label="Urine notes"
-          className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm resize-none"
+          className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-violet-400 focus:ring-2 focus:ring-violet-100 outline-none text-sm resize-none"
           rows={2} />
       </FormStep>
 
       <button type="submit"
-        className="w-full py-3 bg-lavender-500 hover:bg-lavender-600 text-white rounded-xl font-semibold text-sm transition-all shadow-lg shadow-lavender-200">
+        className="w-full py-3 bg-violet-500 hover:bg-violet-600 text-white rounded-xl font-semibold text-sm transition-all shadow-lg shadow-violet-200">
         {URINE_COPY.submitLabel} 🚿
       </button>
     </form>

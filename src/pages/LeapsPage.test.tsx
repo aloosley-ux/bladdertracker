@@ -30,8 +30,8 @@ describe('LeapsPage', () => {
 
     // The active (selected) tab should be Milestones
     const milestonesBtn = await screen.findByRole('button', { name: /milestones/i });
-    // It should be the active tab (bg-lavender-500 class indicates active)
-    expect(milestonesBtn.className).toContain('bg-lavender-500');
+    // It should be the active tab (bg-violet-500 class indicates active)
+    expect(milestonesBtn.className).toContain('bg-violet-500');
   }, 15000);
 
   it('does not show a Tools tab', async () => {

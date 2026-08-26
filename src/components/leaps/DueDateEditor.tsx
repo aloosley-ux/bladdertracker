@@ -29,7 +29,7 @@ export default function DueDateEditor({
           type="date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
-          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-lavender-400 focus:ring-2 focus:ring-lavender-200"
+          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-violet-400 focus:ring-2 focus:ring-violet-200"
           aria-label={aria}
         />
       </div>
@@ -40,7 +40,7 @@ export default function DueDateEditor({
             checked={useAsDue}
             onChange={() => setUseAsDue((v) => !v)}
             disabled={!date}
-            className="mr-2 h-4 w-4 rounded border-gray-300 text-lavender-600 focus:ring-lavender-200"
+            className="mr-2 h-4 w-4 rounded border-gray-300 text-violet-600 focus:ring-violet-200"
             aria-label="Use as due date until born"
             title="Use as due date until born"
           />
@@ -51,7 +51,7 @@ export default function DueDateEditor({
             if (date) onSave(date, useAsDue);
           }}
           disabled={!date}
-          className="rounded-lg bg-lavender-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-50 hover:bg-lavender-700 transition-colors"
+          className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-50 hover:bg-violet-700 transition-colors"
           aria-label={saveLabel}
         >
           Save

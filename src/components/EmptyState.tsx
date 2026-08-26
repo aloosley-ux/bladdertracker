@@ -34,15 +34,15 @@ export default function EmptyState({
       ) : (
         icon && <p className="text-3xl">{icon}</p>
       )}
-      <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">{title}</p>
+      <p className="mt-2 text-sm font-semibold text-[var(--foreground)]">{title}</p>
       {description && (
-        <p className="mt-1 text-xs text-[var(--text-secondary)]">{description}</p>
+        <p className="mt-1 text-xs text-[var(--muted-foreground)]">{description}</p>
       )}
       {actionLabel && onAction && (
         <button
           type="button"
           onClick={onAction}
-          className="mt-4 inline-flex items-center rounded-full bg-lavender-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-lavender-600"
+          className="mt-4 inline-flex items-center rounded-full bg-violet-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-violet-600"
         >
           {actionLabel}
         </button>

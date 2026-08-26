@@ -45,8 +45,8 @@ export default function DrinkForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-3xl bg-[var(--bg-card)] p-5 shadow-sm space-y-5">
-      <h2 className="text-base font-bold text-[var(--text-primary)] flex items-center gap-2">
+    <form onSubmit={handleSubmit} className="rounded-3xl bg-[var(--card)] p-5 shadow-sm space-y-5">
+      <h2 className="text-base font-bold text-[var(--foreground)] flex items-center gap-2">
         <Droplets size={18} className="text-blue-500" /> Log a Drink
       </h2>
 
@@ -62,12 +62,12 @@ export default function DrinkForm() {
           <div>
             <label className="text-xs font-medium text-gray-600">Date</label>
             <input aria-label="Drink date" type="date" value={date} onChange={(e) => setDate(e.target.value)}
-              className="w-full mt-1 px-3 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-input)] focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm text-[var(--text-primary)]" />
+              className="w-full mt-1 px-3 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--input)] focus:border-violet-400 focus:ring-2 focus:ring-violet-100 outline-none text-sm text-[var(--foreground)]" />
           </div>
           <div>
             <label className="text-xs font-medium text-gray-600">Time</label>
             <input aria-label="Drink time" type="time" value={time} onChange={(e) => setTime(e.target.value)}
-              className="w-full mt-1 px-3 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-input)] focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm text-[var(--text-primary)]" />
+              className="w-full mt-1 px-3 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--input)] focus:border-violet-400 focus:ring-2 focus:ring-violet-100 outline-none text-sm text-[var(--foreground)]" />
           </div>
         </div>
       </FormStep>
@@ -80,8 +80,8 @@ export default function DrinkForm() {
               <button key={dt.value} type="button" onClick={() => setType(dt.value)}
                 className={`px-3 py-2 rounded-xl text-sm transition-all ${
                   type === dt.value
-                    ? 'bg-lavender-500 text-white shadow-md'
-                    : 'bg-[var(--bg-card)] text-[var(--text-secondary)] hover:bg-lavender-50'
+                    ? 'bg-violet-500 text-white shadow-md'
+                    : 'bg-[var(--card)] text-[var(--muted-foreground)] hover:bg-violet-50'
                 }`}>
                 {dt.label}
               </button>
@@ -93,13 +93,13 @@ export default function DrinkForm() {
           <label className="text-xs font-medium text-gray-600">Amount (ml)</label>
           <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)}
             placeholder="Enter amount in ml"
-            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-input)] focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm text-[var(--text-primary)]"
+            className="w-full mt-1 px-3 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--input)] focus:border-violet-400 focus:ring-2 focus:ring-violet-100 outline-none text-sm text-[var(--foreground)]"
             min="0" required />
           <div className="flex gap-2 mt-2 flex-wrap">
             {quickAmounts.map((qa) => (
               <button key={qa} type="button" onClick={() => setAmount(String(qa))}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                  amount === String(qa) ? 'bg-sky-200 text-sky-800' : 'bg-[var(--bg-card)] text-[var(--text-secondary)] hover:bg-sky-50'
+                  amount === String(qa) ? 'bg-sky-200 text-sky-800' : 'bg-[var(--card)] text-[var(--muted-foreground)] hover:bg-sky-50'
                 }`}>
                 {qa}ml
               </button>
@@ -112,12 +112,12 @@ export default function DrinkForm() {
           <textarea value={notes} onChange={(e) => setNotes(e.target.value)}
           placeholder="Optional notes..."
           aria-label="Drink notes"
-          className="w-full px-3 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-input)] focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm text-[var(--text-primary)] resize-none"
+          className="w-full px-3 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--input)] focus:border-violet-400 focus:ring-2 focus:ring-violet-100 outline-none text-sm text-[var(--foreground)] resize-none"
           rows={2} />
       </FormStep>
 
       <button type="submit"
-        className="w-full py-3 bg-lavender-500 hover:bg-lavender-600 text-white rounded-xl font-semibold text-sm transition-all shadow-lg shadow-lavender-200">
+        className="w-full py-3 bg-violet-500 hover:bg-violet-600 text-white rounded-xl font-semibold text-sm transition-all shadow-lg shadow-violet-200">
         Save Drink Entry 💧
       </button>
     </form>

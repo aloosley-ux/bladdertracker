@@ -5,7 +5,7 @@ export const STATUS_COLOURS: Record<LeapStatus, string> = {
   stormy: 'bg-amber-100 text-amber-800 border-amber-300',
   current: 'bg-emerald-100 text-emerald-800 border-emerald-300',
   upcoming: 'bg-sky-100 text-sky-800 border-sky-300',
-  future: 'bg-lavender-50 text-lavender-700 border-lavender-200',
+  future: 'bg-violet-50 text-violet-700 border-violet-200',
 };
 
 export const STATUS_LABELS: Record<LeapStatus, string> = {

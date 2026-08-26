@@ -76,7 +76,7 @@ export default function CalendarPage() {
             <button
               onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
               aria-label="Previous month"
-              className="w-11 h-11 rounded-full bg-gray-50 flex items-center justify-center text-gray-500 hover:bg-lavender-50"
+              className="w-11 h-11 rounded-full bg-gray-50 flex items-center justify-center text-gray-500 hover:bg-violet-50"
             >
               <ChevronLeft size={16} />
             </button>
@@ -86,7 +86,7 @@ export default function CalendarPage() {
             <button
               onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
               aria-label="Next month"
-              className="w-11 h-11 rounded-full bg-gray-50 flex items-center justify-center text-gray-500 hover:bg-lavender-50"
+              className="w-11 h-11 rounded-full bg-gray-50 flex items-center justify-center text-gray-500 hover:bg-violet-50"
             >
               <ChevronRight size={16} />
             </button>
@@ -119,10 +119,10 @@ export default function CalendarPage() {
                     !isCurrentMonth
                       ? 'text-gray-200'
                       : isSelected
-                        ? 'bg-lavender-500 text-white shadow-md'
+                        ? 'bg-violet-500 text-white shadow-md'
                         : isToday
-                          ? 'bg-lavender-50 text-lavender-600 font-bold'
-                          : 'text-gray-700 hover:bg-lavender-50'
+                          ? 'bg-violet-50 text-violet-600 font-bold'
+                          : 'text-gray-700 hover:bg-violet-50'
                   }`}
                 >
                   <span className="font-medium">{format(day, 'd')}</span>
@@ -171,7 +171,7 @@ export default function CalendarPage() {
           ) : (
             <div className="space-y-2">
               {selectedDrinks.map((d) => (
-                <div key={d.id} className="bg-sky-light rounded-xl p-3 flex items-center gap-3">
+                <div key={d.id} className="bg-sky-50 rounded-xl p-3 flex items-center gap-3">
                   <Droplets size={16} className="text-blue-500" />
                   <div className="flex-1 text-sm">
                     <span className="font-medium">{d.amountMl}ml</span> - {d.type}
@@ -181,7 +181,7 @@ export default function CalendarPage() {
                 </div>
               ))}
               {selectedUrine.map((u) => (
-                <div key={u.id} className="bg-peach rounded-xl p-3 flex items-center gap-3">
+                <div key={u.id} className="bg-orange-50 rounded-xl p-3 flex items-center gap-3">
                   <CloudRain size={16} className="text-yellow-500" />
                   <div className="flex-1 text-sm">
                     {u.wet && <span className="font-medium">Wet </span>}
@@ -195,7 +195,7 @@ export default function CalendarPage() {
                 </div>
               ))}
               {selectedBowel.map((b) => (
-                <div key={b.id} className="bg-mint rounded-xl p-3 flex items-center gap-3">
+                <div key={b.id} className="bg-emerald-50 rounded-xl p-3 flex items-center gap-3">
                   <Stethoscope size={16} className="text-green-500" />
                   <div className="flex-1 text-sm">
                     <span className="font-medium">{b.location}</span> - {b.amount} (Type {b.bristolType})

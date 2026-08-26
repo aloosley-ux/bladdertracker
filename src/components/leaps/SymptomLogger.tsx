@@ -103,14 +103,14 @@ export default function SymptomLogger({ child }: { child: Child }) {
   };
 
   return (
-    <section aria-labelledby="symptoms-heading" className="rounded-2xl bg-white border border-lavender-100 shadow-sm p-5">
+    <section aria-labelledby="symptoms-heading" className="rounded-2xl bg-white border border-violet-100 shadow-sm p-5">
       <div className="flex items-center justify-between mb-4">
-        <h2 id="symptoms-heading" className="flex items-center gap-2 text-lg font-bold text-lavender-700">
+        <h2 id="symptoms-heading" className="flex items-center gap-2 text-lg font-bold text-violet-700">
           📝 Leap Symptoms &amp; Signs
         </h2>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="flex items-center gap-1.5 rounded-lg bg-lavender-600 px-3 py-2 text-sm font-medium text-white hover:bg-lavender-700 transition-colors"
+          className="flex items-center gap-1.5 rounded-lg bg-violet-600 px-3 py-2 text-sm font-medium text-white hover:bg-violet-700 transition-colors"
           aria-label={showForm ? 'Close log form' : 'Log a new symptom'}
         >
           {showForm ? <X size={16} /> : <Plus size={16} />}
@@ -128,7 +128,7 @@ export default function SymptomLogger({ child }: { child: Child }) {
 
       {/* Quick-add form */}
       {showForm && (
-        <div className="mb-5 rounded-xl border border-lavender-200 bg-lavender-50/50 p-4">
+        <div className="mb-5 rounded-xl border border-violet-200 bg-violet-50/50 p-4">
           <p className="text-sm font-semibold text-gray-700 mb-3">
             Tap symptoms you&apos;re noticing:
           </p>
@@ -142,8 +142,8 @@ export default function SymptomLogger({ child }: { child: Child }) {
                   aria-pressed={active}
                   className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium border transition-all ${
                     active
-                      ? 'bg-lavender-600 text-white border-lavender-600 shadow-sm scale-105'
-                      : 'bg-white text-gray-600 border-gray-200 hover:border-lavender-300'
+                      ? 'bg-violet-600 text-white border-violet-600 shadow-sm scale-105'
+                      : 'bg-white text-gray-600 border-gray-200 hover:border-violet-300'
                   }`}
                 >
                   <span aria-hidden="true">{opt.emoji}</span> {opt.label}
@@ -156,13 +156,13 @@ export default function SymptomLogger({ child }: { child: Child }) {
             onChange={(e) => setNotes(e.target.value)}
             placeholder="Add notes (optional)…"
             rows={2}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-lavender-400 focus:ring-2 focus:ring-lavender-200 mb-3"
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-violet-400 focus:ring-2 focus:ring-violet-200 mb-3"
             aria-label="Additional notes"
           />
           <button
             onClick={handleSubmit}
             disabled={selectedSymptoms.length === 0}
-            className="w-full rounded-lg bg-lavender-600 px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-40 hover:bg-lavender-700 transition-colors"
+            className="w-full rounded-lg bg-violet-600 px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-40 hover:bg-violet-700 transition-colors"
           >
             Save symptom log
           </button>
@@ -182,7 +182,7 @@ export default function SymptomLogger({ child }: { child: Child }) {
                   <span className="text-xs font-medium text-gray-700 w-24 truncate">{opt?.label ?? id}</span>
                   <div className="flex-1 h-3 rounded-full bg-gray-100 overflow-hidden">
                     <div
-                      className="h-full rounded-full bg-gradient-to-r from-lavender-400 to-lavender-600 transition-all duration-500"
+                      className="h-full rounded-full bg-gradient-to-r from-violet-400 to-violet-600 transition-all duration-500"
                       style={{ width: `${(count / maxFreq) * 100}%` }}
                     />
                   </div>
@@ -234,7 +234,7 @@ export default function SymptomLogger({ child }: { child: Child }) {
                 {log.symptoms.map((s) => {
                   const opt = SYMPTOM_OPTIONS.find((o) => o.id === s);
                   return (
-                    <span key={s} className="inline-flex items-center gap-1 rounded-full bg-lavender-100 px-2 py-0.5 text-xs font-medium text-lavender-700">
+                    <span key={s} className="inline-flex items-center gap-1 rounded-full bg-violet-100 px-2 py-0.5 text-xs font-medium text-violet-700">
                       <span aria-hidden="true">{opt?.emoji}</span> {opt?.label ?? s}
                     </span>
                   );

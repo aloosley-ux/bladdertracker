@@ -53,7 +53,7 @@ export default function ModuleSettings({ childName, initialModules, onSave }: Mo
   return (
     <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
       <h3 className="mb-1 flex items-center gap-2 text-sm font-bold text-gray-700">
-        <Settings size={16} className="text-lavender-500" /> Tracker Modules for {childName}
+        <Settings size={16} className="text-violet-500" /> Tracker Modules for {childName}
       </h3>
       <p className="mb-3 text-xs text-gray-400">
         Toggles apply instantly — only enabled modules appear on Dashboard, Log, Reports, and Add Entry.
@@ -65,7 +65,7 @@ export default function ModuleSettings({ childName, initialModules, onSave }: Mo
           return (
             <div
               key={mod.id}
-              className="flex cursor-pointer items-center justify-between rounded-xl bg-gray-50 px-3 py-3 transition-colors hover:bg-lavender-50"
+              className="flex cursor-pointer items-center justify-between rounded-xl bg-gray-50 px-3 py-3 transition-colors hover:bg-violet-50"
               onClick={() => toggle(mod.id, !isOn)}
             >
               <div className="flex items-center gap-3">

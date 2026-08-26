@@ -129,8 +129,8 @@ export default function LeapsPage() {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
         <span className="text-4xl mb-3">🌈</span>
-        <h1 className="text-xl font-bold text-[var(--text-primary)] mb-2">Developmental Leaps</h1>
-        <p className="text-sm text-[var(--text-secondary)]">Add a child profile first to use the leap tracker.</p>
+        <h1 className="text-xl font-bold text-[var(--foreground)] mb-2">Developmental Leaps</h1>
+        <p className="text-sm text-[var(--muted-foreground)]">Add a child profile first to use the leap tracker.</p>
       </div>
     );
   }
@@ -144,8 +144,8 @@ export default function LeapsPage() {
         heroAssetKey="pageLeapsHero"
         heroContent={(
           <header className="px-1 pt-6">
-            <h1 className="text-xl font-bold text-lavender-700">🌈 Developmental Leaps</h1>
-            <p className="mt-1 text-sm text-[var(--text-secondary)]">
+            <h1 className="text-xl font-bold text-violet-700">🌈 Developmental Leaps</h1>
+            <p className="mt-1 text-sm text-[var(--muted-foreground)]">
               Track <strong>{activeChild.name}&apos;s</strong> developmental leaps, milestones, and growth
             </p>
           </header>
@@ -162,8 +162,8 @@ export default function LeapsPage() {
             onClick={() => setActiveSection(sec.id)}
             className={`flex items-center gap-1.5 rounded-xl py-2.5 px-3 text-xs font-medium transition-all whitespace-nowrap ${
               activeSection === sec.id
-                ? 'bg-lavender-500 text-white shadow-md'
-                : 'bg-[var(--bg-card)] text-[var(--text-secondary)] shadow-sm ring-1 ring-[var(--border-color)] hover:bg-lavender-50'
+                ? 'bg-violet-500 text-white shadow-md'
+                : 'bg-[var(--card)] text-[var(--muted-foreground)] shadow-sm ring-1 ring-[var(--border)] hover:bg-violet-50'
             }`}
           >
             <span>{sec.emoji}</span>
@@ -180,18 +180,18 @@ export default function LeapsPage() {
 
           {/* Current leap guidance */}
           {currentLeap && (
-            <section className="rounded-2xl bg-[var(--bg-card)] border border-lavender-100 shadow-sm p-5">
-              <h2 className="flex items-center gap-2 text-sm font-bold text-[var(--text-primary)] mb-3">
+            <section className="rounded-2xl bg-[var(--card)] border border-violet-100 shadow-sm p-5">
+              <h2 className="flex items-center gap-2 text-sm font-bold text-[var(--foreground)] mb-3">
                 🌊 Currently in Leap {currentLeap.leap.number}: {currentLeap.leap.title}
               </h2>
-              <p className="text-sm text-[var(--text-secondary)] mb-3">{currentLeap.leap.description}</p>
+              <p className="text-sm text-[var(--muted-foreground)] mb-3">{currentLeap.leap.description}</p>
 
               <div className="space-y-3">
                 <div>
-                  <h3 className="text-xs font-semibold text-[var(--text-primary)] mb-1">🌟 Skills emerging</h3>
+                  <h3 className="text-xs font-semibold text-[var(--foreground)] mb-1">🌟 Skills emerging</h3>
                   <div className="flex flex-wrap gap-1.5">
                     {currentLeap.leap.skills.map((skill) => (
-                      <span key={skill} className="rounded-full bg-lavender-50 px-2.5 py-1 text-xs text-lavender-700">
+                      <span key={skill} className="rounded-full bg-violet-50 px-2.5 py-1 text-xs text-violet-700">
                         {skill}
                       </span>
                     ))}
@@ -199,11 +199,11 @@ export default function LeapsPage() {
                 </div>
 
                 <div>
-                  <h3 className="text-xs font-semibold text-[var(--text-primary)] mb-1">💡 Tips for parents</h3>
+                  <h3 className="text-xs font-semibold text-[var(--foreground)] mb-1">💡 Tips for parents</h3>
                   <ul className="space-y-1">
                     {currentLeap.leap.parentalTips.slice(0, 3).map((tip) => (
-                      <li key={tip} className="text-xs text-[var(--text-secondary)] flex gap-1.5">
-                        <span className="text-lavender-400 shrink-0">•</span>
+                      <li key={tip} className="text-xs text-[var(--muted-foreground)] flex gap-1.5">
+                        <span className="text-violet-400 shrink-0">•</span>
                         {tip}
                       </li>
                     ))}
@@ -215,27 +215,27 @@ export default function LeapsPage() {
 
           {/* Missed milestones alert */}
           {missedMilestones.length > 0 && (
-            <section className="rounded-2xl bg-rose-50 border border-rose-200 p-4" aria-label="Milestones needing attention">
-              <h2 className="flex items-center gap-2 text-sm font-bold text-rose-800 mb-2">
+            <section className="rounded-2xl bg-pink-50 border border-pink-200 p-4" aria-label="Milestones needing attention">
+              <h2 className="flex items-center gap-2 text-sm font-bold text-pink-800 mb-2">
                 ⚠️ {missedMilestones.length} milestone{missedMilestones.length !== 1 ? 's' : ''} past their target date
               </h2>
-              <p className="text-xs text-rose-700 mb-3">
+              <p className="text-xs text-pink-700 mb-3">
                 These milestones have not yet been marked as achieved. Every child develops at their own pace —
                 these dates are advisory guides, not diagnostic deadlines. Only you can mark a milestone as achieved
                 when you have observed the skill.
               </p>
               <ul className="space-y-2 mb-3">
                 {missedMilestones.slice(0, 3).map((m) => (
-                  <li key={m.id} className="rounded-xl bg-[var(--bg-card)] px-3 py-2 text-xs ring-1 ring-rose-100">
-                    <span className="font-semibold text-[var(--text-primary)]">{m.name}</span>
-                    <span className="text-rose-700 ml-2">Target: {m.targetDate}</span>
-                    <p className="text-[10px] text-[var(--text-secondary)] mt-0.5">
+                  <li key={m.id} className="rounded-xl bg-[var(--card)] px-3 py-2 text-xs ring-1 ring-rose-100">
+                    <span className="font-semibold text-[var(--foreground)]">{m.name}</span>
+                    <span className="text-pink-700 ml-2">Target: {m.targetDate}</span>
+                    <p className="text-[10px] text-[var(--muted-foreground)] mt-0.5">
                       Continue observing and practising — mark this achieved when you see the skill.
                     </p>
                   </li>
                 ))}
                 {missedMilestones.length > 3 && (
-                  <li className="text-xs text-rose-700">
+                  <li className="text-xs text-pink-700">
                     +{missedMilestones.length - 3} more — view in the Milestones tab
                   </li>
                 )}
@@ -243,15 +243,15 @@ export default function LeapsPage() {
 
               {/* Seek advice banner for significantly overdue milestones */}
               {seekAdviceMilestones.length > 0 && (
-                <div className="rounded-xl bg-[var(--bg-card)] border border-rose-200 px-3 py-3 mb-3">
-                  <p className="text-xs font-semibold text-rose-800 mb-1">
+                <div className="rounded-xl bg-[var(--card)] border border-pink-200 px-3 py-3 mb-3">
+                  <p className="text-xs font-semibold text-pink-800 mb-1">
                     🩺 Some milestones are significantly overdue — consider seeking advice
                   </p>
-                  <p className="text-[10px] text-[var(--text-secondary)] mb-2">
+                  <p className="text-[10px] text-[var(--muted-foreground)] mb-2">
                     When milestones are significantly past their expected window it can be worth a chat with
                     your health visitor or GP. They can reassure you or point you to appropriate support.
                   </p>
-                  <ul className="space-y-1 text-[10px] text-rose-700">
+                  <ul className="space-y-1 text-[10px] text-pink-700">
                     {UK_SUPPORT_RESOURCES.map((r) => (
                       <li key={r.url} className="flex gap-1.5">
                         <span>{r.emoji}</span>
@@ -265,8 +265,8 @@ export default function LeapsPage() {
               )}
 
               <div className="space-y-2">
-                <h3 className="text-xs font-semibold text-rose-800">Reassuring next steps:</h3>
-                <ul className="space-y-1 text-xs text-rose-700">
+                <h3 className="text-xs font-semibold text-pink-800">Reassuring next steps:</h3>
+                <ul className="space-y-1 text-xs text-pink-700">
                   <li className="flex gap-1.5"><span>✅</span> Keep supporting play and daily activities — skills often emerge gradually</li>
                   <li className="flex gap-1.5"><span>📝</span> Note any new skills you observe, however small, and update the milestone</li>
                   <li className="flex gap-1.5"><span>🩺</span> Speak to your GP or health visitor if you have concerns — they are there to help</li>
@@ -276,7 +276,7 @@ export default function LeapsPage() {
               {milestonesEnabled && (
                 <Link
                   to="/milestones"
-                  className="mt-3 inline-flex rounded-full bg-rose-600 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-rose-700"
+                  className="mt-3 inline-flex rounded-full bg-pink-600 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-pink-700"
                 >
                   Review &amp; update milestones →
                 </Link>
@@ -286,20 +286,20 @@ export default function LeapsPage() {
 
           {/* Quick stats */}
           {milestonesEnabled && (
-            <section className="rounded-2xl bg-[var(--bg-card)] border border-lavender-100 shadow-sm p-5">
-              <h2 className="text-sm font-bold text-[var(--text-primary)] mb-3">📈 Progress at a glance</h2>
+            <section className="rounded-2xl bg-[var(--card)] border border-violet-100 shadow-sm p-5">
+              <h2 className="text-sm font-bold text-[var(--foreground)] mb-3">📈 Progress at a glance</h2>
               <div className="grid grid-cols-3 gap-3">
-                <div className="rounded-xl bg-[var(--bg-primary)] p-3 text-center">
-                  <div className="text-lg font-bold text-lavender-700">{pastLeaps.length}</div>
-                  <div className="text-[10px] text-[var(--text-secondary)]">Leaps completed</div>
+                <div className="rounded-xl bg-[var(--background)] p-3 text-center">
+                  <div className="text-lg font-bold text-violet-700">{pastLeaps.length}</div>
+                  <div className="text-[10px] text-[var(--muted-foreground)]">Leaps completed</div>
                 </div>
-                <div className="rounded-xl bg-[var(--bg-primary)] p-3 text-center">
+                <div className="rounded-xl bg-[var(--background)] p-3 text-center">
                   <div className="text-lg font-bold text-emerald-600">{achievedCount}</div>
-                  <div className="text-[10px] text-[var(--text-secondary)]">Milestones achieved</div>
+                  <div className="text-[10px] text-[var(--muted-foreground)]">Milestones achieved</div>
                 </div>
-                <div className="rounded-xl bg-[var(--bg-primary)] p-3 text-center">
+                <div className="rounded-xl bg-[var(--background)] p-3 text-center">
                   <div className="text-lg font-bold text-amber-600">{inProgressCount}</div>
-                  <div className="text-[10px] text-[var(--text-secondary)]">In progress</div>
+                  <div className="text-[10px] text-[var(--muted-foreground)]">In progress</div>
                 </div>
               </div>
             </section>
@@ -311,35 +311,35 @@ export default function LeapsPage() {
       {activeSection === 'milestones' && (
         <div className="space-y-4">
           {!milestonesEnabled ? (
-            <section className="rounded-2xl bg-[var(--bg-card)] border border-lavender-100 shadow-sm p-5 text-center">
+            <section className="rounded-2xl bg-[var(--card)] border border-violet-100 shadow-sm p-5 text-center">
               <span className="text-3xl mb-2 block">⭐</span>
-              <h2 className="text-sm font-bold text-[var(--text-primary)] mb-1">Milestones module is turned off</h2>
-              <p className="text-xs text-[var(--text-secondary)] mb-3">
+              <h2 className="text-sm font-bold text-[var(--foreground)] mb-1">Milestones module is turned off</h2>
+              <p className="text-xs text-[var(--muted-foreground)] mb-3">
                 Enable the Milestones module in Settings to track and link milestones with developmental leaps.
               </p>
-              <Link to="/settings" className="inline-flex rounded-full bg-lavender-500 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-lavender-600">
+              <Link to="/settings" className="inline-flex rounded-full bg-violet-500 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-violet-600">
                 Open Settings
               </Link>
             </section>
           ) : (
             <>
               {/* Compact quick-log actions: compact buttons + preview, full page at /leap-entry */}
-              <section className="rounded-2xl bg-[var(--bg-card)] border border-lavender-100 shadow-sm p-4">
+              <section className="rounded-2xl bg-[var(--card)] border border-violet-100 shadow-sm p-4">
                 <div className="flex items-center justify-between mb-3">
-                  <h2 className="text-sm font-bold text-[var(--text-primary)]">📝 Quick logging</h2>
-                  <Link to="/leap-entry" className="text-xs font-semibold text-lavender-600 hover:underline">Open full entry page →</Link>
+                  <h2 className="text-sm font-bold text-[var(--foreground)]">📝 Quick logging</h2>
+                  <Link to="/leap-entry" className="text-xs font-semibold text-violet-600 hover:underline">Open full entry page →</Link>
                 </div>
 
                 <div className="flex gap-3">
                   <Link
                     to="/leap-entry"
-                    className="flex-1 rounded-lg bg-lavender-600 px-3 py-2 text-sm font-semibold text-white text-center hover:bg-lavender-700"
+                    className="flex-1 rounded-lg bg-violet-600 px-3 py-2 text-sm font-semibold text-white text-center hover:bg-violet-700"
                   >
                     📝 Log symptom or note
                   </Link>
                   <Link
                     to="/leap-entry"
-                    className="flex-1 rounded-lg bg-[var(--bg-primary)] border border-lavender-100 px-3 py-2 text-sm font-semibold text-lavender-700 text-center hover:bg-lavender-50"
+                    className="flex-1 rounded-lg bg-[var(--background)] border border-violet-100 px-3 py-2 text-sm font-semibold text-violet-700 text-center hover:bg-violet-50"
                   >
                     📚 Add diary note
                   </Link>
@@ -374,9 +374,9 @@ export default function LeapsPage() {
               </section>
 
               {/* Milestone summary by category */}
-              <section className="rounded-2xl bg-[var(--bg-card)] border border-lavender-100 shadow-sm p-5">
-                <h2 className="text-sm font-bold text-[var(--text-primary)] mb-1">Milestone progress by category</h2>
-                <p className="text-xs text-[var(--text-secondary)] mb-3">
+              <section className="rounded-2xl bg-[var(--card)] border border-violet-100 shadow-sm p-5">
+                <h2 className="text-sm font-bold text-[var(--foreground)] mb-1">Milestone progress by category</h2>
+                <p className="text-xs text-[var(--muted-foreground)] mb-3">
                   Milestones are marked achieved only when <strong>you</strong> confirm the skill — they are never
                   auto-completed. Target dates are advisory guides, not diagnostic deadlines.
                 </p>
@@ -386,10 +386,10 @@ export default function LeapsPage() {
                     const catAchieved = catMilestones.filter((m) => m.status === 'achieved').length;
                     const isExpected = expectedMilestoneCategories.includes(cat);
                     return (
-                      <div key={cat} className="flex items-center gap-3 rounded-xl bg-[var(--bg-primary)] px-3 py-2.5">
+                      <div key={cat} className="flex items-center gap-3 rounded-xl bg-[var(--background)] px-3 py-2.5">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-1.5">
-                            <span className="text-xs font-semibold text-[var(--text-primary)] truncate">
+                            <span className="text-xs font-semibold text-[var(--foreground)] truncate">
                               {MILESTONE_GUIDANCE[cat].title}
                             </span>
                             {isExpected && catMilestones.length === 0 && (
@@ -398,14 +398,14 @@ export default function LeapsPage() {
                               </span>
                             )}
                           </div>
-                          <div className="text-[10px] text-[var(--text-secondary)]">
+                          <div className="text-[10px] text-[var(--muted-foreground)]">
                             {catMilestones.length === 0
                               ? 'No milestones tracked yet'
                               : `${catAchieved} of ${catMilestones.length} achieved`}
                           </div>
                         </div>
                         {catMilestones.length > 0 && (
-                          <div className="h-2 w-16 overflow-hidden rounded-full bg-[var(--bg-hover)]">
+                          <div className="h-2 w-16 overflow-hidden rounded-full bg-[var(--accent)]">
                             <div
                               className="h-full rounded-full bg-emerald-500 transition-all"
                               style={{ width: `${(catAchieved / catMilestones.length) * 100}%` }}
@@ -418,7 +418,7 @@ export default function LeapsPage() {
                 </div>
                 <Link
                   to="/milestones"
-                  className="mt-3 inline-flex rounded-full bg-lavender-500 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-lavender-600"
+                  className="mt-3 inline-flex rounded-full bg-violet-500 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-violet-600"
                 >
                   Manage milestones →
                 </Link>
@@ -426,11 +426,11 @@ export default function LeapsPage() {
 
               {/* Missed milestones in milestones tab */}
               {missedMilestones.length > 0 && (
-                <section className="rounded-2xl bg-rose-50 border border-rose-200 p-4" aria-label="Milestones past target date">
-                  <h2 className="flex items-center gap-2 text-sm font-bold text-rose-800 mb-2">
+                <section className="rounded-2xl bg-pink-50 border border-pink-200 p-4" aria-label="Milestones past target date">
+                  <h2 className="flex items-center gap-2 text-sm font-bold text-pink-800 mb-2">
                     ⚠️ Milestones past target date
                   </h2>
-                  <p className="text-xs text-rose-700 mb-2">
+                  <p className="text-xs text-pink-700 mb-2">
                     Every child develops at their own pace — these dates are guides, not deadlines.
                     Only you can mark a milestone as achieved when you observe the skill.
                   </p>
@@ -439,22 +439,22 @@ export default function LeapsPage() {
                       const guidance = MILESTONE_GUIDANCE[m.category];
                       const isSeekAdvice = seekAdviceMilestones.some((s) => s.id === m.id);
                       return (
-                        <div key={m.id} className="rounded-xl bg-[var(--bg-card)] p-3 ring-1 ring-rose-100">
+                        <div key={m.id} className="rounded-xl bg-[var(--card)] p-3 ring-1 ring-rose-100">
                           <div className="flex items-center gap-1.5">
-                            <span className="text-xs font-semibold text-[var(--text-primary)]">
+                            <span className="text-xs font-semibold text-[var(--foreground)]">
                               {stripSlugSentinel(m.name)}
                             </span>
                             {isSeekAdvice && (
-                              <span className="shrink-0 rounded-full bg-rose-100 px-1.5 py-0.5 text-[9px] font-bold text-rose-700">
+                              <span className="shrink-0 rounded-full bg-pink-100 px-1.5 py-0.5 text-[9px] font-bold text-pink-700">
                                 Seek advice
                               </span>
                             )}
                           </div>
-                          <div className="text-[10px] text-[var(--text-secondary)] mt-0.5">
+                          <div className="text-[10px] text-[var(--muted-foreground)] mt-0.5">
                             {guidance?.title ?? m.category} · Target: {m.targetDate}
                           </div>
                           {guidance && (
-                            <div className="mt-1.5 text-[10px] text-rose-700">
+                            <div className="mt-1.5 text-[10px] text-pink-700">
                               <strong>Next steps:</strong> {guidance.nextSteps[0]}
                             </div>
                           )}
@@ -466,10 +466,10 @@ export default function LeapsPage() {
                   {/* Seek advice resources shown when any milestone is significantly overdue */}
                   {seekAdviceMilestones.length > 0 && (
                     <div className="mt-3 space-y-1">
-                      <p className="text-xs font-semibold text-rose-800">UK support resources:</p>
+                      <p className="text-xs font-semibold text-pink-800">UK support resources:</p>
                       {UK_SUPPORT_RESOURCES.map((r) => (
                         <a key={r.url} href={r.url} target="_blank" rel="noopener noreferrer"
-                          className="flex items-center gap-1.5 text-xs text-rose-700 underline underline-offset-2">
+                          className="flex items-center gap-1.5 text-xs text-pink-700 underline underline-offset-2">
                           <span>{r.emoji}</span>{r.label}
                         </a>
                       ))}
@@ -479,9 +479,9 @@ export default function LeapsPage() {
               )}
 
               {/* Guidance by leap stage */}
-              <section className="rounded-2xl bg-[var(--bg-card)] border border-lavender-100 shadow-sm p-5">
-                <h2 className="text-sm font-bold text-[var(--text-primary)] mb-2">🧭 Guidance &amp; support</h2>
-                <p className="text-xs text-[var(--text-secondary)] mb-3">
+              <section className="rounded-2xl bg-[var(--card)] border border-violet-100 shadow-sm p-5">
+                <h2 className="text-sm font-bold text-[var(--foreground)] mb-2">🧭 Guidance &amp; support</h2>
+                <p className="text-xs text-[var(--muted-foreground)] mb-3">
                   Helpful UK resources for each stage of your child&apos;s development.
                 </p>
                 <div className="space-y-2">
@@ -490,7 +490,7 @@ export default function LeapsPage() {
                       key={r.url}
                       href={r.url}
                       target="_blank" rel="noopener noreferrer"
-                      className="flex items-center gap-2 rounded-xl bg-[var(--bg-primary)] px-3 py-2.5 text-xs text-[var(--text-primary)] ring-1 ring-[var(--border-color)] hover:ring-lavender-200 transition"
+                      className="flex items-center gap-2 rounded-xl bg-[var(--background)] px-3 py-2.5 text-xs text-[var(--foreground)] ring-1 ring-[var(--border)] hover:ring-violet-200 transition"
                     >
                       {r.emoji} <span className="underline underline-offset-2">{r.label}</span>
                     </a>
@@ -503,11 +503,11 @@ export default function LeapsPage() {
           
 
           {/* ── Leap reminders ───────────────────────────────────── */}
-          <section className="rounded-2xl bg-[var(--bg-card)] border border-lavender-100 shadow-sm p-5">
-            <h2 className="text-sm font-bold text-[var(--text-primary)] mb-2">🔔 Leap reminders</h2>
-              <p className="text-xs text-[var(--text-secondary)] mb-3">
+          <section className="rounded-2xl bg-[var(--card)] border border-violet-100 shadow-sm p-5">
+            <h2 className="text-sm font-bold text-[var(--foreground)] mb-2">🔔 Leap reminders</h2>
+              <p className="text-xs text-[var(--muted-foreground)] mb-3">
                 Reminders can be configured in{' '}
-                <Link to="/settings" className="text-lavender-600 underline underline-offset-2">Settings</Link>.
+                <Link to="/settings" className="text-violet-600 underline underline-offset-2">Settings</Link>.
               </p>
           </section>
         </div>
@@ -603,7 +603,7 @@ export default function LeapsPage() {
                                 <button type="button" onClick={() => window.location.assign(`/milestones?module=leaps&leap=${pred.leap.number}`)} className="inline-flex min-h-10 items-center gap-1 rounded-full border border-blue-200 bg-white px-3 text-xs font-semibold text-blue-700">
                                   NHS guidance
                                 </button>
-                                <button type="button" onClick={() => deleteMilestone(entry.id)} className="ml-auto min-h-10 rounded-full bg-rose-600 px-3 text-xs font-semibold text-white">Delete</button>
+                                <button type="button" onClick={() => deleteMilestone(entry.id)} className="ml-auto min-h-10 rounded-full bg-pink-600 px-3 text-xs font-semibold text-white">Delete</button>
                               </div>
                             </article>
                           ))

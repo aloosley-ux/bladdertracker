@@ -159,7 +159,7 @@ export default function DashboardPage() {
                 Add a child profile or accept a shared invite to start tracking.
               </p>
             <div className="mt-5 flex justify-center gap-3">
-              <Link className="rounded-full bg-lavender-500 px-4 py-3 text-sm font-semibold text-white" to="/settings">
+              <Link className="rounded-full bg-violet-500 px-4 py-3 text-sm font-semibold text-white" to="/settings">
                 Open settings
               </Link>
               <Link className="rounded-full bg-gray-100 px-4 py-3 text-sm font-semibold text-gray-700" to="/profiles">
@@ -173,17 +173,17 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="pb-20 bg-[var(--bg-primary)] min-h-screen">
+    <div className="pb-20 bg-[var(--background)] min-h-screen">
       <PageShell
         heroAssetKey="pageDashboardHero"
         heroContent={(
           <div className="pb-4">
             <div className="flex flex-col gap-1 px-4 pt-6">
-              <h1 className="text-xl font-bold leading-snug text-[var(--text-primary)]" aria-label="Dashboard heading">
+              <h1 className="text-xl font-bold leading-snug text-[var(--foreground)]" aria-label="Dashboard heading">
                 Home
               </h1>
-              <p className="text-sm text-[var(--text-secondary)]">Quickly capture and review drinks, sleeps, visits and meals for {selectedChild.name}</p>
-              <p className="text-xs text-[var(--text-secondary)]">{todayLabel}</p>
+              <p className="text-sm text-[var(--muted-foreground)]">Quickly capture and review drinks, sleeps, visits and meals for {selectedChild.name}</p>
+              <p className="text-xs text-[var(--muted-foreground)]">{todayLabel}</p>
             </div>
 
             {children.length > 1 && (
@@ -191,7 +191,7 @@ export default function DashboardPage() {
                 aria-label="Select child"
                 value={selectedChildId ?? ''}
                 onChange={(event) => selectChild(event.target.value)}
-                className="mx-4 mt-3 mb-2 w-[calc(100%-2rem)] rounded-2xl border border-[var(--border-color)] bg-[var(--bg-input)] px-4 py-3 text-sm font-medium text-[var(--text-primary)] shadow-sm outline-none"
+                className="mx-4 mt-3 mb-2 w-[calc(100%-2rem)] rounded-2xl border border-[var(--border)] bg-[var(--input)] px-4 py-3 text-sm font-medium text-[var(--foreground)] shadow-sm outline-none"
               >
                 {children.map((child) => (
                   <option key={child.id} value={child.id}>
@@ -250,8 +250,8 @@ export default function DashboardPage() {
           summary={(
             <section aria-label="Home summary">
               <div className="mb-2 flex items-center justify-between">
-                <h2 className="text-sm font-bold text-[var(--text-primary)]">Home snapshot</h2>
-                <p className="text-xs text-[var(--text-secondary)]">At-a-glance totals</p>
+                <h2 className="text-sm font-bold text-[var(--foreground)]">Home snapshot</h2>
+                <p className="text-xs text-[var(--muted-foreground)]">At-a-glance totals</p>
               </div>
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
                 {on('drinks') && (
@@ -394,11 +394,11 @@ export default function DashboardPage() {
 
         {/* ── Today's entries feed ──────────────────────────────────── */}
         <div aria-label="Home entries" className="space-y-3">
-          <h2 className="text-sm font-bold text-[var(--text-primary)]">Home entries</h2>
+          <h2 className="text-sm font-bold text-[var(--foreground)]">Home entries</h2>
           {!hasEntries && (
-            <div className="rounded-2xl bg-[var(--bg-card)] py-12 text-center shadow-sm ring-1 ring-[var(--border-color)]">
+            <div className="rounded-2xl bg-[var(--card)] py-12 text-center shadow-sm ring-1 ring-[var(--border)]">
               <span className="text-4xl">📋</span>
-              <p className="mt-2 text-sm text-[var(--text-secondary)]">Nothing logged yet today. Start with the quickest update above.</p>
+              <p className="mt-2 text-sm text-[var(--muted-foreground)]">Nothing logged yet today. Start with the quickest update above.</p>
             </div>
           )}
 
@@ -409,7 +409,7 @@ export default function DashboardPage() {
               title={`${drink.amountMl}ml - ${drink.type}`}
               subtitle={drink.notes}
               time={drink.time}
-              color="bg-sky-light"
+              color="bg-sky-50"
               onDelete={() => deleteDrink(drink.id)}
               entryType="drinks"
               entryData={drink as unknown}
@@ -432,7 +432,7 @@ export default function DashboardPage() {
                 title={`${getModuleLabel('urine')}: ${parts}`}
                 subtitle={[details, entry.notes].filter(Boolean).join(' — ')}
                 time={entry.time}
-                color="bg-peach"
+                color="bg-orange-50"
                 onDelete={() => deleteUrineEntry(entry.id)}
                 entryType="urine"
                 entryData={entry as unknown}
@@ -449,7 +449,7 @@ export default function DashboardPage() {
                title={`${getModuleLabel('bowel')}: ${entry.location === 'nappy' ? 'Nappy' : 'Toilet'} · ${entry.amount} · Type ${entry.bristolType}`}
                subtitle={`${entry.laxativesGiven ? '💊 Laxatives today. ' : ''}${entry.notes}`}
               time={entry.time}
-              color="bg-mint"
+              color="bg-emerald-50"
               onDelete={() => deleteBowelEntry(entry.id)}
               entryType="bowel"
               entryData={entry as unknown}
@@ -614,7 +614,7 @@ function SummaryCard({ icon, label, value, sub, accent, addTo, addTab }: { icon:
       to={addTo}
       state={addTab ? { tab: addTab } : undefined}
       aria-label={addTo ? `Add ${label} entry` : undefined}
-      className="rounded-2xl bg-[var(--bg-card)] pt-6 pb-3 px-3 pr-12 shadow-sm ring-1 ring-[var(--border-color)] overflow-hidden relative block min-h-[72px]"
+      className="rounded-2xl bg-[var(--card)] pt-6 pb-3 px-3 pr-12 shadow-sm ring-1 ring-[var(--border)] overflow-hidden relative block min-h-[72px]"
       style={{ borderTop: `3px solid ${accent}` }}
     >
       <span
@@ -626,12 +626,12 @@ function SummaryCard({ icon, label, value, sub, accent, addTo, addTab }: { icon:
       </span>
       <div className="flex items-center gap-3">
         <div className="flex flex-col items-center gap-1">
-          <div className="rounded-full p-2 bg-[var(--bg-secondary)] flex items-center justify-center">{icon}</div>
-          <div className="text-sm font-semibold text-[var(--text-secondary)]">{label}</div>
+          <div className="rounded-full p-2 bg-[var(--secondary)] flex items-center justify-center">{icon}</div>
+          <div className="text-sm font-semibold text-[var(--muted-foreground)]">{label}</div>
         </div>
         <div className="ml-auto text-right">
-          <div className="text-base font-bold text-[var(--text-primary)] leading-tight">{value}</div>
-          <div className="text-[10px] text-[var(--text-secondary)]">{sub}</div>
+          <div className="text-base font-bold text-[var(--foreground)] leading-tight">{value}</div>
+          <div className="text-[10px] text-[var(--muted-foreground)]">{sub}</div>
         </div>
       </div>
     </CardWrapper>

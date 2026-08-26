@@ -42,7 +42,7 @@ export default function BowelForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-3xl bg-mint p-5 shadow-sm space-y-5">
+    <form onSubmit={handleSubmit} className="rounded-3xl bg-emerald-50 p-5 shadow-sm space-y-5">
       <h2 className="text-base font-bold text-gray-800 flex items-center gap-2">
         <Stethoscope size={18} className="text-green-500" /> Log a poo
       </h2>
@@ -60,12 +60,12 @@ export default function BowelForm() {
           <div>
             <label className="text-xs font-medium text-gray-600">Date</label>
             <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
-              className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
+              className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-violet-400 focus:ring-2 focus:ring-violet-100 outline-none text-sm" />
           </div>
           <div>
             <label className="text-xs font-medium text-gray-600">Time</label>
             <input type="time" value={time} onChange={(e) => setTime(e.target.value)}
-              className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm" />
+              className="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-violet-400 focus:ring-2 focus:ring-violet-100 outline-none text-sm" />
           </div>
         </div>
       </FormStep>
@@ -78,8 +78,8 @@ export default function BowelForm() {
               <button key={loc} type="button" onClick={() => setLocation(loc)}
                 className={`flex-1 py-3 rounded-xl text-sm font-medium transition-all ${
                   location === loc
-                    ? 'bg-lavender-500 text-white shadow-md'
-                    : 'bg-white text-gray-600 hover:bg-lavender-50'
+                    ? 'bg-violet-500 text-white shadow-md'
+                    : 'bg-white text-gray-600 hover:bg-violet-50'
                 }`}>
                 {loc === 'toilet' ? '🚽 Toilet' : '👶 Nappy'}
               </button>
@@ -94,8 +94,8 @@ export default function BowelForm() {
               <button key={size} type="button" onClick={() => setAmount(size)}
                 className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all ${
                   amount === size
-                    ? 'bg-lavender-500 text-white shadow-md'
-                    : 'bg-white text-gray-600 hover:bg-lavender-50'
+                    ? 'bg-violet-500 text-white shadow-md'
+                    : 'bg-white text-gray-600 hover:bg-violet-50'
                 }`}>
                 {size === 'S' ? '🔹 Small' : size === 'M' ? '🔸 Medium' : '🔶 Large'}
               </button>
@@ -110,13 +110,13 @@ export default function BowelForm() {
           <div className="flex gap-3">
             <button type="button" onClick={() => setLaxatives(true)}
               className={`flex-1 py-3 rounded-xl text-sm font-medium transition-all ${
-                laxatives ? 'bg-lavender-500 text-white shadow-md' : 'bg-white text-gray-600 hover:bg-lavender-50'
+                laxatives ? 'bg-violet-500 text-white shadow-md' : 'bg-white text-gray-600 hover:bg-violet-50'
               }`}>
               💊 Yes
             </button>
             <button type="button" onClick={() => setLaxatives(false)}
               className={`flex-1 py-3 rounded-xl text-sm font-medium transition-all ${
-                !laxatives ? 'bg-lavender-500 text-white shadow-md' : 'bg-white text-gray-600 hover:bg-lavender-50'
+                !laxatives ? 'bg-violet-500 text-white shadow-md' : 'bg-white text-gray-600 hover:bg-violet-50'
               }`}>
               ❌ No
             </button>
@@ -128,12 +128,12 @@ export default function BowelForm() {
         <textarea value={notes} onChange={(e) => setNotes(e.target.value)}
           placeholder="Optional notes..."
           aria-label="Bowel notes"
-          className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-lavender-400 focus:ring-2 focus:ring-lavender-100 outline-none text-sm resize-none"
+          className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-white focus:border-violet-400 focus:ring-2 focus:ring-violet-100 outline-none text-sm resize-none"
           rows={2} />
       </FormStep>
 
       <button type="submit"
-        className="w-full py-3 bg-lavender-500 hover:bg-lavender-600 text-white rounded-xl font-semibold text-sm transition-all shadow-lg shadow-lavender-200"
+        className="w-full py-3 bg-violet-500 hover:bg-violet-600 text-white rounded-xl font-semibold text-sm transition-all shadow-lg shadow-violet-200"
         disabled={!bristolType}>
         Save poo log 📋
       </button>

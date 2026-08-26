@@ -21,10 +21,10 @@ export default function CalendarStrip({ selectedDate, onSelectDate }: CalendarSt
             onClick={() => onSelectDate(day)}
             className={`flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all min-w-[44px] ${
               isSelected
-                ? 'bg-lavender-500 text-white shadow-lg shadow-lavender-200'
+                ? 'bg-violet-500 text-white shadow-lg shadow-violet-200'
                 : isToday
-                  ? 'bg-lavender-50 text-lavender-600'
-                  : 'text-gray-500 hover:bg-lavender-50'
+                  ? 'bg-violet-50 text-violet-600'
+                  : 'text-gray-500 hover:bg-violet-50'
             }`}
           >
             <span className="text-[10px] font-medium uppercase">

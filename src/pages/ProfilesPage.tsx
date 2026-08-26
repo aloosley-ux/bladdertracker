@@ -142,7 +142,7 @@ export default function ProfilesPage() {
             <select
               value={selectedChildId ?? ''}
               onChange={(event) => selectChild(event.target.value)}
-              className="mt-1 w-full rounded-2xl border border-lavender-100 bg-lavender-50 px-3 py-2 text-sm font-semibold text-lavender-700 outline-none"
+              className="mt-1 w-full rounded-2xl border border-violet-100 bg-violet-50 px-3 py-2 text-sm font-semibold text-violet-700 outline-none"
             >
               {children.map((child) => (
                 <option key={child.id} value={child.id}>
@@ -157,10 +157,10 @@ export default function ProfilesPage() {
         <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
           <div className="mb-3 flex items-center justify-between">
             <h3 className="flex items-center gap-2 text-sm font-bold text-gray-700">
-              <Baby size={16} className="text-lavender-500" /> Child profiles
+              <Baby size={16} className="text-violet-500" /> Child profiles
             </h3>
             {canManageChildren && (
-              <button onClick={() => setShowAddChild((v) => !v)} className="text-xs font-semibold text-lavender-600">
+              <button onClick={() => setShowAddChild((v) => !v)} className="text-xs font-semibold text-violet-600">
                 + Add child
               </button>
             )}
@@ -172,13 +172,13 @@ export default function ProfilesPage() {
                 <button
                   onClick={() => selectChild(child.id)}
                   className={`w-full rounded-2xl p-4 text-left ring-1 transition-all ${
-                    selectedChild?.id === child.id ? 'bg-lavender-50 ring-lavender-200' : 'bg-[var(--bg-accent)] ring-[var(--border-color)]'
+                    selectedChild?.id === child.id ? 'bg-violet-50 ring-violet-200' : 'bg-[var(--muted)] ring-[var(--border)]'
                   }`}
                 >
-                  <div className="text-sm font-semibold text-[var(--text-primary)]">{child.name}</div>
-                  <div className="mt-1 text-xs text-[var(--text-secondary)]">{child.dateOfBirth || 'DOB not recorded'}</div>
+                  <div className="text-sm font-semibold text-[var(--foreground)]">{child.name}</div>
+                  <div className="mt-1 text-xs text-[var(--muted-foreground)]">{child.dateOfBirth || 'DOB not recorded'}</div>
                   {selectedChild?.id === child.id && (
-                    <span className="mt-1 inline-block rounded-full bg-lavender-500 px-2 py-0.5 text-[11px] font-semibold text-white">
+                    <span className="mt-1 inline-block rounded-full bg-violet-500 px-2 py-0.5 text-[11px] font-semibold text-white">
                       Selected
                     </span>
                   )}
@@ -187,7 +187,7 @@ export default function ProfilesPage() {
                 {canManageChildren && (
                   <button
                     onClick={() => handleToggleRemoveChild(child.id)}
-                    className="absolute right-2 top-2 flex h-11 w-11 items-center justify-center rounded-full bg-rose-50 text-rose-400 transition hover:bg-rose-100"
+                    className="absolute right-2 top-2 flex h-11 w-11 items-center justify-center rounded-full bg-pink-50 text-pink-400 transition hover:bg-pink-100"
                     title={`Remove ${child.name}`}
                   >
                     <Trash2 size={14} />
@@ -195,17 +195,17 @@ export default function ProfilesPage() {
                 )}
 
                 {removeTargetId === child.id && (
-                  <div className="mt-2 rounded-2xl bg-rose-50 p-4 ring-1 ring-rose-200">
+                  <div className="mt-2 rounded-2xl bg-pink-50 p-4 ring-1 ring-rose-200">
                     <div className="mb-3 flex items-start gap-2">
-                      <AlertTriangle size={16} className="mt-0.5 shrink-0 text-rose-500" />
+                      <AlertTriangle size={16} className="mt-0.5 shrink-0 text-pink-500" />
                       <div>
-                        <p className="text-sm font-semibold text-rose-700">Remove {child.name}?</p>
-                        <p className="mt-1 text-xs text-rose-600">
+                        <p className="text-sm font-semibold text-pink-700">Remove {child.name}?</p>
+                        <p className="mt-1 text-xs text-pink-600">
                           This action is <strong>irreversible</strong>. All diary entries, sleep records, food logs, and toilet attempt data for this child will be permanently deleted.
                         </p>
                       </div>
                     </div>
-                    <p className="mb-2 text-xs text-rose-600">
+                    <p className="mb-2 text-xs text-pink-600">
                       Type <strong>{child.name}</strong> to confirm:
                     </p>
                     <div className="flex gap-2">
@@ -214,12 +214,12 @@ export default function ProfilesPage() {
                         value={removeConfirmText}
                         onChange={(e) => setRemoveConfirmText(e.target.value)}
                         placeholder={child.name}
-                        className="flex-1 rounded-xl border border-rose-200 bg-white px-3 py-2 text-xs outline-none focus:border-rose-400"
+                        className="flex-1 rounded-xl border border-pink-200 bg-white px-3 py-2 text-xs outline-none focus:border-pink-400"
                       />
                       <button
                         onClick={() => handleRemoveChild(child.id)}
                         disabled={removeConfirmText !== child.name}
-                        className="rounded-xl bg-rose-500 px-4 py-2 text-xs font-semibold text-white disabled:opacity-40"
+                        className="rounded-xl bg-pink-500 px-4 py-2 text-xs font-semibold text-white disabled:opacity-40"
                       >
                         Remove
                       </button>
@@ -235,14 +235,14 @@ export default function ProfilesPage() {
               </div>
             ))}
             {children.length === 0 && (
-              <div className="rounded-2xl bg-[var(--bg-accent)] px-4 py-6 text-center text-sm text-gray-500 ring-1 ring-lavender-100">
+              <div className="rounded-2xl bg-[var(--muted)] px-4 py-6 text-center text-sm text-gray-500 ring-1 ring-violet-100">
                 No children added yet. Use the button above to add a child profile.
               </div>
             )}
           </div>
 
           {showAddChild && canManageChildren && (
-            <form onSubmit={handleAddChild} className="mt-4 space-y-3 rounded-2xl bg-[var(--bg-accent)] p-4 ring-1 ring-lavender-100">
+            <form onSubmit={handleAddChild} className="mt-4 space-y-3 rounded-2xl bg-[var(--muted)] p-4 ring-1 ring-violet-100">
               <input
                 type="text"
                 value={childName}
@@ -257,7 +257,7 @@ export default function ProfilesPage() {
                 onChange={(event) => setChildDob(event.target.value)}
                 className="input-card"
               />
-              <button className="w-full rounded-full bg-lavender-500 px-4 py-3 text-sm font-semibold text-white">Save child profile</button>
+              <button className="w-full rounded-full bg-violet-500 px-4 py-3 text-sm font-semibold text-white">Save child profile</button>
             </form>
           )}
         </section>
@@ -266,7 +266,7 @@ export default function ProfilesPage() {
         {canManageInvites && (
           <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-lavender-50 text-lavender-600">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-violet-50 text-violet-600">
                 <MailPlus size={18} />
               </div>
               <div>
@@ -292,29 +292,29 @@ export default function ProfilesPage() {
                     onClick={() => setInviteRole(role)}
                     className={`rounded-2xl border px-3 py-2 text-xs font-semibold capitalize transition-all ${
                       inviteRole === role
-                        ? 'border-lavender-300 bg-lavender-50 text-lavender-700'
-                        : 'border-gray-200 text-gray-500 hover:border-lavender-200 hover:bg-lavender-50/60'
+                        ? 'border-violet-300 bg-violet-50 text-violet-700'
+                        : 'border-gray-200 text-gray-500 hover:border-violet-200 hover:bg-violet-50/60'
                     }`}
                   >
                     {formatRole(role)}
                   </button>
                 ))}
               </div>
-              <button className="w-full rounded-full bg-lavender-500 px-4 py-3 text-sm font-semibold text-white shadow-[0_16px_30px_rgba(139,77,255,0.24)]">
+              <button className="w-full rounded-full bg-violet-500 px-4 py-3 text-sm font-semibold text-white shadow-[0_16px_30px_rgba(139,77,255,0.24)]">
                 Create secure invite
               </button>
             </form>
-            {statusMessage && <p className="mt-3 rounded-2xl bg-lavender-50 px-4 py-3 text-sm text-lavender-700">{statusMessage}</p>}
+            {statusMessage && <p className="mt-3 rounded-2xl bg-violet-50 px-4 py-3 text-sm text-violet-700">{statusMessage}</p>}
 
             {sentInvites.length > 0 && (
               <div className="mt-4 space-y-3">
-                <h4 className="text-xs font-semibold text-[var(--text-secondary)]">Sent invites</h4>
+                <h4 className="text-xs font-semibold text-[var(--muted-foreground)]">Sent invites</h4>
                 {sentInvites.map((invite) => (
-                  <div key={invite.id} className="rounded-2xl bg-[var(--bg-card)] px-4 py-3 ring-1 ring-[var(--border-color)]">
+                  <div key={invite.id} className="rounded-2xl bg-[var(--card)] px-4 py-3 ring-1 ring-[var(--border)]">
                     <div className="flex items-start justify-between gap-3">
                       <div>
-                        <div className="text-sm font-semibold text-[var(--text-primary)]">{invite.email}</div>
-                        <div className="mt-1 text-xs text-[var(--text-secondary)]">
+                        <div className="text-sm font-semibold text-[var(--foreground)]">{invite.email}</div>
+                        <div className="mt-1 text-xs text-[var(--muted-foreground)]">
                           {invite.childName} · {formatRole(invite.role)} ·{' '}
                           <span className={invite.status === 'accepted' ? 'text-green-600' : 'text-amber-600'}>
                             {invite.status}
@@ -324,7 +324,7 @@ export default function ProfilesPage() {
                       <button
                         type="button"
                         onClick={() => navigator.clipboard.writeText(invite.link)}
-                        className="flex items-center gap-1 rounded-full bg-[var(--bg-secondary)] px-3 py-1 text-[11px] font-semibold text-lavender-600 ring-1 ring-[var(--border-color)]"
+                        className="flex items-center gap-1 rounded-full bg-[var(--secondary)] px-3 py-1 text-[11px] font-semibold text-violet-600 ring-1 ring-[var(--border)]"
                       >
                         <Copy size={12} /> Copy link
                       </button>
@@ -351,7 +351,7 @@ export default function ProfilesPage() {
 
             <div className="mt-4 space-y-3">
               {pendingReceivedInvites.map((invite) => (
-                <div key={invite.id} className="rounded-2xl bg-[var(--bg-accent)] px-4 py-3 ring-1 ring-lavender-100">
+                <div key={invite.id} className="rounded-2xl bg-[var(--muted)] px-4 py-3 ring-1 ring-violet-100">
                   <div className="flex items-center justify-between gap-3">
                     <div>
                       <div className="text-sm font-semibold text-gray-900">{invite.childName}</div>
@@ -362,7 +362,7 @@ export default function ProfilesPage() {
                         const accepted = await acceptInvite(invite.token);
                         setStatusMessage(accepted ? `Accepted access to ${invite.childName}.` : 'This invite could not be accepted.');
                       }}
-                      className="rounded-full bg-lavender-500 px-4 py-2 text-xs font-semibold text-white"
+                      className="rounded-full bg-violet-500 px-4 py-2 text-xs font-semibold text-white"
                     >
                       Accept invite
                     </button>
@@ -376,14 +376,14 @@ export default function ProfilesPage() {
         {/* Notifications */}
         <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-lavender-50 text-lavender-600">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-violet-50 text-violet-600">
               <Bell size={18} />
             </div>
             <div>
               <h2 className="text-sm font-bold text-gray-700">
                 Notifications
                 {unreadNotifications.length > 0 && (
-                  <span className="ml-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">
+                  <span className="ml-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-pink-500 text-[10px] font-bold text-white">
                     {unreadNotifications.length}
                   </span>
                 )}
@@ -398,7 +398,7 @@ export default function ProfilesPage() {
                 key={notification.id}
                 onClick={() => markNotificationRead(notification.id)}
                 className={`w-full rounded-2xl px-4 py-3 text-left ring-1 transition-all ${
-                  notification.read ? 'bg-white ring-gray-100' : 'bg-lavender-50 ring-lavender-100'
+                  notification.read ? 'bg-white ring-gray-100' : 'bg-violet-50 ring-violet-100'
                 }`}
               >
                 <div className="text-sm font-semibold text-gray-900">{notification.title}</div>
@@ -416,7 +416,7 @@ export default function ProfilesPage() {
         {selectedChild && (
           <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-lavender-50 text-lavender-600">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-violet-50 text-violet-600">
                 <Shield size={18} />
               </div>
               <div>
@@ -427,17 +427,17 @@ export default function ProfilesPage() {
 
             <div className="mt-4 space-y-2">
               {selectedChild.parentIds.length > 0 && (
-                <div className="rounded-2xl bg-[var(--bg-accent)] px-4 py-3 ring-1 ring-lavender-100">
-                  <div className="text-xs font-semibold text-[var(--text-secondary)]">Parents</div>
-                  <div className="mt-1 text-sm text-[var(--text-primary)]">
+                <div className="rounded-2xl bg-[var(--muted)] px-4 py-3 ring-1 ring-violet-100">
+                  <div className="text-xs font-semibold text-[var(--muted-foreground)]">Parents</div>
+                  <div className="mt-1 text-sm text-[var(--foreground)]">
                     {selectedChild.parentIds.length} parent{selectedChild.parentIds.length === 1 ? '' : 's'} linked
                   </div>
                 </div>
               )}
               {selectedChild.caregivers.length > 0 && (
-                <div className="rounded-2xl bg-[var(--bg-accent)] px-4 py-3 ring-1 ring-lavender-100">
-                  <div className="text-xs font-semibold text-[var(--text-secondary)]">Caregivers</div>
-                  <div className="mt-1 text-sm text-[var(--text-primary)]">
+                <div className="rounded-2xl bg-[var(--muted)] px-4 py-3 ring-1 ring-violet-100">
+                  <div className="text-xs font-semibold text-[var(--muted-foreground)]">Caregivers</div>
+                  <div className="mt-1 text-sm text-[var(--foreground)]">
                     {selectedChild.caregivers.length} caregiver{selectedChild.caregivers.length === 1 ? '' : 's'} linked
                   </div>
                 </div>

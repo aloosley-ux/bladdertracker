@@ -246,8 +246,8 @@ export default function SettingsPage() {
         heroAssetKey="pageSettingsHero"
         heroContent={(
           <div className="px-4 pb-6 pt-8">
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">Account &amp; Settings</h1>
-            <p className="mt-1 text-sm text-[var(--text-primary)]">
+            <h1 className="text-xl font-bold text-[var(--foreground)]">Account &amp; Settings</h1>
+            <p className="mt-1 text-sm text-[var(--foreground)]">
               Manage your profile, preferences, data, and privacy in one place.
             </p>
           </div>
@@ -257,7 +257,7 @@ export default function SettingsPage() {
         {/* ── User Profile Card ─────────────────────────────────────── */}
         <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
           <div className="flex items-center gap-4">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-lavender-50 text-lg font-bold text-lavender-700">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-violet-50 text-lg font-bold text-violet-700">
               {userInitials}
             </div>
             <div>
@@ -275,7 +275,7 @@ export default function SettingsPage() {
         {cloud && (
           <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5" aria-labelledby="password-heading">
             <h3 id="password-heading" className="mb-3 flex items-center gap-2 text-sm font-bold text-gray-700">
-              <Lock size={16} className="text-lavender-500" /> Change Password
+              <Lock size={16} className="text-violet-500" /> Change Password
             </h3>
             <form onSubmit={handleChangePassword} className="space-y-3">
               <div>
@@ -287,7 +287,7 @@ export default function SettingsPage() {
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
                   required
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-lavender-400 focus:outline-none focus:ring-2 focus:ring-lavender-200"
+                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-violet-400 focus:outline-none focus:ring-2 focus:ring-violet-200"
                 />
               </div>
               <div>
@@ -300,7 +300,7 @@ export default function SettingsPage() {
                   onChange={(e) => setNewPassword(e.target.value)}
                   required
                   minLength={8}
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-lavender-400 focus:outline-none focus:ring-2 focus:ring-lavender-200"
+                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-violet-400 focus:outline-none focus:ring-2 focus:ring-violet-200"
                 />
               </div>
               <div>
@@ -313,7 +313,7 @@ export default function SettingsPage() {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
                   minLength={8}
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-lavender-400 focus:outline-none focus:ring-2 focus:ring-lavender-200"
+                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-violet-400 focus:outline-none focus:ring-2 focus:ring-violet-200"
                 />
               </div>
               {passwordError && <p className="text-xs font-semibold text-red-600" role="alert">{passwordError}</p>}
@@ -321,7 +321,7 @@ export default function SettingsPage() {
               <button
                 type="submit"
                 disabled={changingPassword}
-                className="rounded-xl bg-lavender-500 px-4 py-2.5 text-xs font-semibold text-white shadow-sm transition-all hover:bg-lavender-600 disabled:opacity-50"
+                className="rounded-xl bg-violet-500 px-4 py-2.5 text-xs font-semibold text-white shadow-sm transition-all hover:bg-violet-600 disabled:opacity-50"
                 aria-label="Change password"
               >
                 {changingPassword ? 'Changing…' : 'Change password'}
@@ -333,13 +333,13 @@ export default function SettingsPage() {
         {/* ── Role & Permissions ────────────────────────────────────── */}
         <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5" aria-labelledby="role-heading">
           <h3 id="role-heading" className="mb-3 flex items-center gap-2 text-sm font-bold text-gray-700">
-            <UserCheck size={16} className="text-lavender-500" /> Your Role &amp; Access
+            <UserCheck size={16} className="text-violet-500" /> Your Role &amp; Access
           </h3>
-          <div className="mb-3 rounded-xl bg-lavender-50 p-3">
-            <p className="mb-1 text-xs font-semibold text-lavender-800">
+          <div className="mb-3 rounded-xl bg-violet-50 p-3">
+            <p className="mb-1 text-xs font-semibold text-violet-800">
               {formatRole(user?.role ?? '')} — what you can do:
             </p>
-            <ul className="list-inside list-disc space-y-1 text-xs text-lavender-700">
+            <ul className="list-inside list-disc space-y-1 text-xs text-violet-700">
               {(user?.role === 'admin' || user?.role === 'parent') && (
                 <>
                   <li>Add, edit, and remove child profiles</li>
@@ -379,7 +379,7 @@ export default function SettingsPage() {
         {/* ── Appearance ────────────────────────────────────────────── */}
         <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
           <h3 className="mb-3 flex items-center gap-2 text-sm font-bold text-gray-700">
-            <Palette size={16} className="text-lavender-500" /> Appearance
+            <Palette size={16} className="text-violet-500" /> Appearance
           </h3>
           <div className="flex gap-2">
             {(['light', 'dark', 'high-contrast'] as const).map((t) => (
@@ -388,8 +388,8 @@ export default function SettingsPage() {
                 onClick={() => setTheme(t)}
                 className={`flex-1 rounded-xl py-2.5 text-xs font-semibold transition-all ${
                   theme === t
-                    ? 'bg-lavender-500 text-white shadow-md'
-                    : 'bg-gray-100 text-gray-600 hover:bg-lavender-50'
+                    ? 'bg-violet-500 text-white shadow-md'
+                    : 'bg-gray-100 text-gray-600 hover:bg-violet-50'
                 }`}
               >
                 {t === 'light' ? '☀️ Light' : t === 'dark' ? '🌙 Dark' : '🔲 High Contrast'}
@@ -398,9 +398,9 @@ export default function SettingsPage() {
           </div>
 
           {/* Dyslexia-friendly font toggle [7] */}
-          <div className="mt-4 flex items-center justify-between gap-3 rounded-xl bg-lavender-50 px-4 py-3">
+          <div className="mt-4 flex items-center justify-between gap-3 rounded-xl bg-violet-50 px-4 py-3">
             <div className="flex items-center gap-2.5">
-              <Type size={16} className="shrink-0 text-lavender-600" />
+              <Type size={16} className="shrink-0 text-violet-600" />
               <div>
                 <p className="text-sm font-semibold text-gray-800">Dyslexia-friendly font</p>
                 <p className="text-xs text-gray-500">Switches to Atkinson Hyperlegible — designed for readability</p>
@@ -430,7 +430,7 @@ export default function SettingsPage() {
         {selectedChild && (
           <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
             <h3 className="mb-2 flex items-center gap-2 text-sm font-bold text-gray-700">
-              <Bell size={16} className="text-lavender-500" /> Reminder preferences
+              <Bell size={16} className="text-violet-500" /> Reminder preferences
             </h3>
             <p className="mb-3 text-xs text-gray-500">
               Opt in to daily or weekly module reminders. Reminders stay scoped to this child profile.
@@ -498,10 +498,10 @@ export default function SettingsPage() {
         <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
           <div className="mb-3 flex items-center justify-between">
             <h3 className="flex items-center gap-2 text-sm font-bold text-gray-700">
-              <Settings size={16} className="text-lavender-500" /> Child profiles
+              <Settings size={16} className="text-violet-500" /> Child profiles
             </h3>
             {canManageChildren && (
-              <button onClick={() => setShowAddChild((v) => !v)} className="text-xs font-semibold text-lavender-600">
+              <button onClick={() => setShowAddChild((v) => !v)} className="text-xs font-semibold text-violet-600">
                 + Add child
               </button>
             )}
@@ -513,11 +513,11 @@ export default function SettingsPage() {
                 <button
                   onClick={() => selectChild(child.id)}
                   className={`w-full rounded-2xl p-4 text-left ring-1 transition-all ${
-                    selectedChild?.id === child.id ? 'bg-lavender-50 ring-lavender-200' : 'bg-[var(--bg-accent)] ring-[var(--border-color)]'
+                    selectedChild?.id === child.id ? 'bg-violet-50 ring-violet-200' : 'bg-[var(--muted)] ring-[var(--border)]'
                   }`}
                 >
-                  <div className="text-sm font-semibold text-[var(--text-primary)]">{child.name}</div>
-                  <div className="mt-1 text-xs text-[var(--text-secondary)]">
+                  <div className="text-sm font-semibold text-[var(--foreground)]">{child.name}</div>
+                  <div className="mt-1 text-xs text-[var(--muted-foreground)]">
                     {(() => {
                       const showDue = !!child.dueDate && !child.isBorn;
                       const label = showDue ? 'DUE' : 'DOB';
@@ -531,13 +531,13 @@ export default function SettingsPage() {
                   <>
                     {/* DOB edit button (opens DOB editor) */}
                     {child.dueDate && (
-                      <div className="absolute right-28 top-3 text-xs font-semibold text-[var(--text-primary)] uppercase">DUE</div>
+                      <div className="absolute right-28 top-3 text-xs font-semibold text-[var(--foreground)] uppercase">DUE</div>
                     )}
                     <button
                       onClick={() => {
                         setDueDateTargetId(dueDateTargetId === child.id ? null : child.id);
                       }}
-                      className="absolute right-12 top-3 flex h-7 items-center gap-2 rounded-full bg-lavender-50 px-3 text-xs font-semibold text-lavender-600 ring-1 ring-lavender-100 transition hover:bg-lavender-100"
+                      className="absolute right-12 top-3 flex h-7 items-center gap-2 rounded-full bg-violet-50 px-3 text-xs font-semibold text-violet-600 ring-1 ring-violet-100 transition hover:bg-violet-100"
                       title={child.isBorn ? `Set DOB for ${child.name}` : `Set DOB for ${child.name}`}
                     >
                       {child.dateOfBirth || child.dueDate || 'Set DOB'}
@@ -547,7 +547,7 @@ export default function SettingsPage() {
                         setRemoveTargetId(removeTargetId === child.id ? null : child.id);
                         setRemoveConfirmText('');
                       }}
-                      className="absolute right-2 top-2 flex h-11 w-11 items-center justify-center rounded-full bg-rose-50 text-rose-400 transition hover:bg-rose-100"
+                      className="absolute right-2 top-2 flex h-11 w-11 items-center justify-center rounded-full bg-pink-50 text-pink-400 transition hover:bg-pink-100"
                       title={`Remove ${child.name}`}
                     >
                       <Trash2 size={14} />
@@ -556,8 +556,8 @@ export default function SettingsPage() {
                 )}
 
                 {dueDateTargetId === child.id && (
-                  <div className="mt-2 rounded-2xl bg-[var(--bg-accent)] p-4 ring-1 ring-[var(--border-color)]">
-                    <p className="text-xs text-[var(--text-secondary)] mb-3">
+                  <div className="mt-2 rounded-2xl bg-[var(--muted)] p-4 ring-1 ring-[var(--border)]">
+                    <p className="text-xs text-[var(--muted-foreground)] mb-3">
                       💡 Setting {child.name}&apos;s date of birth helps developmental leap predictions. For children not yet born,
                       you can choose to treat this date as the expected due date until they are marked born.
                     </p>
@@ -570,7 +570,7 @@ export default function SettingsPage() {
                       <button
                         type="button"
                         onClick={() => setDueDateTargetId(null)}
-                        className="mt-2 text-xs text-[var(--text-secondary)] underline"
+                        className="mt-2 text-xs text-[var(--muted-foreground)] underline"
                       >
                         Cancel
                       </button>
@@ -579,18 +579,18 @@ export default function SettingsPage() {
                 )}
 
                 {removeTargetId === child.id && (
-                  <div className="mt-2 rounded-2xl bg-rose-50 p-4 ring-1 ring-rose-200">
+                  <div className="mt-2 rounded-2xl bg-pink-50 p-4 ring-1 ring-rose-200">
                     <div className="mb-3 flex items-start gap-2">
-                      <AlertTriangle size={16} className="mt-0.5 shrink-0 text-rose-500" />
+                      <AlertTriangle size={16} className="mt-0.5 shrink-0 text-pink-500" />
                       <div>
-                        <p className="text-sm font-semibold text-rose-700">Remove {child.name}?</p>
-                        <p className="mt-1 text-xs text-rose-600">
+                        <p className="text-sm font-semibold text-pink-700">Remove {child.name}?</p>
+                        <p className="mt-1 text-xs text-pink-600">
                           This action is <strong>irreversible</strong>. All diary entries, sleep records, food logs, and
                           toilet attempt data for this child will be permanently deleted.
                         </p>
                       </div>
                     </div>
-                    <p className="mb-2 text-xs text-rose-600">
+                    <p className="mb-2 text-xs text-pink-600">
                       Type <strong>{child.name}</strong> to confirm:
                     </p>
                     <div className="flex gap-2">
@@ -599,12 +599,12 @@ export default function SettingsPage() {
                         value={removeConfirmText}
                         onChange={(e) => setRemoveConfirmText(e.target.value)}
                         placeholder={child.name}
-                        className="flex-1 rounded-xl border border-rose-200 bg-white px-3 py-2 text-xs outline-none focus:border-rose-400"
+                        className="flex-1 rounded-xl border border-pink-200 bg-white px-3 py-2 text-xs outline-none focus:border-pink-400"
                       />
                       <button
                         onClick={() => handleRemoveChild(child.id)}
                         disabled={removeConfirmText !== child.name}
-                        className="rounded-xl bg-rose-500 px-4 py-2 text-xs font-semibold text-white disabled:opacity-40"
+                        className="rounded-xl bg-pink-500 px-4 py-2 text-xs font-semibold text-white disabled:opacity-40"
                       >
                         Remove
                       </button>
@@ -625,7 +625,7 @@ export default function SettingsPage() {
           </div>
 
           {showAddChild && canManageChildren && (
-            <form onSubmit={handleAddChild} className="mt-4 space-y-3 rounded-2xl bg-[var(--bg-accent)] p-4 ring-1 ring-[var(--border-color)]">
+            <form onSubmit={handleAddChild} className="mt-4 space-y-3 rounded-2xl bg-[var(--muted)] p-4 ring-1 ring-[var(--border)]">
               <input
                 type="text"
                 value={childName}
@@ -640,7 +640,7 @@ export default function SettingsPage() {
                 onChange={(event) => setChildDob(event.target.value)}
                 className="input-card"
               />
-              <button className="w-full rounded-full bg-lavender-500 px-4 py-3 text-sm font-semibold text-white">
+              <button className="w-full rounded-full bg-violet-500 px-4 py-3 text-sm font-semibold text-white">
                 Save child profile
               </button>
             </form>
@@ -650,7 +650,7 @@ export default function SettingsPage() {
         {/* ── Data & Privacy (unified) ─────────────────────────────── */}
         <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5" aria-labelledby="data-privacy-heading">
           <h3 id="data-privacy-heading" className="mb-1 flex items-center gap-2 text-sm font-bold text-gray-700">
-            <Shield size={16} className="text-lavender-500" /> Data &amp; Privacy
+            <Shield size={16} className="text-violet-500" /> Data &amp; Privacy
           </h3>
           <p className="mb-4 text-xs text-gray-400">
             Your data is stored securely. You have the right to export, import, or permanently delete your account and
@@ -661,10 +661,10 @@ export default function SettingsPage() {
             {/* Export */}
             <button
               onClick={exportData}
-              className="flex w-full items-center gap-3 rounded-2xl bg-lavender-50 p-4 text-left ring-1 ring-lavender-100 transition hover:bg-lavender-100"
+              className="flex w-full items-center gap-3 rounded-2xl bg-violet-50 p-4 text-left ring-1 ring-violet-100 transition hover:bg-violet-100"
               aria-label="Export your diary data as a CSV file"
             >
-              <Download size={18} className="text-lavender-600" />
+              <Download size={18} className="text-violet-600" />
               <div>
                 <div className="text-sm font-semibold text-gray-900">Export my data</div>
                 <div className="text-xs text-gray-500">
@@ -674,9 +674,9 @@ export default function SettingsPage() {
             </button>
 
             {/* Import */}
-            <div className="rounded-2xl bg-lavender-50 p-4 ring-1 ring-lavender-100">
+            <div className="rounded-2xl bg-violet-50 p-4 ring-1 ring-violet-100">
               <div className="flex items-center gap-3">
-                <Upload size={18} className="shrink-0 text-lavender-600" />
+                <Upload size={18} className="shrink-0 text-violet-600" />
                 <div className="flex-1">
                   <div className="text-sm font-semibold text-gray-900">Import data</div>
                   <div className="text-xs text-gray-500">
@@ -687,7 +687,7 @@ export default function SettingsPage() {
                 <button
                   onClick={() => fileInputRef.current?.click()}
                   disabled={importing || !selectedChildId}
-                  className="shrink-0 rounded-xl bg-lavender-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-lavender-600 disabled:opacity-40"
+                  className="shrink-0 rounded-xl bg-violet-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-violet-600 disabled:opacity-40"
                 >
                   <FileUp size={14} className="mr-1 inline-block" />
                   {importing ? 'Importing…' : 'Choose file'}
@@ -702,10 +702,10 @@ export default function SettingsPage() {
                 />
               </div>
               {importMessage && (
-                <p className="mt-2 text-xs text-lavender-700">{importMessage}</p>
+                <p className="mt-2 text-xs text-violet-700">{importMessage}</p>
               )}
               <details className="mt-2">
-                <summary className="cursor-pointer text-[10px] font-medium text-lavender-600">
+                <summary className="cursor-pointer text-[10px] font-medium text-violet-600">
                   Template format hints
                 </summary>
                 <ul className="mt-1 list-inside list-disc space-y-0.5 text-[10px] text-gray-500">
@@ -721,26 +721,26 @@ export default function SettingsPage() {
               onClick={() => setShowClearConfirm(true)}
               className="flex w-full items-center gap-3 rounded-2xl bg-[#fff4f5] p-4 text-left ring-1 ring-rose-100"
             >
-              <Trash2 size={18} className="text-rose-500" />
+              <Trash2 size={18} className="text-pink-500" />
               <div>
-                <div className="text-sm font-semibold text-rose-600">Clear all data</div>
+                <div className="text-sm font-semibold text-pink-600">Clear all data</div>
                 <div className="text-xs text-gray-500">Remove all saved app data from this browser.</div>
               </div>
             </button>
 
             {showClearConfirm && (
-              <div className="rounded-2xl bg-rose-50 p-4 ring-1 ring-rose-200">
+              <div className="rounded-2xl bg-pink-50 p-4 ring-1 ring-rose-200">
                 <div className="mb-3 flex items-start gap-2">
-                  <AlertTriangle size={16} className="mt-0.5 shrink-0 text-rose-500" />
+                  <AlertTriangle size={16} className="mt-0.5 shrink-0 text-pink-500" />
                   <div>
-                    <p className="text-sm font-semibold text-rose-700">Clear all saved data?</p>
-                    <p className="mt-1 text-xs text-rose-600">
+                    <p className="text-sm font-semibold text-pink-700">Clear all saved data?</p>
+                    <p className="mt-1 text-xs text-pink-600">
                       This will <strong>permanently delete</strong> all accounts, children, diary entries, invites, and
                       audit history from this browser. This cannot be undone.
                     </p>
                   </div>
                 </div>
-                <p className="mb-2 text-xs text-rose-600">
+                <p className="mb-2 text-xs text-pink-600">
                   Type <strong>DELETE</strong> to confirm:
                 </p>
                 <div className="flex gap-2">
@@ -749,12 +749,12 @@ export default function SettingsPage() {
                     value={clearConfirmText}
                     onChange={(e) => setClearConfirmText(e.target.value)}
                     placeholder="DELETE"
-                    className="flex-1 rounded-xl border border-rose-200 bg-white px-3 py-2 text-xs outline-none focus:border-rose-400"
+                    className="flex-1 rounded-xl border border-pink-200 bg-white px-3 py-2 text-xs outline-none focus:border-pink-400"
                   />
                   <button
                     onClick={handleClearAllData}
                     disabled={clearConfirmText !== 'DELETE'}
-                    className="rounded-xl bg-rose-500 px-4 py-2 text-xs font-semibold text-white disabled:opacity-40"
+                    className="rounded-xl bg-pink-500 px-4 py-2 text-xs font-semibold text-white disabled:opacity-40"
                   >
                     Clear all
                   </button>
@@ -775,13 +775,13 @@ export default function SettingsPage() {
             {cloud && (
               <button
                 onClick={() => setShowDeleteAccount(true)}
-                className="flex w-full items-center gap-3 rounded-2xl bg-rose-50 p-4 text-left ring-1 ring-rose-100 transition hover:bg-rose-100"
+                className="flex w-full items-center gap-3 rounded-2xl bg-pink-50 p-4 text-left ring-1 ring-rose-100 transition hover:bg-pink-100"
                 aria-label="Permanently delete your account"
               >
-                <Trash2 size={18} className="text-rose-500" />
+                <Trash2 size={18} className="text-pink-500" />
                 <div>
-                  <div className="text-sm font-semibold text-rose-700">Delete my account</div>
-                  <div className="text-xs text-rose-500">
+                  <div className="text-sm font-semibold text-pink-700">Delete my account</div>
+                  <div className="text-xs text-pink-500">
                     Permanently removes your account and all data. Cannot be undone.
                   </div>
                 </div>
@@ -789,11 +789,11 @@ export default function SettingsPage() {
             )}
 
             {showDeleteAccount && (
-              <div className="rounded-2xl bg-rose-50 p-4 ring-1 ring-rose-200">
-                <p className="mb-2 text-sm font-semibold text-rose-700">
+              <div className="rounded-2xl bg-pink-50 p-4 ring-1 ring-rose-200">
+                <p className="mb-2 text-sm font-semibold text-pink-700">
                   This will permanently delete your account and all data.
                 </p>
-                <p className="mb-3 text-xs text-rose-600">
+                <p className="mb-3 text-xs text-pink-600">
                   Type <strong>DELETE MY ACCOUNT</strong> to confirm:
                 </p>
                 <div className="flex gap-2">
@@ -802,13 +802,13 @@ export default function SettingsPage() {
                     value={deleteAccountText}
                     onChange={(e) => setDeleteAccountText(e.target.value)}
                     placeholder="DELETE MY ACCOUNT"
-                    className="flex-1 rounded-xl border border-rose-200 bg-white px-3 py-2 text-xs outline-none focus:border-rose-400"
+                    className="flex-1 rounded-xl border border-pink-200 bg-white px-3 py-2 text-xs outline-none focus:border-pink-400"
                     aria-label="Type DELETE MY ACCOUNT to confirm"
                   />
                   <button
                     onClick={handleDeleteAccount}
                     disabled={deleteAccountText !== 'DELETE MY ACCOUNT'}
-                    className="rounded-xl bg-rose-500 px-4 py-2 text-xs font-semibold text-white disabled:opacity-40"
+                    className="rounded-xl bg-pink-500 px-4 py-2 text-xs font-semibold text-white disabled:opacity-40"
                   >
                     Delete
                   </button>
@@ -830,13 +830,13 @@ export default function SettingsPage() {
           <div className="mt-4 border-t border-gray-100 pt-4">
             <div className="flex items-center justify-between mb-3">
               <h4 className="text-xs font-bold text-gray-600">Recent audit trail</h4>
-              <Link to="/audit-trail" className="text-xs font-semibold text-lavender-600 underline underline-offset-2 hover:text-lavender-700">
+              <Link to="/audit-trail" className="text-xs font-semibold text-violet-600 underline underline-offset-2 hover:text-violet-700">
                 View full history
               </Link>
             </div>
             <div className="space-y-2">
               {visibleAudit.map((event) => (
-                <div key={event.id} className="rounded-2xl bg-[var(--bg-card)] px-4 py-3 ring-1 ring-[var(--border-color)]">
+                <div key={event.id} className="rounded-2xl bg-[var(--card)] px-4 py-3 ring-1 ring-[var(--border)]">
                   <div className="text-sm font-semibold text-gray-900">{event.action}</div>
                   <div className="mt-1 text-xs text-gray-500">{event.detail}</div>
                   <div className="mt-2 text-[11px] text-gray-400">
@@ -851,8 +851,8 @@ export default function SettingsPage() {
           {/* GDPR link */}
           <div className="mt-4 border-t border-gray-100 pt-3">
             <div className="flex items-center gap-2 text-xs text-gray-500">
-              <Globe size={14} className="text-lavender-500" />
-              <Link to="/gdpr" className="underline underline-offset-2 hover:text-lavender-600">
+              <Globe size={14} className="text-violet-500" />
+              <Link to="/gdpr" className="underline underline-offset-2 hover:text-violet-600">
                 View our full GDPR &amp; Data Protection policy
               </Link>
             </div>
@@ -862,9 +862,9 @@ export default function SettingsPage() {
         {/* ── Help ──────────────────────────────────────────────────── */}
         <Link
           to="/help"
-          className="flex w-full items-center gap-3 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5 transition hover:bg-lavender-50"
+          className="flex w-full items-center gap-3 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5 transition hover:bg-violet-50"
         >
-          <HelpCircle size={18} className="text-lavender-500" />
+          <HelpCircle size={18} className="text-violet-500" />
           <div>
             <div className="text-sm font-semibold text-gray-900">Help &amp; Support</div>
             <div className="text-xs text-gray-500">FAQs, guides, and contact information.</div>
@@ -888,9 +888,9 @@ export default function SettingsPage() {
         {/* ── Sign out ─────────────────────────────────────────────── */}
         <button
           onClick={logout}
-          className="flex w-full items-center gap-3 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5 transition hover:bg-rose-50"
+          className="flex w-full items-center gap-3 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5 transition hover:bg-pink-50"
         >
-          <LogOut size={18} className="text-rose-500" />
+          <LogOut size={18} className="text-pink-500" />
           <div className="text-left">
             <div className="text-sm font-semibold text-gray-900">Sign out</div>
             <div className="text-xs text-gray-500">End your current session.</div>

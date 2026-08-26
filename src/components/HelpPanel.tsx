@@ -16,7 +16,7 @@ export default function HelpPanel({ title, children }: HelpPanelProps) {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-1.5 text-xs font-medium text-lavender-600 hover:text-lavender-700 transition"
+        className="flex items-center gap-1.5 text-xs font-medium text-violet-600 hover:text-violet-700 transition"
         aria-expanded={open}
         aria-label={`${open ? 'Hide' : 'Show'} help for ${title}`}
       >
@@ -28,17 +28,17 @@ export default function HelpPanel({ title, children }: HelpPanelProps) {
         <div
           role="region"
           aria-label={`Help: ${title}`}
-          className="mt-2 rounded-2xl bg-lavender-50 p-4 text-xs text-lavender-900 ring-1 ring-lavender-100 relative"
+          className="mt-2 rounded-2xl bg-violet-50 p-4 text-xs text-violet-900 ring-1 ring-violet-100 relative"
         >
           <button
             type="button"
             onClick={() => setOpen(false)}
-            className="absolute right-3 top-3 text-lavender-400 hover:text-lavender-600"
+            className="absolute right-3 top-3 text-violet-400 hover:text-violet-600"
             aria-label="Close help panel"
           >
             <X size={14} />
           </button>
-          <p className="font-semibold text-lavender-800 mb-2">📖 {title}</p>
+          <p className="font-semibold text-violet-800 mb-2">📖 {title}</p>
           <div className="space-y-1.5">{children}</div>
         </div>
       )}
