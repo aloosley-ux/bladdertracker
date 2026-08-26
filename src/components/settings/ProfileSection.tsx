@@ -10,7 +10,6 @@ interface ProfileSectionProps {
   selectedChildId: string | null;
   enabledModules: ModuleId[];
   setEnabledModules: (modules: ModuleId[]) => void;
-  reminderModules: ModuleId[];
   setReminderPreferences: (childId: string, reminders: Array<Partial<ReminderPreference> & { moduleId: ReminderPreference['moduleId'] }>) => void | Promise<void>;
   theme: Theme;
   setTheme: (theme: Theme) => void;
