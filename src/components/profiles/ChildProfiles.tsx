@@ -1,7 +1,8 @@
 import { AlertTriangle, Baby, Trash2 } from 'lucide-react';
+import type { Child } from '@/types';
 
 interface ChildProfilesProps {
-  children: any[];
+  children: Child[];
   selectedChildId: string | null;
   selectChild: (id: string) => void;
   canManageChildren: boolean;

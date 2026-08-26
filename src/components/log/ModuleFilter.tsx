@@ -46,7 +46,7 @@ export default function ModuleFilter({ enabledKeys, activeFilters, toggleFilter 
       .filter((key) => enabledKeys.has(key))
       .map((key) => ({
         key,
-        label: getModuleLabel(key as any, key === 'toilet' ? 'short' : undefined),
+        label: getModuleLabel(key as ModuleKey, key === 'toilet' ? 'short' : undefined),
         emoji: DEFAULT_MODULES.find((m) => m.id === key)?.icon ?? '',
       })),
     [enabledKeys],

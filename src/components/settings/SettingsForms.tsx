@@ -1,11 +1,12 @@
 import { formatDistanceToNow } from 'date-fns';
 import { AlertTriangle, Crown, Download, FileUp, Globe, HelpCircle, LogOut, Settings, Shield, Trash2, Upload } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import type { Child } from '@/types';
 import { DueDateEditor } from '../leaps';
 
 interface SettingsFormsProps {
-  children: any[];
-  selectedChild: any;
+  children: Child[];
+  selectedChild: Child;
   selectChild: (id: string) => void;
   canManageChildren: boolean;
   dueDateTargetId: string | null;
@@ -14,7 +15,7 @@ interface SettingsFormsProps {
   setRemoveTargetId: (id: string | null) => void;
   removeConfirmText: string;
   setRemoveConfirmText: (v: string) => void;
-  handleSaveDueDate: (child: any, date: string, useAsDue?: boolean) => void;
+  handleSaveDueDate: (child: Child, date: string, useAsDue?: boolean) => void;
   handleRemoveChild: (childId: string) => void;
   showAddChild: boolean;
   setShowAddChild: (v: boolean) => void;
@@ -41,7 +42,7 @@ interface SettingsFormsProps {
   deleteAccountText: string;
   setDeleteAccountText: (v: string) => void;
   handleDeleteAccount: () => void;
-  visibleAudit: any[];
+  visibleAudit: { id: string; type: string; timestamp: string; userId: string }[];
   logout: () => void;
   isAdmin: boolean;
 }
