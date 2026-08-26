@@ -1,6 +1,7 @@
 import { Bell, Crown, Lock, Palette, Type, UserCheck } from 'lucide-react';
 import type { ModuleId } from '../../types';
 import type { Theme } from '../../context/themeContextDef';
+import { Switch } from '../ui/switch';
 import ModuleSettings from './ModuleSettings';
 
 interface ProfileSectionProps {
@@ -213,12 +214,9 @@ export function ProfileSection({
               <p className="text-xs text-gray-500">Switches to Atkinson Hyperlegible — designed for readability</p>
             </div>
           </div>
-          <button
-            role="switch"
-            aria-checked={dyslexiaFont}
-            onClick={() => setDyslexiaFont(!dyslexiaFont)}
-            className="nhs-toggle shrink-0"
-            data-on={dyslexiaFont}
+          <Switch
+            checked={dyslexiaFont}
+            onCheckedChange={(checked) => setDyslexiaFont(checked)}
             aria-label="Toggle dyslexia-friendly font"
           />
         </div>
@@ -255,13 +253,9 @@ export function ProfileSection({
                       <p className="text-sm font-semibold text-gray-900">{moduleId}</p>
                       <p className="text-xs text-gray-500">Show dashboard reminder banner</p>
                     </div>
-                    <button
-                      role="switch"
-                      aria-checked={enabled}
-                      aria-label={`Toggle ${moduleId} reminders`}
-                      className="nhs-toggle"
-                      data-on={enabled}
-                      onClick={() => {
+                    <Switch
+                      checked={enabled}
+                      onCheckedChange={() => {
                         if (!selectedChildId) return;
                         const next = reminderModules
                           .map((id) => {
@@ -271,6 +265,7 @@ export function ProfileSection({
                           });
                         setReminderPreferences(selectedChildId, next);
                       }}
+                      aria-label={`Toggle ${moduleId} reminders`}
                     />
                   </div>
                   {enabled && (

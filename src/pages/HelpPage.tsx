@@ -12,11 +12,11 @@ import {
   Shield,
   Sparkles,
   Users,
-  X,
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/useApp';
 import BrandIcon from '../components/BrandIcon';
+import { Dialog, DialogContent } from '../components/ui/dialog';
 import PageShell from '../components/PageShell';
 import { BRAND, HELP_COPY, getModuleLabel } from '../content/presentation';
 
@@ -369,31 +369,17 @@ export function WelcomeModal() {
   if (dismissed || children.length > 0) return null;
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-label="Welcome to BladderTracker"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 backdrop-blur-sm"
-    >
-      <div className="relative w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl ring-1 ring-black/10">
-        {/* Close button */}
-        <button
-          type="button"
-          onClick={dismiss}
-          className="absolute right-3 top-3 flex h-11 w-11 items-center justify-center rounded-full bg-gray-100 text-gray-500 transition hover:bg-gray-200"
-          aria-label="Dismiss welcome screen"
-        >
-          <X size={16} />
-        </button>
-
-        {/* Branding header */}
+    <Dialog open onOpenChange={() => dismiss()}>
+      <DialogContent
+        className="max-w-sm rounded-3xl p-6 shadow-2xl ring-1 ring-black/10"
+        showCloseButton={true}
+      >
         <div className="mb-5 flex flex-col items-center text-center">
           <BrandIcon width={96} className="mb-3" />
           <h2 className="text-lg font-bold text-gray-900">Welcome to BladderTracker!</h2>
           <p className="mt-1 text-xs text-gray-500">A calm, secure diary for families, carers, and professionals.</p>
         </div>
 
-        {/* Step-by-step guide [6] */}
         <ol className="mb-5 space-y-4">
           {ONBOARDING_MODAL_STEPS.map(({ step, title, description, cta, to }) => (
             <li key={step} className="flex flex-col gap-2">
@@ -422,7 +408,7 @@ export function WelcomeModal() {
         >
           Skip for now
         </button>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

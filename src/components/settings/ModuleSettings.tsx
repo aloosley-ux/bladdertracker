@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Settings } from 'lucide-react';
 import { DEFAULT_MODULES } from '../../types';
 import type { ModuleId } from '../../types';
+import { Switch } from '../ui/switch';
 
 // ── Module accent colours ─────────────────────────────────────────────
 const MODULE_ACCENT: Record<string, string> = {
@@ -80,13 +81,10 @@ export default function ModuleSettings({ childName, initialModules, onSave }: Mo
                   <p className="text-[10px] text-gray-400">{mod.description}</p>
                 </div>
               </div>
-              <button
-                role="switch"
-                aria-checked={isOn}
+              <Switch
+                checked={isOn}
+                onCheckedChange={(checked) => toggle(mod.id, checked)}
                 aria-label={`Toggle ${mod.label}`}
-                onClick={(e) => { e.stopPropagation(); toggle(mod.id, !isOn); }}
-                className="nhs-toggle shrink-0"
-                data-on={isOn}
               />
             </div>
           );
