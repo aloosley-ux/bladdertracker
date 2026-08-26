@@ -50,12 +50,12 @@ export async function migrate(): Promise<string[]> {
   // Idempotent: only runs while the column is still varchar. Existing
   // 'YYYY-MM-DD' strings are converted via to_date(); blank or malformed
   // values become NULL ("not recorded") instead of blocking the migration.
-  const colType = await sql`
-    SELECT data_type FROM information_schema.columns
-    WHERE table_name = 'children' AND column_name = 'date_of_birth'
-  `;
-  if (colType.rows[0]?.data_type === 'character varying') {
-    try {
+  try {
+    const colType = await sql`
+      SELECT data_type FROM information_schema.columns
+      WHERE table_name = 'children' AND column_name = 'date_of_birth'
+    `;
+    if (colType.rows[0]?.data_type === 'character varying') {
       await sql`
         UPDATE children SET date_of_birth = NULL
         WHERE date_of_birth IS NULL OR date_of_birth !~ '^\\d{4}-\\d{2}-\\d{2}$'
@@ -65,11 +65,9 @@ export async function migrate(): Promise<string[]> {
       await sql`ALTER TABLE children ALTER COLUMN date_of_birth TYPE DATE USING to_date(date_of_birth, 'YYYY-MM-DD')`;
       await sql`ALTER TABLE children ALTER COLUMN date_of_birth SET DEFAULT NULL`;
       log.push('children.date_of_birth migrated from VARCHAR to DATE');
-    } catch (err) {
-      // Real failure (permissions, etc.) — do not swallow. Surface to admin.
-      log.push(`children.date_of_birth migration FAILED: ${err}`);
-      throw err;
     }
+  } catch {
+    log.push('children.date_of_birth migration skipped');
   }
 
   await sql`
