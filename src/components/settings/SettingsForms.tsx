@@ -1,12 +1,12 @@
 import { formatDistanceToNow } from 'date-fns';
 import { AlertTriangle, Crown, Download, FileUp, Globe, HelpCircle, LogOut, Settings, Shield, Trash2, Upload } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import type { Child } from '@/types';
+import type { AuditEvent, Child } from '@/types';
 import { DueDateEditor } from '../leaps';
 
 interface SettingsFormsProps {
   children: Child[];
-  selectedChild: Child;
+  selectedChild: Child | null;
   selectChild: (id: string) => void;
   canManageChildren: boolean;
   dueDateTargetId: string | null;
@@ -42,7 +42,7 @@ interface SettingsFormsProps {
   deleteAccountText: string;
   setDeleteAccountText: (v: string) => void;
   handleDeleteAccount: () => void;
-  visibleAudit: { id: string; type: string; timestamp: string; userId: string }[];
+  visibleAudit: AuditEvent[];
   logout: () => void;
   isAdmin: boolean;
 }

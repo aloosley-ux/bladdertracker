@@ -1,17 +1,17 @@
 import { Bell, Crown, Lock, Palette, Type, UserCheck } from 'lucide-react';
-import type { ModuleId, User, Child } from '../../types';
+import type { ModuleId, ReminderPreference, User, Child } from '../../types';
 import type { Theme } from '../../context/themeContextDef';
 import { Switch } from '../ui/switch';
 import ModuleSettings from './ModuleSettings';
 
 interface ProfileSectionProps {
-  user: User;
-  selectedChild: Child;
+  user: User | null;
+  selectedChild: Child | null;
   selectedChildId: string | null;
   enabledModules: ModuleId[];
   setEnabledModules: (modules: ModuleId[]) => void;
-  reminderPreferences: { moduleId: string; enabled: boolean; time?: string }[];
-  setReminderPreferences: (childId: string, prefs: { moduleId: string; enabled: boolean; time?: string }[]) => void;
+  reminderModules: ModuleId[];
+  setReminderPreferences: (childId: string, reminders: Array<Partial<ReminderPreference> & { moduleId: ReminderPreference['moduleId'] }>) => void | Promise<void>;
   theme: Theme;
   setTheme: (theme: Theme) => void;
   dyslexiaFont: boolean;
@@ -30,8 +30,8 @@ interface ProfileSectionProps {
   passwordSuccess: string;
   changingPassword: boolean;
   handleChangePassword: (e: React.FormEvent) => void;
-  reminderModules: { moduleId: string; enabled: boolean; time?: string }[];
-  reminderForChild: { moduleId: string; enabled: boolean; time?: string }[];
+  reminderModules: ModuleId[];
+  reminderForChild: ReminderPreference[];
 }
 
 export function ProfileSection({
