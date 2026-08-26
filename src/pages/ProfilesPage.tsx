@@ -52,6 +52,7 @@ export default function ProfilesPage() {
           handleRemoveChild={p.handleRemoveChild}
           handleCancelRemove={p.handleCancelRemove}
           showAddChild={p.showAddChild}
+          setShowAddChild={p.setShowAddChild}
           childName={p.childName}
           setChildName={p.setChildName}
           childDob={p.childDob}

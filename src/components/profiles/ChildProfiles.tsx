@@ -13,6 +13,7 @@ interface ChildProfilesProps {
   handleRemoveChild: (id: string) => void;
   handleCancelRemove: () => void;
   showAddChild: boolean;
+  setShowAddChild: (v: boolean) => void;
   childName: string;
   setChildName: (v: string) => void;
   childDob: string;
@@ -33,6 +34,7 @@ export default function ChildProfiles(props: ChildProfilesProps) {
     handleRemoveChild,
     handleCancelRemove,
     showAddChild,
+    setShowAddChild,
     childName,
     setChildName,
     childDob,
@@ -47,7 +49,7 @@ export default function ChildProfiles(props: ChildProfilesProps) {
           <Baby size={16} className="text-lavender-500" /> Child profiles
         </h3>
         {canManageChildren && (
-          <button onClick={() => { setChildName(''); setChildDob(''); }} className="text-xs font-semibold text-lavender-600">
+          <button onClick={() => { setShowAddChild(!showAddChild); setChildName(''); setChildDob(''); }} className="text-xs font-semibold text-lavender-600">
             + Add child
           </button>
         )}
