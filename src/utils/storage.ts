@@ -1004,7 +1004,7 @@ export function exportToCSV(childId: string, childName: string): string {
   const routine = getRoutineEntries(childId);
   const milestones = getMilestones(childId);
 
-  let csv = `BladderTracker Export for ${childName}\n`;
+  let csv = `EveryStep Export for ${childName}\n`;
   csv += `Generated: ${new Date().toLocaleDateString()}\n\n`;
 
   csv += 'DRINKS\n';

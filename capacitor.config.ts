@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.bladdertracker.app',
-  appName: 'BladderTracker',
+  appName: 'EveryStep',
   webDir: 'dist',
   server: {
     androidScheme: 'https',

@@ -21,7 +21,7 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
   }
 
   componentDidCatch(error: Error, errorInfo: unknown) {
-    logger.error('BladderTracker error boundary caught an error', error, errorInfo);
+    logger.error('EveryStep error boundary caught an error', error, errorInfo);
   }
 
   private handleReload = () => {

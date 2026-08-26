@@ -22,7 +22,7 @@ export default function generateICS(predictions: LeapPrediction[], childName: st
   return [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//BladderTracker//Leap Calendar//EN',
+    'PRODID:-//EveryStep//Leap Calendar//EN',
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
     ...events,

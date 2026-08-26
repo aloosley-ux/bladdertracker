@@ -2,11 +2,11 @@ import { DEFAULT_MODULES } from '../types';
 import type { ModuleId, ToiletAttemptOutcome, UserRole } from '../types';
 
 export const BRAND = {
-  name: 'BladderTracker',
+  name: 'EveryStep',
   tagline: 'Calm tracking for families and care teams',
   heroTitle: 'Calm, one-handed tracking for families and care teams',
-  logoAlt: 'BladderTracker logo',
-  bannerAlt: 'BladderTracker brand mark',
+  logoAlt: 'EveryStep logo',
+  bannerAlt: 'EveryStep brand mark',
 } as const;
 
 type ModulePresentation = {

@@ -1,6 +1,6 @@
 <svg width="512" height="512" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="bt-mark-mono-title bt-mark-mono-desc">
-  <title id="bt-mark-mono-title">BladderTracker monochrome mark</title>
-  <desc id="bt-mark-mono-desc">Single-color variant of the BladderTracker droplet mark.</desc>
+  <title id="bt-mark-mono-title">EveryStep monochrome mark</title>
+  <desc id="bt-mark-mono-desc">Single-color variant of the EveryStep droplet mark.</desc>
   <rect x="8" y="10" width="124" height="124" rx="30" fill="#6A28DD"/>
   <path d="M70 32C70 32 44 62.118 44 80.355C44 95.072 55.641 107 70 107C84.359 107 96 95.072 96 80.355C96 62.118 70 32 70 32Z" fill="#FFFFFF" fill-opacity="0.94"/>
   <path d="M58.5 82C58.5 87.422 62.713 92.328 68.879 94.537" stroke="#6A28DD" stroke-width="6" stroke-linecap="round"/>

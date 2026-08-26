@@ -376,7 +376,7 @@ export function WelcomeModal() {
       >
         <div className="mb-5 flex flex-col items-center text-center">
           <BrandIcon width={96} className="mb-3" />
-          <h2 className="text-lg font-bold text-gray-900">Welcome to BladderTracker!</h2>
+          <h2 className="text-lg font-bold text-gray-900">Welcome to EveryStep!</h2>
           <p className="mt-1 text-xs text-gray-500">A calm, secure diary for families, carers, and professionals.</p>
         </div>
 

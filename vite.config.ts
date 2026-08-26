@@ -19,8 +19,8 @@ export default defineConfig({
       injectRegister: 'auto',
       includeAssets: ['icon.svg'],
       manifest: {
-        name: 'BladderTracker',
-        short_name: 'BladderTracker',
+        name: 'EveryStep',
+        short_name: 'EveryStep',
         description: 'Calm tracking for families, caregivers, and care teams.',
         theme_color: '#f8f5ff',
         background_color: '#f8f5ff',
